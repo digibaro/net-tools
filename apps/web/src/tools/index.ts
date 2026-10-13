@@ -29,6 +29,7 @@ import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as whatIsMyIp } from './what-is-my-ip'
+import { tool as wifiQrGenerator } from './wifi-qr-generator'
 import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
@@ -42,7 +43,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },
   { id: 'client', components: [] },
 ]
 

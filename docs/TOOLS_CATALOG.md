@@ -183,7 +183,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-08 | DNS record type reference | Record types, RFCs, examples | B | bundled JSON | — | 1 | ✅ |
 | CAL-09 | Subnet cheat sheet | /0–/32 and common v6 prefix table | B | generated | — | 1 | ✅ |
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ⬜ |
-| CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ⬜ |
+| CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ✅ |
 | CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ⬜ |
 
 ## 11. Client Diagnostics (runs in the user's browser)

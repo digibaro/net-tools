@@ -663,3 +663,23 @@ tools:
       '48': Site; smallest globally routable prefix
       '32': Minimum LIR allocation (RIPE NCC)
       '29': Typical larger LIR allocation
+  wifi-qr-generator:
+    title: Wi-Fi QR generator
+    description: Create a QR code that phones scan to join a Wi-Fi network (WPA2, WPA3, WEP or open).
+    ssid: Network name (SSID)
+    password: Password
+    securityLabel: Security
+    hidden: Hidden network
+    qr: QR code
+    qrAlt: 'QR code to join the Wi-Fi network {ssid}'
+    downloadPng: Download PNG
+    copyUri: Copy WIFI string
+    privacy: Generated in your browser. The password is never added to the page URL.
+    security:
+      WPA: WPA / WPA2 (Personal)
+      SAE: WPA3 (SAE)
+      WEP: WEP (insecure)
+      nopass: Open (no password)
+    invalid:
+      ssid: The SSID must be 1–32 bytes.
+      password: 'WPA passwords need 8–63 characters; WEP keys 5, 13, 10 or 26 characters.'
