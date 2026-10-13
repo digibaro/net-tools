@@ -121,10 +121,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| EM-01 | MX lookup + SMTP reachability | MX records, connect each on 25, banner, STARTTLS | S | `miekg/dns` + `net/smtp` | — | 2 | ⬜ |
-| EM-02 | SPF checker | Parse, expand includes, count DNS lookups (≤10), flag errors | S | custom on `miekg/dns` | — | 2 | ⬜ |
-| EM-03 | DMARC checker | Parse policy, rua/ruf, alignment | S | custom | — | 2 | ⬜ |
-| EM-04 | DKIM checker | Fetch `<selector>._domainkey`, key size/type | S | custom | — | 2 | ⬜ |
+| EM-01 | MX lookup + SMTP reachability | MX records, connect each on 25, banner, STARTTLS | S | `miekg/dns` + `net/smtp` | — | 2 | ✅ |
+| EM-02 | SPF checker | Parse, expand includes, count DNS lookups (≤10), flag errors | S | custom on `miekg/dns` | — | 2 | ✅ |
+| EM-03 | DMARC checker | Parse policy, rua/ruf, alignment | S | custom | — | 2 | ✅ |
+| EM-04 | DKIM checker | Fetch `<selector>._domainkey`, key size/type | S | custom | — | 2 | ✅ |
 | EM-05 | MTA-STS / TLS-RPT / BIMI | Fetch policy file + DNS, validate | S | custom | — | 3 | ⬜ |
 | EM-06 | Blacklist (DNSBL) check | Query IP/domain against ~30 RBLs | S | DNS queries | — | 3 | ⬜ |
 | EM-07 | Email header analyzer | Paste headers → hop timeline, delays, auth results | B | custom parser | — | 2 | ⬜ |

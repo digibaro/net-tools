@@ -181,6 +181,36 @@ http:
     ttfb: Wait
     transfer: Transfer
   invalidUrl: Enter an http or https URL.
+email:
+  domain: Domain
+  findings:
+    dns-error: The DNS lookup failed.
+    no-record: No record was found.
+    nxdomain: The domain does not exist.
+    multiple-records: More than one record exists — receivers treat this as an error.
+    include-loop: The SPF includes form a loop.
+    include-missing: An included domain has no SPF record (permanent error at receivers).
+    plus-all: '"+all" lets anyone send mail as this domain.'
+    neutral-all: '"?all" expresses no policy; prefer "~all" or "-all".'
+    no-all: The record does not end with an "all" mechanism.
+    too-many-lookups: More than 10 DNS lookups — receivers return a permanent error.
+    too-many-void-lookups: More than 2 lookups return nothing — receivers may return a permanent error.
+    ptr-deprecated: The "ptr" mechanism is deprecated and slow.
+    unknown-mechanism: The record contains an unknown mechanism.
+    syntax: The record has a syntax error.
+    policy-none: Policy "none" only monitors; it does not protect the domain.
+    partial-pct: The policy applies to only part of the mail (pct below 100).
+    no-rua: No aggregate reports (rua) are requested.
+    missing-policy: The required p= tag is missing.
+    invalid-policy: The policy value is not none, quarantine or reject.
+    invalid-pct: The pct value is not between 0 and 100.
+    unauthorized-external-report: An external report address has not authorized receiving reports for this domain.
+    bad-version: The record version is not DKIM1.
+    revoked: The key is revoked (empty p=).
+    bad-key: The public key cannot be decoded.
+    weak-key: The RSA key is shorter than 1024 bits and is ignored by receivers.
+    short-key: The RSA key is shorter than the recommended 2048 bits.
+    testing: The key is in testing mode (t=y).
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -1130,3 +1160,50 @@ tools:
       expires: Expires
       issuer: Issuer
       status: Status
+  mx-lookup:
+    title: MX lookup + SMTP check
+    description: List a domain's mail servers and test each on port 25 — banner, ESMTP extensions, STARTTLS and certificate.
+    probe: Connect to port 25 (SMTP)
+    run: Look up
+    nullMx: This domain publishes a null MX (RFC 7505) — it does not accept email.
+    implicit: No MX records — senders fall back to the domain's own address (implicit MX).
+    status:
+      ok: STARTTLS, valid certificate
+      no-starttls: No STARTTLS
+      cert: STARTTLS, certificate problem
+      unreachable: Unreachable
+  spf-checker:
+    title: SPF checker
+    description: Parse a domain's SPF record, expand every include, count DNS lookups against the limit of 10 and flag mistakes.
+    run: Check SPF
+    ok: The SPF record is valid.
+    lookups: '{n} of 10 DNS lookups used'
+    tree: Expanded record
+  dmarc-checker:
+    title: DMARC checker
+    description: Parse a domain's DMARC policy, alignment and report addresses, including authorization of external report destinations.
+    run: Check DMARC
+    ok: The DMARC record is valid.
+    subdomains: subdomains
+    strength:
+      strong: Enforced
+      weak: Partly enforced
+      none: Not enforced
+    fields:
+      foundAt: Record found at
+      policy: Policy
+      pct: Applies to
+      alignment: Alignment
+      rua: Aggregate reports (rua)
+      ruf: Failure reports (ruf)
+  dkim-checker:
+    title: DKIM checker
+    description: Fetch a DKIM public key by selector and check its type, size and flags.
+    selector: Selector
+    run: Check DKIM
+    ok: The DKIM key is valid.
+    invalidSelector: A selector is a label such as google or selector1.
+    fields:
+      name: Record
+      key: Key
+      flags: Tags

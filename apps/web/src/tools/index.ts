@@ -8,6 +8,8 @@ import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as corsTester } from './cors-tester'
 import { tool as dataUnitConverter } from './data-unit-converter'
+import { tool as dkimChecker } from './dkim-checker'
+import { tool as dmarcChecker } from './dmarc-checker'
 import { tool as dnsConsistency } from './dns-consistency'
 import { tool as dnsLookup } from './dns-lookup'
 import { tool as dnsPropagation } from './dns-propagation'
@@ -30,6 +32,7 @@ import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
 import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
+import { tool as mxLookup } from './mx-lookup'
 import { tool as ntpCheck } from './ntp-check'
 import { tool as ping } from './ping'
 import { tool as portCheck } from './port-check'
@@ -42,6 +45,7 @@ import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
+import { tool as spfChecker } from './spf-checker'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as tcpPing } from './tcp-ping'
@@ -61,7 +65,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
-  { id: 'email', components: [] },
+  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker] },
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },

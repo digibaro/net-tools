@@ -571,6 +571,92 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/TlsExpiry" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/email/mx:
+    get:
+      operationId: emailMx
+      summary: MX records and SMTP reachability with STARTTLS
+      tags: [email]
+      x-capability: email.mx
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+        - { name: probe, in: query, description: "set false to skip the port 25 probes", schema: { type: boolean, default: true } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailMx" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/spf:
+    get:
+      operationId: emailSpf
+      summary: Parse and expand an SPF record, count DNS lookups
+      tags: [email]
+      x-capability: email.spf
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailSpf" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/dmarc:
+    get:
+      operationId: emailDmarc
+      summary: Parse and validate a DMARC policy
+      tags: [email]
+      x-capability: email.dmarc
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailDmarc" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/dkim:
+    get:
+      operationId: emailDkim
+      summary: Fetch and analyze a DKIM key
+      tags: [email]
+      x-capability: email.dkim
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+        - { name: selector, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailDkim" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1168,3 +1254,104 @@ components:
               verifyError: { type: string }
               error: { type: string }
               errorCode: { type: string }
+    EmailMx:
+      type: object
+      required: [domain, hosts, nullMx, implicit, probed]
+      properties:
+        domain: { type: string }
+        nullMx: { type: boolean }
+        implicit: { type: boolean }
+        probed: { type: boolean }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [preference, host, addresses, probes, error]
+            properties:
+              preference: { type: integer }
+              host: { type: string }
+              addresses: { type: array, items: { type: string } }
+              error: { type: string }
+              probes:
+                type: array
+                items:
+                  type: object
+                  required: [address, connected, connectMs, banner, extensions, starttls, tls, error]
+                  properties:
+                    address: { type: string }
+                    connected: { type: boolean }
+                    connectMs: { type: number }
+                    banner: { type: string }
+                    extensions: { type: array, items: { type: string } }
+                    starttls: { type: boolean }
+                    tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
+                    error: { type: string }
+    SpfTerm:
+      type: object
+      required: [raw, qualifier, kind, value, lookup]
+      properties:
+        raw: { type: string }
+        qualifier: { type: string }
+        kind: { type: string }
+        value: { type: string }
+        lookup: { type: boolean }
+        include: { $ref: "#/components/schemas/SpfRecord" }
+    SpfRecord:
+      type: object
+      required: [domain, record, terms, error]
+      properties:
+        domain: { type: string }
+        record: { type: string }
+        error: { type: string }
+        terms: { type: array, items: { $ref: "#/components/schemas/SpfTerm" } }
+    EmailSpf:
+      type: object
+      required: [domain, record, lookups, voidLookups, all, problems, warnings]
+      properties:
+        domain: { type: string }
+        record: { $ref: "#/components/schemas/SpfRecord" }
+        lookups: { type: integer }
+        voidLookups: { type: integer }
+        all: { type: string }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+    DmarcReportUri:
+      type: object
+      required: [uri, external, authorized]
+      properties:
+        uri: { type: string }
+        external: { type: boolean }
+        authorized: { type: [boolean, "null"] }
+    EmailDmarc:
+      type: object
+      required: [domain, foundAt, orgDomain, record, tags, policy, subPolicy, pct, adkim, aspf, rua, ruf, problems, warnings]
+      properties:
+        domain: { type: string }
+        foundAt: { type: string }
+        orgDomain: { type: string }
+        record: { type: string }
+        tags: { type: object, additionalProperties: { type: string } }
+        policy: { type: string }
+        subPolicy: { type: string }
+        pct: { type: integer }
+        adkim: { type: string }
+        aspf: { type: string }
+        rua: { type: array, items: { $ref: "#/components/schemas/DmarcReportUri" } }
+        ruf: { type: array, items: { $ref: "#/components/schemas/DmarcReportUri" } }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+    EmailDkim:
+      type: object
+      required: [domain, selector, name, record, tags, keyType, keyBits, testing, revoked, problems, warnings]
+      properties:
+        domain: { type: string }
+        selector: { type: string }
+        name: { type: string }
+        record: { type: string }
+        tags: { type: object, additionalProperties: { type: string } }
+        keyType: { type: string }
+        keyBits: { type: integer }
+        testing: { type: boolean }
+        revoked: { type: boolean }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }

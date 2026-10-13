@@ -463,6 +463,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/email/mx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** MX records and SMTP reachability with STARTTLS */
+        get: operations["emailMx"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/spf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Parse and expand an SPF record, count DNS lookups */
+        get: operations["emailSpf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/dmarc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Parse and validate a DMARC policy */
+        get: operations["emailDmarc"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/dkim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch and analyze a DKIM key */
+        get: operations["emailDkim"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -924,6 +992,89 @@ export interface components {
                 error: string;
                 errorCode: string;
             }[];
+        };
+        EmailMx: {
+            domain: string;
+            nullMx: boolean;
+            implicit: boolean;
+            probed: boolean;
+            hosts: {
+                preference: number;
+                host: string;
+                addresses: string[];
+                error: string;
+                probes: {
+                    address: string;
+                    connected: boolean;
+                    connectMs: number;
+                    banner: string;
+                    extensions: string[];
+                    starttls: boolean;
+                    tls: null | components["schemas"]["TlsSession"];
+                    error: string;
+                }[];
+            }[];
+        };
+        SpfTerm: {
+            raw: string;
+            qualifier: string;
+            kind: string;
+            value: string;
+            lookup: boolean;
+            include?: components["schemas"]["SpfRecord"];
+        };
+        SpfRecord: {
+            domain: string;
+            record: string;
+            error: string;
+            terms: components["schemas"]["SpfTerm"][];
+        };
+        EmailSpf: {
+            domain: string;
+            record: components["schemas"]["SpfRecord"];
+            lookups: number;
+            voidLookups: number;
+            all: string;
+            problems: string[];
+            warnings: string[];
+        };
+        DmarcReportUri: {
+            uri: string;
+            external: boolean;
+            authorized: boolean | null;
+        };
+        EmailDmarc: {
+            domain: string;
+            foundAt: string;
+            orgDomain: string;
+            record: string;
+            tags: {
+                [key: string]: string;
+            };
+            policy: string;
+            subPolicy: string;
+            pct: number;
+            adkim: string;
+            aspf: string;
+            rua: components["schemas"]["DmarcReportUri"][];
+            ruf: components["schemas"]["DmarcReportUri"][];
+            problems: string[];
+            warnings: string[];
+        };
+        EmailDkim: {
+            domain: string;
+            selector: string;
+            name: string;
+            record: string;
+            tags: {
+                [key: string]: string;
+            };
+            keyType: string;
+            keyBits: number;
+            testing: boolean;
+            revoked: boolean;
+            problems: string[];
+            warnings: string[];
         };
     };
     responses: {
@@ -1646,6 +1797,109 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["TlsExpiry"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailMx: {
+        parameters: {
+            query: {
+                domain: string;
+                /** @description set false to skip the port 25 probes */
+                probe?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailMx"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailSpf: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailSpf"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailDmarc: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailDmarc"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailDkim: {
+        parameters: {
+            query: {
+                domain: string;
+                selector: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailDkim"];
                     };
                 };
             };

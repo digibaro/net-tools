@@ -10,6 +10,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnspropagation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsreverse"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnstrace"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
@@ -44,5 +45,9 @@ func Tools() []tools.Tool {
 		&web.CORSTool{},
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
+		&email.MXTool{},
+		&email.SPFTool{},
+		&email.DMARCTool{},
+		&email.DKIMTool{},
 	}
 }
