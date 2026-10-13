@@ -178,3 +178,10 @@ tools:
       first: First address
       last: Last address
       addresses: Addresses
+  cidr-aggregator:
+    title: CIDR aggregator
+    description: Merge and deduplicate a list of IPv4 and IPv6 prefixes into the smallest equivalent set.
+    input: Prefixes (one per line, or separated by commas or spaces)
+    output: Aggregated prefixes
+    summary: '{input} valid prefixes → {output} aggregated.'
+    invalid: '{count} invalid entries ignored: {entries}'
