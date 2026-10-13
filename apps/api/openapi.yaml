@@ -177,6 +177,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsCaa" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/consistency:
+    get:
+      operationId: dnsConsistency
+      summary: Compare SOA serials and NS sets across all authoritative servers
+      tags: [dns]
+      x-capability: dns.consistency
+      parameters:
+        - { name: zone, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsConsistency" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -388,3 +409,27 @@ components:
               name: { type: string }
               rcode: { type: string }
               records: { type: array, items: { $ref: "#/components/schemas/CaaRecord" } }
+    DnsConsistency:
+      type: object
+      required: [zone, nameservers, servers, serialsConsistent, nsSetsConsistent, allAuthoritative]
+      properties:
+        zone: { type: string }
+        nameservers: { type: array, items: { type: string } }
+        serialsConsistent: { type: boolean }
+        nsSetsConsistent: { type: boolean }
+        allAuthoritative: { type: boolean }
+        servers:
+          type: array
+          items:
+            type: object
+            required: [name, address, serial, mname, rname, authoritative, nsSet, rttMs, error]
+            properties:
+              name: { type: string }
+              address: { type: string }
+              serial: { type: [integer, "null"] }
+              mname: { type: string }
+              rname: { type: string }
+              authoritative: { type: boolean }
+              nsSet: { type: array, items: { type: string } }
+              rttMs: { type: number }
+              error: { type: string }

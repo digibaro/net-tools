@@ -93,10 +93,16 @@ func defaultPort(t Transport) uint16 {
 // private-target policy: inside Docker it is usually 127.0.0.11).
 var ResolvConf = "/etc/resolv.conf"
 
+// SystemOverride, when set, replaces the resolv.conf server (tests only).
+var SystemOverride *netip.AddrPort
+
 // SystemServer returns the first nameserver from resolv.conf.
 func SystemServer(t Transport) (Server, error) {
 	if t == DoT || t == DoH {
 		return Server{}, &target.Error{Code: target.CodeInvalid, Message: "the system resolver supports only UDP and TCP", Field: "transport"}
+	}
+	if SystemOverride != nil {
+		return Server{Label: "System (" + SystemOverride.String() + ")", Addr: *SystemOverride, Transport: t}, nil
 	}
 	cfg, err := dns.ClientConfigFromFile(ResolvConf)
 	if err != nil || len(cfg.Servers) == 0 {

@@ -785,3 +785,29 @@ tools:
       name: Name
       rcode: Response
       record: CAA record
+  dns-consistency:
+    title: SOA / NS consistency
+    description: Ask every authoritative nameserver of a zone for its SOA serial and NS set, and compare them.
+    zone: Zone (domain apex)
+    run: Check
+    checks:
+      serials:
+        ok: SOA serials match
+        fail: SOA serials differ
+      nsSets:
+        ok: NS sets match
+        fail: NS sets differ
+      authoritative:
+        ok: All answers authoritative
+        fail: Some answers not authoritative (lame delegation)
+      reachable:
+        ok: All servers answered
+        fail: Some servers did not answer
+    columns:
+      name: Nameserver
+      address: Address
+      serial: Serial
+      aa: AA
+      rtt: RTT
+      ns: NS set
+      error: Problem

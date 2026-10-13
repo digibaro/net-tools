@@ -4,6 +4,7 @@ package all
 import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnscaa"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsconsistency"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnslookup"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsreverse"
 )
@@ -13,6 +14,7 @@ func Tools() []tools.Tool {
 	return []tools.Tool{
 		&dnslookup.Tool{},
 		&dnsreverse.Tool{},
+		&dnsconsistency.Tool{},
 		&dnscaa.Tool{},
 	}
 }
