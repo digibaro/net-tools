@@ -45,6 +45,6 @@ const registryColumns = computed(() => [
     <p class="mt-0 text-sm nt-muted">
       {{ t('tools.ip-special-check.registryHint') }}
     </p>
-    <ResultTable :columns="registryColumns" :rows="registry" :actions="false" :max-height="400" />
+    <ResultTable :columns="registryColumns" :rows="registry" :actions="false" :max-height="400" :label="t('tools.ip-special-check.registry')" />
   </CCard>
 </template>
