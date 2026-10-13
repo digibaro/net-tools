@@ -105,8 +105,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| TLS-01 | TLS certificate inspector | Fetch chain from host:port (SNI), show fields, SANs, validity, issuer chain | S | `crypto/tls` + `x509` | — | 2 | ⬜ |
-| TLS-02 | Certificate expiry checker | Days left for one or many hosts | S | `crypto/tls` | — | 2 | ⬜ |
+| TLS-01 | TLS certificate inspector | Fetch chain from host:port (SNI), show fields, SANs, validity, issuer chain | S | `crypto/tls` + `x509` | — | 2 | ✅ |
+| TLS-02 | Certificate expiry checker | Days left for one or many hosts | S | `crypto/tls` | — | 2 | ✅ |
 | TLS-03 | TLS protocol & cipher scan | Supported TLS 1.0–1.3, cipher suites, weak configs | S | Go handshake loop (or `testssl.sh` opt-in image) | SSL Labs API v4 (registration required) | 3 | ⬜ |
 | TLS-04 | OCSP / CRL status | Revocation status of leaf cert | S | `x/crypto/ocsp` | — | 3 | ⬜ |
 | TLS-05 | Certificate decoder | Paste PEM/DER → human-readable fields | B | `@peculiar/x509` | — | 1 | ✅ |

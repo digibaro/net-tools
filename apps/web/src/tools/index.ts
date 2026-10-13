@@ -45,6 +45,8 @@ import { tool as serverNetworkInfo } from './server-network-info'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as tcpPing } from './tcp-ping'
+import { tool as tlsExpiry } from './tls-expiry'
+import { tool as tlsInspector } from './tls-inspector'
 import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
@@ -58,7 +60,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
-  { id: 'tls', components: [certificateDecoder] },
+  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },

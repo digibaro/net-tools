@@ -1089,3 +1089,44 @@ tools:
       actual-allow-origin: Access-Control-Allow-Origin on the response allows this origin
       vary-origin: The response varies by Origin (needed when the origin is echoed)
       null-origin: Access-Control-Allow-Origin is "null", which is unsafe
+  tls-inspector:
+    title: TLS certificate inspector
+    description: Connect to host:port (optionally via STARTTLS), show the TLS session and every certificate in the chain, and verify it.
+    host: Host (or host:port)
+    starttls: Protocol
+    directTls: Direct TLS
+    sni: Server name (SNI)
+    sniPlaceholder: defaults to the host name
+    run: Inspect
+    session: Session
+    leaf: Server certificate
+    intermediate: 'Chain certificate {n}'
+    valid: 'The certificate chain is valid; the server certificate expires in {days} days.'
+    legacy: '{version} is outdated and should be disabled.'
+    expired: Expired
+    daysLeft: '{days} days left'
+    fields:
+      connected: Connected to
+      protocol: Protocol and cipher
+      ocsp: OCSP stapled
+      handshake: Handshake time
+    cert:
+      subject: Subject
+      issuer: Issuer
+      san: Alternative names
+      validity: Valid
+      key: Key and signature
+      serial: Serial
+  tls-expiry:
+    title: Certificate expiry checker
+    description: Check how many days are left on the TLS certificates of one or many hosts at once.
+    input: Hosts (one host[:port] per line)
+    run: 'Check {count} host(s)'
+    tooMany: 'At most {max} hosts per check.'
+    valid: Valid
+    columns:
+      target: Host
+      days: Days left
+      expires: Expires
+      issuer: Issuer
+      status: Status

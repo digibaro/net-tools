@@ -519,6 +519,58 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Cors" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tls/inspect:
+    get:
+      operationId: tlsInspect
+      summary: TLS handshake details and certificate chain of host:port (optional STARTTLS)
+      tags: [tls]
+      x-capability: tls.inspect
+      parameters:
+        - { name: host, in: query, required: true, description: "host or host:port", schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: sni, in: query, description: "server name to send (defaults to host)", schema: { type: string } }
+        - { name: starttls, in: query, schema: { type: string, enum: ["", smtp, imap, pop3, ftp] } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/TlsSession" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/tls/expiry:
+    post:
+      operationId: tlsExpiry
+      summary: Certificate expiry for up to BULK_MAX_TARGETS hosts
+      tags: [tls]
+      x-capability: tls.expiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targets]
+              properties:
+                targets: { type: array, items: { type: string }, minItems: 1, maxItems: 50 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/TlsExpiry" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1064,3 +1116,55 @@ components:
               code: { type: string }
               ok: { type: boolean }
               value: { type: string }
+    TlsCert:
+      type: object
+      required: [subject, issuer, serial, notBefore, notAfter, daysLeft, dnsNames, ipAddresses, keyAlgorithm, signatureAlgorithm, isCA, sha256, selfSigned]
+      properties:
+        subject: { type: string }
+        issuer: { type: string }
+        serial: { type: string }
+        notBefore: { type: string }
+        notAfter: { type: string }
+        daysLeft: { type: integer }
+        dnsNames: { type: array, items: { type: string } }
+        ipAddresses: { type: array, items: { type: string } }
+        keyAlgorithm: { type: string }
+        signatureAlgorithm: { type: string }
+        isCA: { type: boolean }
+        sha256: { type: string }
+        selfSigned: { type: boolean }
+    TlsSession:
+      type: object
+      required: [version, cipher, alpn, serverName, ocspStapled, chain, verified, verifyError, handshakeMs, starttls, connectedTo]
+      properties:
+        version: { type: string }
+        cipher: { type: string }
+        alpn: { type: string }
+        serverName: { type: string }
+        ocspStapled: { type: boolean }
+        chain: { type: array, items: { $ref: "#/components/schemas/TlsCert" } }
+        verified: { type: boolean }
+        verifyError: { type: string }
+        handshakeMs: { type: number }
+        starttls: { type: string }
+        connectedTo: { type: string }
+    TlsExpiry:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          items:
+            type: object
+            required: [target, address, notAfter, daysLeft, issuer, subject, verified, verifyError, error, errorCode]
+            properties:
+              target: { type: string }
+              address: { type: string }
+              notAfter: { type: string }
+              daysLeft: { type: [integer, "null"] }
+              issuer: { type: string }
+              subject: { type: string }
+              verified: { type: boolean }
+              verifyError: { type: string }
+              error: { type: string }
+              errorCode: { type: string }
