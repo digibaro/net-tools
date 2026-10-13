@@ -1,0 +1,11 @@
+// Package all lists every server tool; main mounts them and /capabilities reports them.
+package all
+
+import (
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
+)
+
+// Tools returns every registered tool, in catalog order.
+func Tools() []tools.Tool {
+	return []tools.Tool{}
+}

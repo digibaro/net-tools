@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+
+	"github.com/digibaro/net-tools/apps/api/internal/limits"
 )
 
 // Code is a stable, machine-readable error code (docs/API_SPEC.md §1.2).
@@ -95,6 +97,9 @@ func ToAPIError(err error) *APIError {
 	}
 	if c, ok := errors.AsType[Coder](err); ok {
 		return &APIError{Code: Code(c.APICode()), Message: c.APIMessage(), Details: c.APIDetails(), Err: err}
+	}
+	if errors.Is(err, limits.ErrBusy) {
+		return &APIError{Code: CodeBusy, Message: "the server is busy, try again shortly", Err: err}
 	}
 	if errors.Is(err, context.DeadlineExceeded) {
 		return &APIError{Code: CodeTimeout, Message: "the operation timed out", Err: err}

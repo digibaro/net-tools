@@ -4,10 +4,15 @@ package tools
 
 import (
 	"log/slog"
+	"net/http"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/execx"
+	"github.com/digibaro/net-tools/apps/api/internal/limits"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
 )
 
 // Reason explains why a tool is disabled (docs/API_SPEC.md §2).
@@ -20,11 +25,21 @@ const (
 	ReasonBinaryMissing      Reason = "binary_missing"
 )
 
-// Deps are the shared dependencies handed to tools when they mount their routes.
-// Phase 2 adds the target resolver, exec runner, rate limiter and concurrency pool.
+// Middleware is a standard net/http middleware.
+type Middleware = func(http.Handler) http.Handler
+
+// Deps are the shared dependencies handed to tools.
 type Deps struct {
 	Config config.Config
 	Logger *slog.Logger
+	// Target is the only way to obtain an address to dial.
+	Target *target.Resolver
+	Exec   *execx.Runner
+	Pool   *limits.Pool
+	// RateLimit returns the per-client limiter middleware for a class.
+	RateLimit func(limits.Class) Middleware
+	// Timeout bounds a route's context.
+	Timeout func(time.Duration) Middleware
 }
 
 // Tool is one server-side capability.
@@ -33,8 +48,8 @@ type Tool interface {
 	ID() string
 	// Mount registers the tool's routes on a router rooted at /api/v1.
 	Mount(r chi.Router, deps Deps)
-	// Enabled reports whether the tool may run under cfg, and why not.
-	Enabled(cfg config.Config) (bool, Reason)
+	// Enabled reports whether the tool may run, and why not.
+	Enabled(deps Deps) (bool, Reason)
 }
 
 // Capability is the per-tool entry of /api/v1/capabilities.
@@ -43,11 +58,11 @@ type Capability struct {
 	Reason  Reason `json:"reason,omitempty"`
 }
 
-// Capabilities evaluates every tool against cfg.
-func Capabilities(cfg config.Config, all []Tool) map[string]Capability {
+// Capabilities evaluates every tool.
+func Capabilities(d Deps, all []Tool) map[string]Capability {
 	out := make(map[string]Capability, len(all))
 	for _, t := range all {
-		ok, reason := t.Enabled(cfg)
+		ok, reason := t.Enabled(d)
 		c := Capability{Enabled: ok}
 		if !ok {
 			c.Reason = reason
@@ -57,7 +72,5 @@ func Capabilities(cfg config.Config, all []Tool) map[string]Capability {
 	return out
 }
 
-// All returns the registered tools. Empty until Phase 2.
-func All() []Tool {
-	return []Tool{}
-}
+// Always is an Enabled implementation for tools without preconditions.
+func Always(Deps) (bool, Reason) { return true, "" }

@@ -6,12 +6,16 @@ import (
 	"encoding/hex"
 	"log/slog"
 	"net/http"
+	"net/netip"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/execx"
+	"github.com/digibaro/net-tools/apps/api/internal/limits"
 	"github.com/digibaro/net-tools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
@@ -39,10 +43,52 @@ type Options struct {
 	Build  BuildInfo
 	Tools  []tools.Tool
 	Ready  []ReadyCheck
+	// Target, Exec, Limiter and Pool default to production instances built from Config.
+	Target  *target.Resolver
+	Exec    *execx.Runner
+	Limiter *limits.RateLimiter
+	Pool    *limits.Pool
+}
+
+// BuildDeps fills defaults and returns the dependencies handed to tools.
+func BuildDeps(o *Options) tools.Deps {
+	cfg := o.Config
+	if o.Target == nil {
+		o.Target = target.NewResolver(target.Policy{
+			AllowPrivate: cfg.Features.AllowPrivate,
+			Deny:         cfg.Features.DenyCIDRs,
+			Allow:        cfg.Features.AllowCIDRs,
+		})
+	}
+	if o.Exec == nil {
+		o.Exec = execx.New(execx.DefaultCandidates())
+	}
+	if o.Limiter == nil {
+		o.Limiter = limits.NewRateLimiter(cfg.Limits.RateLimitRPM, cfg.Limits.RateLimitHeavyRPM)
+	}
+	if o.Pool == nil {
+		o.Pool = limits.NewPool(cfg.Limits.ConcurrencyGlobal, cfg.Limits.ConcurrencyPerIP)
+	}
+	limiter := o.Limiter
+	return tools.Deps{
+		Config: cfg,
+		Logger: o.Logger,
+		Target: o.Target,
+		Exec:   o.Exec,
+		Pool:   o.Pool,
+		RateLimit: func(c limits.Class) tools.Middleware {
+			return limiter.Middleware(c, func(r *http.Request) netip.Addr { return middleware.GetClientIP(r.Context()) },
+				func(w http.ResponseWriter, r *http.Request) {
+					Error(w, r, NewError(CodeRateLimited, "too many requests, please wait"))
+				})
+		},
+		Timeout: limits.Timeout,
+	}
 }
 
 // NewRouter builds the API handler. All routes live under /api.
 func NewRouter(o Options) http.Handler {
+	deps := BuildDeps(&o)
 	r := chi.NewRouter()
 	r.Use(
 		middleware.RequestID(o.Logger),
@@ -66,12 +112,11 @@ func NewRouter(o Options) http.Handler {
 
 		r.Route("/v1", func(r chi.Router) {
 			r.Get("/version", handleVersion(o.Build))
-			r.Get("/capabilities", handleCapabilities(o.Config, o.Tools))
+			r.Get("/capabilities", handleCapabilities(deps, o.Tools))
 			r.Get("/echo", handleEcho(o.Config.Features.TrustedProxies))
 
-			deps := tools.Deps{Config: o.Config, Logger: o.Logger}
 			for _, t := range o.Tools {
-				if ok, _ := t.Enabled(o.Config); ok {
+				if ok, _ := t.Enabled(deps); ok {
 					t.Mount(r, deps)
 				}
 			}
@@ -135,14 +180,15 @@ type LimitsInfo struct {
 	BulkMaxTargets    int   `json:"bulkMaxTargets"`
 }
 
-func handleCapabilities(cfg config.Config, all []tools.Tool) http.HandlerFunc {
+func handleCapabilities(deps tools.Deps, all []tools.Tool) http.HandlerFunc {
+	cfg := deps.Config
 	data := CapabilitiesData{
 		Mode: ModeInfo{
 			Profile:             cfg.Profile,
 			AllowPrivateTargets: cfg.Features.AllowPrivate,
 			LAN:                 cfg.Features.LAN,
 		},
-		Tools: tools.Capabilities(cfg, all),
+		Tools: tools.Capabilities(deps, all),
 		Limits: LimitsInfo{
 			PingMaxCount:      cfg.Limits.PingMaxCount,
 			PingMinIntervalMs: cfg.Limits.PingMinInterval.Milliseconds(),

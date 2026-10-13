@@ -26,7 +26,7 @@ type fakeTool struct {
 }
 
 func (f fakeTool) ID() string { return f.id }
-func (f fakeTool) Enabled(config.Config) (bool, tools.Reason) {
+func (f fakeTool) Enabled(tools.Deps) (bool, tools.Reason) {
 	return f.enabled, f.reason
 }
 
@@ -128,7 +128,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestCapabilitiesEmpty(t *testing.T) {
-	h := newTestRouter(t, Options{Tools: tools.All()})
+	h := newTestRouter(t, Options{Tools: nil})
 	rec, body := get(t, h, "/api/v1/capabilities")
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status %d", rec.Code)
@@ -207,8 +207,8 @@ func TestPanicIsInternalError(t *testing.T) {
 
 type panicTool struct{}
 
-func (panicTool) ID() string                                 { return "panic" }
-func (panicTool) Enabled(config.Config) (bool, tools.Reason) { return true, "" }
+func (panicTool) ID() string                              { return "panic" }
+func (panicTool) Enabled(tools.Deps) (bool, tools.Reason) { return true, "" }
 func (panicTool) Mount(r chi.Router, _ tools.Deps) {
 	r.Get("/panic", func(http.ResponseWriter, *http.Request) { panic("boom") })
 }
