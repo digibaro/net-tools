@@ -22,7 +22,6 @@
     "deny": [
       "Read(./.env)",
       "Read(./.env.*)",
-      "Bash(git push:*)",
       "Bash(docker system prune:*)"
     ]
   }
