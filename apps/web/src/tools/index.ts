@@ -18,6 +18,7 @@ import { tool as ipv6SubnetCalculator } from './ipv6-subnet-calculator'
 import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
+import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as punycodeConverter } from './punycode-converter'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as subnetSplitter } from './subnet-splitter'
@@ -37,7 +38,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator] },
   { id: 'client', components: [] },
 ]
 

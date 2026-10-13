@@ -176,7 +176,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-01 | Bandwidth / transfer-time calculator | Size ÷ speed, with protocol overhead | B | custom | — | 1 | ✅ |
 | CAL-02 | Bits/bytes unit converter | bit, B, Kb/KiB, Mbps ↔ MB/s, … | B | custom | — | 1 | ✅ |
 | CAL-03 | BDP / TCP window calculator | Bandwidth-delay product, required window, max throughput for given window+RTT | B | custom | — | 1 | ✅ |
-| CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ⬜ |
+| CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ✅ |
 | CAL-05 | Optical power converter | dBm ↔ mW, link budget | B | custom | — | 2 | ⬜ |
 | CAL-06 | Port number reference | IANA service names/ports, searchable | B | bundled IANA CSV → JSON | — | 1 | ⬜ |
 | CAL-07 | Protocol / ICMP type reference | IP protocol numbers, ICMP/ICMPv6 types & codes | B | bundled JSON | — | 1 | ⬜ |

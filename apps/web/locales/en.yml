@@ -564,3 +564,33 @@ tools:
       scaling: Window scaling needed
       maxThroughput: Max throughput with this window
       mathis: Max throughput with this loss rate
+  mtu-calculator:
+    title: MTU / MSS calculator
+    description: Inner MTU and TCP MSS after VLAN, QinQ, MPLS, PPPoE, GRE, IPsec, WireGuard, VXLAN or GENEVE encapsulation.
+    linkMtu: Link MTU (bytes)
+    encapsulations: Encapsulations
+    count: 'Number of {layer}'
+    invalid: The overhead is larger than the link MTU allows.
+    ipv6Minimum: The inner MTU is below 1280 bytes, the minimum IPv6 requires (RFC 8200).
+    layers:
+      vlan: 802.1Q VLAN tag
+      qinq: QinQ (802.1ad)
+      mpls: MPLS label
+      pppoe: PPPoE
+      gre: GRE (IPv4)
+      gre-key: GRE with key (IPv4)
+      ipip: IP-in-IP / 6in4
+      ipv6-tunnel: IPv6 tunnel (4in6 / 6in6)
+      ipsec-gcm: IPsec ESP tunnel, AES-GCM (IPv4)
+      ipsec-cbc: IPsec ESP tunnel, AES-CBC + SHA-1 (IPv4)
+      nat-t: IPsec NAT-T (UDP 4500)
+      wireguard-v4: WireGuard over IPv4
+      wireguard-v6: WireGuard over IPv6
+      vxlan-v4: VXLAN over IPv4
+      vxlan-v6: VXLAN over IPv6
+      geneve-v4: GENEVE over IPv4
+    fields:
+      overhead: Total overhead
+      innerMtu: Inner MTU
+      mssIpv4: TCP MSS (IPv4)
+      mssIpv6: TCP MSS (IPv6)
