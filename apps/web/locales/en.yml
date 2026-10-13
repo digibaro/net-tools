@@ -1416,7 +1416,7 @@ tools:
       spfIp6: IPv6 networks
       spfAll: Everything else
     errors:
-      name: Enter a name — @ for the zone itself, a relative name (www) or an absolute one ending in a dot.
+      name: "Enter a name — {'@'} for the zone itself, a relative name (www) or an absolute one ending in a dot."
       ttl: The TTL must be a whole number of seconds.
       address: Enter a valid address.
       target: Enter a host name (relative, or absolute with a trailing dot).
@@ -1484,7 +1484,7 @@ tools:
       l: Amsterdam
       st: Noord-Holland
       c: NL
-      email: admin@example.com
+      email: "admin{'@'}example.com"
     fields:
       subject: Subject
       sans: Alternative names
