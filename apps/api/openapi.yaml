@@ -387,6 +387,25 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/NtpCheck" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/server/netinfo:
+    get:
+      operationId: serverNetinfo
+      summary: Interfaces, routes and resolvers of the api container (SERVER_INFO_ENABLED)
+      tags: [connectivity]
+      x-capability: net.serverinfo
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/ServerNetinfo" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -793,3 +812,40 @@ components:
         kissCode: { type: string }
         valid: { type: boolean }
         problem: { type: string }
+    ServerNetinfo:
+      type: object
+      required: [hostname, lanMode, interfaces, routes, gateways, resolvers]
+      properties:
+        hostname: { type: string }
+        lanMode: { type: boolean }
+        gateways: { type: array, items: { type: string } }
+        interfaces:
+          type: array
+          items:
+            type: object
+            required: [name, mtu, mac, flags, addresses]
+            properties:
+              name: { type: string }
+              mtu: { type: integer }
+              mac: { type: string }
+              flags: { type: array, items: { type: string } }
+              addresses: { type: array, items: { type: string } }
+        routes:
+          type: array
+          items:
+            type: object
+            required: [family, destination, gateway, interface, metric, default]
+            properties:
+              family: { type: integer }
+              destination: { type: string }
+              gateway: { type: string }
+              interface: { type: string }
+              metric: { type: integer }
+              default: { type: boolean }
+        resolvers:
+          type: object
+          required: [nameservers, search, options]
+          properties:
+            nameservers: { type: array, items: { type: string } }
+            search: { type: array, items: { type: string } }
+            options: { type: array, items: { type: string } }

@@ -14,6 +14,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 )
 
@@ -33,5 +34,6 @@ func Tools() []tools.Tool {
 		&mtr.Tool{Mode: mtr.MTR},
 		&portcheck.Tool{},
 		&ntpcheck.Tool{},
+		&serverinfo.Tool{},
 	}
 }

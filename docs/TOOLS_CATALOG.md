@@ -77,7 +77,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CON-10 | Global ping / "is it down" | Ping/HTTP from many countries, map view | P | — | Globalping API, check-host.net | 3 | ⬜ |
 | CON-11 | NTP check | Query NTP server: offset, stratum, delay, refid | S | `github.com/beevik/ntp` | — | 2 | ✅ |
 | CON-12 | SNMP get / walk | v2c/v3 get/walk of an OID subtree (bounded) | S | `gosnmp` | — | 4 | ⬜ |
-| CON-13 | Server network info | Interfaces, addresses, routes, resolvers, gateway of the api container/host | S | `net.Interfaces`, `/proc/net/route` | — | 2 | ⬜ |
+| CON-13 | Server network info | Interfaces, addresses, routes, resolvers, gateway of the api container/host | S | `net.Interfaces`, `/proc/net/route` | — | 2 | ✅ |
 | CON-14 | IPv6 readiness | Does target have AAAA, is it reachable over v6 from server | S | DNS + dial | Globalping | 3 | ⬜ |
 | CON-15 | Latency matrix | Ping multiple targets in parallel, compare | S | `pro-bing` fan-out | Globalping | 3 | ⬜ |
 

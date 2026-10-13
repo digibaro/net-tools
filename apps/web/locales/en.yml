@@ -936,3 +936,23 @@ tools:
       precision: Precision
       leap: Leap indicator
       version: Version
+  server-network-info:
+    title: Server network info
+    description: Interfaces, addresses, routes, gateways and DNS resolvers of the NetTools server (container or host in LAN mode).
+    summary: Overview
+    interfaces: Interfaces
+    routes: Routes
+    direct: directly connected
+    columns:
+      hostname: Hostname
+      gateways: Default gateways
+      resolvers: DNS resolvers
+      search: Search domains
+      lanMode: LAN mode
+      name: Interface
+      addresses: Addresses
+      flags: Flags
+      destination: Destination
+      gateway: Gateway
+      interface: Interface
+      metric: Metric

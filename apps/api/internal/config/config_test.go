@@ -40,8 +40,8 @@ func TestLoadDefaults(t *testing.T) {
 	if cfg.LogLevel != slog.LevelInfo {
 		t.Errorf("LogLevel = %v", cfg.LogLevel)
 	}
-	if cfg.Features.AllowPrivate || cfg.Features.Portscan {
-		t.Errorf("public profile must deny private targets and disable portscan")
+	if cfg.Features.AllowPrivate || cfg.Features.Portscan || cfg.Features.ServerInfo {
+		t.Errorf("public profile must deny private targets and disable portscan and server info")
 	}
 	want := Limits{
 		RateLimitRPM: 60, RateLimitHeavyRPM: 10, ConcurrencyGlobal: 32, ConcurrencyPerIP: 3,

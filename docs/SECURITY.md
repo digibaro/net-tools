@@ -13,6 +13,8 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 | `homelab` | `true` + `lan` profile | on | relaxed | Single user on home network |
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
+The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
+routes and is therefore off in `public` and on in the other profiles.
 The UI shows the active profile on the About page.
 
 ## 2. Target validation — `internal/target`

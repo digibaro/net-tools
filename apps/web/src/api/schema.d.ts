@@ -327,6 +327,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/server/netinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Interfaces, routes and resolvers of the api container (SERVER_INFO_ENABLED) */
+        get: operations["serverNetinfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -636,6 +653,31 @@ export interface components {
             kissCode: string;
             valid: boolean;
             problem: string;
+        };
+        ServerNetinfo: {
+            hostname: string;
+            lanMode: boolean;
+            gateways: string[];
+            interfaces: {
+                name: string;
+                mtu: number;
+                mac: string;
+                flags: string[];
+                addresses: string[];
+            }[];
+            routes: {
+                family: number;
+                destination: string;
+                gateway: string;
+                interface: string;
+                metric: number;
+                default: boolean;
+            }[];
+            resolvers: {
+                nameservers: string[];
+                search: string[];
+                options: string[];
+            };
         };
     };
     responses: {
@@ -1143,6 +1185,29 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["NtpCheck"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    serverNetinfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["ServerNetinfo"];
                     };
                 };
             };
