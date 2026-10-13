@@ -1,0 +1,21 @@
+import type { Tool, ToolCategory } from './tool'
+import { translate } from '@/plugins/i18n.plugin'
+
+// Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
+const categories: { id: string, components: Tool[] }[] = [
+  { id: 'ip', components: [] },
+  { id: 'dns', components: [] },
+  { id: 'connectivity', components: [] },
+  { id: 'web', components: [] },
+  { id: 'tls', components: [] },
+  { id: 'email', components: [] },
+  { id: 'bgp', components: [] },
+  { id: 'reputation', components: [] },
+  { id: 'lan', components: [] },
+  { id: 'calculators', components: [] },
+  { id: 'client', components: [] },
+]
+
+export const toolsByCategory: ToolCategory[] = categories
+  .filter(c => c.components.length > 0)
+  .map(c => ({ ...c, name: translate(`categories.${c.id}`) }))

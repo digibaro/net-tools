@@ -1,8 +1,125 @@
 app:
   name: NetTools
   tagline: Network tools and troubleshooting utilities
+locales:
+  en: English
+nav:
+  home: Home
+  about: About
+  settings: Settings
+  tools: Tools
+  toggleMenu: Toggle menu
+search:
+  title: Search
+  open: Search tools
+  placeholder: Search tools…
+  noResults: No matching tools
+theme:
+  title: Theme
+  light: Light
+  dark: Dark
+  auto: Auto
+  label: 'Theme: {mode}'
+  autoCurrently: 'Theme: Auto (currently {current})'
+  choose: Choose theme
+favorites:
+  add: Add to favorites
+  remove: Remove from favorites
 home:
-  placeholder: Tools are coming soon.
-  apiVersion: 'API {version} ({commit})'
-  apiLoading: Connecting to API…
-  apiError: 'API unreachable: {message}'
+  favorites: Favorites
+  newest: Newest tools
+  empty: No tools yet.
+categories:
+  ip: IP & Addressing
+  dns: DNS
+  connectivity: Connectivity & Diagnostics
+  web: HTTP & Web
+  tls: TLS & Certificates
+  email: Email
+  bgp: Routing, BGP & Registry
+  reputation: Reputation & Geolocation
+  lan: LAN
+  calculators: Calculators & Reference
+  client: Client Diagnostics
+runMode:
+  browser:
+    label: Browser
+    description: Runs entirely in your browser; nothing is sent to the server. Works offline.
+  server:
+    label: Server
+    description: Runs on the NetTools server, from its network vantage point.
+  public-api:
+    label: Public API
+    description: Uses a third-party service through the NetTools server.
+  hybrid:
+    label: Hybrid
+    description: Runs on the server by default, with an optional public-service mode.
+capabilities:
+  disabledTitle: This tool is unavailable
+  reasons:
+    disabled_by_admin: Disabled by the administrator.
+    provider_key_missing: Requires an API key that is not configured on the server.
+    requires_lan_mode: Requires LAN mode (host networking) on the server.
+    binary_missing: A required program is not installed on the server.
+    api_unreachable: The NetTools server cannot be reached. Browser-only tools still work.
+    unavailable: Not available on this server.
+apiErrors:
+  INVALID_INPUT: Invalid input
+  TARGET_UNRESOLVABLE: Target could not be resolved
+  TARGET_PRIVATE_DENIED: Private and internal targets are not allowed on this server
+  TARGET_BLOCKED: Target is blocked by server policy
+  TOOL_DISABLED: Tool disabled
+  PROVIDER_KEY_MISSING: Provider API key missing
+  TIMEOUT: The request timed out
+  RATE_LIMITED: Too many requests, please wait
+  BUSY: Server is busy, try again shortly
+  PROVIDER_ERROR: The upstream service failed
+  INTERNAL: Unexpected server error
+  NOT_FOUND: Endpoint not found
+  METHOD_NOT_ALLOWED: Method not allowed
+  NETWORK_ERROR: Network error
+  BAD_RESPONSE: Unexpected response from the server
+common:
+  copy: Copy
+  copied: Copied to clipboard
+  copyFailed: Could not copy to the clipboard
+  copyValue: 'Copy {label}'
+  copyText: Copy as text
+  copyJson: Copy as JSON
+  downloadJson: Download JSON
+  new: New
+  allowed: Allowed
+  denied: Denied
+  on: On
+  off: Off
+  clear: Clear
+  generate: Generate
+  yes: Yes
+  no: No
+  none: None
+  result: Result
+  invalid: Invalid value
+settings:
+  appearance: Appearance
+  language: Language
+  favoritesCount: 'You have {count} favorite tools.'
+  clearFavorites: Remove all favorites
+about:
+  intro: NetTools bundles network tools and troubleshooting utilities in one self-hosted app.
+  build: Build
+  webVersion: Web version
+  apiVersion: API version
+  buildDate: API build date
+  profile: Deployment profile
+  privateTargets: Private targets
+  lanMode: LAN mode
+  apiUnreachable: API unreachable
+  capabilities: Server capabilities
+  noServerTools: No server tools are registered yet.
+  attributions: License & attributions
+  license: NetTools is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
+notFound:
+  title: Page not found
+  description: The page you are looking for does not exist.
+  back: Back to home
+tools: {}

@@ -12,11 +12,17 @@ COPY apps/web/ apps/web/
 ARG VERSION=dev
 ENV VITE_APP_VERSION=$VERSION
 RUN pnpm --filter @nettools/web build
+# Allow exactly our inline scripts (anti-FOUC theme script) in the CSP.
+COPY docker/nginx/security-headers.conf /src/security-headers.conf
+RUN hashes="$(cat apps/web/dist/csp-script-hashes.txt)" \
+    && sed -i "s|script-src 'self';|script-src 'self' ${hashes};|" /src/security-headers.conf \
+    && grep -q "script-src 'self' 'sha256-" /src/security-headers.conf \
+    && rm apps/web/dist/csp-script-hashes.txt
 
 FROM nginxinc/nginx-unprivileged:stable-alpine
 # official nginx images render /etc/nginx/templates/*.template with envsubst at start
 COPY docker/nginx/default.conf.template /etc/nginx/templates/default.conf.template
-COPY docker/nginx/security-headers.conf /etc/nginx/snippets/security-headers.conf
+COPY --from=build /src/security-headers.conf /etc/nginx/snippets/security-headers.conf
 COPY --from=build /src/apps/web/dist /usr/share/nginx/html
 ENV NGINX_ENVSUBST_FILTER="^(API_UPSTREAM|ENABLE_HSTS)$" \
     API_UPSTREAM=http://api:8081 \
