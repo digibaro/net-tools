@@ -1445,3 +1445,54 @@ tools:
       by: By
       with: Protocol
       date: Time
+  csr-tool:
+    title: CSR decoder & generator
+    description: Decode a certificate signing request, or generate a private key and CSR with SANs — entirely in your browser.
+    decode: Decode
+    generate: Generate
+    csrInput: CSR (PEM)
+    invalidCsr: This is not a PEM certificate signing request.
+    sigOk: Signature valid
+    sigBad: Signature invalid
+    sans: Subject alternative names (host names or IPs)
+    includeCn: Add the common name to the SANs
+    sanPreview: 'SANs: {list}'
+    keyType: Key type
+    generateButton: Generate key and CSR
+    csrTitle: Certificate signing request
+    keyTitle: Private key
+    keyWarning: Generated in your browser and never sent anywhere. Save it now — it cannot be recovered, and anyone with this key can use the certificate.
+    download: 'Download {file}'
+    keyTypes:
+      ec-p256: ECDSA P-256 (recommended)
+      ec-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096
+    subject:
+      cn: Common name (CN)
+      o: Organization (O)
+      ou: Organizational unit (OU)
+      l: City (L)
+      st: State or province (ST)
+      c: Country code (C)
+      email: Email
+    placeholders:
+      cn: www.example.com
+      o: Example Ltd
+      ou: IT
+      l: Amsterdam
+      st: Noord-Holland
+      c: NL
+      email: admin@example.com
+    fields:
+      subject: Subject
+      sans: Alternative names
+      publicKey: Public key
+      signature: Signature algorithm
+      spki: Public key SHA-256
+    errors:
+      cn: The common name is required (at most 64 characters).
+      c: The country is a two-letter code such as NL or US.
+      email: Enter a valid email address.
+      san: Each alternative name must be a host name, a wildcard (*.example.com) or an IP address.

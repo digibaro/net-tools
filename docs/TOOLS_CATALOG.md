@@ -110,7 +110,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-03 | TLS protocol & cipher scan | Supported TLS 1.0–1.3, cipher suites, weak configs | S | Go handshake loop (or `testssl.sh` opt-in image) | SSL Labs API v4 (registration required) | 3 | ⬜ |
 | TLS-04 | OCSP / CRL status | Revocation status of leaf cert | S | `x/crypto/ocsp` | — | 3 | ⬜ |
 | TLS-05 | Certificate decoder | Paste PEM/DER → human-readable fields | B | `@peculiar/x509` | — | 1 | ✅ |
-| TLS-06 | CSR decoder / generator | Decode CSR; generate key+CSR in browser | B | `@peculiar/x509` + WebCrypto | — | 2 | ⬜ |
+| TLS-06 | CSR decoder / generator | Decode CSR; generate key+CSR in browser | B | `@peculiar/x509` + WebCrypto | — | 2 | ✅ |
 | TLS-07 | Cert / key matcher | Check that a cert, key and CSR belong together | B | WebCrypto | — | 2 | ⬜ |
 | TLS-08 | Certificate Transparency search | Certificates issued for a domain (subdomain discovery) | P | — | crt.sh JSON (`?output=json`) | 3 | ⬜ |
 | TLS-09 | STARTTLS check | SMTP/IMAP/POP3/FTP/XMPP STARTTLS + cert | S | `net/smtp` & raw dialogs | — | 3 | ⬜ |
