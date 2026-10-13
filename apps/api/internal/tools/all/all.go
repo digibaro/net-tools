@@ -10,6 +10,8 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnspropagation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsreverse"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnstrace"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 )
 
 // Tools returns every registered tool, in catalog order.
@@ -22,5 +24,7 @@ func Tools() []tools.Tool {
 		&dnsencrypted.Tool{},
 		&dnsconsistency.Tool{},
 		&dnscaa.Tool{},
+		&ping.Tool{},
+		&tcping.Tool{},
 	}
 }

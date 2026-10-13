@@ -133,6 +133,17 @@ dns:
     ttl: TTL
     type: Type
     data: Data
+ping:
+  sentReceived: Sent / received
+  loss: Packet loss
+  rtt: RTT min / avg / max
+  stddev: Standard deviation
+  jitter: Jitter
+  chart: Round-trip time per probe; red marks are lost probes
+  target: Host or IP address
+  count: Count
+  interval: Interval (ms)
+  run: Start
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -858,3 +869,11 @@ tools:
       names: Certificate names
       expires: Expires
       latency: Query latency
+  ping:
+    title: Ping
+    description: Send ICMP echo requests from the server and watch round-trip time, loss and jitter live.
+    invalid: Enter a host name or an IP address.
+  tcp-ping:
+    title: TCP ping
+    description: Measure TCP connect time to a host and port — works where ICMP is blocked.
+    port: Port

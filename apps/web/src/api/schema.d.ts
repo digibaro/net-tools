@@ -213,6 +213,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/ping/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ICMP echo with live replies (SSE)
+         * @description Events: meta, reply (PingReply)*, done ({summary: PingSummary, durationMs}) or error.
+         */
+        get: operations["pingStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tcping/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Repeated TCP connects with timing (SSE)
+         * @description Events: meta, reply|timeout (PingReply)*, done ({summary: PingSummary, durationMs}) or error.
+         */
+        get: operations["tcpingStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -456,6 +496,24 @@ export interface components {
                 verifyError: string;
                 handshakeMs: number;
             };
+        };
+        PingReply: {
+            seq: number;
+            rttMs?: number;
+            ttl?: number;
+            from: string;
+            bytes?: number;
+            error?: string;
+        };
+        PingSummary: {
+            sent: number;
+            received: number;
+            lossPct: number;
+            minMs: number;
+            avgMs: number;
+            maxMs: number;
+            stddevMs: number;
+            jitterMs: number;
         };
     };
     responses: {
@@ -796,6 +854,62 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    pingStream: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description 1..PING_MAX_COUNT */
+                count?: number;
+                /** @description ms, PING_MIN_INTERVAL_MS..5000 */
+                interval?: number;
+                size?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    tcpingStream: {
+        parameters: {
+            query: {
+                target: string;
+                port?: number;
+                count?: number;
+                interval?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }

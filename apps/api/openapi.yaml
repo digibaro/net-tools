@@ -264,6 +264,44 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsEncrypted" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/ping/stream:
+    get:
+      operationId: pingStream
+      summary: ICMP echo with live replies (SSE)
+      description: "Events: meta, reply (PingReply)*, done ({summary: PingSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.ping
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: count, in: query, description: "1..PING_MAX_COUNT", schema: { type: integer, default: 5 } }
+        - { name: interval, in: query, description: "ms, PING_MIN_INTERVAL_MS..5000", schema: { type: integer, default: 1000 } }
+        - { name: size, in: query, schema: { type: integer, minimum: 16, maximum: 1472, default: 56 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/tcping/stream:
+    get:
+      operationId: tcpingStream
+      summary: Repeated TCP connects with timing (SSE)
+      description: "Events: meta, reply|timeout (PingReply)*, done ({summary: PingSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.tcping
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: count, in: query, schema: { type: integer, default: 5 } }
+        - { name: interval, in: query, schema: { type: integer, default: 1000 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -592,3 +630,25 @@ components:
             verified: { type: boolean }
             verifyError: { type: string }
             handshakeMs: { type: number }
+    PingReply:
+      type: object
+      required: [seq, from]
+      properties:
+        seq: { type: integer }
+        rttMs: { type: number }
+        ttl: { type: integer }
+        from: { type: string }
+        bytes: { type: integer }
+        error: { type: string }
+    PingSummary:
+      type: object
+      required: [sent, received, lossPct, minMs, avgMs, maxMs, stddevMs, jitterMs]
+      properties:
+        sent: { type: integer }
+        received: { type: integer }
+        lossPct: { type: number }
+        minMs: { type: number }
+        avgMs: { type: number }
+        maxMs: { type: number }
+        stddevMs: { type: number }
+        jitterMs: { type: number }

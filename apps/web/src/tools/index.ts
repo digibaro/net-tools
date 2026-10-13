@@ -26,6 +26,7 @@ import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
 import { tool as mtuCalculator } from './mtu-calculator'
+import { tool as ping } from './ping'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
@@ -34,6 +35,7 @@ import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
+import { tool as tcpPing } from './tcp-ping'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as whatIsMyIp } from './what-is-my-ip'
@@ -44,7 +46,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
-  { id: 'connectivity', components: [] },
+  { id: 'connectivity', components: [ping, tcpPing] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
   { id: 'tls', components: [certificateDecoder] },
   { id: 'email', components: [] },
