@@ -12,7 +12,7 @@ services:
     build:
       context: .
       dockerfile: docker/web.Dockerfile
-    image: ghcr.io/OWNER/nettools-web:${NETTOOLS_VERSION:-latest}
+    image: ghcr.io/digibaro/nettools-web:${NETTOOLS_VERSION:-latest}
     ports:
       - "${NETTOOLS_PORT:-8080}:8080"
     environment:
@@ -41,7 +41,7 @@ services:
       dockerfile: docker/api.Dockerfile
       args:
         INSTALL_NMAP: ${INSTALL_NMAP:-false}
-    image: ghcr.io/OWNER/nettools-api:${NETTOOLS_VERSION:-latest}
+    image: ghcr.io/digibaro/nettools-api:${NETTOOLS_VERSION:-latest}
     env_file: [.env]
     expose: ["8081"]
     read_only: true

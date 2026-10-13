@@ -74,7 +74,7 @@ server's vantage point, plus optional public APIs for an outside-in / worldwide 
 | Compatibility | Last 2 versions of Chrome, Firefox, Safari, Edge; mobile ≥360px |
 | Images | Multi-arch (`linux/amd64`, `linux/arm64`); web image < 50 MB; api image < 150 MB |
 | Observability | Structured JSON logs; `/api/healthz`, `/api/readyz`; optional Prometheus `/metrics` |
-| Licensing | Project license MIT or GPL-3.0 (decide in Phase 0). it-tools is GPL-3.0: take inspiration from layout, do **not** copy code verbatim unless you adopt GPL-3.0 |
+| Licensing | GPL-3.0-or-later (decided in Phase 0), same as it-tools; credit it-tools in `NOTICE` |
 
 ## 7. Acceptance criteria (release v1.0)
 

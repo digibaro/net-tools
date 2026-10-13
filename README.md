@@ -24,16 +24,10 @@ network tools and troubleshooting utilities, with the UX of
 ## How to use
 
 ```bash
-mkdir net-tools && cd net-tools && git init
-# copy the contents of this kit into the repo root
 claude
-> /implement-phase 0
 > /implement-phase 1
 > /new-tool DNS-01        # or pick tools one by one
 ```
-
-Before Phase 0, decide: license (MIT vs GPL-3.0), and the GHCR owner to replace `OWNER` in
-`docker-compose.yml`.
 
 ## Running (once built)
 
@@ -43,3 +37,8 @@ docker compose up -d                                   # http://localhost:8080
 docker compose --profile iperf --profile speedtest up -d
 docker compose -f docker-compose.yml -f docker-compose.lan.yml up -d   # LAN tools (Linux host)
 ```
+
+## License
+
+GPL-3.0-or-later — see [LICENSE](LICENSE) and [NOTICE](NOTICE). UX inspired by
+[it-tools](https://github.com/CorentinTh/it-tools).
