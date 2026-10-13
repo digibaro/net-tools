@@ -1,0 +1,82 @@
+name: nettools
+
+x-common: &common
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  web:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+    image: ghcr.io/OWNER/nettools-web:${NETTOOLS_VERSION:-latest}
+    ports:
+      - "${NETTOOLS_PORT:-8080}:8080"
+    environment:
+      API_UPSTREAM: ${API_UPSTREAM:-http://api:8081}
+      ENABLE_HSTS: ${ENABLE_HSTS:-false}
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /var/cache/nginx
+      - /etc/nginx/conf.d
+    security_opt: [no-new-privileges:true]
+    cap_drop: [ALL]
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:8080/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+
+  api:
+    <<: *common
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+      args:
+        INSTALL_NMAP: ${INSTALL_NMAP:-false}
+    image: ghcr.io/OWNER/nettools-api:${NETTOOLS_VERSION:-latest}
+    env_file: [.env]
+    expose: ["8081"]
+    read_only: true
+    tmpfs: [/tmp]
+    volumes:
+      - ./data:/data:ro            # GeoLite2-City.mmdb, GeoLite2-ASN.mmdb (optional)
+    cap_drop: [ALL]
+    cap_add: [NET_RAW]
+    sysctls:
+      net.ipv4.ping_group_range: "0 2147483647"
+    security_opt: [no-new-privileges:true]
+    mem_limit: 256m
+    pids_limit: 256
+    cpus: 1.0
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/nettools-api", "healthcheck"]
+      interval: 15s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  # ── optional profiles ───────────────────────────────────────────────
+  iperf:
+    <<: *common
+    profiles: [iperf]
+    image: networkstatic/iperf3:latest     # or build a minimal debian image with iperf3
+    command: ["-s"]
+    ports: ["${IPERF_PORT:-5201}:5201/tcp", "${IPERF_PORT:-5201}:5201/udp"]
+    read_only: true
+    cap_drop: [ALL]
+
+  speedtest:
+    <<: *common
+    profiles: [speedtest]
+    image: ghcr.io/librespeed/speedtest:latest
+    environment:
+      MODE: standalone
+    ports: ["${SPEEDTEST_PORT:-8082}:8080"]

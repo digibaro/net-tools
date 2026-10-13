@@ -1,0 +1,35 @@
+# Dev override: Vite dev server with HMR + Go hot reload (air).
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+services:
+  web:
+    build: !reset null
+    image: node:22-alpine
+    working_dir: /repo/apps/web
+    command: sh -c "corepack enable && pnpm install && pnpm dev --host 0.0.0.0 --port 8080"
+    environment:
+      VITE_API_PROXY: http://api:8081
+    volumes:
+      - ./:/repo
+      - web_node_modules:/repo/apps/web/node_modules
+    read_only: false
+    tmpfs: !reset []
+    cap_drop: !reset []
+    healthcheck: !reset {}
+
+  api:
+    build: !reset null
+    image: golang:1-bookworm
+    working_dir: /repo/apps/api
+    command: sh -c "go install github.com/air-verse/air@latest && air"
+    volumes:
+      - ./:/repo
+      - go_mod_cache:/go/pkg/mod
+    read_only: false
+    environment:
+      NETTOOLS_PROFILE: homelab
+      LOG_LEVEL: debug
+    healthcheck: !reset {}
+
+volumes:
+  web_node_modules:
+  go_mod_cache:

@@ -1,0 +1,19 @@
+# LAN mode: api uses host networking so ARP scan, Wake-on-LAN, mDNS, SSDP and DHCP probes see the
+# real LAN. Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.lan.yml up -d
+# Security: only for trusted networks (NETTOOLS_PROFILE=homelab). Linux hosts only
+# (Docker Desktop on macOS/Windows does not expose the host LAN this way).
+services:
+  api:
+    network_mode: host
+    expose: !reset []
+    sysctls: !reset {}            # not allowed with host networking; set on the host if needed
+    cap_add: [NET_RAW]            # add NET_ADMIN only if LAN-05 DHCP probe is enabled
+    environment:
+      NETTOOLS_LAN: "true"
+      API_LISTEN: 127.0.0.1:8081  # host loopback; web reaches it via host-gateway
+  web:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      API_UPSTREAM: http://host.docker.internal:8081
