@@ -989,3 +989,24 @@ tools:
     run: Send request
     hop: 'Hop {n}'
     invalidHeader: 'Invalid or not allowed header line: {line}'
+  redirect-tracer:
+    title: Redirect chain tracer
+    description: Follow a URL through every redirect and see status, Location and timing at each hop.
+    run: Trace redirects
+    chain: Redirect chain
+    summary: '{redirects} redirect(s), final status {status} at {url}.'
+    upgrade: The chain upgrades from HTTP to HTTPS.
+    downgrade: Warning — the chain downgrades from HTTPS to HTTP.
+    stopped: 'The chain was stopped: {code}.'
+  http-timing:
+    title: Http Timing
+    description: TODO describe Http Timing
+    input: Input
+  security-headers:
+    title: Security Headers
+    description: TODO describe Security Headers
+    input: Input
+  cors-tester:
+    title: Cors Tester
+    description: TODO describe Cors Tester
+    input: Input

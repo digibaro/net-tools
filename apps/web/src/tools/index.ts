@@ -6,6 +6,7 @@ import { tool as caaChecker } from './caa-checker'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
+import { tool as corsTester } from './cors-tester'
 import { tool as dataUnitConverter } from './data-unit-converter'
 import { tool as dnsConsistency } from './dns-consistency'
 import { tool as dnsLookup } from './dns-lookup'
@@ -17,6 +18,7 @@ import { tool as encryptedDnsTester } from './encrypted-dns-tester'
 import { tool as eui64Calculator } from './eui64-calculator'
 import { tool as httpRequest } from './http-request'
 import { tool as httpStatusCodes } from './http-status-codes'
+import { tool as httpTiming } from './http-timing'
 import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
@@ -34,9 +36,11 @@ import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
+import { tool as redirectTracer } from './redirect-tracer'
 import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
+import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
@@ -53,7 +57,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
-  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest] },
+  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },
