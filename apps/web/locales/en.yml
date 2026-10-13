@@ -1513,3 +1513,38 @@ tools:
       no-key: No PEM private key found.
       encrypted: The key is encrypted. Decrypt it first (openssl pkey -in key.pem -out plain.pem).
       unsupported: This key type or format is not supported.
+  wireguard-config:
+    title: WireGuard config generator
+    description: Generate WireGuard keys and matching server and client configurations, with a QR code per client for the mobile apps.
+    privacy: Keys are generated in your browser with a secure random source. They are never sent anywhere or stored in the page address.
+    regenerate: New keys
+    auto: auto
+    serverTitle: Server (wg0.conf)
+    download: 'Download {file}'
+    qrAlt: 'QR code with the configuration for {name}'
+    routing:
+      full: All traffic
+      split: Tunnel network only
+      custom: Custom
+    fields:
+      endpoint: Server endpoint (host or IP, optional :port)
+      port: Listen port
+      address4: Tunnel IPv4 address of the server
+      address6: Tunnel IPv6 address (optional)
+      dns: DNS servers for clients
+      peers: Clients
+      mtu: MTU
+      keepalive: Keepalive (s)
+      routing: Route through the tunnel
+      allowedIps: Allowed IPs
+      psk: Preshared keys
+    errors:
+      endpoint: Enter a host name or IP address.
+      port: The port must be between 1 and 65535.
+      address4: Enter the server address with a prefix of /30 or larger, such as 10.8.0.1/24.
+      address6: Enter an IPv6 address with prefix, such as fd42:42::1/64.
+      dns: DNS servers must be IP addresses.
+      mtu: The MTU must be between 1280 and 9000 (0 for automatic).
+      peers: 'Between 1 and {max} clients.'
+      allowedIps: Enter one or more networks in CIDR notation.
+      full: The tunnel network is too small for this many clients.

@@ -69,6 +69,7 @@ import { tool as whatIsMyIp } from './what-is-my-ip'
 import { tool as whoisLookup } from './whois-lookup'
 import { tool as wifiQrGenerator } from './wifi-qr-generator'
 import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
+import { tool as wireguardConfig } from './wireguard-config'
 import { tool as zoneBuilder } from './zone-builder'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
@@ -82,7 +83,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders] },
 ]
 
