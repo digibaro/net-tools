@@ -196,6 +196,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/encrypted": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Test a DNS-over-TLS or DNS-over-HTTPS endpoint */
+        get: operations["dnsEncrypted"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -413,6 +430,32 @@ export interface components {
             steps: number;
             rcode: string;
             answers: number;
+        };
+        DnsEncrypted: {
+            endpoint: string;
+            transport: string;
+            address: string;
+            minMs: number;
+            avgMs: number;
+            maxMs: number;
+            answer: components["schemas"]["DnsRecord"][];
+            queries: {
+                rttMs: number;
+                rcode: string;
+                error: string;
+            }[];
+            tls: {
+                version: string;
+                cipher: string;
+                alpn: string;
+                subject: string;
+                issuer: string;
+                notAfter: string;
+                dnsNames: string[];
+                verified: boolean;
+                verifyError: string;
+                handshakeMs: number;
+            };
         };
     };
     responses: {
@@ -723,6 +766,36 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    dnsEncrypted: {
+        parameters: {
+            query: {
+                /** @description preset id, host[:port] / ip[:port] (DoT) or https URL (DoH) */
+                endpoint: string;
+                transport?: "dot" | "doh";
+                name?: string;
+                type?: components["schemas"]["DnsRecordType"];
+                count?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsEncrypted"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

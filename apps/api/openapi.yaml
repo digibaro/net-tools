@@ -239,6 +239,31 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/dns/encrypted:
+    get:
+      operationId: dnsEncrypted
+      summary: Test a DNS-over-TLS or DNS-over-HTTPS endpoint
+      tags: [dns]
+      x-capability: dns.encrypted
+      parameters:
+        - { name: endpoint, in: query, required: true, description: "preset id, host[:port] / ip[:port] (DoT) or https URL (DoH)", schema: { type: string } }
+        - { name: transport, in: query, schema: { type: string, enum: [dot, doh], default: dot } }
+        - { name: name, in: query, schema: { type: string, default: example.com } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+        - { name: count, in: query, schema: { type: integer, minimum: 1, maximum: 5, default: 3 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsEncrypted" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -533,3 +558,37 @@ components:
         steps: { type: integer }
         rcode: { type: string }
         answers: { type: integer }
+    DnsEncrypted:
+      type: object
+      required: [endpoint, transport, address, tls, queries, answer, minMs, avgMs, maxMs]
+      properties:
+        endpoint: { type: string }
+        transport: { type: string }
+        address: { type: string }
+        minMs: { type: number }
+        avgMs: { type: number }
+        maxMs: { type: number }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        queries:
+          type: array
+          items:
+            type: object
+            required: [rttMs, rcode, error]
+            properties:
+              rttMs: { type: number }
+              rcode: { type: string }
+              error: { type: string }
+        tls:
+          type: object
+          required: [version, cipher, alpn, subject, issuer, notAfter, dnsNames, verified, verifyError, handshakeMs]
+          properties:
+            version: { type: string }
+            cipher: { type: string }
+            alpn: { type: string }
+            subject: { type: string }
+            issuer: { type: string }
+            notAfter: { type: string }
+            dnsNames: { type: array, items: { type: string } }
+            verified: { type: boolean }
+            verifyError: { type: string }
+            handshakeMs: { type: number }

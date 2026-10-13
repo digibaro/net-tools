@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"errors"
 	"fmt"
 	"io"
@@ -52,6 +53,16 @@ type Server struct {
 	TLSName string
 	// DoHURL is the DoH endpoint.
 	DoHURL string
+	// RootCAs overrides the system trust store for DoT/DoH (tests).
+	RootCAs *x509.CertPool
+}
+
+// tlsServerName is the name verified on the certificate (the IP itself for IP endpoints).
+func (s Server) tlsServerName() string {
+	if s.TLSName != "" {
+		return s.TLSName
+	}
+	return s.Addr.Addr().String()
 }
 
 // Preset is a well-known public resolver.
@@ -186,7 +197,7 @@ func Exchange(ctx context.Context, s Server, m *dns.Msg) (*dns.Msg, time.Duratio
 	case DoH:
 		return exchangeDoH(ctx, s, m)
 	case DoT:
-		c := &dns.Client{Net: "tcp-tls", Timeout: 5 * time.Second, TLSConfig: &tls.Config{ServerName: s.TLSName, MinVersion: tls.VersionTLS12}}
+		c := &dns.Client{Net: "tcp-tls", Timeout: 5 * time.Second, TLSConfig: &tls.Config{ServerName: s.tlsServerName(), RootCAs: s.RootCAs, MinVersion: tls.VersionTLS12}}
 		return exchange(ctx, c, s, m)
 	case TCP:
 		return exchange(ctx, &dns.Client{Net: "tcp", Timeout: 5 * time.Second}, s, m)
@@ -217,7 +228,7 @@ func exchangeDoH(ctx context.Context, s Server, m *dns.Msg) (*dns.Msg, time.Dura
 		return nil, 0, fmt.Errorf("doh url: %w", err)
 	}
 	tgt := target.Target{Host: s.TLSName, IP: s.Addr.Addr(), Port: int(s.Addr.Port())}
-	client := netx.HTTPClient(tgt, netx.ClientOptions{Timeout: 8 * time.Second})
+	client := netx.HTTPClient(tgt, netx.ClientOptions{Timeout: 8 * time.Second, TLSConfig: &tls.Config{RootCAs: s.RootCAs, MinVersion: tls.VersionTLS12}})
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, u.String(), bytes.NewReader(packed))
 	if err != nil {
 		return nil, 0, fmt.Errorf("doh request: %w", err)

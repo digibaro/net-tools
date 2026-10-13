@@ -837,3 +837,24 @@ tools:
     run: Trace
     steps: 'Delegation steps ({count})'
     summary: '{rcode}, {answers} answer(s)'
+  encrypted-dns-tester:
+    title: DoH / DoT tester
+    description: Test a DNS-over-TLS or DNS-over-HTTPS endpoint — TLS version, certificate, ALPN and query latency.
+    endpoint: Endpoint
+    queryName: Query name
+    hint: 'Use a preset (cloudflare, google, quad9, opendns), host[:port] for DoT or an https URL for DoH.'
+    invalid: Enter a preset, host[:port] or an https URL (DoH).
+    run: Test
+    tls: TLS and latency
+    verified: The certificate is valid for this endpoint.
+    notVerified: 'Certificate problem: {error}'
+    days: '{days} days'
+    fields:
+      address: Address
+      protocol: TLS
+      handshake: Handshake time
+      subject: Certificate subject
+      issuer: Issuer
+      names: Certificate names
+      expires: Expires
+      latency: Query latency
