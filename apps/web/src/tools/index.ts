@@ -4,6 +4,7 @@ import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
+import { tool as dataUnitConverter } from './data-unit-converter'
 import { tool as domainParser } from './domain-parser'
 import { tool as eui64Calculator } from './eui64-calculator'
 import { tool as httpStatusCodes } from './http-status-codes'
@@ -35,7 +36,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter] },
   { id: 'client', components: [] },
 ]
 

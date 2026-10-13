@@ -537,3 +537,10 @@ tools:
       efficiency: Efficiency
       requiredRate: Required link rate
       requiredRateBytes: Required link rate (bytes)
+  data-unit-converter:
+    title: Bits / bytes unit converter
+    description: Convert data sizes and rates between bits and bytes with decimal (k, M, G) and binary (Ki, Mi, Gi) prefixes.
+    size: Data size
+    rate: Data rate
+    value: Value
+    unit: Unit
