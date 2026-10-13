@@ -438,3 +438,29 @@ tools:
       search: Query string
       hash: Fragment
       origin: Origin
+  user-agent-parser:
+    title: User-agent parser
+    description: Identify browser, rendering engine, operating system and device from a User-Agent string.
+    input: User-Agent string
+    useMine: Use my browser's User-Agent
+    unknown: Unknown
+    hintsTitle: User-Agent Client Hints (this browser)
+    hintsNote: Chromium browsers reduce the User-Agent string; these low-entropy client hints are more reliable.
+    types:
+      desktop: Desktop
+      mobile: Mobile
+      tablet: Tablet
+      smarttv: Smart TV
+      console: Game console
+      wearable: Wearable
+      embedded: Embedded
+    fields:
+      browser: Browser
+      engine: Engine
+      os: Operating system
+      device: Device
+      deviceType: Device type
+      cpu: CPU architecture
+      brands: Brands
+      platform: Platform
+      mobile: Mobile
