@@ -12,7 +12,7 @@ import { MAX_ROWS, split } from './subnet-splitter.service'
 
 const { t } = useI18n()
 const input = useQueryParam({ name: 'net', defaultValue: '192.168.0.0/24' })
-const mode = useQueryParam<string>({ name: 'mode', defaultValue: 'count' })
+const mode = useQueryParam({ name: 'mode', defaultValue: 'count' })
 const value = useQueryParam({ name: 'n', defaultValue: 4 })
 const splitMode = computed(() => (mode.value === 'prefix' ? 'prefix' : 'count') as SplitMode)
 

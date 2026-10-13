@@ -17,15 +17,23 @@ export function parseQueryValue<T extends Primitive>(raw: unknown, defaultValue:
   return value as T
 }
 
+interface Options<T> {
+  name: string
+  defaultValue: T
+}
+
 /**
  * Two-way binds a value to a URL query parameter so tool inputs are shareable.
  * The parameter is removed from the URL while the value equals its default.
  */
-export function useQueryParam<T extends Primitive>({ name, defaultValue }: { name: string, defaultValue: T }): Ref<T> {
+export function useQueryParam(options: Options<string>): Ref<string>
+export function useQueryParam(options: Options<number>): Ref<number>
+export function useQueryParam(options: Options<boolean>): Ref<boolean>
+export function useQueryParam({ name, defaultValue }: Options<Primitive>): Ref<Primitive> {
   const route = useRoute()
   const router = useRouter()
 
-  return computed<T>({
+  return computed<Primitive>({
     get: () => parseQueryValue(route.query[name], defaultValue),
     set: (value) => {
       const query = { ...route.query }

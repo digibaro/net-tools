@@ -7,11 +7,12 @@ import { tool as ipv4FormatConverter } from './ipv4-format-converter'
 import { tool as ipv4SubnetCalculator } from './ipv4-subnet-calculator'
 import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
 import { tool as ipv6SubnetCalculator } from './ipv6-subnet-calculator'
+import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as subnetSplitter } from './subnet-splitter'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
-  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress] },
+  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator] },
   { id: 'dns', components: [] },
   { id: 'connectivity', components: [] },
   { id: 'web', components: [] },

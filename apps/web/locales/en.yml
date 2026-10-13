@@ -244,3 +244,15 @@ tools:
       hex: Hexadecimal
       decimal: Decimal (128-bit integer)
       type: Address type
+  ipv6-ula-generator:
+    title: IPv6 ULA generator
+    description: Generate a random RFC 4193 Unique Local Address /48 prefix with its /64 subnets.
+    mac: MAC address (optional)
+    hint: Follows RFC 4193 §3.2.2 (SHA-1 of the current time and an EUI-64). Without a MAC address, a random 64-bit value is used instead.
+    invalidMac: Not a valid MAC address.
+    fields:
+      prefix: ULA prefix
+      globalId: Global ID
+      subnets: /64 subnet range
+      subnetCount: Number of /64 subnets
+      examples: Example subnets
