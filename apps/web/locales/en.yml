@@ -627,6 +627,15 @@ tools:
       type: Type
       code: Code
   dns-record-types:
-    title: Dns Record Types
-    description: TODO describe Dns Record Types
-    input: Input
+    title: DNS record type reference
+    description: DNS resource record types with their numeric values, purpose, zone-file examples and RFCs.
+    search: Search by type, number or purpose
+    commonOnly: Common types only
+    count: '{count} record types'
+    source: Types and values from the IANA DNS Parameters registry; summaries and examples curated for common types.
+    columns:
+      type: Type
+      value: Value
+      summary: Purpose
+      example: Example
+      reference: Reference

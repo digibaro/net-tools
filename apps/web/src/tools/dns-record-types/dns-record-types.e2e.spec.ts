@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test'
 
-test('dns-record-types: input from the URL produces a result', async ({ page }) => {
-  await page.goto('/dns-record-types?q=x')
-  await expect(page.getByTestId('result')).toHaveText('x')
+test('dns-record-types: finds HTTPS with an example', async ({ page }) => {
+  await page.goto('/dns-record-types?q=https')
+  await expect(page.getByTestId('result').getByText(/alpn="h3,h2"/)).toBeVisible()
 })
