@@ -28,7 +28,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | IP-04 | CIDR ↔ IP range | Convert CIDR to first/last IP and an arbitrary range to minimal CIDR list | B | custom | — | 1 | ✅ |
 | IP-05 | CIDR aggregator / summarizer | Merge/deduplicate a list of prefixes (v4+v6) | B | custom (sorted merge) | — | 1 | ✅ |
 | IP-06 | VLSM planner | Split a block into subnets by required host counts | B | custom | — | 2 | ⬜ |
-| IP-07 | Subnet splitter | Divide a prefix into N equal subnets / by new prefix length | B | custom | — | 1 | ⬜ |
+| IP-07 | Subnet splitter | Divide a prefix into N equal subnets / by new prefix length | B | custom | — | 1 | ✅ |
 | IP-08 | IP in subnet checker | Is IP X inside any of the prefixes in a list? | B | `ipaddr.js` | — | 1 | ⬜ |
 | IP-09 | IPv4 format converter | Dotted ↔ decimal ↔ hex ↔ binary ↔ octal | B | custom | — | 1 | ⬜ |
 | IP-10 | IPv6 expand / compress | RFC 5952 canonical form, full form, reverse nibble | B | `ip-address` | — | 1 | ⬜ |

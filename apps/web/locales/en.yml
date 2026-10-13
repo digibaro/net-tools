@@ -185,3 +185,22 @@ tools:
     output: Aggregated prefixes
     summary: '{input} valid prefixes → {output} aggregated.'
     invalid: '{count} invalid entries ignored: {entries}'
+  subnet-splitter:
+    title: Subnet splitter
+    description: Divide an IPv4 or IPv6 prefix into N equal subnets or into subnets of a new prefix length.
+    input: Prefix to split
+    invalid: Enter a prefix such as 10.0.0.0/16 or 2001:db8::/48.
+    mode: Split by
+    byCount: Number of subnets
+    byPrefix: New prefix length
+    count: Number of subnets
+    newPrefix: New prefix length
+    value: Split value
+    result: '{count} subnets of /{prefix}'
+    truncated: 'Showing the first {max}.'
+    impossible: That split is not possible for this prefix.
+    columns:
+      cidr: Subnet
+      first: First address
+      last: Last address
+      addresses: Addresses
