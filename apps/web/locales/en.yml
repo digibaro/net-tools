@@ -230,3 +230,17 @@ tools:
       binaryDotted: Dotted binary
       binary: Binary
       ipv4Mapped: IPv4-mapped IPv6
+  ipv6-expand-compress:
+    title: IPv6 expand / compress
+    description: Canonical RFC 5952 form, full expanded form and ip6.arpa reverse name of an IPv6 address.
+    input: IPv6 address
+    invalid: Enter a valid IPv6 address (zone ids like %eth0 are not supported).
+    fields:
+      compressed: Compressed (RFC 5952)
+      expanded: Expanded
+      expandedNoZeros: Expanded without leading zeros
+      reverse: Reverse pointer (ip6.arpa)
+      uri: URL form
+      hex: Hexadecimal
+      decimal: Decimal (128-bit integer)
+      type: Address type
