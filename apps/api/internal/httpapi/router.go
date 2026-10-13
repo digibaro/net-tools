@@ -83,6 +83,18 @@ func BuildDeps(o *Options) tools.Deps {
 				})
 		},
 		Timeout: limits.Timeout,
+		Slot: func(next http.Handler) http.Handler {
+			pool := o.Pool
+			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				release, err := pool.Acquire(middleware.GetClientIP(r.Context()))
+				if err != nil {
+					Error(w, r, err)
+					return
+				}
+				defer release()
+				next.ServeHTTP(w, r)
+			})
+		},
 	}
 }
 

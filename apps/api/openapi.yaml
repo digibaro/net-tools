@@ -107,7 +107,39 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Echo" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/lookup:
+    get:
+      operationId: dnsLookup
+      summary: Query a record type against a resolver
+      tags: [dns]
+      x-capability: dns.lookup
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string, maxLength: 253 } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+        - { name: resolver, in: query, description: "system, a preset id (cloudflare, google, quad9, opendns), ip[:port], host[:port] or an https DoH URL", schema: { type: string, default: system } }
+        - { name: transport, in: query, schema: { type: string, enum: [udp, tcp, dot, doh], default: udp } }
+        - { name: dnssec, in: query, schema: { type: boolean, default: false } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsLookup" }
+        default: { $ref: "#/components/responses/Error" }
 components:
+  parameters:
+    Family:
+      name: family
+      in: query
+      description: Restrict to IPv4 (4) or IPv6 (6)
+      schema: { type: integer, enum: [0, 4, 6] }
   responses:
     Error:
       description: Error envelope
@@ -229,3 +261,40 @@ components:
             properties:
               name: { type: string }
               value: { type: string }
+    DnsRecordType:
+      type: string
+      enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, SRV, CAA, PTR, DS, DNSKEY, HTTPS, SVCB, TLSA, NAPTR, ANY]
+      default: A
+    DnsRecord:
+      type: object
+      required: [name, type, ttl, class, data]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        ttl: { type: integer }
+        class: { type: string }
+        data: { type: string }
+    DnsFlags:
+      type: object
+      required: [aa, tc, rd, ra, ad, cd]
+      properties:
+        aa: { type: boolean }
+        tc: { type: boolean }
+        rd: { type: boolean }
+        ra: { type: boolean }
+        ad: { type: boolean }
+        cd: { type: boolean }
+    DnsLookup:
+      type: object
+      required: [name, type, resolver, transport, rcode, flags, answer, authority, additional, rttMs]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        resolver: { type: string }
+        transport: { type: string }
+        rcode: { type: string, examples: [NOERROR, NXDOMAIN, SERVFAIL] }
+        flags: { $ref: "#/components/schemas/DnsFlags" }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        authority: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        additional: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        rttMs: { type: number }

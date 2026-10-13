@@ -40,6 +40,8 @@ type Deps struct {
 	RateLimit func(limits.Class) Middleware
 	// Timeout bounds a route's context.
 	Timeout func(time.Duration) Middleware
+	// Slot holds a concurrency-pool slot for the duration of the request (BUSY when full).
+	Slot Middleware
 }
 
 // Tool is one server-side capability.

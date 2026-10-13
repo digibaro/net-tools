@@ -118,6 +118,20 @@ about:
   noServerTools: No server tools are registered yet.
   attributions: License & attributions
   license: NetTools is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
+dns:
+  resolver: Resolver
+  flags: Flags
+  rtt: Response time
+  records: '{count} answer record(s)'
+  sections:
+    answer: Answer
+    authority: Authority
+    additional: Additional
+  columns:
+    name: Name
+    ttl: TTL
+    type: Type
+    data: Data
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -706,3 +720,31 @@ tools:
       ip: Client address
       protocol: Protocol
       method: Method
+  dns-lookup:
+    title: DNS lookup
+    description: Query any DNS record type against the system resolver, a public resolver or your own, over UDP, TCP, DoT or DoH.
+    name: Domain name
+    type: Record type
+    vantage: Run from
+    fromServer: This server
+    fromBrowser: Your browser (DoH)
+    resolver: Resolver
+    custom: Custom resolver
+    transport: Transport
+    dnssec: Request DNSSEC (DO bit)
+    dohProvider: DoH provider
+    browserNote: The query is sent directly from your browser to the provider, so it shows what public DNS returns.
+    run: Look up
+    invalidName: Enter a domain name (or an IP address for PTR).
+    resolvers:
+      system: System resolver (server)
+      cloudflare: Cloudflare (1.1.1.1)
+      google: Google (8.8.8.8)
+      quad9: Quad9 (9.9.9.9)
+      opendns: OpenDNS
+      custom: Custom…
+    transports:
+      udp: UDP
+      tcp: TCP
+      dot: DNS over TLS
+      doh: DNS over HTTPS

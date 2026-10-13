@@ -174,7 +174,7 @@ func parse(input string, o Opts, field string) (Target, error) {
 		return t, invalid(field, "ambiguous numeric address; use dotted-decimal IPv4 such as 192.0.2.1")
 	}
 
-	name, err := normalizeHostname(host)
+	name, err := NormalizeHostname(host)
 	if err != nil {
 		return t, invalid(field, err.Error())
 	}
@@ -216,7 +216,9 @@ func parsePort(s string) (int, error) {
 	return p, nil
 }
 
-func normalizeHostname(h string) (string, error) {
+// NormalizeHostname lowercases, strips the trailing dot, applies IDNA (UTS 46 lookup) and
+// checks label syntax. Use it for names that are queried but not dialed (e.g. DNS names).
+func NormalizeHostname(h string) (string, error) {
 	h = strings.TrimSuffix(h, ".")
 	ascii, err := idnaProfile.ToASCII(h)
 	if err != nil {

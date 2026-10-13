@@ -3,9 +3,12 @@ package all
 
 import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/dnslookup"
 )
 
 // Tools returns every registered tool, in catalog order.
 func Tools() []tools.Tool {
-	return []tools.Tool{}
+	return []tools.Tool{
+		&dnslookup.Tool{},
+	}
 }

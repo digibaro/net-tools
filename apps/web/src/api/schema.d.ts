@@ -89,6 +89,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Query a record type against a resolver */
+        get: operations["dnsLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -175,6 +192,43 @@ export interface components {
                 value: string;
             }[];
         };
+        /**
+         * @default A
+         * @enum {string}
+         */
+        DnsRecordType: "A" | "AAAA" | "CNAME" | "MX" | "NS" | "TXT" | "SOA" | "SRV" | "CAA" | "PTR" | "DS" | "DNSKEY" | "HTTPS" | "SVCB" | "TLSA" | "NAPTR" | "ANY";
+        DnsRecord: {
+            name: string;
+            type: string;
+            ttl: number;
+            class: string;
+            data: string;
+        };
+        DnsFlags: {
+            aa: boolean;
+            tc: boolean;
+            rd: boolean;
+            ra: boolean;
+            ad: boolean;
+            cd: boolean;
+        };
+        DnsLookup: {
+            name: string;
+            type: string;
+            resolver: string;
+            transport: string;
+            /**
+             * @example NOERROR
+             * @example NXDOMAIN
+             * @example SERVFAIL
+             */
+            rcode: string;
+            flags: components["schemas"]["DnsFlags"];
+            answer: components["schemas"]["DnsRecord"][];
+            authority: components["schemas"]["DnsRecord"][];
+            additional: components["schemas"]["DnsRecord"][];
+            rttMs: number;
+        };
     };
     responses: {
         /** @description Error envelope */
@@ -188,7 +242,10 @@ export interface components {
             };
         };
     };
-    parameters: never;
+    parameters: {
+        /** @description Restrict to IPv4 (4) or IPv6 (6) */
+        Family: 0 | 4 | 6;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -319,6 +376,38 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["Echo"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsLookup: {
+        parameters: {
+            query: {
+                name: string;
+                type?: components["schemas"]["DnsRecordType"];
+                /** @description system, a preset id (cloudflare, google, quad9, opendns), ip[:port], host[:port] or an https DoH URL */
+                resolver?: string;
+                transport?: "udp" | "tcp" | "dot" | "doh";
+                dnssec?: boolean;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsLookup"];
                     };
                 };
             };

@@ -6,6 +6,7 @@ import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as dataUnitConverter } from './data-unit-converter'
+import { tool as dnsLookup } from './dns-lookup'
 import { tool as dnsRecordTypes } from './dns-record-types'
 import { tool as domainParser } from './domain-parser'
 import { tool as eui64Calculator } from './eui64-calculator'
@@ -36,7 +37,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
-  { id: 'dns', components: [punycodeConverter, domainParser] },
+  { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup] },
   { id: 'connectivity', components: [] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
   { id: 'tls', components: [certificateDecoder] },
