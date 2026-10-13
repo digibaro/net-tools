@@ -24,7 +24,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 |---|---|---|---|---|---|---|---|
 | IP-01 | What is my IP | Shows client public IPv4/IPv6 as seen by server + by outside | H | `api` echoes `X-Forwarded-For`/remote addr | ipify (`api.ipify.org`, `api6.ipify.org`) *(browser-direct OK)* | 1 | ⬜ |
 | IP-02 | IPv4 subnet calculator | Network, broadcast, mask, wildcard, host range, host count, class, private/public | B | `ipaddr.js` | — | 1 | ✅ |
-| IP-03 | IPv6 subnet calculator | Prefix, range, number of /64s, compressed & expanded forms | B | `ip-address` + BigInt | — | 1 | ⬜ |
+| IP-03 | IPv6 subnet calculator | Prefix, range, number of /64s, compressed & expanded forms | B | `ip-address` + BigInt | — | 1 | ✅ |
 | IP-04 | CIDR ↔ IP range | Convert CIDR to first/last IP and an arbitrary range to minimal CIDR list | B | custom | — | 1 | ⬜ |
 | IP-05 | CIDR aggregator / summarizer | Merge/deduplicate a list of prefixes (v4+v6) | B | custom (sorted merge) | — | 1 | ⬜ |
 | IP-06 | VLSM planner | Split a block into subnets by required host counts | B | custom | — | 2 | ⬜ |

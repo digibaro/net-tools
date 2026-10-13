@@ -145,3 +145,22 @@ tools:
       integer: Address (integer)
       previous: Previous network
       next: Next network
+  ipv6-subnet-calculator:
+    title: IPv6 subnet calculator
+    description: Prefix, address range, number of /64s, compressed and expanded forms for an IPv6 prefix.
+    input: IPv6 address and prefix
+    invalid: Enter an IPv6 address with an optional prefix length (0–128), e.g. 2001:db8::/48.
+    fields:
+      network: Network
+      networkExpanded: Network (expanded)
+      firstAddress: First address
+      lastAddress: Last address
+      lastAddressExpanded: Last address (expanded)
+      addressExpanded: Address (expanded)
+      totalAddresses: Total addresses
+      subnets64: /64 subnets
+      subnets48: /48 subnets
+      type: Address type
+      reverseZone: Reverse zone
+      previous: Previous network
+      next: Next network
