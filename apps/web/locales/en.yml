@@ -1496,3 +1496,20 @@ tools:
       c: The country is a two-letter code such as NL or US.
       email: Enter a valid email address.
       san: Each alternative name must be a host name, a wildcard (*.example.com) or an IP address.
+  cert-key-matcher:
+    title: Certificate / key matcher
+    description: Check that a certificate, a private key and a CSR belong together by comparing their public keys — in your browser.
+    inputs:
+      certificate: Certificate
+      key: Private key
+      csr: CSR
+    privacy: Everything is checked in your browser. The private key is not sent anywhere and is not stored in the page address.
+    match: The public keys match — these belong together.
+    mismatch: The public keys differ — these do not belong together.
+    keys: Public keys
+    how: Compared by the SHA-256 of each public key (SubjectPublicKeyInfo). Works for RSA, ECDSA and Ed25519.
+    errors:
+      invalid: This is not a valid PEM block of this type.
+      no-key: No PEM private key found.
+      encrypted: The key is encrypted. Decrypt it first (openssl pkey -in key.pem -out plain.pem).
+      unsupported: This key type or format is not supported.
