@@ -123,3 +123,25 @@ notFound:
   description: The page you are looking for does not exist.
   back: Back to home
 tools:
+  ipv4-subnet-calculator:
+    title: IPv4 subnet calculator
+    description: Network, broadcast, netmask, wildcard, host range and host count for an IPv4 address and prefix.
+    input: IPv4 address and prefix
+    hint: 'Accepts 192.168.1.10/24, 192.168.1.10 255.255.255.0 or a single address.'
+    invalid: Enter an IPv4 address with a prefix length (0–32) or a contiguous netmask.
+    fields:
+      network: Network
+      netmask: Netmask
+      wildcard: Wildcard mask
+      broadcast: Broadcast
+      hostRange: Host range
+      usableHosts: Usable hosts
+      totalAddresses: Total addresses
+      class: Class
+      type: Address type
+      binaryAddress: Address (binary)
+      binaryNetmask: Netmask (binary)
+      hex: Address (hex)
+      integer: Address (integer)
+      previous: Previous network
+      next: Next network

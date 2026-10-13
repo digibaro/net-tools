@@ -8,6 +8,13 @@ export const lightThemeOverrides: GlobalThemeOverrides = {
     primaryColorPressed: '#0b5f39',
     primaryColorSuppl: '#12905a',
   },
+  // Naive's default light tag text (e.g. #18a058 on its 10% tint) is ~3:1; darken to >= 5.7:1.
+  Tag: {
+    textColorSuccess: '#0b6b40',
+    textColorInfo: '#1559b0',
+    textColorWarning: '#8a5300',
+    textColorError: '#b0203f',
+  },
 }
 
 export const darkThemeOverrides: GlobalThemeOverrides = {
