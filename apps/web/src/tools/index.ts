@@ -17,6 +17,7 @@ import { tool as dnsRecordTypes } from './dns-record-types'
 import { tool as dnsTrace } from './dns-trace'
 import { tool as domainExpiry } from './domain-expiry'
 import { tool as domainParser } from './domain-parser'
+import { tool as emailHeaderAnalyzer } from './email-header-analyzer'
 import { tool as encryptedDnsTester } from './encrypted-dns-tester'
 import { tool as eui64Calculator } from './eui64-calculator'
 import { tool as httpRequest } from './http-request'
@@ -75,7 +76,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
-  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker] },
+  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },

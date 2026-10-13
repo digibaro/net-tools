@@ -1424,3 +1424,24 @@ tools:
       text: Enter the text.
       value: Check the value.
       service: Service and protocol are labels such as sip and tcp.
+  email-header-analyzer:
+    title: Email header analyzer
+    description: Paste email headers to see the delivery path hop by hop, delays between servers, and SPF, DKIM and DMARC results.
+    input: Message headers
+    placeholder: Paste the full headers ("Show original" / "View source" in your mail client).
+    privacy: The headers are analyzed in your browser and are not sent anywhere or kept in the page address.
+    summary: Message
+    auth: Authentication
+    noAuth: No Authentication-Results header was found.
+    dkimSig: 'DKIM signature by {domain}, selector {selector} ({alg}).'
+    checkKey: Check the key
+    hops: 'Delivery path ({n} hops)'
+    total: 'Total transit time: {total}.'
+    slow: 'The slowest hop took {delay}.'
+    noHops: No Received headers were found.
+    columns:
+      delay: Delay
+      from: From
+      by: By
+      with: Protocol
+      date: Time
