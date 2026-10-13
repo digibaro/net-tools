@@ -3,13 +3,14 @@
 services:
   web:
     build: !reset null
-    image: node:22-alpine
-    working_dir: /repo/apps/web
-    command: sh -c "corepack enable && pnpm install && pnpm dev --host 0.0.0.0 --port 8080"
+    image: node:24-alpine
+    working_dir: /repo
+    command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @nettools/web dev --host 0.0.0.0 --port 8080"
     environment:
       VITE_API_PROXY: http://api:8081
     volumes:
       - ./:/repo
+      - root_node_modules:/repo/node_modules
       - web_node_modules:/repo/apps/web/node_modules
     read_only: false
     tmpfs: !reset []
@@ -31,5 +32,6 @@ services:
     healthcheck: !reset {}
 
 volumes:
+  root_node_modules:
   web_node_modules:
   go_mod_cache:
