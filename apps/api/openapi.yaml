@@ -365,6 +365,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/PortCheck" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/ntp:
+    get:
+      operationId: ntpCheck
+      summary: Query an NTP server (offset, stratum, delay, refid)
+      tags: [connectivity]
+      x-capability: net.ntp
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/NtpCheck" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -750,3 +772,24 @@ components:
               service: { type: string }
               rttMs: { type: number }
               detail: { type: string }
+    NtpCheck:
+      type: object
+      required: [server, address, version, stratum, referenceId, referenceTime, serverTime, offsetMs, rttMs, precisionMs, rootDelayMs, rootDispersionMs, rootDistanceMs, leap, kissCode, valid, problem]
+      properties:
+        server: { type: string }
+        address: { type: string }
+        version: { type: integer }
+        stratum: { type: integer }
+        referenceId: { type: string }
+        referenceTime: { type: string }
+        serverTime: { type: string }
+        offsetMs: { type: number }
+        rttMs: { type: number }
+        precisionMs: { type: number }
+        rootDelayMs: { type: number }
+        rootDispersionMs: { type: number }
+        rootDistanceMs: { type: number }
+        leap: { type: string }
+        kissCode: { type: string }
+        valid: { type: boolean }
+        problem: { type: string }

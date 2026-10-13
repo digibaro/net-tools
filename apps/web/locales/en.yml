@@ -913,3 +913,26 @@ tools:
       filtered: Filtered
       open|filtered: Open or filtered
       error: Error
+  ntp-check:
+    title: NTP check
+    description: Query an NTP server for its time, stratum, reference, delay and the offset from this server's clock.
+    server: NTP server
+    run: Query
+    invalid: 'The answer is not usable: {problem}'
+    quality:
+      good: 'Healthy — offset {offset} ms from the NetTools server clock.'
+      fair: 'Offset {offset} ms from the NetTools server clock (either clock may be off).'
+      poor: 'Large offset of {offset} ms from the NetTools server clock.'
+    fields:
+      address: Address
+      offset: Clock offset
+      rtt: Round-trip delay
+      stratum: Stratum
+      refid: Reference ID
+      referenceTime: Reference time
+      serverTime: Server time
+      rootDelay: Root delay
+      rootDispersion: Root dispersion
+      precision: Precision
+      leap: Leap indicator
+      version: Version

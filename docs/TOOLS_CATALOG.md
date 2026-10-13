@@ -75,7 +75,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CON-08 | Bandwidth test (iperf3) | TCP/UDP throughput to an iperf3 server | S | `iperf3 -c … --json` via execx | public iperf3 servers list (user-supplied) | 4 | ⬜ |
 | CON-09 | Browser speed test | Download/upload/latency between browser and server | B+S | LibreSpeed container (`speedtest` profile) | Cloudflare speed test endpoints | 3 | ⬜ |
 | CON-10 | Global ping / "is it down" | Ping/HTTP from many countries, map view | P | — | Globalping API, check-host.net | 3 | ⬜ |
-| CON-11 | NTP check | Query NTP server: offset, stratum, delay, refid | S | `github.com/beevik/ntp` | — | 2 | ⬜ |
+| CON-11 | NTP check | Query NTP server: offset, stratum, delay, refid | S | `github.com/beevik/ntp` | — | 2 | ✅ |
 | CON-12 | SNMP get / walk | v2c/v3 get/walk of an OID subtree (bounded) | S | `gosnmp` | — | 4 | ⬜ |
 | CON-13 | Server network info | Interfaces, addresses, routes, resolvers, gateway of the api container/host | S | `net.Interfaces`, `/proc/net/route` | — | 2 | ⬜ |
 | CON-14 | IPv6 readiness | Does target have AAAA, is it reachable over v6 from server | S | DNS + dial | Globalping | 3 | ⬜ |

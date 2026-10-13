@@ -3,6 +3,7 @@ module github.com/digibaro/net-tools/apps/api
 go 1.27
 
 require (
+	github.com/beevik/ntp v1.6.0
 	github.com/go-chi/chi/v5 v5.4.0
 	github.com/miekg/dns v1.1.73
 	github.com/prometheus-community/pro-bing v0.9.1
