@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable } from 'naive-ui'
-import { computed } from 'vue'
+import { NA, NDataTable } from 'naive-ui'
+import { computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ResultActions from './ResultActions.vue'
 
@@ -11,6 +11,8 @@ export interface ResultColumn {
   sortable?: boolean
   mono?: boolean
   width?: number
+  /** Row key holding a URL; the cell renders as an external link. */
+  hrefKey?: string
 }
 
 type Row = Record<string, unknown>
@@ -36,6 +38,13 @@ const tableColumns = computed<DataTableColumns<Row>>(() => props.columns.map(c =
   title: c.title,
   width: c.width,
   className: c.mono ? 'font-mono' : undefined,
+  render: c.hrefKey
+    ? (row: Row) => {
+        const href = row[c.hrefKey!]
+        const text = String(row[c.key] ?? '')
+        return typeof href === 'string' && href ? h(NA, { href, target: '_blank', rel: 'noopener noreferrer' }, () => text) : text
+      }
+    : undefined,
   sorter: c.sortable
     ? (a: Row, b: Row) => {
         const x = a[c.key]

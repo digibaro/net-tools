@@ -98,7 +98,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-11 | WebSocket tester | Connect, send/receive messages, close codes | B | native `WebSocket` | — | 3 | ⬜ |
 | WEB-12 | URL parser / encoder | Components, query params, encode/decode | B | `URL` | — | 1 | ✅ |
 | WEB-13 | User-agent parser | Browser/OS/device from UA string | B | `ua-parser-js` | — | 1 | ✅ |
-| WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ⬜ |
+| WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ✅ |
 | WEB-15 | curl command builder / parser | Build curl from form; parse curl into fields | B | custom | — | 3 | ⬜ |
 
 ## 5. TLS & Certificates

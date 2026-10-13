@@ -4,6 +4,7 @@ import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as domainParser } from './domain-parser'
 import { tool as eui64Calculator } from './eui64-calculator'
+import { tool as httpStatusCodes } from './http-status-codes'
 import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
@@ -26,7 +27,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser] },
   { id: 'connectivity', components: [] },
-  { id: 'web', components: [urlParser, userAgentParser] },
+  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
   { id: 'tls', components: [] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },
