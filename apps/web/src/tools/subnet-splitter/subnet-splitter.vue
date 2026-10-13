@@ -42,7 +42,7 @@ const columns = computed(() => [
         </NRadioGroup>
       </NFormItem>
       <NFormItem :label="t(splitMode === 'count' ? 'tools.subnet-splitter.count' : 'tools.subnet-splitter.newPrefix')" :show-feedback="false">
-        <NInputNumber v-model:value="value" :min="splitMode === 'count' ? 1 : 0" :max="splitMode === 'count' ? 1048576 : 128" class="w-40" :input-props="{ 'aria-label': t('tools.subnet-splitter.value') }" data-testid="value" />
+        <NInputNumber v-model:value="value" :show-button="false" :min="splitMode === 'count' ? 1 : 0" :max="splitMode === 'count' ? 1048576 : 128" class="w-40" :input-props="{ 'aria-label': t('tools.subnet-splitter.value') }" data-testid="value" />
       </NFormItem>
     </div>
   </CCard>
