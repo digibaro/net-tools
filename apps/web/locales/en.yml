@@ -364,3 +364,19 @@ tools:
       linkLocal: Link-local address
       slaac: SLAAC address
       mac: MAC address
+  what-is-my-ip:
+    title: What is my IP
+    description: Your public IPv4 and IPv6 addresses as seen from the Internet, and the address the NetTools server sees.
+    refresh: Refresh
+    ipv4: IPv4
+    ipv6: IPv6
+    address: Address
+    family: Family
+    protocol: Protocol
+    notAvailable: Not available
+    publicTitle: As seen from the Internet
+    serverTitle: As seen by this NetTools server
+    ipifyNote: Looked up directly from your browser via ipify.org (api.ipify.org / api6.ipify.org), which sees your address. "Not available" usually means no connectivity for that family.
+    relation:
+      private: The server sees a private address, so it is on your local network or behind the same NAT. Use the Internet view for your public address.
+      different: The server sees a different public address than the Internet does — a proxy, VPN or NAT64 is probably in the path.
