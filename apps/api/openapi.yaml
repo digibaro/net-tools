@@ -657,6 +657,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/EmailDkim" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/asn/lookup:
+    get:
+      operationId: asnLookup
+      summary: Origin ASN, prefix, AS name and registry for an IP (Team Cymru DNS)
+      tags: [bgp]
+      x-capability: bgp.ip2asn
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/AsnLookup" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1355,3 +1376,20 @@ components:
         revoked: { type: boolean }
         problems: { type: array, items: { type: string } }
         warnings: { type: array, items: { type: string } }
+    AsnOrigin:
+      type: object
+      required: [asn, prefix, country, registry, allocated, asName]
+      properties:
+        asn: { type: integer }
+        prefix: { type: string }
+        country: { type: string }
+        registry: { type: string }
+        allocated: { type: string }
+        asName: { type: string }
+    AsnLookup:
+      type: object
+      required: [ip, announced, origins]
+      properties:
+        ip: { type: string }
+        announced: { type: boolean }
+        origins: { type: array, items: { $ref: "#/components/schemas/AsnOrigin" } }

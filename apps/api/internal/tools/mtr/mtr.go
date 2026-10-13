@@ -4,11 +4,14 @@ package mtr
 import (
 	"context"
 	"net/http"
+	"net/netip"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/go-chi/chi/v5"
 
+	"github.com/digibaro/net-tools/apps/api/internal/asn"
 	"github.com/digibaro/net-tools/apps/api/internal/execx"
 	"github.com/digibaro/net-tools/apps/api/internal/limits"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
@@ -31,6 +34,8 @@ type Tool struct {
 	deps tools.Deps
 	// UpdateEvery throttles per-hop updates in MTR mode.
 	UpdateEvery time.Duration
+	// ASN resolves origin ASNs for hop annotation (defaults to Team Cymru DNS).
+	ASN asn.TXTFunc
 }
 
 func (t *Tool) ID() string {
@@ -52,6 +57,9 @@ func (t *Tool) Mount(r chi.Router, d tools.Deps) {
 	path := "/traceroute/stream"
 	if t.Mode == MTR {
 		path = "/mtr/stream"
+	}
+	if t.ASN == nil {
+		t.ASN = asn.SystemTXT
 	}
 	r.With(d.RateLimit(limits.Heavy), d.Slot, d.Timeout(d.Config.Limits.StreamTimeoutMax)).Get(path, t.handle)
 }
@@ -131,7 +139,29 @@ func (t *Tool) run(ctx context.Context, args []string, emit stream.Emit) (Summar
 	if err != nil && ctx.Err() == nil {
 		return Summary{}, &mtrError{err}
 	}
-	return Summary{Hops: p.Hops()}, nil
+	hops := p.Hops()
+	t.annotateASN(ctx, hops)
+	return Summary{Hops: hops}, nil
+}
+
+// annotateASN adds origin ASNs for public hop addresses (best effort, 3 s budget).
+func (t *Tool) annotateASN(ctx context.Context, hops []Hop) {
+	ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	var wg sync.WaitGroup
+	for i := range hops {
+		ip, err := netip.ParseAddr(hops[i].IP)
+		if err != nil || !asn.IsPublic(ip) {
+			continue
+		}
+		wg.Go(func() {
+			if origins, err := asn.Lookup(ctx, t.ASN, ip); err == nil && len(origins) > 0 {
+				n := origins[0].ASN
+				hops[i].ASN = &n
+			}
+		})
+	}
+	wg.Wait()
 }
 
 type mtrError struct{ err error }

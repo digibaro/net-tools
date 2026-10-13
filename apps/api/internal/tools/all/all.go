@@ -3,6 +3,7 @@ package all
 
 import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/asnlookup"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnscaa"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsconsistency"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsencrypted"
@@ -49,5 +50,6 @@ func Tools() []tools.Tool {
 		&email.SPFTool{},
 		&email.DMARCTool{},
 		&email.DKIMTool{},
+		&asnlookup.Tool{},
 	}
 }

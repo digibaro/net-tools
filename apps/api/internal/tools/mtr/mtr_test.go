@@ -1,6 +1,7 @@
 package mtr
 
 import (
+	"context"
 	"os"
 	"path/filepath"
 	"slices"
@@ -75,11 +76,21 @@ func fakeMtr(t *testing.T, out string) (*execx.Runner, string) {
 	return execx.New(map[string][]string{"mtr": {script}}), argsFile
 }
 
+func fakeASN(_ context.Context, name string) ([]string, error) {
+	switch name {
+	case "14.215.184.93.origin.asn.cymru.com":
+		return []string{"15133 | 93.184.215.0/24 | US | ripencc | 2008-06-02"}, nil
+	case "AS15133.asn.cymru.com":
+		return []string{"15133 | US | arin | 2001-06-01 | EDGECAST, US"}, nil
+	}
+	return nil, nil
+}
+
 func TestTracerouteStream(t *testing.T) {
 	runner, argsFile := fakeMtr(t, rawOutput)
-	env := tooltest.New(t, &Tool{Mode: Traceroute}, tooltest.Options{Exec: runner, Lookup: tooltest.StaticLookup("93.184.215.14")})
+	env := tooltest.New(t, &Tool{Mode: Traceroute, ASN: fakeASN}, tooltest.Options{Exec: runner, Lookup: tooltest.StaticLookup("93.184.215.14")})
 	body := env.Get("/api/v1/traceroute/stream?target=example.com&proto=udp&maxHops=20").Raw.Body.String()
-	if !strings.Contains(body, "event: hop") || !strings.Contains(body, `"hops":[`) || !strings.Contains(body, `"host":"gw.example."`) {
+	if !strings.Contains(body, "event: hop") || !strings.Contains(body, `"hops":[`) || !strings.Contains(body, `"host":"gw.example."`) || !strings.Contains(body, `"asn":15133`) {
 		t.Fatalf("body = %s", body)
 	}
 	args, _ := os.ReadFile(argsFile)
@@ -90,7 +101,7 @@ func TestTracerouteStream(t *testing.T) {
 
 func TestMTRLimitsAndSSRF(t *testing.T) {
 	runner, _ := fakeMtr(t, rawOutput)
-	env := tooltest.New(t, &Tool{Mode: MTR, UpdateEvery: time.Nanosecond}, tooltest.Options{Exec: runner, Lookup: tooltest.StaticLookup("172.16.5.5"), Env: map[string]string{"MTR_MAX_CYCLES": "5", "TRACEROUTE_MAX_HOPS": "20"}})
+	env := tooltest.New(t, &Tool{Mode: MTR, UpdateEvery: time.Nanosecond, ASN: fakeASN}, tooltest.Options{Exec: runner, Lookup: tooltest.StaticLookup("172.16.5.5"), Env: map[string]string{"MTR_MAX_CYCLES": "5", "TRACEROUTE_MAX_HOPS": "20"}})
 	for q, code := range map[string]string{
 		"target=8.8.8.8&cycles=6":   "INVALID_INPUT",
 		"target=8.8.8.8&maxHops=21": "INVALID_INPUT",

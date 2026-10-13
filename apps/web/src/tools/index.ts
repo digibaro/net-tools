@@ -23,6 +23,7 @@ import { tool as httpStatusCodes } from './http-status-codes'
 import { tool as httpTiming } from './http-timing'
 import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
+import { tool as ipToAsn } from './ip-to-asn'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
 import { tool as ipv4SubnetCalculator } from './ipv4-subnet-calculator'
 import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
@@ -66,7 +67,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker] },
-  { id: 'bgp', components: [] },
+  { id: 'bgp', components: [ipToAsn] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },

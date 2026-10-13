@@ -135,7 +135,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| BGP-01 | IP → ASN | Origin ASN, prefix, AS name, RIR | H | Team Cymru DNS (`origin.asn.cymru.com`) via `miekg/dns` | RIPEstat `prefix-overview` | 2 | ⬜ |
+| BGP-01 | IP → ASN | Origin ASN, prefix, AS name, RIR | H | Team Cymru DNS (`origin.asn.cymru.com`) via `miekg/dns` | RIPEstat `prefix-overview` | 2 | ✅ |
 | BGP-02 | ASN info | Name, country, announced prefixes v4/v6, neighbours | P | — | RIPEstat `as-overview`, `announced-prefixes`, `asn-neighbours` | 3 | ⬜ |
 | BGP-03 | Prefix routing status | Visibility, first/last seen, origin(s), MOAS detection | P | — | RIPEstat `routing-status`, `bgp-state` | 3 | ⬜ |
 | BGP-04 | RPKI ROV validation | Valid/invalid/unknown for prefix+origin | P | — | RIPEstat `rpki-validation` | 3 | ⬜ |

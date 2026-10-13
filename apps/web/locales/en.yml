@@ -1207,3 +1207,16 @@ tools:
       name: Record
       key: Key
       flags: Tags
+  ip-to-asn:
+    title: IP → ASN
+    description: Find the autonomous system (ASN), announced prefix, AS name, country and registry for an IP address.
+    run: Look up
+    notAnnounced: '{ip} is not announced in the global BGP table (private, reserved or unrouted).'
+    source: Data from the Team Cymru IP-to-ASN service (DNS interface).
+    columns:
+      asn: ASN
+      name: AS name
+      prefix: Prefix
+      country: Country
+      registry: Registry
+      allocated: Allocated
