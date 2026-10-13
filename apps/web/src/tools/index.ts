@@ -2,6 +2,7 @@ import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as bdpCalculator } from './bdp-calculator'
+import { tool as browserLatency } from './browser-latency'
 import { tool as caaChecker } from './caa-checker'
 import { tool as certKeyMatcher } from './cert-key-matcher'
 import { tool as certificateDecoder } from './certificate-decoder'
@@ -84,7 +85,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
-  { id: 'client', components: [requestHeaders] },
+  { id: 'client', components: [requestHeaders, browserLatency] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories

@@ -1548,3 +1548,19 @@ tools:
       peers: 'Between 1 and {max} clients.'
       allowedIps: Enter one or more networks in CIDR notation.
       full: The tunnel network is too small for this many clients.
+  browser-latency:
+    title: Browser ↔ server latency
+    description: Measure HTTP round-trip time and jitter from your browser to this NetTools server, with a live graph.
+    stop: Stop
+    progress: Measurement progress
+    note: Each sample is a small HTTP request over an already open connection, so it includes browser and server processing on top of the network round trip.
+    unreachable: No request reached the server.
+    fields:
+      medianP95: Median / 95th percentile
+      protocol: HTTP version
+      ip: Your address as seen by the server
+    quality:
+      excellent: Excellent
+      good: Good
+      fair: Fair
+      poor: Poor
