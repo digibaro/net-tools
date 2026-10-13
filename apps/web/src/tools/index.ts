@@ -27,6 +27,7 @@ import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipToAsn } from './ip-to-asn'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
+import { tool as ipv4InIpv6 } from './ipv4-in-ipv6'
 import { tool as ipv4SubnetCalculator } from './ipv4-subnet-calculator'
 import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
 import { tool as ipv6SubnetCalculator } from './ipv6-subnet-calculator'
@@ -66,7 +67,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
-  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner] },
+  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },

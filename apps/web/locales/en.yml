@@ -1306,3 +1306,27 @@ tools:
       requirements: Each line needs a host count, optionally preceded by a name (Office 100).
       no-fit: The subnets do not fit in this network. Use a larger network or fewer hosts.
       too-many: 'At most {max} subnets.'
+  ipv4-in-ipv6:
+    title: IPv4 in IPv6 (mapped, 6to4, NAT64)
+    description: Embed an IPv4 address in IPv6 (::ffff:, 6to4, NAT64 with any RFC 6052 prefix) or find the IPv4 address inside an IPv6 one, Teredo included.
+    input: IPv4 or IPv6 address
+    prefix: NAT64 prefix (/32, /40, /48, /56, /64 or /96)
+    invalid: Enter an IPv4 or IPv6 address.
+    invalidPrefix: Use an IPv6 prefix of length 32, 40, 48, 56, 64 or 96 with bits 64–71 set to zero (RFC 6052).
+    embedTitle: IPv6 forms
+    extractTitle: Embedded IPv4 address
+    none: No IPv4 address is embedded in a well-known prefix.
+    deprecated: deprecated
+    columns:
+      kind: Form
+      ipv6: IPv6
+      ipv4: IPv4
+      detail: Detail
+    kinds:
+      mapped: IPv4-mapped (::ffff:0:0/96)
+      nat64: NAT64 well-known prefix (64:ff9b::/96)
+      nat64Local: NAT64 local-use prefix (64:ff9b:1::/48)
+      nat64Custom: NAT64 network-specific prefix
+      sixToFour: 6to4 site prefix (2002::/16)
+      teredo: Teredo client (2001::/32)
+      compat: IPv4-compatible (::/96)
