@@ -8,6 +8,7 @@ import { tool as certKeyMatcher } from './cert-key-matcher'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
+import { tool as connectionInfo } from './connection-info'
 import { tool as corsTester } from './cors-tester'
 import { tool as csrTool } from './csr-tool'
 import { tool as dataUnitConverter } from './data-unit-converter'
@@ -85,7 +86,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
-  { id: 'client', components: [requestHeaders, browserLatency] },
+  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories

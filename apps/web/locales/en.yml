@@ -1564,3 +1564,36 @@ tools:
       good: Good
       fair: Fair
       poor: Poor
+  connection-info:
+    title: Browser connection info
+    description: Check IPv4 and IPv6 connectivity from your browser, the connection type it reports, and how this page was loaded (HTTP version, DNS, TLS, time to first byte).
+    ipTitle: Connectivity
+    ipNote: IPv4 and IPv6 are tested with requests to api.ipify.org and api6.ipify.org.
+    refresh: Test again
+    noConnectivity: No connectivity
+    estimateTitle: Connection estimate
+    noEstimate: This browser does not expose the Network Information API (only Chromium-based browsers do).
+    timingTitle: How this page was loaded
+    browserTitle: Browser
+    dohNote: Web pages cannot detect encrypted DNS (DoH). Check your browser's secure DNS setting or use the encrypted DNS tester.
+    stack:
+      dual: Dual stack
+      v4-only: IPv4 only
+      v6-only: IPv6 only
+      none: No connectivity
+    fields:
+      toServer: To this server
+      type: Connection type
+      effectiveType: Effective type
+      downlink: Downlink
+      rtt: Round-trip time
+      saveData: Data saver
+      protocol: HTTP version
+      dns: DNS lookup
+      connect: Connect (TCP + TLS)
+      tls: TLS handshake
+      ttfb: Time to first byte
+      download: Download
+      online: Online
+      secure: Secure context (HTTPS)
+      doh: Encrypted DNS
