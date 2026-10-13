@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
-FROM node:24-alpine AS build
+# Static output is platform independent: build natively, never under QEMU.
+FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 WORKDIR /src
 # pnpm version comes from "packageManager" in package.json
 RUN corepack enable

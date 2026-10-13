@@ -1,7 +1,9 @@
 # syntax=docker/dockerfile:1
 # Use the latest stable Go; bump via Renovate.
 ARG GO_VERSION=1
-FROM golang:${GO_VERSION}-bookworm AS build
+# Cross-compile natively on the build host instead of emulating the target arch.
+FROM --platform=$BUILDPLATFORM golang:${GO_VERSION}-bookworm AS build
+ARG TARGETOS TARGETARCH
 WORKDIR /src/apps/api
 COPY apps/api/go.mod apps/api/go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod go mod download
@@ -10,7 +12,7 @@ ARG VERSION=dev
 ARG COMMIT=unknown
 ARG BUILD_DATE=unknown
 RUN --mount=type=cache,target=/go/pkg/mod --mount=type=cache,target=/root/.cache/go-build \
-    CGO_ENABLED=0 go build -trimpath \
+    CGO_ENABLED=0 GOOS=$TARGETOS GOARCH=$TARGETARCH go build -trimpath \
       -ldflags="-s -w -X main.version=${VERSION} -X main.commit=${COMMIT} -X main.buildDate=${BUILD_DATE}" \
       -o /out/nettools-api ./cmd/nettools-api
 
