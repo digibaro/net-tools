@@ -12,17 +12,20 @@ export interface ResultColumn {
   width?: number
 }
 
-type Row = Record<string, string | number | boolean | null | undefined>
+type Row = Record<string, unknown>
 
 const props = withDefaults(defineProps<{
   columns: ResultColumn[]
-  rows: Row[]
+  /** Any plain objects; values are shown via String(). */
+  rows: object[]
   filename?: string
   /** Show copy / download actions. */
   actions?: boolean
   maxHeight?: number
   rowKey?: string
 }>(), { filename: 'result.json', actions: true })
+
+const data = computed(() => props.rows as Row[])
 
 const tableColumns = computed<DataTableColumns<Row>>(() => props.columns.map(c => ({
   key: c.key,
@@ -42,7 +45,7 @@ const tableColumns = computed<DataTableColumns<Row>>(() => props.columns.map(c =
 
 function asText(): string {
   const header = props.columns.map(c => c.title).join('\t')
-  const lines = props.rows.map(r => props.columns.map(c => String(r[c.key] ?? '')).join('\t'))
+  const lines = data.value.map(r => props.columns.map(c => String(r[c.key] ?? '')).join('\t'))
   return [header, ...lines].join('\n')
 }
 </script>
@@ -51,7 +54,7 @@ function asText(): string {
   <div>
     <NDataTable
       :columns="tableColumns"
-      :data="rows"
+      :data="data"
       :max-height="maxHeight"
       :row-key="rowKey ? (r: Row) => String(r[rowKey!]) : undefined"
       size="small"

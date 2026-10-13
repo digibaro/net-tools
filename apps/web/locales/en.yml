@@ -164,3 +164,17 @@ tools:
       reverseZone: Reverse zone
       previous: Previous network
       next: Next network
+  cidr-range-converter:
+    title: CIDR ↔ IP range
+    description: Convert a CIDR block to its first and last address, or an arbitrary IP range to the minimal list of CIDR blocks.
+    input: CIDR block or IP range
+    invalid: Enter a CIDR (10.0.0.0/22) or a range of two addresses of the same family (10.0.0.5 - 10.0.1.9).
+    title-cidr: Range
+    title-range: CIDR blocks
+    summary: '{blocks} block(s) covering {total} addresses.'
+    truncated: 'Showing the first {max}.'
+    columns:
+      cidr: CIDR
+      first: First address
+      last: Last address
+      addresses: Addresses
