@@ -215,3 +215,18 @@ tools:
       ip: IP address
       matched: Matched
       prefixes: Matching prefixes (most specific first)
+  ipv4-format-converter:
+    title: IPv4 format converter
+    description: Convert an IPv4 address between dotted, decimal, hex, octal and binary notations.
+    input: IPv4 address in any notation
+    invalid: Not a valid IPv4 address in dotted, decimal, hex (0x…), octal (0…) or binary notation.
+    lenient: 'This shorthand is accepted by inet_aton() and most browsers and resolves to {ip} — a common trick to disguise addresses.'
+    fields:
+      dotted: Dotted decimal
+      decimal: Decimal (32-bit integer)
+      hex: Hexadecimal
+      hexDotted: Dotted hexadecimal
+      octalDotted: Dotted octal
+      binaryDotted: Dotted binary
+      binary: Binary
+      ipv4Mapped: IPv4-mapped IPv6
