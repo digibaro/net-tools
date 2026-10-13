@@ -155,6 +155,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsReverse" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/caa:
+    get:
+      operationId: dnsCaa
+      summary: CAA records with RFC 8659 tree climbing
+      tags: [dns]
+      x-capability: dns.caa
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsCaa" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -338,3 +360,31 @@ components:
               name: { type: string }
               forwardAddresses: { type: array, items: { type: string } }
               forwardConfirmed: { type: boolean }
+    CaaRecord:
+      type: object
+      required: [flag, critical, tag, value]
+      properties:
+        flag: { type: integer }
+        critical: { type: boolean }
+        tag: { type: string }
+        value: { type: string }
+    DnsCaa:
+      type: object
+      required: [name, relevantName, steps, issue, issueWild, iodef, unknownCritical, resolver]
+      properties:
+        name: { type: string }
+        relevantName: { type: string, description: "Where the effective CAA set was found; empty if none" }
+        resolver: { type: string }
+        issue: { type: array, items: { type: string } }
+        issueWild: { type: array, items: { type: string } }
+        iodef: { type: array, items: { type: string } }
+        unknownCritical: { type: array, items: { type: string } }
+        steps:
+          type: array
+          items:
+            type: object
+            required: [name, rcode, records]
+            properties:
+              name: { type: string }
+              rcode: { type: string }
+              records: { type: array, items: { $ref: "#/components/schemas/CaaRecord" } }

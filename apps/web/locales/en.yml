@@ -764,3 +764,24 @@ tools:
       name: PTR name
       forward: Forward addresses
       confirmed: Confirmed
+  caa-checker:
+    title: CAA checker
+    description: Which certificate authorities may issue for a domain, following CAA tree climbing (RFC 8659).
+    name: Domain name
+    run: Check CAA
+    steps: Lookup steps
+    anyCa: Any CA
+    noCa: No CA
+    verdict:
+      any: No CAA records apply, so any certificate authority may issue for this name.
+      restricted: 'Only these certificate authorities may issue: {cas}.'
+      none-allowed: CAA forbids every certificate authority from issuing (issue ";").
+      critical: An unknown critical CAA property is present, so certificate authorities must refuse to issue.
+    fields:
+      relevant: CAA set found at
+      wildcard: Wildcard certificates
+      iodef: Violation reports (iodef)
+    columns:
+      name: Name
+      rcode: Response
+      record: CAA record

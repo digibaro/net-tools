@@ -2,6 +2,7 @@ import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as bdpCalculator } from './bdp-calculator'
+import { tool as caaChecker } from './caa-checker'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
@@ -38,7 +39,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
-  { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns] },
+  { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker] },
   { id: 'connectivity', components: [] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
   { id: 'tls', components: [certificateDecoder] },
