@@ -12,7 +12,9 @@ for (const tool of tools) {
     test('renders without console errors and fits 360px', async ({ page }) => {
       const errors: string[] = []
       page.on('console', (msg) => {
-        if (msg.type() === 'error')
+        // Third-party lookups (e.g. ipify over IPv6) may legitimately fail; the tool handles it.
+        const external = !msg.location().url.startsWith(new URL(page.url() || 'http://x').origin)
+        if (msg.type() === 'error' && !(external && msg.text().startsWith('Failed to load resource')))
           errors.push(msg.text())
       })
       page.on('pageerror', err => errors.push(err.message))
