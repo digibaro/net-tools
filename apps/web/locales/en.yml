@@ -292,3 +292,20 @@ tools:
       matching: Matching addresses
       acl: ACL example
       ospf: OSPF example
+  reverse-dns-name:
+    title: Reverse DNS name builder
+    description: Build in-addr.arpa / ip6.arpa PTR names for addresses and reverse zone names for prefixes.
+    input: IP addresses or prefixes (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    classlessNote: 'RFC 2317 classless delegation: CNAMEs in {parent} point into this sub-zone.'
+    truncated: 'First zones of {total} shown.'
+    multiple: 'Not label-aligned: {count} zones cover this prefix.'
+    kinds:
+      ptr: PTR name
+      zone: Reverse zone
+      classless: Classless zone
+    columns:
+      input: Input
+      kind: Type
+      names: Name(s)
+      note: Note
