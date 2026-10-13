@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
@@ -275,6 +277,17 @@ func TestToAPIError(t *testing.T) {
 		if code.Status() != want {
 			t.Errorf("%s.Status() = %d, want %d", code, code.Status(), want)
 		}
+	}
+}
+
+func TestToAPIErrorCoderAndTimeout(t *testing.T) {
+	_, err := (&target.Resolver{}).Resolve(context.Background(), "http://x", target.Opts{Field: "host"})
+	got := ToAPIError(fmt.Errorf("wrapped: %w", err))
+	if got.Code != CodeInvalidInput || got.Details["field"] != "host" || got.Code.Status() != 400 {
+		t.Errorf("got %+v", got)
+	}
+	if got := ToAPIError(fmt.Errorf("x: %w", context.DeadlineExceeded)); got.Code != CodeTimeout {
+		t.Errorf("timeout mapped to %s", got.Code)
 	}
 }
 

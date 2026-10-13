@@ -1,6 +1,7 @@
 package httpapi
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -77,11 +78,26 @@ func InvalidInput(field, message string) *APIError {
 	return &APIError{Code: CodeInvalidInput, Message: message, Details: map[string]any{"field": field}}
 }
 
+// Coder is implemented by errors from other packages (e.g. target.Error) that carry a
+// client-safe code without importing httpapi.
+type Coder interface {
+	error
+	APICode() string
+	APIMessage() string
+	APIDetails() map[string]any
+}
+
 // ToAPIError maps any error to a client-safe APIError; unknown errors become INTERNAL
 // with a generic message so internals never leak.
 func ToAPIError(err error) *APIError {
 	if apiErr, ok := errors.AsType[*APIError](err); ok {
 		return apiErr
+	}
+	if c, ok := errors.AsType[Coder](err); ok {
+		return &APIError{Code: Code(c.APICode()), Message: c.APIMessage(), Details: c.APIDetails(), Err: err}
+	}
+	if errors.Is(err, context.DeadlineExceeded) {
+		return &APIError{Code: CodeTimeout, Message: "the operation timed out", Err: err}
 	}
 	return &APIError{Code: CodeInternal, Message: "internal error", Err: err}
 }
