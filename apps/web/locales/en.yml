@@ -349,3 +349,18 @@ tools:
       hyphen: Hyphen (00-1a-2b-3c-4d-5e)
       cisco: Cisco (001a.2b3c.4d5e)
       plain: Plain (001a2b3c4d5e)
+  eui64-calculator:
+    title: EUI-64 / link-local from MAC
+    description: 'Build the modified EUI-64 interface ID, fe80:: link-local and SLAAC address from a MAC, or recover the MAC from an address.'
+    mac: MAC address
+    prefix: /64 prefix for SLAAC (optional)
+    address: IPv6 address with an EUI-64 interface ID
+    reverseTitle: Recover the MAC address
+    invalidMac: Not a valid MAC address.
+    invalidPrefix: Enter a /64 prefix, e.g. 2001:db8:1:2::/64.
+    invalidAddress: The interface ID of this address is not a modified EUI-64 (no ff:fe in the middle).
+    fields:
+      interfaceId: Interface ID (modified EUI-64)
+      linkLocal: Link-local address
+      slaac: SLAAC address
+      mac: MAC address
