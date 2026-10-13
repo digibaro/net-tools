@@ -1,6 +1,7 @@
 import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
+import { tool as bdpCalculator } from './bdp-calculator'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
@@ -36,7 +37,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator] },
   { id: 'client', components: [] },
 ]
 

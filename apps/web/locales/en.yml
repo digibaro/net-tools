@@ -544,3 +544,23 @@ tools:
     rate: Data rate
     value: Value
     unit: Unit
+  bdp-calculator:
+    title: BDP / TCP window calculator
+    description: Bandwidth-delay product, required TCP window and window scaling, and maximum throughput for a window, RTT and loss rate.
+    rate: Link rate
+    unit: Unit
+    rtt: Round-trip time (ms)
+    bdpTitle: Bandwidth-delay product
+    windowTitle: Throughput limits
+    windowKiB: Receive window (KiB)
+    mss: MSS (bytes)
+    loss: Packet loss (%)
+    scalingNeeded: 'Yes, window scale factor ≥ {shift} (RFC 7323)'
+    scalingNotNeeded: No, fits in 64 KiB
+    mathisNote: The loss bound uses the Mathis et al. model (throughput ≤ MSS/RTT · 1.22/√p) and applies to Reno-style congestion control.
+    fields:
+      bdp: Bandwidth-delay product
+      window: Required TCP window
+      scaling: Window scaling needed
+      maxThroughput: Max throughput with this window
+      mathis: Max throughput with this loss rate
