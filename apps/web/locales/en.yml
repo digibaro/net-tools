@@ -1284,3 +1284,25 @@ tools:
       timeZone: Time zone
       asn: Network (ASN)
       prefix: Network block
+  vlsm-planner:
+    title: VLSM planner
+    description: Split a network into subnets sized for the number of hosts each one needs, largest first, and see the space left over.
+    network: Network to divide
+    requirements: Subnets (one per line, name and number of hosts)
+    requirementsPlaceholder: "Office 100\nWiFi 50\nLink 2"
+    p2p: Use /31 for 2-host links (RFC 3021)
+    used: '{used} of {total} addresses allocated ({pct} %)'
+    free: Unallocated space
+    columns:
+      name: Name
+      hosts: Hosts
+      cidr: Subnet
+      first: First usable
+      last: Last usable
+      usable: Usable
+      efficiency: Used
+    errors:
+      network: Enter a network in CIDR notation, such as 10.0.0.0/16.
+      requirements: Each line needs a host count, optionally preceded by a name (Office 100).
+      no-fit: The subnets do not fit in this network. Use a larger network or fewer hosts.
+      too-many: 'At most {max} subnets.'

@@ -58,6 +58,7 @@ import { tool as tlsInspector } from './tls-inspector'
 import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
+import { tool as vlsmPlanner } from './vlsm-planner'
 import { tool as whatIsMyIp } from './what-is-my-ip'
 import { tool as whoisLookup } from './whois-lookup'
 import { tool as wifiQrGenerator } from './wifi-qr-generator'
@@ -65,7 +66,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
-  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
+  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
