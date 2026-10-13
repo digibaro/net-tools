@@ -1375,3 +1375,52 @@ tools:
     ok: 'The link works with {db} dB to spare.'
     fail: 'The link is short by {db} dB. Reduce losses or use stronger optics.'
     overload: 'The receiver is overloaded. Add an attenuator of at least {db} dB.'
+  zone-builder:
+    title: Zone file & record builder
+    description: Build BIND-style DNS records — A, AAAA, MX, SRV, CAA, TXT with automatic 255-byte splitting, SPF — and assemble a zone file with SOA.
+    zoneTitle: Zone
+    addTitle: Add a record
+    recordsTitle: Records
+    records: Records (one per line, edit freely)
+    outputTitle: Zone file
+    add: Add to zone
+    download: 'Download {file}'
+    spfType: SPF (TXT)
+    spfTooMany: '{n} DNS lookups — SPF allows at most 10; receivers will reject the record.'
+    headerInvalid: Check the origin, primary name server and email; the SOA header cannot be built.
+    fields:
+      origin: Origin (zone name)
+      defaultTtl: Default TTL (seconds)
+      primary: Primary name server
+      email: Responsible email
+      type: Type
+      name: Name
+      srvBase: Name (below the service labels)
+      ttl: TTL (optional)
+      address: Address
+      target: Target
+      preference: Preference
+      text: Text
+      service: Service
+      protocol: Protocol
+      priority: Priority
+      weight: Weight
+      port: Port
+      tag: Tag
+      value: Value
+      critical: Critical (issuer-critical flag 128)
+      spfMx: Allow the domain's MX servers (mx)
+      spfA: Allow the domain's own address (a)
+      spfIncludes: Include domains (include:)
+      spfIp4: IPv4 networks
+      spfIp6: IPv6 networks
+      spfAll: Everything else
+    errors:
+      name: Enter a name — @ for the zone itself, a relative name (www) or an absolute one ending in a dot.
+      ttl: The TTL must be a whole number of seconds.
+      address: Enter a valid address.
+      target: Enter a host name (relative, or absolute with a trailing dot).
+      number: Numbers must be between 0 and 65535.
+      text: Enter the text.
+      value: Check the value.
+      service: Service and protocol are labels such as sip and tcp.
