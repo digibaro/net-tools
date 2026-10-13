@@ -11,6 +11,7 @@
     "types": [
       "node"
     ],
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true

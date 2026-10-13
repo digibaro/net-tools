@@ -5,7 +5,7 @@ import vue from '@vitejs/plugin-vue'
 import UnoCSS from 'unocss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { defineConfig } from 'vitest/config'
-import { cspScriptHashes } from './build/csp-hashes'
+import { cspScriptHashes } from './build/csp-hashes.ts'
 
 const apiProxy = process.env.VITE_API_PROXY ?? 'http://localhost:8081'
 
