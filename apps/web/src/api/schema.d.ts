@@ -106,6 +106,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/reverse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** PTR lookup with forward confirmation */
+        get: operations["dnsReverse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -228,6 +245,18 @@ export interface components {
             authority: components["schemas"]["DnsRecord"][];
             additional: components["schemas"]["DnsRecord"][];
             rttMs: number;
+        };
+        DnsReverse: {
+            ip: string;
+            ptrName: string;
+            resolver: string;
+            rcode: string;
+            rttMs: number;
+            names: {
+                name: string;
+                forwardAddresses: string[];
+                forwardConfirmed: boolean;
+            }[];
         };
     };
     responses: {
@@ -408,6 +437,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["DnsLookup"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsReverse: {
+        parameters: {
+            query: {
+                ip: string;
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsReverse"];
                     };
                 };
             };

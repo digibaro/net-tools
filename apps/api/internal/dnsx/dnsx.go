@@ -280,3 +280,32 @@ func RcodeName(rcode int) string {
 
 // IsResolvConfMissing reports whether the system resolver is unavailable.
 func IsResolvConfMissing(err error) bool { return errors.Is(err, os.ErrNotExist) }
+
+// Query sends a single question and returns the reply (rcode is in the message).
+func Query(ctx context.Context, s Server, name string, qtype uint16) (*dns.Msg, time.Duration, error) {
+	return Exchange(ctx, s, NewQuery(name, qtype, false))
+}
+
+// Addresses resolves A and AAAA for name via s.
+func Addresses(ctx context.Context, s Server, name string) ([]netip.Addr, error) {
+	var out []netip.Addr
+	for _, qt := range []uint16{dns.TypeA, dns.TypeAAAA} {
+		m, _, err := Query(ctx, s, name, qt)
+		if err != nil {
+			return out, err
+		}
+		for _, rr := range m.Answer {
+			switch v := rr.(type) {
+			case *dns.A:
+				if a, ok := netip.AddrFromSlice(v.A.To4()); ok {
+					out = append(out, a)
+				}
+			case *dns.AAAA:
+				if a, ok := netip.AddrFromSlice(v.AAAA); ok {
+					out = append(out, a)
+				}
+			}
+		}
+	}
+	return out, nil
+}

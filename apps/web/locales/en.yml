@@ -748,3 +748,19 @@ tools:
       tcp: TCP
       dot: DNS over TLS
       doh: DNS over HTTPS
+  reverse-dns:
+    title: Reverse DNS (PTR)
+    description: Look up the hostname of an IP address and check that it resolves back (forward-confirmed reverse DNS).
+    ip: IP address
+    run: Look up
+    invalid: Enter an IPv4 or IPv6 address.
+    ptrName: PTR query name
+    verdict:
+      confirmed: Forward-confirmed — every PTR name resolves back to this address.
+      partial: Partly confirmed — some PTR names do not resolve back to this address.
+      unconfirmed: Not confirmed — the PTR names do not resolve back to this address.
+      none: No PTR record exists for this address.
+    columns:
+      name: PTR name
+      forward: Forward addresses
+      confirmed: Confirmed

@@ -97,7 +97,7 @@ func (t *Tool) handle(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	msg, rtt, err := dnsx.Exchange(r.Context(), srv, dnsx.NewQuery(name, qtype, dnssec))
 	if err != nil {
-		httpapi.Error(w, r, upstream(err))
+		httpapi.Error(w, r, Upstream(err))
 		return
 	}
 	res := Result{
@@ -116,8 +116,8 @@ func (t *Tool) handle(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// upstream maps query failures: deadline → TIMEOUT, others → PROVIDER_ERROR with a safe message.
-func upstream(err error) error {
+// Upstream maps query failures: deadline → TIMEOUT, others → PROVIDER_ERROR with a safe message.
+func Upstream(err error) error {
 	a := httpapi.ToAPIError(err)
 	if a.Code == httpapi.CodeTimeout {
 		return a

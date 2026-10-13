@@ -133,6 +133,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsLookup" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/reverse:
+    get:
+      operationId: dnsReverse
+      summary: PTR lookup with forward confirmation
+      tags: [dns]
+      x-capability: dns.reverse
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsReverse" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -298,3 +320,21 @@ components:
         authority: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
         additional: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
         rttMs: { type: number }
+    DnsReverse:
+      type: object
+      required: [ip, ptrName, resolver, rcode, names, rttMs]
+      properties:
+        ip: { type: string }
+        ptrName: { type: string }
+        resolver: { type: string }
+        rcode: { type: string }
+        rttMs: { type: number }
+        names:
+          type: array
+          items:
+            type: object
+            required: [name, forwardAddresses, forwardConfirmed]
+            properties:
+              name: { type: string }
+              forwardAddresses: { type: array, items: { type: string } }
+              forwardConfirmed: { type: boolean }
