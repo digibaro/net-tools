@@ -38,6 +38,7 @@ import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as mxLookup } from './mx-lookup'
 import { tool as ntpCheck } from './ntp-check'
+import { tool as opticalPower } from './optical-power'
 import { tool as ping } from './ping'
 import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
@@ -77,7 +78,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower] },
   { id: 'client', components: [requestHeaders] },
 ]
 

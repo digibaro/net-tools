@@ -1340,3 +1340,38 @@ tools:
     regenerate: Generate again
     invalid: Enter a prefix such as 10.0.0.0/8 or 2001:db8::/32.
     tooSmall: The prefix has fewer usable addresses than requested. Allow duplicates or use a larger prefix.
+  optical-power:
+    title: Optical power & link budget
+    description: Convert between dBm, mW and W, and check a fibre link budget — losses, received power and remaining margin.
+    convertTitle: Power conversion
+    power: Power
+    unit: Unit
+    positive: Linear power (mW, µW, W) must be greater than zero.
+    budgetTitle: Fibre link budget
+    presets:
+      smf1310: Single-mode 1310 nm
+      smf1550: Single-mode 1550 nm
+      mmf850: Multimode 850 nm
+      mmf1300: Multimode 1300 nm
+    fields:
+      tx: Transmit power (dBm)
+      sens: Receiver sensitivity (dBm)
+      overload: Receiver overload (dBm)
+      km: Fibre length (km)
+      att: Attenuation (dB/km)
+      conn: Connector pairs
+      connLoss: Loss per connector (dB)
+      splices: Splices
+      spliceLoss: Loss per splice (dB)
+      margin: Safety margin (dB)
+    results:
+      fiber: Fibre loss
+      connectors: Connector loss
+      splices: Splice loss
+      total: Total loss
+      rx: Expected receive power
+      budget: Power budget (Tx − sensitivity)
+      headroom: Headroom after margin
+    ok: 'The link works with {db} dB to spare.'
+    fail: 'The link is short by {db} dB. Reduce losses or use stronger optics.'
+    overload: 'The receiver is overloaded. Add an attenuator of at least {db} dB.'
