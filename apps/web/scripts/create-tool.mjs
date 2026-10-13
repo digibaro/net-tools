@@ -118,42 +118,10 @@ if (server) {
   const pkg = name.replace(/-/g, '')
   const goDir = join(root, '../api/internal/tools', pkg)
   mkdirSync(goDir, { recursive: true })
-  writeFileSync(join(goDir, 'register.go'), `// Package ${pkg} implements the ${title} tool.
-package ${pkg}
-
-import (
-	"github.com/go-chi/chi/v5"
-
-	"github.com/digibaro/net-tools/apps/api/internal/config"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-)
-
-// Tool implements tools.Tool.
-type Tool struct{}
-
-// ID is the capability id.
-func (Tool) ID() string { return "TODO.${pkg}" }
-
-// Enabled reports availability.
-func (Tool) Enabled(config.Config) (bool, tools.Reason) { return true, "" }
-
-// Mount registers routes under /api/v1.
-func (t Tool) Mount(r chi.Router, _ tools.Deps) {
-	r.Get("/${name}", t.handle)
-}
-`)
-  writeFileSync(join(goDir, 'handler.go'), `package ${pkg}
-
-import (
-	"net/http"
-
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-)
-
-func (Tool) handle(w http.ResponseWriter, r *http.Request) {
-	httpapi.Error(w, r, httpapi.NewError(httpapi.CodeInternal, "not implemented"))
-}
-`)
+  for (const file of ['register.go', 'handler.go']) {
+    const tmpl = readFileSync(join(root, 'scripts/templates/go', `${file}.tmpl`), 'utf8')
+    writeFileSync(join(goDir, file), tmpl.replaceAll('{{pkg}}', pkg).replaceAll('{{name}}', name).replaceAll('{{title}}', title))
+  }
   console.log(`scaffolded apps/api/internal/tools/${pkg} — add it to tools.All() and openapi.yaml`)
 }
 
