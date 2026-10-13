@@ -999,9 +999,17 @@ tools:
     downgrade: Warning — the chain downgrades from HTTPS to HTTP.
     stopped: 'The chain was stopped: {code}.'
   http-timing:
-    title: Http Timing
-    description: TODO describe Http Timing
-    input: Input
+    title: HTTP timing breakdown
+    description: How long DNS, TCP connect, TLS handshake, server wait (TTFB) and download take for a URL, like curl -w.
+    run: Measure
+    breakdown: Timing breakdown
+    phase: Phase
+    duration: Duration
+    start: Starts at
+    rating:
+      fast: 'Fast: first byte after {ttfb} ms, {total} ms in total.'
+      ok: 'Acceptable: first byte after {ttfb} ms, {total} ms in total.'
+      slow: 'Slow server response: first byte after {ttfb} ms, {total} ms in total.'
   security-headers:
     title: Security Headers
     description: TODO describe Security Headers
