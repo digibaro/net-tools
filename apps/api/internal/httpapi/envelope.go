@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"net/http"
 
-	"github.com/digibaro/nettools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/middleware"
 )
 
 // Meta is the optional envelope metadata (docs/API_SPEC.md §1.1).

@@ -6,7 +6,7 @@ import (
 	"slices"
 	"strings"
 
-	"github.com/digibaro/nettools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/middleware"
 )
 
 // redactedHeaders may carry credentials (e.g. added by an auth proxy) and are never echoed.

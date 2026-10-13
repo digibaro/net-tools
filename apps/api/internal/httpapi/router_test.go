@@ -13,8 +13,8 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/nettools/apps/api/internal/config"
-	"github.com/digibaro/nettools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
 type fakeTool struct {

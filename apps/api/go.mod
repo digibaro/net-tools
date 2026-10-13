@@ -1,4 +1,4 @@
-module github.com/digibaro/nettools/apps/api
+module github.com/digibaro/net-tools/apps/api
 
 go 1.27
 

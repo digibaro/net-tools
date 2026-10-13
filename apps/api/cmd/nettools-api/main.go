@@ -19,9 +19,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/digibaro/nettools/apps/api/internal/config"
-	"github.com/digibaro/nettools/apps/api/internal/httpapi"
-	"github.com/digibaro/nettools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
 // Set via -ldflags "-X main.version=… -X main.commit=… -X main.buildDate=…".

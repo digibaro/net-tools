@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/nettools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/config"
 )
 
 // Reason explains why a tool is disabled (docs/API_SPEC.md §2).

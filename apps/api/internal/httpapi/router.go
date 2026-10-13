@@ -10,9 +10,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/nettools/apps/api/internal/config"
-	"github.com/digibaro/nettools/apps/api/internal/middleware"
-	"github.com/digibaro/nettools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
 // maxRequestBody caps request bodies for every route; tools may lower it.
