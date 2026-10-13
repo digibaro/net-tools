@@ -481,3 +481,36 @@ tools:
       phrase: Reason phrase
       description: Meaning
       reference: Reference
+  certificate-decoder:
+    title: Certificate decoder
+    description: Paste a PEM certificate or chain (or upload a DER file) to see its fields, extensions and fingerprints.
+    input: PEM certificate(s) or base64 DER
+    invalid: Could not parse an X.509 certificate.
+    upload: Upload a .pem, .crt or .der file
+    hint: Decoded entirely in your browser; nothing is uploaded.
+    nth: 'Certificate {n}'
+    selfSigned: Self-signed
+    validity:
+      valid: 'Valid ({days} days left)'
+      expired: Expired
+      not-yet-valid: Not yet valid
+    fields:
+      subject: Subject
+      issuer: Issuer
+      san: Subject Alternative Names
+      notBefore: Valid from
+      notAfter: Valid until
+      serial: Serial number
+      publicKey: Public key
+      signature: Signature algorithm
+      keyUsage: Key usage
+      eku: Extended key usage
+      basicConstraints: Basic constraints
+      policies: Certificate policies
+      ocsp: OCSP responder
+      caIssuers: CA issuers
+      crl: CRL distribution points
+      ski: Subject key identifier
+      aki: Authority key identifier
+      sha256: SHA-256 fingerprint
+      sha1: SHA-1 fingerprint

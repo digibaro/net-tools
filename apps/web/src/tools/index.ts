@@ -1,5 +1,6 @@
 import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
+import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as domainParser } from './domain-parser'
@@ -28,7 +29,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser] },
   { id: 'connectivity', components: [] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
-  { id: 'tls', components: [] },
+  { id: 'tls', components: [certificateDecoder] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
