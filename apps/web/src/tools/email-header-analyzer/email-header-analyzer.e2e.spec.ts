@@ -7,7 +7,7 @@ Subject: Test`
 
 test('email-header-analyzer: builds the hop timeline', async ({ page }) => {
   await page.goto('/email-header-analyzer')
-  await page.getByTestId('input').locator('textarea').fill(HEADERS)
+  await page.getByTestId('input').fill(HEADERS)
   await expect(page.getByTestId('result')).toContainText('7 s')
   await expect(page.getByTestId('auth')).toContainText('SPF pass')
 })

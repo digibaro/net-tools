@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test'
 
 test('whois-lookup: rejects invalid input', async ({ page }) => {
   await page.goto('/whois-lookup')
-  await page.getByTestId('query').locator('input').fill('not valid')
+  await page.getByTestId('query').fill('not valid')
   await expect(page.getByTestId('run')).toBeDisabled()
 })
 
