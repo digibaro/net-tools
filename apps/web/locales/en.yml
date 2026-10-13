@@ -331,3 +331,21 @@ tools:
       country: Country
       administration: Administration
       cast: Type
+  mac-formatter:
+    title: MAC formatter / generator
+    description: Normalize MAC addresses to colon, hyphen, Cisco dot or plain notation, and generate random locally administered MACs.
+    format: Output format
+    uppercase: Uppercase
+    formatTitle: Format MAC addresses
+    input: MAC addresses (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    generateTitle: Generate random MAC addresses
+    count: How many
+    prefix: Prefix (optional, 1–5 octets)
+    invalidPrefix: Enter 1 to 5 octets, e.g. 00:0c:29.
+    generateHint: Without a prefix, addresses are locally administered unicast and cannot collide with vendor-assigned ones.
+    formats:
+      colon: 'Colon (00:1a:2b:3c:4d:5e)'
+      hyphen: Hyphen (00-1a-2b-3c-4d-5e)
+      cisco: Cisco (001a.2b3c.4d5e)
+      plain: Plain (001a2b3c4d5e)
