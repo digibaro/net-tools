@@ -256,3 +256,17 @@ tools:
       subnets: /64 subnet range
       subnetCount: Number of /64 subnets
       examples: Example subnets
+  ip-special-check:
+    title: Special-purpose / bogon check
+    description: Identify private, CGNAT, loopback, documentation, multicast and other reserved IPv4/IPv6 ranges.
+    input: IP addresses (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    registry: IANA special-purpose registries
+    registryHint: Bundled from the IANA IPv4 and IPv6 Special-Purpose Address Registries, plus the multicast blocks.
+    columns:
+      ip: IP address
+      name: Purpose
+      range: Range
+      rfc: Reference
+      bogon: Bogon
+      globallyReachable: Globally reachable
