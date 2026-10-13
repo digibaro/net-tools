@@ -1063,6 +1063,29 @@ tools:
       cookie:
         cookie: 'Cookie {value} is missing: {detail}.'
   cors-tester:
-    title: Cors Tester
-    description: TODO describe Cors Tester
-    input: Input
+    title: CORS tester
+    description: Send a CORS preflight with your Origin, method and headers and see whether a browser would allow the request.
+    origin: Origin (the page making the request)
+    headers: Request headers (comma-separated, optional)
+    credentials: Send credentials (cookies / Authorization)
+    note: Only GET and HEAD are also sent as the actual request, so testing never changes data on the server.
+    run: Test CORS
+    invalidOrigin: An origin looks like https://app.example.com (no path).
+    invalidHeaders: Enter header names separated by commas.
+    allowed: A browser would allow this cross-origin request.
+    blocked: A browser would block this cross-origin request.
+    preflightSent: A preflight was required and sent.
+    simple: No preflight is needed for this request.
+    evaluation: Evaluation
+    preflight: Preflight response (OPTIONS)
+    actual: Actual response
+    findings:
+      preflight-status: Preflight answered with a 2xx status
+      allow-origin: Access-Control-Allow-Origin on the preflight allows this origin
+      allow-credentials: Access-Control-Allow-Credentials allows credentials
+      allow-methods: Access-Control-Allow-Methods includes the method
+      allow-headers: Access-Control-Allow-Headers includes the request headers
+      max-age: Preflight may be cached (Access-Control-Max-Age)
+      actual-allow-origin: Access-Control-Allow-Origin on the response allows this origin
+      vary-origin: The response varies by Origin (needed when the origin is echoed)
+      null-origin: Access-Control-Allow-Origin is "null", which is unsafe
