@@ -5,9 +5,11 @@ import (
 	"context"
 	"crypto/tls"
 	"crypto/x509"
+	"fmt"
 	"net"
 	"net/http"
 	"net/http/httptest"
+	"net/netip"
 	"slices"
 	"strconv"
 	"strings"
@@ -196,4 +198,65 @@ func TestMXPolicy(t *testing.T) {
 	}
 	env.Get("/api/v1/email/mx?domain=bad%20domain").ExpectError(t, "INVALID_INPUT")
 	env.Get("/api/v1/email/mx?domain=localhost").ExpectError(t, "INVALID_INPUT")
+}
+
+// Every MX host is resolved through the public-profile policy before port 25 is touched.
+func TestMXSSRF(t *testing.T) {
+	hosts := map[string]string{
+		"loopback.test.": "127.0.0.1", "metadata.test.": "169.254.169.254", "mapped.test.": "::ffff:127.0.0.1",
+		"ula.test.": "fd00::25", "rfc1918.test.": "192.168.1.25", "cgnat.test.": "100.64.0.25", "nat64.test.": "64:ff9b::a00:1",
+	}
+	mx := map[string][]*dns.MX{}
+	for h := range hosts {
+		mx[strings.TrimSuffix(strings.SplitN(h, ".", 2)[0], ".")+".example"] = []*dns.MX{{Preference: 10, Mx: h}}
+	}
+	lookup := func(_ context.Context, _, host string) ([]netip.Addr, error) {
+		return []netip.Addr{netip.MustParseAddr(hosts[host+"."])}, nil
+	}
+	env := tooltest.New(t, &MXTool{res: fakeDNS{mx: mx}}, tooltest.Options{Lookup: lookup})
+	for domain := range mx {
+		var res MXResult
+		env.Get("/api/v1/email/mx?domain="+domain).Must(t).Decode(t, &res)
+		if len(res.Hosts) != 1 || res.Hosts[0].Error == "" || len(res.Hosts[0].Probes) != 0 {
+			t.Errorf("%s: %+v", domain, res.Hosts)
+		}
+	}
+}
+
+func TestSPFStopsAtLookupLimit(t *testing.T) {
+	txt := map[string][]string{}
+	// A fan-out tree: each level includes 5 children; walking it fully would take thousands of queries.
+	var build func(name string, depth int)
+	build = func(name string, depth int) {
+		rec := "v=spf1"
+		for i := range 5 {
+			child := fmt.Sprintf("c%d.%s", i, name)
+			rec += " include:" + child
+			if depth < 5 {
+				build(child, depth+1)
+			}
+		}
+		txt[name] = []string{rec + " -all"}
+	}
+	build("fan.test", 0)
+	counting := &countingDNS{fakeDNS: fakeDNS{txt: txt}}
+	r := CheckSPF(context.Background(), counting, "fan.test")
+	if !slices.Contains(r.Problems, "too-many-lookups") || counting.queries > MaxLookups+2 {
+		t.Errorf("queries = %d, problems %v", counting.queries, r.Problems)
+	}
+}
+
+type countingDNS struct {
+	fakeDNS
+	queries int
+}
+
+func (c *countingDNS) TXT(ctx context.Context, name string) ([]string, string, error) {
+	c.queries++
+	return c.fakeDNS.TXT(ctx, name)
+}
+
+func (c *countingDNS) Exists(ctx context.Context, name string, qt uint16) (int, string, error) {
+	c.queries++
+	return c.fakeDNS.Exists(ctx, name, qt)
 }

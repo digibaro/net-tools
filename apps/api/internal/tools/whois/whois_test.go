@@ -2,10 +2,14 @@ package whois
 
 import (
 	"bufio"
+	"context"
 	"net"
 	"strings"
 	"testing"
 
+	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
 )
 
@@ -69,7 +73,7 @@ func TestWhoisReferralChain(t *testing.T) {
 		return "Domain Name: EXAMPLE.TEST\nRegistrar WHOIS Server: " + registrar + "\nRegistry Expiry Date: 2030-08-13T04:00:00Z\n"
 	})
 	root := fakeWhois(t, func(string) string { return "% IANA WHOIS server\nrefer:        " + registry + "\n" })
-	env := tooltest.New(t, &Tool{Root: root}, tooltest.Options{AllowPrivate: true})
+	env := tooltest.New(t, &Tool{Root: root, anyPort: true}, tooltest.Options{AllowPrivate: true})
 	var res Result
 	env.Get("/api/v1/whois?query=example.test").Must(t).Decode(t, &res)
 	if len(res.Chain) != 3 || res.Kind != "domain" {
@@ -84,7 +88,7 @@ func TestWhoisReferralChain(t *testing.T) {
 // A referral to a private address must not be followed in the public profile.
 func TestWhoisReferralPolicy(t *testing.T) {
 	root := fakeWhois(t, func(string) string { return "refer: 10.0.0.43\n" })
-	env := tooltest.New(t, &Tool{Root: root}, tooltest.Options{AllowPrivate: true, Deny: []string{"10.0.0.0/8"}})
+	env := tooltest.New(t, &Tool{Root: root, anyPort: true}, tooltest.Options{AllowPrivate: true, Deny: []string{"10.0.0.0/8"}})
 	var res Result
 	env.Get("/api/v1/whois?query=example.test").Must(t).Decode(t, &res)
 	if len(res.Chain) != 2 || !strings.Contains(res.Chain[1].Error, "deny list") || res.Chain[1].Text != "" {
@@ -93,4 +97,24 @@ func TestWhoisReferralPolicy(t *testing.T) {
 	strict := tooltest.New(t, &Tool{Root: "127.0.0.1:43"}, tooltest.Options{})
 	strict.Get("/api/v1/whois?query=example.test").ExpectError(t, "PROVIDER_ERROR")
 	strict.Get("/api/v1/whois?query=not%20valid").ExpectError(t, "INVALID_INPUT")
+}
+
+// Referrals are untrusted data: every one goes through the public-profile policy (asserted by
+// comparing with the policy's own error, so a failed connection cannot pass the test) and the
+// WHOIS port allow-list.
+func TestWhoisReferralSSRF(t *testing.T) {
+	res := target.NewResolver(target.Policy{})
+	res.Lookup = tooltest.StaticLookup("10.0.0.43") // a "public" name that resolves privately (rebinding)
+	tool := &Tool{deps: tools.Deps{Target: res}}
+	for _, referral := range []string{"127.0.0.1", "169.254.169.254", "[::ffff:127.0.0.1]", "[fd00::43]", "0x7f.0.0.1", "10.1.2.3", "whois.rebind.example", "[64:ff9b::a00:1]"} {
+		resp := tool.ask(context.Background(), referral, "example.test")
+		_, perr := res.Resolve(context.Background(), referral, target.Opts{AllowPort: true, Field: "server"})
+		if perr == nil || resp.Text != "" || resp.Error != httpapi.ToAPIError(perr).Message {
+			t.Errorf("referral %s: %+v (policy: %v)", referral, resp, perr)
+		}
+	}
+	res.Lookup = tooltest.StaticLookup("93.184.215.14")
+	if resp := tool.ask(context.Background(), "whois.example.com:22", "example.test"); !strings.Contains(resp.Error, "non-WHOIS port") {
+		t.Errorf("port 22: %+v", resp)
+	}
 }

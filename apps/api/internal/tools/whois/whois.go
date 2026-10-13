@@ -35,7 +35,12 @@ type Tool struct {
 	deps tools.Deps
 	// Root overrides whois.iana.org:43 (tests).
 	Root string
+	// anyPort lifts the WHOIS/RWHOIS port restriction (tests with ephemeral ports).
+	anyPort bool
 }
+
+// whoisPorts are the only ports servers and referrals may use: WHOIS (43) and RWHOIS (4321).
+func whoisPort(p int) bool { return p == 43 || p == 4321 }
 
 func (*Tool) ID() string                                { return "reg.whois" }
 func (*Tool) Enabled(d tools.Deps) (bool, tools.Reason) { return tools.Always(d) }
@@ -138,7 +143,7 @@ func (t *Tool) ask(ctx context.Context, server, query string) Response {
 	resp := Response{Server: server, Query: query}
 	hostport := server
 	if _, _, err := net.SplitHostPort(server); err != nil {
-		hostport = net.JoinHostPort(server, "43")
+		hostport = net.JoinHostPort(strings.Trim(server, "[]"), "43") // "[2001:db8::43]" has no port
 	}
 	tgt, err := t.deps.Target.Resolve(ctx, hostport, target.Opts{AllowPort: true, Field: "server"})
 	if err != nil {
@@ -148,6 +153,10 @@ func (t *Tool) ask(ctx context.Context, server, query string) Response {
 	port := tgt.Port
 	if port == 0 {
 		port = 43
+	}
+	if !t.anyPort && !whoisPort(port) {
+		resp.Error = "referral to a non-WHOIS port refused"
+		return resp
 	}
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()

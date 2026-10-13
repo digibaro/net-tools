@@ -144,6 +144,9 @@ func (w *spfWalker) walk(domain string, depth int) *SPFRecord {
 				w.problem("syntax")
 				break
 			}
+			if w.lookups > MaxLookups {
+				break // receivers stop here with permerror; so do we (no DNS amplification)
+			}
 			term.Include = w.walk(strings.ToLower(term.Value), depth+1)
 			if term.Include.Error == "no-record" || term.Include.Error == "nxdomain" {
 				w.voids++
@@ -157,6 +160,9 @@ func (w *spfWalker) walk(domain string, depth int) *SPFRecord {
 				target = domain
 			}
 			target = strings.SplitN(target, "/", 2)[0]
+			if w.lookups > MaxLookups {
+				break
+			}
 			qt := dns.TypeA
 			if term.Kind == "mx" {
 				qt = dns.TypeMX

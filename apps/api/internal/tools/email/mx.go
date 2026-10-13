@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"context"
 	"crypto/tls"
+	"errors"
 	"fmt"
+	"io"
 	"net"
 	"net/http"
 	"net/netip"
@@ -23,8 +25,12 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rttstats"
 )
 
-// MaxMX bounds probed mail servers.
-const MaxMX = 10
+// Limits for the SMTP probe.
+const (
+	MaxMX         = 10       // probed mail servers
+	MaxSMTPBytes  = 64 << 10 // read before STARTTLS
+	MaxReplyLines = 100      // per multi-line reply
+)
 
 // MXTool is EM-01.
 type MXTool struct {
@@ -169,10 +175,11 @@ func ProbeSMTP(ctx context.Context, addr, mxName string) SMTPProbe {
 	if dl, ok := ctx.Deadline(); ok {
 		_ = c.SetDeadline(dl)
 	}
-	r := bufio.NewReader(c)
+	// A hostile server could stream endless lines: cap the bytes read before TLS and the lines per reply.
+	r := bufio.NewReader(io.LimitReader(c, MaxSMTPBytes))
 	reply := func(code string) ([]string, error) {
 		var lines []string
-		for {
+		for len(lines) < MaxReplyLines {
 			l, err := r.ReadString('\n')
 			if err != nil {
 				return lines, fmt.Errorf("read reply: %w", err)
@@ -186,6 +193,7 @@ func ProbeSMTP(ctx context.Context, addr, mxName string) SMTPProbe {
 				return lines, nil
 			}
 		}
+		return lines, errors.New("reply too long")
 	}
 	banner, err := reply("220")
 	if err != nil {

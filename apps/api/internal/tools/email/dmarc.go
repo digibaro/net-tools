@@ -144,6 +144,9 @@ func defaultTo(v, d string) string {
 	return v
 }
 
+// MaxReportURIs bounds rua/ruf entries examined per list.
+const MaxReportURIs = 10
+
 // reportURIs parses mailto: URIs and checks external-destination authorization (RFC 7489 §7.1).
 func reportURIs(ctx context.Context, res resolver, domain, list string) []ReportURI {
 	out := []ReportURI{}
@@ -152,6 +155,9 @@ func reportURIs(ctx context.Context, res resolver, domain, list string) []Report
 		raw = strings.TrimSpace(raw)
 		if raw == "" {
 			continue
+		}
+		if len(out) == MaxReportURIs {
+			break // bounds the authorization lookups a hostile record can trigger
 		}
 		u := ReportURI{URI: raw}
 		if p, err := url.Parse(strings.SplitN(raw, "!", 2)[0]); err == nil && p.Scheme == "mailto" {
