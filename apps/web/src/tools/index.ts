@@ -15,6 +15,7 @@ import { tool as dnsLookup } from './dns-lookup'
 import { tool as dnsPropagation } from './dns-propagation'
 import { tool as dnsRecordTypes } from './dns-record-types'
 import { tool as dnsTrace } from './dns-trace'
+import { tool as domainExpiry } from './domain-expiry'
 import { tool as domainParser } from './domain-parser'
 import { tool as encryptedDnsTester } from './encrypted-dns-tester'
 import { tool as eui64Calculator } from './eui64-calculator'
@@ -40,6 +41,7 @@ import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
+import { tool as rdapLookup } from './rdap-lookup'
 import { tool as redirectTracer } from './redirect-tracer'
 import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDns } from './reverse-dns'
@@ -56,6 +58,7 @@ import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as whatIsMyIp } from './what-is-my-ip'
+import { tool as whoisLookup } from './whois-lookup'
 import { tool as wifiQrGenerator } from './wifi-qr-generator'
 import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
@@ -67,7 +70,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker] },
-  { id: 'bgp', components: [ipToAsn] },
+  { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },

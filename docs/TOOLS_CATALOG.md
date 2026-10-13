@@ -140,9 +140,9 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | BGP-03 | Prefix routing status | Visibility, first/last seen, origin(s), MOAS detection | P | — | RIPEstat `routing-status`, `bgp-state` | 3 | ⬜ |
 | BGP-04 | RPKI ROV validation | Valid/invalid/unknown for prefix+origin | P | — | RIPEstat `rpki-validation` | 3 | ⬜ |
 | BGP-05 | Looking glass | Routes seen by RIS collectors | P | — | RIPEstat `looking-glass` | 3 | ⬜ |
-| BGP-06 | WHOIS | Domain / IP / ASN WHOIS (port 43, referral following) | S | `likexian/whois` | — | 2 | ⬜ |
-| BGP-07 | RDAP lookup | Structured registration data (domain, IP, ASN) | P | `openrdap` client | rdap.org bootstrap / IANA bootstrap | 2 | ⬜ |
-| BGP-08 | Domain expiry checker | Registration and expiry dates via RDAP | P | `openrdap` | RDAP | 2 | ⬜ |
+| BGP-06 | WHOIS | Domain / IP / ASN WHOIS (port 43, referral following) | S | own port-43 client (every referral via `target.Resolve`) | — | 2 | ✅ |
+| BGP-07 | RDAP lookup | Structured registration data (domain, IP, ASN) | P | `openrdap` client | rdap.org bootstrap / IANA bootstrap | 2 | ✅ |
+| BGP-08 | Domain expiry checker | Registration and expiry dates via RDAP | P | `openrdap` | RDAP | 2 | ✅ |
 | BGP-09 | PeeringDB lookup | Networks, IXPs, facilities, peering policy for ASN | P | — | PeeringDB API (optional key) | 3 | ⬜ |
 | BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ⬜ |
 | BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ⬜ |

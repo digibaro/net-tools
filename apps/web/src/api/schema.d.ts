@@ -548,6 +548,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/whois": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** WHOIS over port 43 with referral following */
+        get: operations["whois"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/rdap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** RDAP lookup for a domain, IP or ASN (IANA bootstrap) */
+        get: operations["rdapLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/domain/expiry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Domain registration and expiry dates via RDAP */
+        get: operations["domainExpiry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1105,6 +1156,66 @@ export interface components {
             ip: string;
             announced: boolean;
             origins: components["schemas"]["AsnOrigin"][];
+        };
+        Whois: {
+            query: string;
+            /** @enum {string} */
+            kind: "domain" | "ip" | "asn";
+            chain: {
+                server: string;
+                query: string;
+                text: string;
+                truncated: boolean;
+                error: string;
+            }[];
+            parsed: {
+                registrar: string;
+                created: string;
+                updated: string;
+                expires: string;
+                status: string[];
+                nameservers: string[];
+                org: string;
+                country: string;
+                netRange: string;
+            };
+        };
+        RdapRecord: {
+            query: string;
+            /** @enum {string} */
+            kind: "domain" | "ip" | "asn";
+            handle: string;
+            name: string;
+            status: string[];
+            events: {
+                action: string;
+                date: string;
+            }[];
+            nameservers: string[];
+            entities: {
+                handle: string;
+                roles: string[];
+                name: string;
+                org: string;
+                email: string;
+                country: string;
+            }[];
+            registrar: string;
+            country: string;
+            range: string;
+            type: string;
+            port43: string;
+            server: string;
+        };
+        DomainExpiry: {
+            domain: string;
+            registered: string;
+            expires: string;
+            updated: string;
+            daysLeft: number | null;
+            registrar: string;
+            status: string[];
+            server: string;
         };
     };
     responses: {
@@ -1955,6 +2066,83 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["AsnLookup"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    whois: {
+        parameters: {
+            query: {
+                /** @description domain, IP address or AS number */
+                query: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Whois"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    rdapLookup: {
+        parameters: {
+            query: {
+                /** @description domain, IP address or AS number */
+                query: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RdapRecord"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    domainExpiry: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DomainExpiry"];
                     };
                 };
             };

@@ -16,14 +16,17 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tlsinspect"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/web"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/whois"
 )
 
 // Tools returns every registered tool, in catalog order.
 func Tools() []tools.Tool {
+	rdapSvc := &rdap.Service{}
 	return []tools.Tool{
 		&dnslookup.Tool{},
 		&dnsreverse.Tool{},
@@ -51,5 +54,8 @@ func Tools() []tools.Tool {
 		&email.DMARCTool{},
 		&email.DKIMTool{},
 		&asnlookup.Tool{},
+		&whois.Tool{},
+		&rdap.LookupTool{Svc: rdapSvc},
+		&rdap.ExpiryTool{Svc: rdapSvc},
 	}
 }

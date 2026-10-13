@@ -181,6 +181,23 @@ http:
     ttfb: Wait
     transfer: Transfer
   invalidUrl: Enter an http or https URL.
+registry:
+  query: Domain, IP address or AS number
+  invalidQuery: Enter a domain (example.com), an IP address or an AS number (AS13335).
+  fields:
+    name: Name
+    handle: Handle
+    registrar: Registrar
+    org: Organization
+    country: Country
+    range: Range
+    type: Type
+    created: Registered
+    updated: Last changed
+    expires: Expires
+    status: Status
+    nameservers: Name servers
+    server: RDAP server
 email:
   domain: Domain
   findings:
@@ -1220,3 +1237,30 @@ tools:
       country: Country
       registry: Registry
       allocated: Allocated
+  whois-lookup:
+    title: WHOIS lookup
+    description: Query WHOIS for a domain, IP address or AS number, following referrals from IANA to the registry and registrar.
+    run: Look up
+    summary: Summary
+    bestEffort: Extracted on a best-effort basis — WHOIS has no standard format. See the raw answers below.
+    raw: Raw responses
+    chain: Servers queried
+    truncated: The response was truncated.
+  rdap-lookup:
+    title: RDAP lookup
+    description: Structured registration data for a domain, IP network or AS number, found through the IANA RDAP bootstrap.
+    run: Look up
+    entities: Contacts
+    columns:
+      roles: Roles
+      name: Name / organization
+      email: Email
+      country: Country
+      handle: Handle
+  domain-expiry:
+    title: Domain expiry checker
+    description: See when a domain was registered and when it expires, with the registrar and status, from RDAP.
+    run: Check
+    daysLeft: '{n} days left'
+    expired: Expired
+    unknown: No expiry date published

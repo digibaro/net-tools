@@ -678,6 +678,69 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/AsnLookup" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/whois:
+    get:
+      operationId: whois
+      summary: WHOIS over port 43 with referral following
+      tags: [registry]
+      x-capability: reg.whois
+      parameters:
+        - { name: query, in: query, required: true, description: "domain, IP address or AS number", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Whois" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/rdap:
+    get:
+      operationId: rdapLookup
+      summary: RDAP lookup for a domain, IP or ASN (IANA bootstrap)
+      tags: [registry]
+      x-capability: reg.rdap
+      parameters:
+        - { name: query, in: query, required: true, description: "domain, IP address or AS number", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RdapRecord" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/domain/expiry:
+    get:
+      operationId: domainExpiry
+      summary: Domain registration and expiry dates via RDAP
+      tags: [registry]
+      x-capability: reg.expiry
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DomainExpiry" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1393,3 +1456,81 @@ components:
         ip: { type: string }
         announced: { type: boolean }
         origins: { type: array, items: { $ref: "#/components/schemas/AsnOrigin" } }
+    Whois:
+      type: object
+      required: [query, kind, chain, parsed]
+      properties:
+        query: { type: string }
+        kind: { type: string, enum: [domain, ip, asn] }
+        chain:
+          type: array
+          items:
+            type: object
+            required: [server, query, text, truncated, error]
+            properties:
+              server: { type: string }
+              query: { type: string }
+              text: { type: string }
+              truncated: { type: boolean }
+              error: { type: string }
+        parsed:
+          type: object
+          required: [registrar, created, updated, expires, status, nameservers, org, country, netRange]
+          properties:
+            registrar: { type: string }
+            created: { type: string }
+            updated: { type: string }
+            expires: { type: string }
+            status: { type: array, items: { type: string } }
+            nameservers: { type: array, items: { type: string } }
+            org: { type: string }
+            country: { type: string }
+            netRange: { type: string }
+    RdapRecord:
+      type: object
+      required: [query, kind, handle, name, status, events, nameservers, entities, registrar, country, range, type, port43, server]
+      properties:
+        query: { type: string }
+        kind: { type: string, enum: [domain, ip, asn] }
+        handle: { type: string }
+        name: { type: string }
+        status: { type: array, items: { type: string } }
+        events:
+          type: array
+          items:
+            type: object
+            required: [action, date]
+            properties:
+              action: { type: string }
+              date: { type: string }
+        nameservers: { type: array, items: { type: string } }
+        entities:
+          type: array
+          items:
+            type: object
+            required: [handle, roles, name, org, email, country]
+            properties:
+              handle: { type: string }
+              roles: { type: array, items: { type: string } }
+              name: { type: string }
+              org: { type: string }
+              email: { type: string }
+              country: { type: string }
+        registrar: { type: string }
+        country: { type: string }
+        range: { type: string }
+        type: { type: string }
+        port43: { type: string }
+        server: { type: string }
+    DomainExpiry:
+      type: object
+      required: [domain, registered, expires, updated, daysLeft, registrar, status, server]
+      properties:
+        domain: { type: string }
+        registered: { type: string }
+        expires: { type: string }
+        updated: { type: string }
+        daysLeft: { type: [integer, "null"] }
+        registrar: { type: string }
+        status: { type: array, items: { type: string } }
+        server: { type: string }
