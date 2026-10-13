@@ -1,0 +1,8 @@
+app:
+  name: NetTools
+  tagline: Network tools and troubleshooting utilities
+home:
+  placeholder: Tools are coming soon.
+  apiVersion: 'API {version} ({commit})'
+  apiLoading: Connecting to API…
+  apiError: 'API unreachable: {message}'

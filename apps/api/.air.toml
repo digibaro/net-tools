@@ -4,7 +4,8 @@ tmp_dir = "/tmp/air"
 
 [build]
   cmd = "go build -o /tmp/air/nettools-api ./cmd/nettools-api"
-  entrypoint = ["/tmp/air/nettools-api", "serve"]
+  bin = "/tmp/air/nettools-api"
+  args_bin = ["serve"]
   include_ext = ["go"]
   exclude_dir = ["testdata"]
   exclude_regex = ["_test\\.go$"]
