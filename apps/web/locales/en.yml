@@ -309,3 +309,25 @@ tools:
       kind: Type
       names: Name(s)
       note: Note
+  mac-address-lookup:
+    title: MAC address lookup (OUI)
+    description: Find the vendor of a MAC address from the bundled IEEE OUI registry; works offline.
+    input: MAC addresses or OUIs (one per line)
+    hint: Uses the IEEE MA-L (OUI) registry bundled with NetTools; nothing is sent to any server.
+    invalid: '{count} invalid entries ignored: {entries}'
+    unknown: Unknown (not in the IEEE MA-L registry)
+    localNoVendor: Locally administered (no vendor)
+    admin:
+      universal: Universal (UAA)
+      local: Locally administered (LAA)
+    cast:
+      unicast: Unicast
+      multicast: Multicast
+      broadcast: Broadcast
+    columns:
+      input: Input
+      oui: OUI
+      vendor: Vendor
+      country: Country
+      administration: Administration
+      cast: Type

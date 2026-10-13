@@ -37,7 +37,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | IP-13 | Special-purpose / bogon check | Identify RFC 1918, CGNAT, loopback, doc, multicast, reserved ranges | B | IANA special registry (bundled JSON) | — | 1 | ✅ |
 | IP-14 | Wildcard / ACL mask calculator | Subnet mask ↔ wildcard (Cisco ACL) | B | custom | — | 1 | ✅ |
 | IP-15 | Reverse DNS name builder | IP → `in-addr.arpa` / `ip6.arpa` name | B | custom | — | 1 | ✅ |
-| IP-16 | MAC address lookup (OUI) | Vendor from MAC prefix | B | `oui-data` bundled | macvendors.com API | 1 | ⬜ |
+| IP-16 | MAC address lookup (OUI) | Vendor from MAC prefix | B | `oui-data` bundled | macvendors.com API | 1 | ✅ |
 | IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ⬜ |
 | IP-18 | EUI-64 / link-local from MAC | Build IPv6 interface ID / fe80:: address from MAC | B | custom | — | 1 | ⬜ |
 | IP-19 | Random IP generator | Random IPs within a prefix (test data) | B | custom | — | 2 | ⬜ |
