@@ -1,0 +1,46 @@
+# Dev override: Vite dev server with HMR + Go hot reload (air).
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up
+services:
+  web:
+    build: !reset null
+    image: node:24-alpine
+    working_dir: /repo
+    command: sh -c "corepack enable && pnpm install --frozen-lockfile && pnpm --filter @nettools/web dev --host 0.0.0.0 --port 8080"
+    depends_on: !override
+      api:
+        condition: service_started   # api has no healthcheck in dev; Vite proxies once it's up
+    environment:
+      VITE_API_PROXY: http://api:8081
+    volumes:
+      - ./:/repo
+      - root_node_modules:/repo/node_modules
+      - web_node_modules:/repo/apps/web/node_modules
+    read_only: false
+    tmpfs: !reset []
+    cap_drop: !reset []
+    healthcheck: !reset {}
+
+  api:
+    build: !reset null
+    image: golang:1-bookworm
+    working_dir: /repo/apps/api
+    command: sh -c "[ -x /go/bin/air ] || go install github.com/air-verse/air@latest; exec air"
+    volumes:
+      - ./:/repo
+      - go_mod_cache:/go/pkg/mod
+      - go_bin:/go/bin              # keeps the air binary between restarts
+    read_only: false
+    # prod limits (256m / 1 CPU) are too tight for compiling
+    mem_limit: !reset null
+    cpus: !reset null
+    pids_limit: !reset null
+    environment:
+      NETTOOLS_PROFILE: homelab
+      LOG_LEVEL: debug
+    healthcheck: !reset {}
+
+volumes:
+  root_node_modules:
+  web_node_modules:
+  go_mod_cache:
+  go_bin:

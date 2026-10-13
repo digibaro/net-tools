@@ -1,0 +1,9 @@
+{
+  "name": "nettools",
+  "private": true,
+  "license": "GPL-3.0-or-later",
+  "packageManager": "pnpm@12.11.2",
+  "engines": {
+    "node": ">=22.12.0"
+  }
+}

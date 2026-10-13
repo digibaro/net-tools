@@ -1,0 +1,16 @@
+NetTools
+Copyright (C) 2026 digibaro
+
+This program is free software: you can redistribute it and/or modify it under the terms of the
+GNU General Public License as published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version. See LICENSE for the full text.
+
+Acknowledgements
+----------------
+
+NetTools' user experience (sidebar of categories, global search, favorites, one page per tool,
+per-tool folder convention) is inspired by it-tools by Corentin Thomasset and contributors:
+  https://github.com/CorentinTh/it-tools  (GPL-3.0)
+
+Third-party libraries and public data sources keep their own licenses; they are listed on the
+in-app About page.

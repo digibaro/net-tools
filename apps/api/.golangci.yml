@@ -1,0 +1,27 @@
+version: "2"
+linters:
+  default: standard
+  enable:
+    - bodyclose
+    - contextcheck
+    - errorlint
+    - gosec
+    - misspell
+    - noctx
+    - revive
+    - unconvert
+    - wrapcheck
+  settings:
+    wrapcheck:
+      ignore-package-globs:
+        - github.com/digibaro/net-tools/*
+  exclusions:
+    presets: [comments, std-error-handling]
+    rules:
+      - path: _test\.go
+        linters: [gosec, wrapcheck, noctx, bodyclose]
+formatters:
+  enable: [gofmt, goimports]
+  settings:
+    goimports:
+      local-prefixes: [github.com/digibaro/net-tools]

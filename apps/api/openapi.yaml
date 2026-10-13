@@ -1,0 +1,231 @@
+openapi: 3.1.0
+info:
+  title: NetTools API
+  version: 0.1.0
+  description: |
+    Backend for NetTools. Conventions (envelope, error codes, SSE) are described in docs/API_SPEC.md.
+    Frontend types are generated from this file with `pnpm gen:api`.
+  license:
+    name: GPL-3.0-or-later
+    identifier: GPL-3.0-or-later
+servers:
+  - url: /api
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      summary: Liveness probe
+      tags: [system]
+      responses:
+        "200":
+          description: Alive
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { type: string, const: ok }
+  /readyz:
+    get:
+      operationId: readyz
+      summary: Readiness probe
+      tags: [system]
+      responses:
+        "200":
+          description: Ready
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status]
+                properties:
+                  status: { type: string, const: ready }
+        "503":
+          description: Not ready
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, checks]
+                properties:
+                  status: { type: string, const: not_ready }
+                  checks:
+                    type: object
+                    additionalProperties: { type: string }
+  /v1/version:
+    get:
+      operationId: getVersion
+      summary: Build information
+      tags: [system]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Version" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/capabilities:
+    get:
+      operationId: getCapabilities
+      summary: Tool availability, deployment mode and limits
+      tags: [system]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Capabilities" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/echo:
+    get:
+      operationId: getEcho
+      summary: The request as seen by the API (client IP, protocol, headers)
+      tags: [system]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Echo" }
+        default: { $ref: "#/components/responses/Error" }
+components:
+  responses:
+    Error:
+      description: Error envelope
+      headers:
+        X-Request-Id:
+          schema: { type: string }
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/ErrorEnvelope" }
+  schemas:
+    OkEnvelope:
+      type: object
+      required: [ok, data]
+      properties:
+        ok: { type: boolean, const: true }
+        data: {}
+        meta: { $ref: "#/components/schemas/Meta" }
+    Meta:
+      type: object
+      properties:
+        tool: { type: string, examples: [dns.lookup] }
+        target:
+          type: object
+          required: [input]
+          properties:
+            input: { type: string }
+            resolved: { type: array, items: { type: string } }
+            used: { type: string }
+        vantage: { type: string, examples: [server, globalping] }
+        durationMs: { type: number }
+        cached: { type: boolean }
+    ErrorEnvelope:
+      type: object
+      required: [ok, error]
+      properties:
+        ok: { type: boolean, const: false }
+        error: { $ref: "#/components/schemas/ApiError" }
+    ApiError:
+      type: object
+      required: [code, message]
+      properties:
+        code: { $ref: "#/components/schemas/ErrorCode" }
+        message: { type: string }
+        details:
+          type: object
+          additionalProperties: true
+    ErrorCode:
+      type: string
+      enum:
+        - INVALID_INPUT
+        - TARGET_UNRESOLVABLE
+        - TARGET_PRIVATE_DENIED
+        - TARGET_BLOCKED
+        - TOOL_DISABLED
+        - PROVIDER_KEY_MISSING
+        - TIMEOUT
+        - RATE_LIMITED
+        - BUSY
+        - PROVIDER_ERROR
+        - INTERNAL
+        - NOT_FOUND
+        - METHOD_NOT_ALLOWED
+    Version:
+      type: object
+      required: [version, commit, buildDate, goVersion]
+      properties:
+        version: { type: string }
+        commit: { type: string }
+        buildDate: { type: string }
+        goVersion: { type: string }
+    Capabilities:
+      type: object
+      required: [mode, tools, limits]
+      properties:
+        mode:
+          type: object
+          required: [profile, allowPrivateTargets, lan]
+          properties:
+            profile: { type: string, enum: [public, internal, homelab] }
+            allowPrivateTargets: { type: boolean }
+            lan: { type: boolean }
+        tools:
+          type: object
+          additionalProperties: { $ref: "#/components/schemas/Capability" }
+        limits:
+          type: object
+          required: [pingMaxCount, pingMinIntervalMs, tracerouteMaxHops, mtrMaxCycles, portscanMaxPorts, iperfMaxSeconds, bulkMaxTargets]
+          properties:
+            pingMaxCount: { type: integer }
+            pingMinIntervalMs: { type: integer }
+            tracerouteMaxHops: { type: integer }
+            mtrMaxCycles: { type: integer }
+            portscanMaxPorts: { type: integer }
+            iperfMaxSeconds: { type: integer }
+            bulkMaxTargets: { type: integer }
+    Capability:
+      type: object
+      required: [enabled]
+      properties:
+        enabled: { type: boolean }
+        reason:
+          type: string
+          enum: [disabled_by_admin, provider_key_missing, requires_lan_mode, binary_missing]
+    Echo:
+      type: object
+      required: [ip, family, protocol, scheme, method, userAgent, headers]
+      properties:
+        ip: { type: string }
+        family: { type: integer, enum: [4, 6] }
+        protocol: { type: string, examples: [HTTP/1.1] }
+        scheme: { type: string, enum: [http, https] }
+        method: { type: string }
+        userAgent: { type: string }
+        headers:
+          type: array
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name: { type: string }
+              value: { type: string }

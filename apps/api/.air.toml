@@ -1,0 +1,15 @@
+# Go hot reload for docker-compose.dev.yml (https://github.com/air-verse/air)
+# /tmp is a noexec tmpfs in compose, so build into /var/tmp.
+root = "."
+tmp_dir = "/var/tmp/air"
+
+[build]
+  cmd = "go build -buildvcs=false -o /var/tmp/air/nettools-api ./cmd/nettools-api"
+  entrypoint = ["/var/tmp/air/nettools-api", "serve"]
+  include_ext = ["go"]
+  exclude_dir = ["testdata"]
+  exclude_regex = ["_test\\.go$"]
+  delay = 300
+
+[log]
+  main_only = true
