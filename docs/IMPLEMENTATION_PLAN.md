@@ -16,16 +16,21 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 1 — Shell + browser tools (2–4 days)
 
-- [ ] Layout copied in spirit from it-tools: `base.layout.vue` (sidebar + header), collapsible
+- [x] Layout copied in spirit from it-tools: `base.layout.vue` (sidebar + header), collapsible
       category menu, home grid with ToolCard, favorites store, fuse.js search + `Ctrl/Cmd+K` palette,
       About page, 404, i18n plugin, PWA.
-- [ ] **Theme light/dark/auto** per `THEMING.md` incl. anti-FOUC and Playwright theme tests.
-- [ ] `defineTool` with `runMode` + `RunModeBadge`; capabilities store + `ToolDisabled` component.
-- [ ] Shared components: `ResultTable`, `CopyButton`, `JsonDownload`, `ApiError`, `useQueryParam`,
+- [x] **Theme light/dark/auto** per `THEMING.md` incl. anti-FOUC and Playwright theme tests.
+- [x] `defineTool` with `runMode` + `RunModeBadge`; capabilities store + `ToolDisabled` component.
+- [x] Shared components: `ResultTable`, `CopyButton`, `JsonDownload`, `ApiError`, `useQueryParam`,
       `useApi`, `useSse`, `StreamConsole`.
-- [ ] All **Phase 1** browser tools from the catalog (IP-*, DNS-13/14, WEB-12/13/14, TLS-05, CAL-*,
+- [x] All **Phase 1** browser tools from the catalog (IP-*, DNS-13/14, WEB-12/13/14, TLS-05, CAL-*,
       CLI-04, IP-01).
 - **Exit**: Lighthouse ≥ 90; every Phase 1 tool ✅.
+  - Status (2026-10-13): all 32 Phase 1 tools ✅. Lighthouse accessibility / best practices / SEO
+    100 on every page; performance 99 (desktop preset), 80 home / 72–75 tool pages (mobile
+    preset: simulated slow 4G + 4× CPU). The remaining mobile gap is startup cost of Naive UI's
+    runtime CSS-in-JS plus Vue/router/i18n init; closing it needs pre-rendering the shell or a
+    lighter shell — pending a decision.
 
 ## Phase 2 — Core server tools (5–8 days)
 
