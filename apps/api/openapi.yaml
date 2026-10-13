@@ -341,6 +341,30 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/port/check:
+    get:
+      operationId: portCheck
+      summary: Check up to 10 TCP (or UDP, best effort) ports from the server
+      tags: [connectivity]
+      x-capability: net.portcheck
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: ports, in: query, required: true, description: "comma list and small ranges, at most 10 ports", schema: { type: string, examples: ["22,80,443"] } }
+        - { name: proto, in: query, schema: { type: string, enum: [tcp, udp], default: tcp } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PortCheck" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -708,3 +732,21 @@ components:
         stddevMs: { type: number }
         rttMs: { type: array, items: { type: number } }
         asn: { type: [integer, "null"] }
+    PortCheck:
+      type: object
+      required: [target, address, rows]
+      properties:
+        target: { type: string }
+        address: { type: string }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [port, proto, state, service, rttMs, detail]
+            properties:
+              port: { type: integer }
+              proto: { type: string }
+              state: { type: string, enum: [open, closed, filtered, "open|filtered", error] }
+              service: { type: string }
+              rttMs: { type: number }
+              detail: { type: string }

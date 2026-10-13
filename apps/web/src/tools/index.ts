@@ -28,6 +28,7 @@ import { tool as macFormatter } from './mac-formatter'
 import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as ping } from './ping'
+import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
@@ -48,7 +49,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
-  { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr] },
+  { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
   { id: 'tls', components: [certificateDecoder] },
   { id: 'email', components: [] },

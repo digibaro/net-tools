@@ -898,3 +898,18 @@ tools:
   mtr:
     title: MTR
     description: Continuous traceroute with per-hop packet loss and latency statistics, updated live.
+  port-check:
+    title: Port check
+    description: Check whether up to 10 TCP ports (or UDP ports, best effort) are open on a host, as seen from the server.
+    ports: Ports
+    udp: UDP (best effort)
+    run: Check ports
+    invalidPorts: Enter up to 10 ports, e.g. 22,80,443 or 8000-8005.
+    result: 'Results for {address}'
+    vantage: Results are as seen from the NetTools server; firewalls may treat other sources differently.
+    states:
+      open: Open
+      closed: Closed
+      filtered: Filtered
+      open|filtered: Open or filtered
+      error: Error

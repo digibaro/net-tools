@@ -293,6 +293,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/port/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check up to 10 TCP (or UDP, best effort) ports from the server */
+        get: operations["portCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -570,6 +587,19 @@ export interface components {
             stddevMs: number;
             rttMs: number[];
             asn: number | null;
+        };
+        PortCheck: {
+            target: string;
+            address: string;
+            rows: {
+                port: number;
+                proto: string;
+                /** @enum {string} */
+                state: "open" | "closed" | "filtered" | "open|filtered" | "error";
+                service: string;
+                rttMs: number;
+                detail: string;
+            }[];
         };
     };
     responses: {
@@ -1024,6 +1054,36 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    portCheck: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description comma list and small ranges, at most 10 ports */
+                ports: string;
+                proto?: "tcp" | "udp";
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["PortCheck"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }
