@@ -43,6 +43,7 @@ import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
+import { tool as randomIpGenerator } from './random-ip-generator'
 import { tool as rdapLookup } from './rdap-lookup'
 import { tool as redirectTracer } from './redirect-tracer'
 import { tool as requestHeaders } from './request-headers'
@@ -67,7 +68,7 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
-  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6] },
+  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6, randomIpGenerator] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },

@@ -1330,3 +1330,13 @@ tools:
       sixToFour: 6to4 site prefix (2002::/16)
       teredo: Teredo client (2001::/32)
       compat: IPv4-compatible (::/96)
+  random-ip-generator:
+    title: Random IP generator
+    description: Generate random IPv4 or IPv6 addresses inside a prefix, for test data and examples.
+    prefix: Prefix
+    count: How many
+    unique: No duplicates
+    usable: Skip network / broadcast addresses
+    regenerate: Generate again
+    invalid: Enter a prefix such as 10.0.0.0/8 or 2001:db8::/32.
+    tooSmall: The prefix has fewer usable addresses than requested. Allow duplicates or use a larger prefix.
