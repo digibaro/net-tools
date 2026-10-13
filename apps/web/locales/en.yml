@@ -390,3 +390,23 @@ tools:
       ascii: ASCII (Punycode)
       unicode: Unicode
       idnLabels: IDN labels
+  domain-parser:
+    title: Domain parser
+    description: Split a hostname or URL into subdomain, registrable domain and public suffix using the Public Suffix List.
+    input: Hostname or URL
+    invalid: Enter a valid hostname or URL.
+    isIp: This is an IP address, not a domain name.
+    withPrivate: Full Public Suffix List
+    icannOnly: ICANN suffixes only
+    differs: The registrable domain differs when private suffixes (operated by companies, e.g. github.io) are ignored. Browsers use the full list for cookies.
+    suffixTypes:
+      icann: ICANN
+      private: Private (PSL private section)
+      unknown: Not in the Public Suffix List
+    fields:
+      hostname: Hostname
+      subdomain: Subdomain
+      domain: Registrable domain
+      domainWithoutSuffix: Domain without suffix
+      publicSuffix: Public suffix
+      suffixType: Suffix type
