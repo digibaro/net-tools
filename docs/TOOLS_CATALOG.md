@@ -35,7 +35,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | IP-11 | IPv6 ULA generator | RFC 4193 random /48 Unique Local prefix | B | WebCrypto | — | 1 | ✅ |
 | IP-12 | IPv4-mapped / 6to4 / NAT64 | Embed/extract IPv4 in IPv6 (::ffff:, 2002::, 64:ff9b::/96) | B | custom | — | 2 | ⬜ |
 | IP-13 | Special-purpose / bogon check | Identify RFC 1918, CGNAT, loopback, doc, multicast, reserved ranges | B | IANA special registry (bundled JSON) | — | 1 | ✅ |
-| IP-14 | Wildcard / ACL mask calculator | Subnet mask ↔ wildcard (Cisco ACL) | B | custom | — | 1 | ⬜ |
+| IP-14 | Wildcard / ACL mask calculator | Subnet mask ↔ wildcard (Cisco ACL) | B | custom | — | 1 | ✅ |
 | IP-15 | Reverse DNS name builder | IP → `in-addr.arpa` / `ip6.arpa` name | B | custom | — | 1 | ⬜ |
 | IP-16 | MAC address lookup (OUI) | Vendor from MAC prefix | B | `oui-data` bundled | macvendors.com API | 1 | ⬜ |
 | IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ⬜ |

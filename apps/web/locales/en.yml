@@ -270,3 +270,25 @@ tools:
       rfc: Reference
       bogon: Bogon
       globallyReachable: Globally reachable
+  wildcard-mask-calculator:
+    title: Wildcard / ACL mask calculator
+    description: Convert between subnet mask, prefix length and Cisco wildcard (inverse) mask, with ACL examples.
+    input: Prefix, netmask or wildcard mask
+    network: Network address (optional, for examples)
+    invalid: Enter a prefix (/24), a netmask (255.255.255.0) or a wildcard mask (0.0.0.255).
+    invalidNetwork: Enter an IPv4 address.
+    noPrefix: None (non-contiguous)
+    nonContiguous: This is a non-contiguous wildcard mask. It is valid in access lists but has no subnet-mask or prefix equivalent.
+    kinds:
+      prefix: Prefix length
+      netmask: Subnet mask
+      wildcard: Wildcard mask
+    fields:
+      kind: Input recognized as
+      prefix: Prefix length
+      netmask: Subnet mask
+      wildcard: Wildcard mask
+      binaryWildcard: Wildcard (binary)
+      matching: Matching addresses
+      acl: ACL example
+      ospf: OSPF example
