@@ -683,3 +683,26 @@ tools:
     invalid:
       ssid: The SSID must be 1–32 bytes.
       password: 'WPA passwords need 8–63 characters; WEP keys 5, 13, 10 or 26 characters.'
+  request-headers:
+    title: Request headers echo
+    description: See the HTTP headers the NetTools server receives from your browser, and whether a proxy is in the path.
+    refresh: Refresh
+    connection: Connection
+    headers: 'Request headers ({count})'
+    addedByNetTools: Added by NetTools
+    noProxy: No signs of an extra proxy
+    proxyDetected: A proxy or middlebox is probably in the path
+    hints:
+      via: A Via header is present (added by HTTP proxies).
+      forwarded: A Forwarded header is present (RFC 7239, added by proxies).
+      multi-hop: X-Forwarded-For lists more than one hop, so another proxy forwarded the request before NetTools.
+      cdn: CDN headers are present (Cloudflare, Akamai, Fastly, CloudFront or Azure Front Door).
+      compression-stripped: Accept-Encoding is missing, which is typical for intercepting proxies and antivirus scanners.
+    columns:
+      name: Header
+      value: Value
+      note: Note
+    fields:
+      ip: Client address
+      protocol: Protocol
+      method: Method

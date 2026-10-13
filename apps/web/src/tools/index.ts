@@ -23,6 +23,7 @@ import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
+import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
@@ -44,7 +45,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },
-  { id: 'client', components: [] },
+  { id: 'client', components: [requestHeaders] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories
