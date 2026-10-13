@@ -173,7 +173,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| CAL-01 | Bandwidth / transfer-time calculator | Size ÷ speed, with protocol overhead | B | custom | — | 1 | ⬜ |
+| CAL-01 | Bandwidth / transfer-time calculator | Size ÷ speed, with protocol overhead | B | custom | — | 1 | ✅ |
 | CAL-02 | Bits/bytes unit converter | bit, B, Kb/KiB, Mbps ↔ MB/s, … | B | custom | — | 1 | ⬜ |
 | CAL-03 | BDP / TCP window calculator | Bandwidth-delay product, required window, max throughput for given window+RTT | B | custom | — | 1 | ⬜ |
 | CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ⬜ |

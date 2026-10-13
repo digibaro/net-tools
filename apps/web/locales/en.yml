@@ -514,3 +514,26 @@ tools:
       aki: Authority key identifier
       sha256: SHA-256 fingerprint
       sha1: SHA-1 fingerprint
+  bandwidth-calculator:
+    title: Bandwidth / transfer-time calculator
+    description: How long a transfer takes at a given link speed, or which speed is needed for a deadline, including protocol overhead.
+    size: Data size
+    unit: Unit
+    rate: Link rate
+    time: Time available
+    overhead: Protocol overhead
+    customPercent: Overhead (%)
+    timeTitle: Transfer time
+    rateTitle: Required bandwidth
+    presets:
+      none: None (raw link rate)
+      tcp-ipv4: TCP/IPv4 over Ethernet, 1500 MTU (94.9 %)
+      tcp-ipv6: TCP/IPv6 over Ethernet, 1500 MTU (93.6 %)
+      udp-ipv4: UDP/IPv4 over Ethernet, 1500 MTU (95.7 %)
+      custom: Custom percentage
+    fields:
+      time: Transfer time
+      goodput: Effective throughput
+      efficiency: Efficiency
+      requiredRate: Required link rate
+      requiredRateBytes: Required link rate (bytes)
