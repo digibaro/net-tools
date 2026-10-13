@@ -204,3 +204,14 @@ tools:
       first: First address
       last: Last address
       addresses: Addresses
+  ip-in-subnet:
+    title: IP in subnet checker
+    description: Check which IP addresses fall inside any prefix of a list (IPv4 and IPv6).
+    ips: IP addresses
+    prefixes: Prefixes
+    invalid: '{count} invalid entries ignored: {entries}'
+    result: '{matched} of {total} addresses matched'
+    columns:
+      ip: IP address
+      matched: Matched
+      prefixes: Matching prefixes (most specific first)
