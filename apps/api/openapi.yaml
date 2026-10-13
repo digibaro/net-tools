@@ -220,6 +220,25 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsPropagation" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/trace/stream:
+    get:
+      operationId: dnsTraceStream
+      summary: Iterative resolution from the root servers (SSE)
+      description: |
+        Server-Sent Events: `meta`, then one `step` event (DnsTraceStep) per server queried, then
+        `done` ({summary: DnsTraceSummary, durationMs}) or `error` (ApiError). Validation errors are
+        also delivered as an `error` event.
+      tags: [dns]
+      x-capability: dns.trace
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -487,3 +506,30 @@ components:
               rttMs: { type: number }
               error: { type: string }
               group: { type: integer, description: "Index into groups; -1 when the resolver failed" }
+    SseDone:
+      type: object
+      required: [summary, durationMs]
+      properties:
+        summary: {}
+        durationMs: { type: number }
+    DnsTraceStep:
+      type: object
+      required: [step, zone, server, address, rcode, aa, rttMs, answer, referral, note]
+      properties:
+        step: { type: integer }
+        zone: { type: string }
+        server: { type: string }
+        address: { type: string }
+        rcode: { type: string }
+        aa: { type: boolean }
+        rttMs: { type: number }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        referral: { type: array, items: { type: string } }
+        note: { type: string }
+    DnsTraceSummary:
+      type: object
+      required: [steps, rcode, answers]
+      properties:
+        steps: { type: integer }
+        rcode: { type: string }
+        answers: { type: integer }

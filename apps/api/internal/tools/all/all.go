@@ -8,6 +8,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnslookup"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnspropagation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsreverse"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/dnstrace"
 )
 
 // Tools returns every registered tool, in catalog order.
@@ -16,6 +17,7 @@ func Tools() []tools.Tool {
 		&dnslookup.Tool{},
 		&dnsreverse.Tool{},
 		&dnspropagation.Tool{},
+		&dnstrace.Tool{},
 		&dnsconsistency.Tool{},
 		&dnscaa.Tool{},
 	}

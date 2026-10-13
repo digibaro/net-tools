@@ -93,6 +93,7 @@ common:
   on: On
   off: Off
   clear: Clear
+  stop: Stop
   generate: Generate
   yes: Yes
   no: No
@@ -830,3 +831,9 @@ tools:
       location: Location
       ttl: TTL
       rtt: RTT
+  dns-trace:
+    title: Delegation trace
+    description: Follow DNS delegation from the root servers down to the authoritative answer, like dig +trace.
+    run: Trace
+    steps: 'Delegation steps ({count})'
+    summary: '{rcode}, {answers} answer(s)'

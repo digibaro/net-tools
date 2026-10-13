@@ -13,13 +13,19 @@ import (
 // Start runs a UDP+TCP DNS server on 127.0.0.1 and returns its address. handler builds replies.
 func Start(t testing.TB, handler func(w dns.ResponseWriter, r *dns.Msg)) netip.AddrPort {
 	t.Helper()
+	return StartOn(t, netip.AddrPortFrom(netip.MustParseAddr("127.0.0.1"), 0), handler)
+}
+
+// StartOn is Start on a chosen loopback address and port (0 = ephemeral).
+func StartOn(t testing.TB, at netip.AddrPort, handler func(w dns.ResponseWriter, r *dns.Msg)) netip.AddrPort {
+	t.Helper()
 	var lc net.ListenConfig
-	pc, err := lc.ListenPacket(t.Context(), "udp", "127.0.0.1:0")
+	pc, err := lc.ListenPacket(t.Context(), "udp", at.String())
 	if err != nil {
 		t.Fatal(err)
 	}
 	port := pc.LocalAddr().(*net.UDPAddr).Port
-	ln, err := lc.Listen(t.Context(), "tcp", net.JoinHostPort("127.0.0.1", strconv.Itoa(port)))
+	ln, err := lc.Listen(t.Context(), "tcp", net.JoinHostPort(at.Addr().String(), strconv.Itoa(port)))
 	if err != nil {
 		_ = pc.Close()
 		t.Skipf("cannot bind TCP on the same port: %v", err)
@@ -33,5 +39,5 @@ func Start(t testing.TB, handler func(w dns.ResponseWriter, r *dns.Msg)) netip.A
 		_ = udp.Shutdown()
 		_ = tcp.Shutdown()
 	})
-	return netip.AddrPortFrom(netip.MustParseAddr("127.0.0.1"), uint16(port)) //nolint:gosec // ephemeral port
+	return netip.AddrPortFrom(at.Addr(), uint16(port)) //nolint:gosec // ephemeral port
 }

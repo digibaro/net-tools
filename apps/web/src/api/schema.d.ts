@@ -174,6 +174,28 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/trace/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Iterative resolution from the root servers (SSE)
+         * @description Server-Sent Events: `meta`, then one `step` event (DnsTraceStep) per server queried, then
+         *     `done` ({summary: DnsTraceSummary, durationMs}) or `error` (ApiError). Validation errors are
+         *     also delivered as an `error` event.
+         */
+        get: operations["dnsTraceStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -370,6 +392,27 @@ export interface components {
                 /** @description Index into groups; -1 when the resolver failed */
                 group: number;
             }[];
+        };
+        SseDone: {
+            summary: unknown;
+            durationMs: number;
+        };
+        DnsTraceStep: {
+            step: number;
+            zone: string;
+            server: string;
+            address: string;
+            rcode: string;
+            aa: boolean;
+            rttMs: number;
+            answer: components["schemas"]["DnsRecord"][];
+            referral: string[];
+            note: string;
+        };
+        DnsTraceSummary: {
+            steps: number;
+            rcode: string;
+            answers: number;
         };
     };
     responses: {
@@ -657,6 +700,29 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    dnsTraceStream: {
+        parameters: {
+            query: {
+                name: string;
+                type?: components["schemas"]["DnsRecordType"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }
