@@ -48,7 +48,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 |---|---|---|---|---|---|---|---|
 | DNS-01 | DNS lookup | Query any record type against chosen resolver (system, 1.1.1.1, 8.8.8.8, 9.9.9.9, custom) | H | `miekg/dns` (UDP/TCP) | Cloudflare / Google DoH JSON *(browser-direct OK)* | 2 | ✅ |
 | DNS-02 | Reverse DNS (PTR) | IP → hostname, with forward-confirmed check | S | `miekg/dns` | DoH | 2 | ✅ |
-| DNS-03 | DNS propagation check | Same query across ~20 public resolvers, diff answers | H | `miekg/dns` fan-out | Globalping `dns` from many countries | 2 | ⬜ |
+| DNS-03 | DNS propagation check | Same query across ~20 public resolvers, diff answers | H | `miekg/dns` fan-out | Globalping `dns` from many countries | 2 | ✅ |
 | DNS-04 | Delegation trace | Iterative resolution from root (`dig +trace` equivalent) | S | `miekg/dns` iterative | — | 2 | ⬜ |
 | DNS-05 | DNSSEC validator | Validate chain (DS/DNSKEY/RRSIG), show where it breaks | S | `miekg/dns` + validation | — | 3 | ⬜ |
 | DNS-06 | DoH / DoT tester | Query a DoH/DoT endpoint, show latency and response | S | `miekg/dns` + `net/http` | — | 2 | ⬜ |

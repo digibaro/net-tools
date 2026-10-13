@@ -811,3 +811,22 @@ tools:
       rtt: RTT
       ns: NS set
       error: Problem
+  dns-propagation:
+    title: DNS propagation check
+    description: Send the same DNS query to 18 public resolvers around the world and compare their answers.
+    run: Check propagation
+    consensus: All resolvers return the same answer.
+    split: 'Resolvers disagree: {groups} different answers, {agreement}% match the most common one.'
+    groups: Distinct answers
+    resolvers: Resolvers
+    failed: No answer
+    columns:
+      group: Answer
+      count: Resolvers
+      rcode: Response
+      answers: Records
+      resolver: Resolver
+      address: Address
+      location: Location
+      ttl: TTL
+      rtt: RTT

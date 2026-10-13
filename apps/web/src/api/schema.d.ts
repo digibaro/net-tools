@@ -157,6 +157,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/propagation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The same query against many public resolvers, grouped by answer */
+        get: operations["dnsPropagation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -329,6 +346,29 @@ export interface components {
                 nsSet: string[];
                 rttMs: number;
                 error: string;
+            }[];
+        };
+        DnsPropagation: {
+            name: string;
+            type: string;
+            consensus: boolean;
+            groups: {
+                answers: string[];
+                rcode: string;
+                count: number;
+            }[];
+            rows: {
+                resolver: string;
+                provider: string;
+                location: string;
+                address: string;
+                rcode: string;
+                answers: string[];
+                ttl: number | null;
+                rttMs: number;
+                error: string;
+                /** @description Index into groups; -1 when the resolver failed */
+                group: number;
             }[];
         };
     };
@@ -587,6 +627,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["DnsConsistency"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsPropagation: {
+        parameters: {
+            query: {
+                name: string;
+                type?: "A" | "AAAA" | "CNAME" | "MX" | "NS" | "TXT" | "SOA" | "CAA" | "SRV" | "PTR";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsPropagation"];
                     };
                 };
             };

@@ -198,6 +198,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsConsistency" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/propagation:
+    get:
+      operationId: dnsPropagation
+      summary: The same query against many public resolvers, grouped by answer
+      tags: [dns]
+      x-capability: dns.propagation
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, CAA, SRV, PTR], default: A } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsPropagation" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -433,3 +455,35 @@ components:
               nsSet: { type: array, items: { type: string } }
               rttMs: { type: number }
               error: { type: string }
+    DnsPropagation:
+      type: object
+      required: [name, type, rows, groups, consensus]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        consensus: { type: boolean }
+        groups:
+          type: array
+          items:
+            type: object
+            required: [answers, rcode, count]
+            properties:
+              answers: { type: array, items: { type: string } }
+              rcode: { type: string }
+              count: { type: integer }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [resolver, provider, location, address, rcode, answers, ttl, rttMs, error, group]
+            properties:
+              resolver: { type: string }
+              provider: { type: string }
+              location: { type: string }
+              address: { type: string }
+              rcode: { type: string }
+              answers: { type: array, items: { type: string } }
+              ttl: { type: [integer, "null"] }
+              rttMs: { type: number }
+              error: { type: string }
+              group: { type: integer, description: "Index into groups; -1 when the resolver failed" }
