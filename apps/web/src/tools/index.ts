@@ -24,6 +24,7 @@ import { tool as portReference } from './port-reference'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
 import { tool as reverseDnsName } from './reverse-dns-name'
+import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
 import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
@@ -41,7 +42,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet] },
   { id: 'client', components: [] },
 ]
 

@@ -639,3 +639,27 @@ tools:
       summary: Purpose
       example: Example
       reference: Reference
+  subnet-cheat-sheet:
+    title: Subnet cheat sheet
+    description: Every IPv4 prefix from /0 to /32 with masks and host counts, and common IPv6 prefix sizes.
+    v4: IPv4 prefixes
+    v6: Common IPv6 prefixes
+    columns:
+      prefix: Prefix
+      netmask: Netmask
+      wildcard: Wildcard
+      addresses: Addresses
+      usable: Usable hosts
+      size: Size
+      subnets64: /64 subnets
+      use: Typical use
+    v6use:
+      '128': Single host, loopback
+      '127': Point-to-point link (RFC 6164)
+      '126': Point-to-point link (legacy)
+      '64': Standard LAN / SLAAC subnet
+      '60': Small site or home (some ISPs)
+      '56': Home or small site (RFC 6177)
+      '48': Site; smallest globally routable prefix
+      '32': Minimum LIR allocation (RIPE NCC)
+      '29': Typical larger LIR allocation
