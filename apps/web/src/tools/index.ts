@@ -16,6 +16,7 @@ import { tool as macFormatter } from './mac-formatter'
 import { tool as punycodeConverter } from './punycode-converter'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as subnetSplitter } from './subnet-splitter'
+import { tool as urlParser } from './url-parser'
 import { tool as whatIsMyIp } from './what-is-my-ip'
 import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 
@@ -24,7 +25,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser] },
   { id: 'connectivity', components: [] },
-  { id: 'web', components: [] },
+  { id: 'web', components: [urlParser] },
   { id: 'tls', components: [] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },

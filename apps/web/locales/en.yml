@@ -410,3 +410,31 @@ tools:
       domainWithoutSuffix: Domain without suffix
       publicSuffix: Public suffix
       suffixType: Suffix type
+  url-parser:
+    title: URL parser / encoder
+    description: Split a URL into its components and query parameters, and percent-encode or decode text.
+    input: URL
+    invalid: Enter an absolute URL including the scheme, e.g. https://example.com/path.
+    components: Components
+    params: 'Query parameters ({count})'
+    key: Name
+    value: Value
+    defaultPort: '(default: {port})'
+    codecTitle: Encode / decode
+    codecComponent: Component (encodeURIComponent)
+    codecUri: Full URI (encodeURI)
+    plain: Text to encode
+    encoded: Encoded
+    toDecode: Text to decode
+    decoded: Decoded
+    malformed: Malformed percent-encoding.
+    fields:
+      protocol: Scheme
+      username: Username
+      password: Password
+      hostname: Hostname
+      port: Port
+      pathname: Path
+      search: Query string
+      hash: Fragment
+      origin: Origin
