@@ -61,6 +61,7 @@ capabilities:
     provider_key_missing: Requires an API key that is not configured on the server.
     requires_lan_mode: Requires LAN mode (host networking) on the server.
     binary_missing: A required program is not installed on the server.
+    data_missing: A required data file (for example the GeoIP database) is not installed on the server.
     api_unreachable: The NetTools server cannot be reached. Browser-only tools still work.
     unavailable: Not available on this server.
 apiErrors:
@@ -1264,3 +1265,22 @@ tools:
     daysLeft: '{n} days left'
     expired: Expired
     unknown: No expiry date published
+  ip-geolocation:
+    title: IP geolocation
+    description: Approximate country, region, city, time zone and network (ASN) of an IP address, from a local GeoIP database.
+    run: Locate
+    notPublic: '{ip} is a private or reserved address and has no public location.'
+    notFound: '{ip} is not in the GeoIP database.'
+    openMap: Open in OpenStreetMap
+    source: 'Database: {db}. Locations are approximate, often only accurate to the country or region.'
+    fields:
+      country: Country
+      region: Region
+      city: City
+      postal: Postal code
+      continent: Continent
+      coordinates: Coordinates
+      accuracy: Accuracy
+      timeZone: Time zone
+      asn: Network (ASN)
+      prefix: Network block

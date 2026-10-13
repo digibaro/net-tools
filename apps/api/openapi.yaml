@@ -741,6 +741,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DomainExpiry" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/geo:
+    get:
+      operationId: geo
+      summary: IP geolocation from the local GeoLite2 / DB-IP Lite database
+      tags: [reputation]
+      x-capability: rep.geo
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+        - { name: source, in: query, description: "only `local` is implemented", schema: { type: string, enum: [local], default: local } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Geo" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -850,7 +872,7 @@ components:
         enabled: { type: boolean }
         reason:
           type: string
-          enum: [disabled_by_admin, provider_key_missing, requires_lan_mode, binary_missing]
+          enum: [disabled_by_admin, provider_key_missing, requires_lan_mode, binary_missing, data_missing]
     Echo:
       type: object
       required: [ip, family, protocol, scheme, method, userAgent, headers]
@@ -1534,3 +1556,26 @@ components:
         registrar: { type: string }
         status: { type: array, items: { type: string } }
         server: { type: string }
+    Geo:
+      type: object
+      required: [ip, public, found, prefix, city, region, postal, country, countryCode, continent, latitude, longitude, accuracyKm, timeZone, asn, asOrg, asnSource, source, database]
+      properties:
+        ip: { type: string }
+        public: { type: boolean }
+        found: { type: boolean }
+        prefix: { type: string }
+        city: { type: string }
+        region: { type: string }
+        postal: { type: string }
+        country: { type: string }
+        countryCode: { type: string }
+        continent: { type: string }
+        latitude: { type: [number, "null"] }
+        longitude: { type: [number, "null"] }
+        accuracyKm: { type: integer }
+        timeZone: { type: string }
+        asn: { type: [integer, "null"] }
+        asOrg: { type: string }
+        asnSource: { type: string, enum: ["", mmdb, cymru] }
+        source: { type: string }
+        database: { type: string }

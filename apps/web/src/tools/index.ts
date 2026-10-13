@@ -22,6 +22,7 @@ import { tool as eui64Calculator } from './eui64-calculator'
 import { tool as httpRequest } from './http-request'
 import { tool as httpStatusCodes } from './http-status-codes'
 import { tool as httpTiming } from './http-timing'
+import { tool as ipGeolocation } from './ip-geolocation'
 import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipToAsn } from './ip-to-asn'
@@ -71,7 +72,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
-  { id: 'reputation', components: [] },
+  { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator] },
   { id: 'client', components: [requestHeaders] },

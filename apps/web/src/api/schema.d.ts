@@ -599,6 +599,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/geo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** IP geolocation from the local GeoLite2 / DB-IP Lite database */
+        get: operations["geo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -668,7 +685,7 @@ export interface components {
         Capability: {
             enabled: boolean;
             /** @enum {string} */
-            reason?: "disabled_by_admin" | "provider_key_missing" | "requires_lan_mode" | "binary_missing";
+            reason?: "disabled_by_admin" | "provider_key_missing" | "requires_lan_mode" | "binary_missing" | "data_missing";
         };
         Echo: {
             ip: string;
@@ -1216,6 +1233,28 @@ export interface components {
             registrar: string;
             status: string[];
             server: string;
+        };
+        Geo: {
+            ip: string;
+            public: boolean;
+            found: boolean;
+            prefix: string;
+            city: string;
+            region: string;
+            postal: string;
+            country: string;
+            countryCode: string;
+            continent: string;
+            latitude: number | null;
+            longitude: number | null;
+            accuracyKm: number;
+            timeZone: string;
+            asn: number | null;
+            asOrg: string;
+            /** @enum {string} */
+            asnSource: "" | "mmdb" | "cymru";
+            source: string;
+            database: string;
         };
     };
     responses: {
@@ -2143,6 +2182,33 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["DomainExpiry"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    geo: {
+        parameters: {
+            query: {
+                ip: string;
+                /** @description only `local` is implemented */
+                source?: "local";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Geo"];
                     };
                 };
             };

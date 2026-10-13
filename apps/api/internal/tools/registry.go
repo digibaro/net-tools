@@ -23,6 +23,7 @@ const (
 	ReasonProviderKeyMissing Reason = "provider_key_missing"
 	ReasonRequiresLANMode    Reason = "requires_lan_mode"
 	ReasonBinaryMissing      Reason = "binary_missing"
+	ReasonDataMissing        Reason = "data_missing"
 )
 
 // Middleware is a standard net/http middleware.

@@ -38,17 +38,24 @@ type Options struct {
 	Deny []string
 }
 
-// New mounts tool on a router built like production.
-func New(t testing.TB, tool tools.Tool, o Options) *Env {
+// Config loads a test configuration (relaxed rate limits) with overrides.
+func Config(t testing.TB, overrides map[string]string) config.Config {
 	t.Helper()
 	env := map[string]string{"RATE_LIMIT_RPM": "10000", "RATE_LIMIT_HEAVY_RPM": "10000"}
-	for k, v := range o.Env {
+	for k, v := range overrides {
 		env[k] = v
 	}
 	cfg, err := config.LoadFrom(func(k string) (string, bool) { v, ok := env[k]; return v, ok }, func(string) ([]byte, error) { return nil, io.EOF })
 	if err != nil {
 		t.Fatal(err)
 	}
+	return cfg
+}
+
+// New mounts tool on a router built like production.
+func New(t testing.TB, tool tools.Tool, o Options) *Env {
+	t.Helper()
+	cfg := Config(t, o.Env)
 	pol := target.Policy{AllowPrivate: o.AllowPrivate}
 	for _, d := range o.Deny {
 		pol.Deny = append(pol.Deny, netip.MustParsePrefix(d))

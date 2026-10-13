@@ -21,6 +21,7 @@ import (
 	"time"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/geoip"
 	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/all"
@@ -79,6 +80,9 @@ func serve() error {
 			Version: version, Commit: commit, BuildDate: buildDate, GoVersion: runtime.Version(),
 		},
 		Tools: all.Tools(),
+		Ready: []httpapi.ReadyCheck{{Name: "geoip", Check: func(context.Context) error {
+			return geoip.ReadyCheck(cfg.DataDir, cfg.Features.GeoIPCityDB, cfg.Features.GeoIPASNDB)
+		}}},
 	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
