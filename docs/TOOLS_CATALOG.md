@@ -67,8 +67,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 |---|---|---|---|---|---|---|---|
 | CON-01 | Ping (ICMP) | Live RTT, loss, jitter, min/avg/max, chart | H | `pro-bing` (unprivileged via `ping_group_range` or NET_RAW) | Globalping `ping` | 2 | ✅ |
 | CON-02 | TCP ping | Connect-time to host:port (ICMP-blocked targets) | S | `net.Dialer` loop | — | 2 | ✅ |
-| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ⬜ |
-| CON-04 | MTR | Continuous traceroute+ping, per-hop loss/latency table | H | `mtr --raw` streamed | Globalping `mtr` | 2 | ⬜ |
+| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
+| CON-04 | MTR | Continuous traceroute+ping, per-hop loss/latency table | H | `mtr --raw` streamed | Globalping `mtr` | 2 | ✅ |
 | CON-05 | Port check | Is TCP (or UDP best-effort) port open from the server | S | `net.Dialer` | check-host.net API | 2 | ⬜ |
 | CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ⬜ |
 | CON-07 | Path MTU discovery | Find max non-fragmented packet size to target | S | `pro-bing` with DF + size bisection | — | 3 | ⬜ |

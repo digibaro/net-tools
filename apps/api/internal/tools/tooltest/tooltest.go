@@ -12,6 +12,7 @@ import (
 	"testing"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/execx"
 	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
@@ -31,6 +32,8 @@ type Options struct {
 	Lookup target.LookupFunc
 	// Env overrides config variables.
 	Env map[string]string
+	// Exec overrides the command runner (fake binaries).
+	Exec *execx.Runner
 }
 
 // New mounts tool on a router built like production.
@@ -53,6 +56,7 @@ func New(t testing.TB, tool tools.Tool, o Options) *Env {
 		Logger: slog.New(slog.NewTextHandler(io.Discard, nil)),
 		Tools:  []tools.Tool{tool},
 		Target: res,
+		Exec:   o.Exec,
 	})
 	return &Env{t: t, Handler: h}
 }

@@ -144,6 +144,21 @@ ping:
   count: Count
   interval: Interval (ms)
   run: Start
+trace:
+  protocol: Protocol
+  cycles: Cycles
+  hops: 'Hops ({count})'
+  columns:
+    host: Host
+    asn: AS
+    loss: Loss
+    sent: Sent
+    last: Last
+    avg: Avg
+    best: Best
+    worst: Worst
+    stddev: StDev
+    rtts: Round-trip times
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -877,3 +892,9 @@ tools:
     title: TCP ping
     description: Measure TCP connect time to a host and port — works where ICMP is blocked.
     port: Port
+  traceroute:
+    title: Traceroute
+    description: Show the network path from the server to a host, hop by hop, using ICMP, UDP or TCP probes.
+  mtr:
+    title: MTR
+    description: Continuous traceroute with per-hop packet loss and latency statistics, updated live.

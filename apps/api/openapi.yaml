@@ -302,6 +302,45 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/traceroute/stream:
+    get:
+      operationId: tracerouteStream
+      summary: Traceroute via mtr (3 probes per hop, SSE)
+      description: "Events: meta, hop (TraceHop)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.traceroute
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: proto, in: query, schema: { type: string, enum: [icmp, udp, tcp], default: icmp } }
+        - { name: port, in: query, description: "TCP mode only", schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: maxHops, in: query, description: "1..TRACEROUTE_MAX_HOPS", schema: { type: integer, default: 30 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/mtr/stream:
+    get:
+      operationId: mtrStream
+      summary: MTR (continuous traceroute with per-hop statistics, SSE)
+      description: "Events: meta, hop (TraceHop, throttled updates)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.mtr
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: proto, in: query, schema: { type: string, enum: [icmp, udp, tcp], default: icmp } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: maxHops, in: query, schema: { type: integer, default: 30 } }
+        - { name: cycles, in: query, description: "1..MTR_MAX_CYCLES", schema: { type: integer, default: 10 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -652,3 +691,20 @@ components:
         maxMs: { type: number }
         stddevMs: { type: number }
         jitterMs: { type: number }
+    TraceHop:
+      type: object
+      required: [hop, ip, host, sent, recv, loss, lastMs, avgMs, bestMs, worstMs, stddevMs, rttMs, asn]
+      properties:
+        hop: { type: integer }
+        ip: { type: string }
+        host: { type: string }
+        sent: { type: integer }
+        recv: { type: integer }
+        loss: { type: number, description: "percent" }
+        lastMs: { type: number }
+        avgMs: { type: number }
+        bestMs: { type: number }
+        worstMs: { type: number }
+        stddevMs: { type: number }
+        rttMs: { type: array, items: { type: number } }
+        asn: { type: [integer, "null"] }

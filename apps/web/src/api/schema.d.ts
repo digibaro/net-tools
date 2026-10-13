@@ -253,6 +253,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/traceroute/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Traceroute via mtr (3 probes per hop, SSE)
+         * @description Events: meta, hop (TraceHop)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error.
+         */
+        get: operations["tracerouteStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/mtr/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * MTR (continuous traceroute with per-hop statistics, SSE)
+         * @description Events: meta, hop (TraceHop, throttled updates)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error.
+         */
+        get: operations["mtrStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -514,6 +554,22 @@ export interface components {
             maxMs: number;
             stddevMs: number;
             jitterMs: number;
+        };
+        TraceHop: {
+            hop: number;
+            ip: string;
+            host: string;
+            sent: number;
+            recv: number;
+            /** @description percent */
+            loss: number;
+            lastMs: number;
+            avgMs: number;
+            bestMs: number;
+            worstMs: number;
+            stddevMs: number;
+            rttMs: number[];
+            asn: number | null;
         };
     };
     responses: {
@@ -892,6 +948,64 @@ export interface operations {
                 port?: number;
                 count?: number;
                 interval?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    tracerouteStream: {
+        parameters: {
+            query: {
+                target: string;
+                proto?: "icmp" | "udp" | "tcp";
+                /** @description TCP mode only */
+                port?: number;
+                /** @description 1..TRACEROUTE_MAX_HOPS */
+                maxHops?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    mtrStream: {
+        parameters: {
+            query: {
+                target: string;
+                proto?: "icmp" | "udp" | "tcp";
+                port?: number;
+                maxHops?: number;
+                /** @description 1..MTR_MAX_CYCLES */
+                cycles?: number;
                 /** @description Restrict to IPv4 (4) or IPv6 (6) */
                 family?: components["parameters"]["Family"];
             };
