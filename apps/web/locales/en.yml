@@ -594,3 +594,26 @@ tools:
       innerMtu: Inner MTU
       mssIpv4: TCP MSS (IPv4)
       mssIpv6: TCP MSS (IPv6)
+  port-reference:
+    title: Port number reference
+    description: Search the IANA service name and port number registry by port, service name or description.
+    search: Port number or service
+    all: All
+    results: '{count} entries'
+    truncated: 'Showing the first {max}.'
+    none: No registered service matches.
+    source: Bundled from the IANA Service Name and Transport Protocol Port Number Registry (regenerate with scripts/gen-data.mjs).
+    columns:
+      port: Port
+      protocol: Transport
+      service: Service
+      description: Description
+      reference: Reference
+  protocol-reference:
+    title: Protocol Reference
+    description: TODO describe Protocol Reference
+    input: Input
+  dns-record-types:
+    title: Dns Record Types
+    description: TODO describe Dns Record Types
+    input: Input

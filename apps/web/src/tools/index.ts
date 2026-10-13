@@ -6,6 +6,7 @@ import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
 import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as dataUnitConverter } from './data-unit-converter'
+import { tool as dnsRecordTypes } from './dns-record-types'
 import { tool as domainParser } from './domain-parser'
 import { tool as eui64Calculator } from './eui64-calculator'
 import { tool as httpStatusCodes } from './http-status-codes'
@@ -19,6 +20,8 @@ import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
 import { tool as mtuCalculator } from './mtu-calculator'
+import { tool as portReference } from './port-reference'
+import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as subnetSplitter } from './subnet-splitter'
@@ -38,7 +41,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [] },
   { id: 'reputation', components: [] },
   { id: 'lan', components: [] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes] },
   { id: 'client', components: [] },
 ]
 
