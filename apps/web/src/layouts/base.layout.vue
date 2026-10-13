@@ -1,18 +1,31 @@
 <script setup lang="ts">
 import { InfoCircle, LayoutSidebarLeftCollapse, Menu2, Search, Settings } from '@vicons/tabler'
+import { onKeyStroke } from '@vueuse/core'
 import { NButton, NIcon, NLayout, NLayoutContent, NLayoutHeader, NLayoutSider, NTooltip } from 'naive-ui'
-import { computed, ref } from 'vue'
+import { computed, defineAsyncComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import CollapsibleToolMenu from '@/components/CollapsibleToolMenu.vue'
-import CommandPalette from '@/components/CommandPalette.vue'
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 import { useStyleStore } from '@/stores/style.store'
 
 const style = useStyleStore()
 const { t } = useI18n()
 const router = useRouter()
+// The palette (fuse.js, modal, input) is loaded on first use to keep the initial bundle small.
+const CommandPalette = defineAsyncComponent(() => import('@/components/CommandPalette.vue'))
 const paletteOpen = ref(false)
+const paletteLoaded = ref(false)
+function openPalette(open = true) {
+  paletteLoaded.value = true
+  paletteOpen.value = open
+}
+onKeyStroke(['k', 'K'], (e) => {
+  if (e.ctrlKey || e.metaKey) {
+    e.preventDefault()
+    openPalette(!paletteOpen.value)
+  }
+})
 const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
 const shortcut = isMac ? '⌘K' : 'Ctrl+K'
 
@@ -53,7 +66,8 @@ function closeOnMobile() {
         <img src="/favicon.svg" alt="" width="28" height="28">
         {{ t('app.name') }}
       </RouterLink>
-      <CollapsibleToolMenu @navigate="closeOnMobile" />
+      <!-- On small screens the collapsed sidebar is off-canvas; mount the menu only when opened. -->
+      <CollapsibleToolMenu v-if="!style.isSmallScreen || mobileOpen" @navigate="closeOnMobile" />
     </NLayoutSider>
     <div v-if="style.isSmallScreen && mobileOpen" class="fixed inset-0 z-10 bg-black/40" aria-hidden="true" @click="mobileOpen = false" />
     <NLayout :native-scrollbar="false">
@@ -68,7 +82,7 @@ function closeOnMobile() {
           </template>
           {{ t('nav.toggleMenu') }}
         </NTooltip>
-        <NButton class="max-w-md flex-1 justify-start" secondary :aria-label="t('search.open')" data-testid="search-open" @click="paletteOpen = true">
+        <NButton class="max-w-md flex-1 justify-start" secondary data-testid="search-open" @click="openPalette()">
           <template #icon>
             <NIcon aria-hidden="true" :component="Search" />
           </template>
@@ -99,10 +113,12 @@ function closeOnMobile() {
           </NTooltip>
         </div>
       </NLayoutHeader>
-      <NLayoutContent tag="main" class="px-4 py-6 sm:px-6">
-        <slot />
+      <NLayoutContent class="px-4 py-6 sm:px-6">
+        <main>
+          <slot />
+        </main>
       </NLayoutContent>
     </NLayout>
-    <CommandPalette v-model:show="paletteOpen" />
+    <CommandPalette v-if="paletteLoaded" v-model:show="paletteOpen" />
   </NLayout>
 </template>

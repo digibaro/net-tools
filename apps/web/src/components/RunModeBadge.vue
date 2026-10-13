@@ -3,7 +3,8 @@ import type { RunMode } from '@/tools/tool'
 import { NTag, NTooltip } from 'naive-ui'
 import { useI18n } from 'vue-i18n'
 
-defineProps<{ mode: RunMode, size?: 'tiny' | 'small' | 'medium' }>()
+// `tooltip: false` uses a native title instead of a Naive popover (cheaper in long card grids).
+withDefaults(defineProps<{ mode: RunMode, size?: 'tiny' | 'small' | 'medium', tooltip?: boolean }>(), { tooltip: true })
 const { t } = useI18n()
 
 const types: Record<RunMode, 'success' | 'info' | 'warning' | 'default'> = {
@@ -15,7 +16,7 @@ const types: Record<RunMode, 'success' | 'info' | 'warning' | 'default'> = {
 </script>
 
 <template>
-  <NTooltip>
+  <NTooltip v-if="tooltip">
     <template #trigger>
       <NTag :type="types[mode]" :size="size ?? 'small'" :bordered="false" round data-testid="run-mode">
         {{ t(`runMode.${mode}.label`) }}
@@ -23,4 +24,7 @@ const types: Record<RunMode, 'success' | 'info' | 'warning' | 'default'> = {
     </template>
     {{ t(`runMode.${mode}.description`) }}
   </NTooltip>
+  <NTag v-else :type="types[mode]" :size="size ?? 'small'" :bordered="false" round :title="t(`runMode.${mode}.description`)" data-testid="run-mode">
+    {{ t(`runMode.${mode}.label`) }}
+  </NTag>
 </template>

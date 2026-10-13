@@ -34,7 +34,7 @@ const options = computed(() => COLOR_MODES.map(mode => ({
       {{ label }}
     </NTooltip>
     <NDropdown trigger="click" :options="options" :value="style.colorMode" @select="(key: ColorMode) => (style.colorMode = key)">
-      <NButton quaternary size="tiny" class="px-0.5" :aria-label="t('theme.choose')" data-testid="theme-menu">
+      <NButton quaternary size="small" class="min-h-6 min-w-6 px-1" :aria-label="t('theme.choose')" data-testid="theme-menu">
         <template #icon>
           <NIcon aria-hidden="true" :component="ChevronDown" />
         </template>

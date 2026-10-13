@@ -2,7 +2,6 @@
 import type { Component } from 'vue'
 import type { ColorMode } from '@/stores/style.store'
 import { DeviceDesktop, Home, InfoCircle, Moon, Search, Settings, Sun } from '@vicons/tabler'
-import { onKeyStroke } from '@vueuse/core'
 import { NIcon, NInput, NModal, useThemeVars } from 'naive-ui'
 import { computed, nextTick, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -62,14 +61,7 @@ watch(show, async (open) => {
     await nextTick()
     input.value?.focus()
   }
-})
-
-onKeyStroke(['k', 'K'], (e) => {
-  if (e.ctrlKey || e.metaKey) {
-    e.preventDefault()
-    show.value = !show.value
-  }
-})
+}, { immediate: true })
 
 function execute(cmd: Command | undefined) {
   if (!cmd)

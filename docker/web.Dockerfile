@@ -18,6 +18,9 @@ RUN hashes="$(cat apps/web/dist/csp-script-hashes.txt)" \
     && sed -i "s|script-src 'self';|script-src 'self' ${hashes};|" /src/security-headers.conf \
     && grep -q "script-src 'self' 'sha256-" /src/security-headers.conf \
     && rm apps/web/dist/csp-script-hashes.txt
+# Precompress static assets at maximum level; nginx serves them with gzip_static.
+RUN find apps/web/dist -type f \( -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.svg' \
+      -o -name '*.json' -o -name '*.webmanifest' -o -name '*.txt' \) -size +1k -exec gzip -9 -k -n {} +
 
 FROM nginxinc/nginx-unprivileged:stable-alpine
 # official nginx images render /etc/nginx/templates/*.template with envsubst at start

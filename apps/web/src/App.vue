@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { darkTheme, NConfigProvider, NGlobalStyle, NMessageProvider, NNotificationProvider } from 'naive-ui'
+import { darkTheme, NConfigProvider, NGlobalStyle, NMessageProvider } from 'naive-ui'
 import { computed, onMounted, watchEffect } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -31,16 +31,14 @@ onMounted(() => {
   <NConfigProvider :theme="theme" :theme-overrides="overrides">
     <NGlobalStyle />
     <NMessageProvider>
-      <NNotificationProvider>
-        <BaseLayout>
-          <RouterView v-slot="{ Component, route: r }">
-            <ToolLayout v-if="r.meta.tool" :key="r.path" :tool="r.meta.tool">
-              <component :is="Component" />
-            </ToolLayout>
-            <component :is="Component" v-else />
-          </RouterView>
-        </BaseLayout>
-      </NNotificationProvider>
+      <BaseLayout>
+        <RouterView v-slot="{ Component, route: r }">
+          <ToolLayout v-if="r.meta.tool" :key="r.path" :tool="r.meta.tool">
+            <component :is="Component" />
+          </ToolLayout>
+          <component :is="Component" v-else />
+        </RouterView>
+      </BaseLayout>
     </NMessageProvider>
   </NConfigProvider>
 </template>
