@@ -610,9 +610,22 @@ tools:
       description: Description
       reference: Reference
   protocol-reference:
-    title: Protocol Reference
-    description: TODO describe Protocol Reference
-    input: Input
+    title: Protocol / ICMP type reference
+    description: IP protocol numbers and ICMP / ICMPv6 types and codes from the IANA registries.
+    search: Search by number or name
+    source: Bundled from the IANA Protocol Numbers, ICMP and ICMPv6 Parameters registries; ICMPv6 codes curated from RFC 4443 and updates.
+    tabs:
+      ip: IP protocols
+      icmp: ICMP (IPv4)
+      icmpv6: ICMPv6
+    columns:
+      number: Number
+      keyword: Keyword
+      name: Name
+      ext: IPv6 extension header
+      reference: Reference
+      type: Type
+      code: Code
   dns-record-types:
     title: Dns Record Types
     description: TODO describe Dns Record Types

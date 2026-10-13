@@ -179,7 +179,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ✅ |
 | CAL-05 | Optical power converter | dBm ↔ mW, link budget | B | custom | — | 2 | ⬜ |
 | CAL-06 | Port number reference | IANA service names/ports, searchable | B | bundled IANA CSV → JSON | — | 1 | ✅ |
-| CAL-07 | Protocol / ICMP type reference | IP protocol numbers, ICMP/ICMPv6 types & codes | B | bundled JSON | — | 1 | ⬜ |
+| CAL-07 | Protocol / ICMP type reference | IP protocol numbers, ICMP/ICMPv6 types & codes | B | bundled JSON | — | 1 | ✅ |
 | CAL-08 | DNS record type reference | Record types, RFCs, examples | B | bundled JSON | — | 1 | ⬜ |
 | CAL-09 | Subnet cheat sheet | /0–/32 and common v6 prefix table | B | generated | — | 1 | ⬜ |
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ⬜ |
