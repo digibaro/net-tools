@@ -1011,9 +1011,57 @@ tools:
       ok: 'Acceptable: first byte after {ttfb} ms, {total} ms in total.'
       slow: 'Slow server response: first byte after {ttfb} ms, {total} ms in total.'
   security-headers:
-    title: Security Headers
-    description: TODO describe Security Headers
-    input: Input
+    title: Security headers analyzer
+    description: Grade a website's HTTP security headers (CSP, HSTS, framing, nosniff, referrer and permissions policies, cookies) with fixes.
+    run: Analyze
+    score: 'Score {score} / 100'
+    status:
+      pass: Pass
+      warn: Warn
+      fail: Fail
+      info: Info
+    checks:
+      hsts:
+        ok: HSTS is enabled with a long max-age.
+        preload: HSTS is enabled with includeSubDomains and preload.
+        short-max-age: HSTS max-age is shorter than 180 days.
+        missing: No HSTS header — browsers may connect over plain HTTP first.
+        not-https: The final page is not served over HTTPS.
+      csp:
+        ok: Content-Security-Policy restricts scripts without unsafe-inline.
+        missing: No Content-Security-Policy.
+        report-only: Only a report-only CSP is set; it does not block anything.
+        unsafe-inline: script-src allows 'unsafe-inline' without nonces or hashes.
+        unsafe-eval: script-src allows 'unsafe-eval'.
+        wildcard: 'script-src allows any host (*, https: or http:).'
+        no-script-src: CSP has neither script-src nor default-src.
+      framing:
+        frame-ancestors: CSP frame-ancestors controls who may frame the page.
+        xfo: X-Frame-Options prevents framing (clickjacking).
+        missing: No framing protection (X-Frame-Options or CSP frame-ancestors).
+      nosniff:
+        ok: MIME sniffing is disabled.
+        missing: X-Content-Type-Options nosniff is missing.
+      referrer:
+        ok: A Referrer-Policy is set.
+        missing: No Referrer-Policy (browser default applies).
+        leaky: The Referrer-Policy sends full URLs to other sites.
+      permissions:
+        ok: A Permissions-Policy is set.
+        missing: No Permissions-Policy restricting powerful browser features.
+      crossoriginopenerpolicy:
+        ok: Cross-Origin-Opener-Policy isolates the browsing context.
+        missing: Cross-Origin-Opener-Policy is not set (optional hardening).
+      crossoriginresourcepolicy:
+        ok: Cross-Origin-Resource-Policy is set.
+        missing: Cross-Origin-Resource-Policy is not set (optional hardening).
+      crossoriginembedderpolicy:
+        ok: Cross-Origin-Embedder-Policy is set.
+        missing: Cross-Origin-Embedder-Policy is not set (needed only for cross-origin isolation).
+      leak:
+        version: This header reveals software versions.
+      cookie:
+        cookie: 'Cookie {value} is missing: {detail}.'
   cors-tester:
     title: Cors Tester
     description: TODO describe Cors Tester
