@@ -1,0 +1,14 @@
+# Go hot reload for docker-compose.dev.yml (https://github.com/air-verse/air)
+root = "."
+tmp_dir = "/tmp/air"
+
+[build]
+  cmd = "go build -o /tmp/air/nettools-api ./cmd/nettools-api"
+  entrypoint = ["/tmp/air/nettools-api", "serve"]
+  include_ext = ["go"]
+  exclude_dir = ["testdata"]
+  exclude_regex = ["_test\\.go$"]
+  delay = 300
+
+[log]
+  main_only = true
