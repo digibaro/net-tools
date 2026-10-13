@@ -380,3 +380,13 @@ tools:
     relation:
       private: The server sees a private address, so it is on your local network or behind the same NAT. Use the Internet view for your public address.
       different: The server sees a different public address than the Internet does — a proxy, VPN or NAT64 is probably in the path.
+  punycode-converter:
+    title: Punycode / IDN converter
+    description: Convert internationalized domain names between Unicode and their xn-- ASCII (Punycode) form.
+    input: Domain names (one per line)
+    invalid: '{count} invalid domain names: {entries}'
+    columns:
+      input: Input
+      ascii: ASCII (Punycode)
+      unicode: Unicode
+      idnLabels: IDN labels
