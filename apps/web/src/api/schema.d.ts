@@ -344,6 +344,91 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/http/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a request and inspect the response (optionally following redirects) */
+        post: operations["httpRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/redirects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Follow and list every redirect hop */
+        get: operations["httpRedirects"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/timing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** DNS / connect / TLS / TTFB / transfer timing */
+        get: operations["httpTiming"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/security-headers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Grade security headers of the final response */
+        get: operations["httpSecurityHeaders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/cors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Send a CORS preflight (and a safe actual request) and evaluate it */
+        get: operations["httpCors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -678,6 +763,91 @@ export interface components {
                 search: string[];
                 options: string[];
             };
+        };
+        HttpHeader: {
+            name: string;
+            value: string;
+        };
+        HttpRequestBody: {
+            url: string;
+            /**
+             * @default GET
+             * @enum {string}
+             */
+            method: "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+            headers?: {
+                [key: string]: string;
+            };
+            body?: string;
+            /** @default false */
+            followRedirects: boolean;
+        };
+        HttpHop: {
+            url: string;
+            method: string;
+            remoteAddr: string;
+            status: number;
+            statusText: string;
+            proto: string;
+            headers: components["schemas"]["HttpHeader"][];
+            location: string;
+            contentType: string;
+            bodyPreview: string;
+            bodyBytes: number;
+            bodyTruncated: boolean;
+            /** @description set when this hop was not fetched (e.g. redirect into a denied range) */
+            error: string;
+            errorCode: string;
+            timing: {
+                resolveMs: number;
+                connectMs: number;
+                tlsMs: number;
+                ttfbMs: number;
+                transferMs: number;
+                totalMs: number;
+            };
+            tls: null | {
+                version: string;
+                cipher: string;
+                alpn: string;
+                serverName: string;
+                subject: string;
+                issuer: string;
+                notAfter: string;
+                verifyError: string;
+            };
+        };
+        HttpHops: {
+            hops: components["schemas"]["HttpHop"][];
+        };
+        SecurityHeaders: {
+            url: string;
+            status: number;
+            /** @enum {string} */
+            grade: "A+" | "A" | "B" | "C" | "D" | "F";
+            score: number;
+            hop: components["schemas"]["HttpHop"];
+            checks: {
+                id: string;
+                header: string;
+                /** @enum {string} */
+                status: "pass" | "warn" | "fail" | "info";
+                value: string;
+                detail: string;
+            }[];
+        };
+        Cors: {
+            allowed: boolean;
+            needsPreflight: boolean;
+            requestedMethod: string;
+            requestHeaders: string[];
+            preflight: null | components["schemas"]["HttpHop"];
+            actual: null | components["schemas"]["HttpHop"];
+            findings: {
+                code: string;
+                ok: boolean;
+                value: string;
+            }[];
         };
     };
     responses: {
@@ -1208,6 +1378,139 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["ServerNetinfo"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HttpRequestBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpRedirects: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpTiming: {
+        parameters: {
+            query: {
+                url: string;
+                follow?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpSecurityHeaders: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SecurityHeaders"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpCors: {
+        parameters: {
+            query: {
+                url: string;
+                origin: string;
+                method?: "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+                /** @description comma-separated request header names */
+                headers?: string;
+                credentials?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Cors"];
                     };
                 };
             };

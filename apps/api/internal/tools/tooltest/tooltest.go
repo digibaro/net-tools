@@ -34,6 +34,8 @@ type Options struct {
 	Env map[string]string
 	// Exec overrides the command runner (fake binaries).
 	Exec *execx.Runner
+	// Deny adds always-denied prefixes (like DENY_CIDRS).
+	Deny []string
 }
 
 // New mounts tool on a router built like production.
@@ -47,7 +49,11 @@ func New(t testing.TB, tool tools.Tool, o Options) *Env {
 	if err != nil {
 		t.Fatal(err)
 	}
-	res := target.NewResolver(target.Policy{AllowPrivate: o.AllowPrivate})
+	pol := target.Policy{AllowPrivate: o.AllowPrivate}
+	for _, d := range o.Deny {
+		pol.Deny = append(pol.Deny, netip.MustParsePrefix(d))
+	}
+	res := target.NewResolver(pol)
 	if o.Lookup != nil {
 		res.Lookup = o.Lookup
 	}

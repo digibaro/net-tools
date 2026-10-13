@@ -85,7 +85,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| WEB-01 | HTTP request inspector | Method, headers, status, response headers, body preview | S | `net/http` w/ pinned dialer | Globalping `http` | 2 | ⬜ |
+| WEB-01 | HTTP request inspector | Method, headers, status, response headers, body preview | S | `net/http` w/ pinned dialer | Globalping `http` | 2 | ✅ |
 | WEB-02 | Redirect chain tracer | Every hop with status, Location, timing | S | `net/http` no-follow loop | — | 2 | ⬜ |
 | WEB-03 | Timing breakdown | DNS / connect / TLS / TTFB / transfer (curl `-w` style) | S | `httptrace` | — | 2 | ⬜ |
 | WEB-04 | Security headers analyzer | CSP, HSTS, XFO, XCTO, Referrer-Policy, Permissions-Policy grading | S | custom rules | Mozilla HTTP Observatory API | 2 | ⬜ |

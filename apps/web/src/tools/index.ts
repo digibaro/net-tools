@@ -15,6 +15,7 @@ import { tool as dnsTrace } from './dns-trace'
 import { tool as domainParser } from './domain-parser'
 import { tool as encryptedDnsTester } from './encrypted-dns-tester'
 import { tool as eui64Calculator } from './eui64-calculator'
+import { tool as httpRequest } from './http-request'
 import { tool as httpStatusCodes } from './http-status-codes'
 import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipSpecialCheck } from './ip-special-check'
@@ -52,7 +53,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo] },
-  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes] },
+  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest] },
   { id: 'tls', components: [certificateDecoder] },
   { id: 'email', components: [] },
   { id: 'bgp', components: [] },

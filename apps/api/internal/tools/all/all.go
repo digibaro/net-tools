@@ -16,6 +16,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/web"
 )
 
 // Tools returns every registered tool, in catalog order.
@@ -35,5 +36,10 @@ func Tools() []tools.Tool {
 		&portcheck.Tool{},
 		&ntpcheck.Tool{},
 		&serverinfo.Tool{},
+		&web.RequestTool{},
+		&web.RedirectsTool{},
+		&web.TimingTool{},
+		&web.SecHeadersTool{},
+		&web.CORSTool{},
 	}
 }

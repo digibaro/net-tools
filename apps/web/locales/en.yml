@@ -159,6 +159,28 @@ trace:
     worst: Worst
     stddev: StDev
     rtts: Round-trip times
+http:
+  url: URL
+  tls: TLS
+  certificate: Certificate
+  until: 'until {date}'
+  verification: Verification
+  verified: Valid certificate
+  location: Location
+  headers: 'Response headers ({count})'
+  body: 'Body ({bytes} bytes)'
+  truncated: The body was truncated.
+  name: Name
+  value: Value
+  total: total
+  timingBar: 'Request timing, {total} ms in total'
+  phases:
+    resolve: DNS
+    connect: Connect
+    tls: TLS
+    ttfb: Wait
+    transfer: Transfer
+  invalidUrl: Enter an http or https URL.
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -956,3 +978,14 @@ tools:
       gateway: Gateway
       interface: Interface
       metric: Metric
+  http-request:
+    title: HTTP request inspector
+    description: Send an HTTP request from the server with any method, headers and body, and inspect status, headers, timing and body.
+    method: Method
+    headers: 'Request headers (one "Name: value" per line)'
+    body: Request body
+    follow: Follow redirects
+    privacy: Headers and body are sent to the target from the NetTools server and are never added to the page URL.
+    run: Send request
+    hop: 'Hop {n}'
+    invalidHeader: 'Invalid or not allowed header line: {line}'

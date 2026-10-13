@@ -42,6 +42,8 @@ type Deps struct {
 	Timeout func(time.Duration) Middleware
 	// Slot holds a concurrency-pool slot for the duration of the request (BUSY when full).
 	Slot Middleware
+	// UserAgent identifies outbound requests: NetTools/<version> (+PUBLIC_URL).
+	UserAgent string
 }
 
 // Tool is one server-side capability.

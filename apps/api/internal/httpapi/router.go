@@ -82,7 +82,8 @@ func BuildDeps(o *Options) tools.Deps {
 					Error(w, r, NewError(CodeRateLimited, "too many requests, please wait"))
 				})
 		},
-		Timeout: limits.Timeout,
+		Timeout:   limits.Timeout,
+		UserAgent: "NetTools/" + o.Build.Version + " (+" + cfg.PublicURL + ")",
 		Slot: func(next http.Handler) http.Handler {
 			pool := o.Pool
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -406,6 +406,119 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/ServerNetinfo" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/request:
+    post:
+      operationId: httpRequest
+      summary: Send a request and inspect the response (optionally following redirects)
+      tags: [web]
+      x-capability: web.request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/HttpRequestBody" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/redirects:
+    get:
+      operationId: httpRedirects
+      summary: Follow and list every redirect hop
+      tags: [web]
+      x-capability: web.redirects
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/timing:
+    get:
+      operationId: httpTiming
+      summary: DNS / connect / TLS / TTFB / transfer timing
+      tags: [web]
+      x-capability: web.timing
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+        - { name: follow, in: query, schema: { type: boolean, default: false } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/security-headers:
+    get:
+      operationId: httpSecurityHeaders
+      summary: Grade security headers of the final response
+      tags: [web]
+      x-capability: web.secheaders
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SecurityHeaders" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/cors:
+    get:
+      operationId: httpCors
+      summary: Send a CORS preflight (and a safe actual request) and evaluate it
+      tags: [web]
+      x-capability: web.cors
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+        - { name: origin, in: query, required: true, schema: { type: string } }
+        - { name: method, in: query, schema: { type: string, enum: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS], default: GET } }
+        - { name: headers, in: query, description: "comma-separated request header names", schema: { type: string } }
+        - { name: credentials, in: query, schema: { type: boolean, default: false } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Cors" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -849,3 +962,105 @@ components:
             nameservers: { type: array, items: { type: string } }
             search: { type: array, items: { type: string } }
             options: { type: array, items: { type: string } }
+    HttpHeader:
+      type: object
+      required: [name, value]
+      properties:
+        name: { type: string }
+        value: { type: string }
+    HttpRequestBody:
+      type: object
+      required: [url]
+      additionalProperties: false
+      properties:
+        url: { type: string }
+        method: { type: string, enum: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS], default: GET }
+        headers: { type: object, additionalProperties: { type: string }, maxProperties: 30 }
+        body: { type: string, maxLength: 65536 }
+        followRedirects: { type: boolean, default: false }
+    HttpHop:
+      type: object
+      required: [url, method, remoteAddr, status, statusText, proto, headers, location, timing, tls, bodyPreview, bodyBytes, bodyTruncated, contentType, error, errorCode]
+      properties:
+        url: { type: string }
+        method: { type: string }
+        remoteAddr: { type: string }
+        status: { type: integer }
+        statusText: { type: string }
+        proto: { type: string }
+        headers: { type: array, items: { $ref: "#/components/schemas/HttpHeader" } }
+        location: { type: string }
+        contentType: { type: string }
+        bodyPreview: { type: string }
+        bodyBytes: { type: integer }
+        bodyTruncated: { type: boolean }
+        error: { type: string, description: "set when this hop was not fetched (e.g. redirect into a denied range)" }
+        errorCode: { type: string }
+        timing:
+          type: object
+          required: [resolveMs, connectMs, tlsMs, ttfbMs, transferMs, totalMs]
+          properties:
+            resolveMs: { type: number }
+            connectMs: { type: number }
+            tlsMs: { type: number }
+            ttfbMs: { type: number }
+            transferMs: { type: number }
+            totalMs: { type: number }
+        tls:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [version, cipher, alpn, serverName, subject, issuer, notAfter, verifyError]
+              properties:
+                version: { type: string }
+                cipher: { type: string }
+                alpn: { type: string }
+                serverName: { type: string }
+                subject: { type: string }
+                issuer: { type: string }
+                notAfter: { type: string }
+                verifyError: { type: string }
+    HttpHops:
+      type: object
+      required: [hops]
+      properties:
+        hops: { type: array, items: { $ref: "#/components/schemas/HttpHop" } }
+    SecurityHeaders:
+      type: object
+      required: [url, status, grade, score, checks, hop]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        grade: { type: string, enum: [A+, A, B, C, D, F] }
+        score: { type: integer }
+        hop: { $ref: "#/components/schemas/HttpHop" }
+        checks:
+          type: array
+          items:
+            type: object
+            required: [id, header, status, value, detail]
+            properties:
+              id: { type: string }
+              header: { type: string }
+              status: { type: string, enum: [pass, warn, fail, info] }
+              value: { type: string }
+              detail: { type: string }
+    Cors:
+      type: object
+      required: [allowed, needsPreflight, findings, preflight, actual, requestedMethod, requestHeaders]
+      properties:
+        allowed: { type: boolean }
+        needsPreflight: { type: boolean }
+        requestedMethod: { type: string }
+        requestHeaders: { type: array, items: { type: string } }
+        preflight: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/HttpHop" }] }
+        actual: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/HttpHop" }] }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [code, ok, value]
+            properties:
+              code: { type: string }
+              ok: { type: boolean }
+              value: { type: string }
