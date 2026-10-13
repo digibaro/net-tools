@@ -34,7 +34,11 @@
 ```
 net-tools/
 ├── CLAUDE.md
+├── LICENSE  NOTICE                # GPL-3.0-or-later; it-tools credited for UX
 ├── Makefile
+├── package.json  pnpm-workspace.yaml  pnpm-lock.yaml   # pnpm workspace (apps/web)
+├── .github/workflows/ci.yml      # lint, typecheck, tests, multi-arch images, Trivy, e2e
+├── data/                         # mounted read-only at /data in api (GeoLite2 mmdb, …)
 ├── docker-compose.yml            # web + api (+ profiles)
 ├── docker-compose.dev.yml        # vite dev server + air (Go hot reload)
 ├── docker-compose.lan.yml        # override: api on host network
@@ -42,7 +46,7 @@ net-tools/
 ├── docker/
 │   ├── web.Dockerfile
 │   ├── api.Dockerfile
-│   └── nginx/default.conf.template
+│   └── nginx/default.conf.template  security-headers.conf
 ├── docs/                         # this kit
 ├── .claude/
 │   ├── settings.json

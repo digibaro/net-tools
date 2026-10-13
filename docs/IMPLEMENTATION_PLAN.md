@@ -5,12 +5,12 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 0 — Scaffold (½–1 day)
 
-- [ ] Monorepo layout from `ARCHITECTURE.md`; pnpm workspace for `apps/web`; Go module `apps/api`.
-- [ ] Decide license (MIT vs GPL-3.0) with the user; add `LICENSE`, `NOTICE` (credit it-tools for UX inspiration).
-- [ ] `docker/web.Dockerfile`, `docker/api.Dockerfile`, `docker/nginx/default.conf.template`,
+- [x] Monorepo layout from `ARCHITECTURE.md`; pnpm workspace for `apps/web`; Go module `apps/api`.
+- [x] Decide license (MIT vs GPL-3.0) with the user — **GPL-3.0-or-later**; add `LICENSE`, `NOTICE` (credit it-tools for UX inspiration).
+- [x] `docker/web.Dockerfile`, `docker/api.Dockerfile`, `docker/nginx/default.conf.template`,
       `docker-compose.yml`, `docker-compose.dev.yml`, `.env.example`, `Makefile` (templates in this kit).
-- [ ] CI (GitHub Actions): lint, typecheck, unit tests, build images (amd64+arm64), Trivy, govulncheck.
-- [ ] `api`: config loader, slog JSON logger, chi router, envelope/errors, `/healthz`, `/readyz`,
+- [x] CI (GitHub Actions): lint, typecheck, unit tests, build images (amd64+arm64), Trivy, govulncheck.
+- [x] `api`: config loader, slog JSON logger, chi router, envelope/errors, `/healthz`, `/readyz`,
       `/v1/version`, `/v1/capabilities` (empty), `/v1/echo`, `healthcheck` subcommand.
 - **Exit**: `docker compose up` serves a blank SPA that calls `/api/v1/version`.
 
