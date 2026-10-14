@@ -2502,3 +2502,29 @@ tools:
     empty: '{set} expanded to nothing — the set may not exist in the selected sources.'
     format: Output format
     plain: Plain list
+  as-path-visualizer:
+    title: AS path visualizer
+    description: Paste BGP AS paths and see them as a graph — shared upstreams, prepending, loops and private ASNs at a glance.
+    input: AS paths (one per line, neighbour first, origin last)
+    hint: Copy paths from a looking glass or "show ip bgp". AS prefixes, origin codes (i, e, ?) and AS_SETs in braces are understood.
+    graph: 'Graph ({n} paths)'
+    graphLabel: AS path graph, origin on the right
+    analysis: Path analysis
+    shortest: 'Shortest path: {n} hops (BGP prefers it when local preference and other attributes are equal).'
+    legend:
+      origin: Origin AS
+      private: Private ASN
+      reserved: Reserved or documentation ASN
+      prepend: ×N = prepended N times
+    notes:
+      prepend: 'AS{asn} prepends {n}×'
+      originPrepend: 'origin AS{asn} prepends itself {n}×'
+      loop: 'AS{asn} appears twice (loop)'
+      private: 'private AS{asn} leaked'
+      reserved: 'reserved AS{asn}'
+      asSet: contains an AS_SET (aggregated route)
+    columns:
+      path: Path
+      length: Length
+      origin: Origin
+      notes: Notes
