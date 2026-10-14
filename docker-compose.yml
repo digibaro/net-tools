@@ -78,6 +78,7 @@ services:
     command: ["-s"]
     ports: ["${IPERF_PORT:-5201}:5201/tcp", "${IPERF_PORT:-5201}:5201/udp"]
     read_only: true
+    tmpfs: [/tmp]                          # iperf3 creates a temp file per stream
     cap_drop: [ALL]
 
   speedtest:
