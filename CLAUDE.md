@@ -33,7 +33,7 @@ Read these before doing non-trivial work:
 make dev            # docker compose -f docker-compose.yml -f docker-compose.dev.yml up (hot reload)
 make up / make down # production-like stack on http://localhost:8080
 make test           # web unit + api unit
-make e2e            # Playwright against the running stack
+make e2e            # Playwright against the running stack (start it with `make up-e2e`: relaxed rate limits)
 make lint           # eslint + vue-tsc + golangci-lint
 make new-tool name=dns-lookup   # scaffolds a tool (see docs/TOOL_AUTHORING.md)
 

@@ -34,12 +34,12 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 2 — Core server tools (5–8 days)
 
-- [ ] `internal/target` + full SSRF test-suite **first**.
-- [ ] `internal/execx`, `internal/sse`, rate limiter, concurrency pool, per-tool timeouts.
-- [ ] DNS (DNS-01/02/03/04/06/09/10), Connectivity (CON-01/02/03/04/05/11/13), HTTP (WEB-01..04/06),
+- [x] `internal/target` + full SSRF test-suite **first**.
+- [x] `internal/execx`, `internal/sse`, rate limiter, concurrency pool, per-tool timeouts.
+- [x] DNS (DNS-01/02/03/04/06/09/10), Connectivity (CON-01/02/03/04/05/11/13), HTTP (WEB-01..04/06),
       TLS (TLS-01/02/06/07), Email (EM-01..04/07), Registry (BGP-01/06/07/08), Geo (REP-01 local mmdb),
       CLI-01/03, IP-06, DNS-12, CAL-05/10.
-- [ ] OpenAPI kept in sync; generated TS client.
+- [x] OpenAPI kept in sync; generated TS client.
 - **Exit**: all Phase 2 rows ✅; `/security-review` checklist done per tool.
 
 ## Phase 3 — Public APIs & depth (4–6 days)
@@ -48,6 +48,9 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 - [ ] Globalping (`remote/stream`) + "Worldwide" vantage switch in ping/traceroute/mtr/dns/http.
 - [ ] RIPEstat (BGP-02..05), PeeringDB (BGP-09), crt.sh (TLS-08), Observatory (WEB-04 option),
       HSTS preload (WEB-10), InternetDB/AbuseIPDB (REP-02/03), Tor (REP-04), cloud ranges (BGP-12).
+- [ ] REP-01 `source=ipinfo`: ipinfo.io provider (token required, `provider_key_missing` without it),
+      used as fallback when no local GeoIP database is mounted. ip-api.com is not used (free tier is
+      non-commercial only).
 - [ ] Remaining Phase 3 rows (DNSSEC, resolver bench, AXFR, wildcard, TLS scan, OCSP, STARTTLS, SSH
       audit, MTA-STS, DNSBL, PMTU, IPv6 readiness, latency matrix, WEB-05/07/08/09/11/15, CLI-02,
       speedtest profile CON-09).
