@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { PrefixStatus } from './prefix-status.service'
 import { NAlert, NButton, NProgress, NTag } from 'naive-ui'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
 import ResultActions from '@/components/ResultActions.vue'
@@ -16,11 +16,24 @@ import { asnPath, prefixPath } from '@/utils/bgp'
 import { isPrefixOrIp, visibilityPct } from './prefix-status.service'
 
 const { t } = useI18n()
+// The URL holds the last looked-up prefix; typing edits a local copy (no request per keystroke).
 const prefix = useQueryParam({ name: 'prefix', defaultValue: '' })
-const validation = useValidation({ source: prefix, rules: [{ validator: isPrefixOrIp, message: t('bgp.invalidPrefix') }] })
+const input = ref(prefix.value)
+const validation = useValidation({ source: input, rules: [{ validator: isPrefixOrIp, message: t('bgp.invalidPrefix') }] })
 const { data, error, loading, run } = useApi<PrefixStatus>('/v1/prefix/status')
-const submit = () => prefix.value && validation.value.isValid && run({ prefix: prefix.value.trim() })
-watch(prefix, () => void submit(), { immediate: true })
+function submit() {
+  if (!input.value || !validation.value.isValid)
+    return
+  if (prefix.value === input.value.trim())
+    void run({ prefix: prefix.value }) // same prefix again: the watcher would not fire
+  prefix.value = input.value.trim()
+}
+// Runs on load, on submit and when a related-prefix link changes the query string.
+watch(prefix, (v) => {
+  input.value = v
+  if (v && isPrefixOrIp(v))
+    void run({ prefix: v })
+}, { immediate: true })
 const rows = computed(() => {
   const d = data.value
   if (!d)
@@ -40,8 +53,8 @@ const c = (key: string) => t(`bgp.columns.${key}`)
 <template>
   <CCard>
     <form class="contents" @submit.prevent="submit">
-      <CInputText v-model:value="prefix" :label="t('bgp.prefix')" placeholder="1.1.1.0/24" :validation="validation" monospace test-id="prefix" />
-      <NButton type="primary" attr-type="submit" :loading="loading" :disabled="!prefix || !validation.isValid" data-testid="run">
+      <CInputText v-model:value="input" :label="t('bgp.prefix')" placeholder="1.1.1.0/24" :validation="validation" monospace test-id="prefix" />
+      <NButton type="primary" attr-type="submit" :loading="loading" :disabled="!input || !validation.isValid" data-testid="run">
         {{ t('bgp.lookUp') }}
       </NButton>
     </form>

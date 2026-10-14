@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { AsnInfo } from './asn-info.service'
 import { NButton, NTag } from 'naive-ui'
-import { computed, watch } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
 import ResultActions from '@/components/ResultActions.vue'
@@ -16,15 +16,25 @@ import { prefixPath } from '@/utils/bgp'
 import { neighbourRows, parseAsn } from './asn-info.service'
 
 const { t } = useI18n()
+// The URL holds the last looked-up ASN; typing edits a local copy so no request runs per keystroke.
 const asn = useQueryParam({ name: 'asn', defaultValue: '' })
-const validation = useValidation({ source: asn, rules: [{ validator: (v: string) => parseAsn(v) !== undefined, message: t('bgp.invalidAsn') }] })
-const parsed = computed(() => parseAsn(asn.value))
+const input = ref(asn.value)
+const validation = useValidation({ source: input, rules: [{ validator: (v: string) => parseAsn(v) !== undefined, message: t('bgp.invalidAsn') }] })
+const parsed = computed(() => parseAsn(input.value))
 const { data, error, loading, run } = useApi<AsnInfo>('/v1/asn')
-const submit = () => parsed.value !== undefined && run({}, `/AS${parsed.value}`)
-// Neighbour links change only the query string, so react to it (also covers the first load).
-watch(parsed, (v) => {
-  if (v !== undefined)
-    void submit()
+function submit() {
+  if (parsed.value === undefined)
+    return
+  if (asn.value === `AS${parsed.value}`)
+    void run({}, `/AS${parsed.value}`) // same ASN again: the watcher would not fire
+  asn.value = `AS${parsed.value}`
+}
+// Runs on load, on submit and when a neighbour link changes the query string.
+watch(asn, (v) => {
+  input.value = v
+  const n = parseAsn(v)
+  if (n !== undefined)
+    void run({}, `/AS${n}`)
 }, { immediate: true })
 const rows = computed(() => (data.value
   ? [
@@ -42,7 +52,7 @@ const c = (key: string) => t(`bgp.columns.${key}`)
 <template>
   <CCard>
     <form class="contents" @submit.prevent="submit">
-      <CInputText v-model:value="asn" :label="t('bgp.asn')" placeholder="AS13335" :validation="validation" monospace test-id="asn" />
+      <CInputText v-model:value="input" :label="t('bgp.asn')" placeholder="AS13335" :validation="validation" monospace test-id="asn" />
       <NButton type="primary" attr-type="submit" :loading="loading" :disabled="parsed === undefined" data-testid="run">
         {{ t('bgp.lookUp') }}
       </NButton>
