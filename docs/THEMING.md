@@ -68,8 +68,25 @@ const overrides = computed(() => (styleStore.isDarkTheme ? darkThemeOverrides : 
 </template>
 ```
 
-`themes.ts` defines `primaryColor` etc. for both modes. Pick an accent with ≥ 4.5:1 contrast on both
-backgrounds (check in both before committing).
+`themes.ts` builds the overrides with `themeOverrides(accent, dark)`.
+
+### Accent colours
+
+Users pick an accent in Settings → Appearance or the header theme menu: green (default), blue,
+indigo, purple, orange or red. The choice is stored per browser (`nettools:accent`) in the style
+store; `App.vue` passes `themeOverrides(style.accent, style.isDarkTheme)` to `NConfigProvider`.
+
+Each preset in `ACCENT_COLORS` has two variants with primary / hover / pressed / suppl shades:
+a dark shade for light mode and a light tint for dark mode. `themes.test.ts` enforces
+≥ 4.5:1 contrast for every preset:
+
+- light shades (primary and pressed) against white — links, and white text on primary buttons;
+- dark tints against Naive's dark body, card and popover surfaces, and against the dark text
+  Naive puts on primary buttons.
+
+`e2e/appearance.e2e.spec.ts` runs axe on Settings and a tool page for every accent in both
+themes. To add a preset, add it to `ACCENTS` / `ACCENT_COLORS`, a label under `theme.accents` in
+`locales/en.yml`, and run both tests.
 
 ## 3. UnoCSS
 

@@ -70,9 +70,13 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 5 — Hardening & release
 
-- [ ] All-in-one image option; multi-arch release workflow pushing to GHCR with SBOM + provenance.
+- [x] Multi-arch release workflow pushing to GHCR with SBOM + provenance (`.github/workflows/release.yml`,
+      triggered by a `vX.Y.Z` tag; first release v0.4.0 after Phase 4).
+- [ ] All-in-one image option.
 - [ ] Docs: README with screenshots (light + dark), configuration reference generated from config struct.
+      (README rewritten for users in v0.4.0; screenshots and generated reference still open.)
 - [ ] Load test streaming endpoints (k6) to validate concurrency limits.
+- [ ] Metrics endpoint for `METRICS_ENABLED` (accepted, not implemented yet).
 - [ ] v1.0.0 tag.
 
 ## Working agreements for Claude Code

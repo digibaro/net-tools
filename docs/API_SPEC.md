@@ -101,6 +101,8 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/dns/caa` | `name` | dns.caa |
 | GET | `/api/v1/dns/axfr` | `zone` | dns.axfr |
 | GET | `/api/v1/dns/benchmark/stream` | `resolvers`, `queries` | dns.benchmark |
+| GET | `/api/v1/dns/encrypted` | `endpoint`, `transport=dot`, `name=example.com`, `type?`, `count=3` | dns.encrypted |
+| GET | `/api/v1/dns/wildcard` | `domain` | dns.wildcard |
 
 ### Connectivity
 | Method | Path | Params | [cap] |
@@ -109,9 +111,15 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/tcping/stream` | `target`, `port`, `count` | net.tcping |
 | GET | `/api/v1/traceroute/stream` | `target`, `proto=icmp|udp|tcp`, `port`, `maxHops` | net.traceroute |
 | GET | `/api/v1/mtr/stream` | `target`, `proto`, `cycles` | net.mtr |
+| GET | `/api/v1/speedtest/ping` | header `X-Speedtest-Token` | net.speedtest |
+| POST | `/api/v1/speedtest/upload` | body ≤ 32 MiB, header `X-Speedtest-Token` | net.speedtest |
+| GET | `/api/v1/speedtest/download` | `bytes=26214400`, header `X-Speedtest-Token` | net.speedtest |
+| POST | `/api/v1/speedtest/session` | — (one heavy request; returns a token valid 45 s / 600 requests) | net.speedtest |
+| GET | `/api/v1/ipv6/readiness` | `domain` | net.ipv6ready |
+| GET | `/api/v1/pmtu/stream` | `target`, `max=1500`, `family=0` | net.pmtu |
+| GET | `/api/v1/latency-matrix/stream` | `targets`, `count=5` | net.latmatrix |
 | GET | `/api/v1/port/check` | `target`, `ports` (≤ 10, comma list), `proto=tcp|udp` | net.portcheck |
 | GET | `/api/v1/portscan/stream` | `target`, `ports` (range/preset, ≤ `PORTSCAN_MAX_PORTS`) | net.portscan |
-| GET | `/api/v1/pmtu` | `target` | net.pmtu |
 | GET | `/api/v1/iperf/stream` | `server`, `port`, `proto`, `duration` (≤ 30s), `reverse` | net.iperf |
 | GET | `/api/v1/ntp` | `server` | net.ntp |
 | POST | `/api/v1/snmp` | `{target, version, community|v3auth, oid, walk}` | net.snmp |
@@ -126,9 +134,15 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/http/security-headers` | `url` | web.secheaders |
 | GET | `/api/v1/http/cors` | `url`, `origin`, `method`, `headers` | web.cors |
 | GET | `/api/v1/http/protocols` | `url` (h2, h3, alt-svc) | web.protocols |
+| GET | `/api/v1/http/hsts-preload` | `domain` | web.hsts |
+| GET | `/api/v1/http/observatory` | `host` | web.observatory |
+| GET | `/api/v1/http/compression` | `url` | web.compression |
+| GET | `/api/v1/http/cookies` | `url` | web.cookies |
+| GET | `/api/v1/http/wellknown` | `url` | web.wellknown |
 | GET | `/api/v1/tls/inspect` | `host`, `port=443`, `sni`, `starttls=smtp|imap|pop3|ftp|xmpp` | tls.inspect |
 | POST | `/api/v1/tls/expiry` | `{targets: ["host:port", …]}` (≤ 50) | tls.expiry |
 | GET | `/api/v1/tls/scan/stream` | `host`, `port` | tls.scan |
+| GET | `/api/v1/tls/revocation` | `host`, `port=443` | tls.revocation |
 | GET | `/api/v1/ssh/audit` | `host`, `port=22` | ssh.audit |
 | GET | `/api/v1/email/mx` | `domain` | email.mx |
 | GET | `/api/v1/email/spf` | `domain` | email.spf |
@@ -142,6 +156,7 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | Method | Path | Params | [cap] |
 |---|---|---|---|
 | GET | `/api/v1/whois` | `query` | reg.whois |
+| GET | `/api/v1/domain/expiry` | `domain` | reg.expiry |
 | GET | `/api/v1/rdap` | `query`, `kind=domain|ip|asn` | reg.rdap |
 | GET | `/api/v1/asn/lookup` | `ip` | bgp.ip2asn |
 | GET | `/api/v1/asn/{asn}` | — | bgp.asn |
