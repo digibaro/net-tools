@@ -56,7 +56,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | DNS-08 | Zone transfer (AXFR) test | Check if NS servers allow AXFR (security audit) | S | `miekg/dns` | — | 3 | ✅ |
 | DNS-09 | SOA / NS consistency | Compare SOA serials and NS sets across all authoritative servers | S | `miekg/dns` | — | 2 | ✅ |
 | DNS-10 | CAA checker | CAA records with tree climbing per RFC 8659 | S | `miekg/dns` | — | 2 | ✅ |
-| DNS-11 | Wildcard detection | Detect wildcard records via random labels | S | `miekg/dns` | — | 3 | ⬜ |
+| DNS-11 | Wildcard detection | Detect wildcard records via random labels | S | `miekg/dns` | — | 3 | ✅ |
 | DNS-12 | Zone file / record builder | Generate BIND-style records (SRV, TXT splitting, SPF) | B | custom | — | 2 | ✅ |
 | DNS-13 | Punycode / IDN converter | Unicode domain ↔ `xn--` | B | `punycode` / `URL` | — | 1 | ✅ |
 | DNS-14 | Domain parser | Split subdomain / registrable domain / public suffix | B | `tldts` | — | 1 | ✅ |

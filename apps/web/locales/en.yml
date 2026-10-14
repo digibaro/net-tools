@@ -1871,3 +1871,12 @@ tools:
       open: Transfer allowed
       refused: Refused
       error: Not tested
+  wildcard-detector:
+    title: Wildcard DNS detector
+    description: Find out whether a domain has wildcard records (*.domain) by looking up random names that cannot exist otherwise.
+    run: Detect
+    found: '{domain} has a wildcard: any name under it resolves ({types}).'
+    foundVarying: '{domain} answers for any name ({types}), with different answers per name — likely a wildcard with load balancing or synthesized records.'
+    none: 'No wildcard: random names under {domain} do not exist.'
+    answers: Wildcard answers
+    probes: Random names tested

@@ -1058,6 +1058,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsAxfr" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/wildcard:
+    get:
+      operationId: dnsWildcard
+      summary: "Detect wildcard DNS records with random labels"
+      tags: [dns]
+      x-capability: dns.wildcard
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsWildcard" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2265,3 +2286,20 @@ components:
               types: { type: object, additionalProperties: { type: integer } }
               sample: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
               error: { type: string }
+    DnsWildcard:
+      type: object
+      required: [domain, wildcard, types, consistent, probes]
+      properties:
+        domain: { type: string }
+        wildcard: { type: boolean }
+        types: { type: array, items: { type: string } }
+        consistent: { type: boolean }
+        probes:
+          type: array
+          items:
+            type: object
+            required: [name, rcode, answers]
+            properties:
+              name: { type: string }
+              rcode: { type: string }
+              answers: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }

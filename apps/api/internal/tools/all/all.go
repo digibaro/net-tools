@@ -14,6 +14,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnspropagation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsreverse"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnstrace"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/dnswildcard"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
@@ -83,5 +84,6 @@ func Tools() []tools.Tool {
 		&cloudranges.Tool{},
 		&observatory.Tool{},
 		&dnsaxfr.Tool{},
+		&dnswildcard.Tool{},
 	}
 }
