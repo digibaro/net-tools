@@ -1332,6 +1332,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/snmp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * SNMP v2c/v3 get or bounded walk
+         * @description Credentials are sent in the body only and are never logged or echoed.
+         */
+        post: operations["snmp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2711,6 +2731,45 @@ export interface components {
             lostPackets?: number;
             server: string;
             version: string;
+        };
+        SnmpRequest: {
+            target: string;
+            /** @default 161 */
+            port: number;
+            /**
+             * @default 2c
+             * @enum {string}
+             */
+            version: "2c" | "3";
+            community?: string;
+            v3?: {
+                user: string;
+                /** @enum {string} */
+                level: "noAuthNoPriv" | "authNoPriv" | "authPriv";
+                /** @enum {string} */
+                authProtocol?: "MD5" | "SHA" | "SHA224" | "SHA256" | "SHA384" | "SHA512";
+                authPassword?: string;
+                /** @enum {string} */
+                privProtocol?: "DES" | "AES" | "AES192" | "AES256" | "AES192C" | "AES256C";
+                privPassword?: string;
+                context?: string;
+            };
+            /** @enum {string} */
+            operation: "get" | "walk";
+            oids: string[];
+            /** @default 200 */
+            maxRows: number;
+        };
+        SnmpResult: {
+            address: string;
+            version: string;
+            operation: string;
+            truncated: boolean;
+            vars: {
+                oid: string;
+                type: string;
+                value: string;
+            }[];
         };
     };
     responses: {
@@ -4696,6 +4755,33 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    snmp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SnmpRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SnmpResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

@@ -1570,6 +1570,31 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/snmp:
+    post:
+      operationId: snmp
+      summary: SNMP v2c/v3 get or bounded walk
+      description: Credentials are sent in the body only and are never logged or echoed.
+      tags: [connectivity]
+      x-capability: net.snmp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SnmpRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SnmpResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3329,3 +3354,42 @@ components:
         lostPackets: { type: integer }
         server: { type: string }
         version: { type: string }
+    SnmpRequest:
+      type: object
+      required: [target, operation, oids]
+      properties:
+        target: { type: string }
+        port: { type: integer, minimum: 1, maximum: 65535, default: 161 }
+        version: { type: string, enum: ["2c", "3"], default: "2c" }
+        community: { type: string, maxLength: 64 }
+        v3:
+          type: object
+          required: [user, level]
+          properties:
+            user: { type: string }
+            level: { type: string, enum: [noAuthNoPriv, authNoPriv, authPriv] }
+            authProtocol: { type: string, enum: [MD5, SHA, SHA224, SHA256, SHA384, SHA512] }
+            authPassword: { type: string }
+            privProtocol: { type: string, enum: [DES, AES, AES192, AES256, AES192C, AES256C] }
+            privPassword: { type: string }
+            context: { type: string }
+        operation: { type: string, enum: [get, walk] }
+        oids: { type: array, items: { type: string }, minItems: 1, maxItems: 20 }
+        maxRows: { type: integer, minimum: 1, maximum: 1000, default: 200 }
+    SnmpResult:
+      type: object
+      required: [address, version, operation, vars, truncated]
+      properties:
+        address: { type: string }
+        version: { type: string }
+        operation: { type: string }
+        truncated: { type: boolean }
+        vars:
+          type: array
+          items:
+            type: object
+            required: [oid, type, value]
+            properties:
+              oid: { type: string }
+              type: { type: string }
+              value: { type: string }

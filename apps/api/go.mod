@@ -22,6 +22,7 @@ require (
 	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/gosnmp/gosnmp v1.45.0 // indirect
 	github.com/josharian/native v1.1.0 // indirect
 	github.com/mdlayher/ethernet v0.0.0-20220221185849-529eae5b6118 // indirect
 	github.com/mdlayher/packet v1.1.2 // indirect

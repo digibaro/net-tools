@@ -39,6 +39,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/revocation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ripestat"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/snmp"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/speedtest"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/sshaudit"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
@@ -115,6 +116,7 @@ func Tools() []tools.Tool {
 		&speedtest.Tool{},
 		&portscan.Tool{},
 		&iperf.Tool{},
+		&snmp.Tool{},
 		&lan.WOLTool{},
 		&lan.ARPScanTool{},
 		&lan.MDNSTool{},

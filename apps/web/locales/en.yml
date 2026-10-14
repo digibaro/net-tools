@@ -2396,3 +2396,38 @@ tools:
       bytes: Transferred
       retransmits: Retransmits
       packets: Packets
+  snmp:
+    title: SNMP get / walk
+    description: Read values from a router, switch or server over SNMP v2c or v3 — a get of single OIDs or a bounded walk of a subtree.
+    target: Device
+    port: Port
+    version: Version
+    operation: Operation
+    walk: Walk
+    get: Get
+    maxRows: Max rows
+    community: Community
+    user: User
+    level: Security level
+    authProtocol: Auth protocol
+    authPassword: Auth password
+    privProtocol: Privacy protocol
+    privPassword: Privacy password
+    oidWalk: OID subtree
+    oidGet: OIDs (comma or space separated)
+    invalidOid: Use numeric OIDs such as 1.3.6.1.2.1.1.5.0.
+    oneOid: A walk takes exactly one OID.
+    run: Query
+    note: Queries are sent from the NetTools server. Community strings and passwords are sent only with the request — they are not stored or added to the shareable link.
+    found: 'Values ({n})'
+    truncated: 'Walk stopped after {n} rows. Raise the limit or walk a narrower subtree.'
+    presets:
+      system: System
+      interfaces: Interfaces
+      ifx: Interface names / 64-bit counters
+      ip: IP addresses
+      storage: Storage
+    columns:
+      name: Name
+      type: Type
+      value: Value
