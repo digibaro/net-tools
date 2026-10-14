@@ -1353,6 +1353,32 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Ipv6Readiness" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/speedtest/session:
+    post:
+      operationId: speedtestSession
+      summary: Start a speed test (one heavy request); returns a token for its ping/download/upload requests
+      description: "The token is valid for 45 s and 600 requests. Requests carrying it skip the per-request limit; the concurrency slot and per-request size caps still apply."
+      tags: [connectivity]
+      x-capability: net.speedtest
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [token, expiresInMs, maxRequests]
+                        properties:
+                          token: { type: string }
+                          expiresInMs: { type: integer }
+                          maxRequests: { type: integer }
+        default: { $ref: "#/components/responses/Error" }
   /v1/speedtest/download:
     get:
       operationId: speedtestDownload
@@ -1361,6 +1387,7 @@ paths:
       x-capability: net.speedtest
       parameters:
         - { name: bytes, in: query, schema: { type: integer, minimum: 1048576, maximum: 104857600, default: 26214400 } }
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       responses:
         "200":
           description: Raw bytes
@@ -1374,6 +1401,8 @@ paths:
       summary: Receives and discards up to 32 MiB for an upload measurement
       tags: [connectivity]
       x-capability: net.speedtest
+      parameters:
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       requestBody:
         content:
           application/octet-stream:
@@ -1402,6 +1431,8 @@ paths:
       summary: Minimal response for latency samples
       tags: [connectivity]
       x-capability: net.speedtest
+      parameters:
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       responses:
         "200":
           description: pong

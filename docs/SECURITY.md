@@ -14,7 +14,10 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
 The speed test (CON-09, `SPEEDTEST_ENABLED`) serves bulk traffic (up to 100 MiB down / 32 MiB up per
-request) and is likewise off by default in the public profile.
+request) and is likewise off by default in the public profile. A test starts with
+`POST /speedtest/session`, which counts against `RATE_LIMIT_HEAVY_RPM`; its token (45 s, 600 requests,
+at most 1000 open sessions) lets the test's ping/download/upload requests bypass `RATE_LIMIT_RPM`,
+while the per-IP concurrency slot and the per-request size caps still apply.
 
 The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
 routes and is therefore off in `public` and on in the other profiles.

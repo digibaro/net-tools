@@ -1127,6 +1127,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/speedtest/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a speed test (one heavy request); returns a token for its ping/download/upload requests
+         * @description The token is valid for 45 s and 600 requests. Requests carrying it skip the per-request limit; the concurrency slot and per-request size caps still apply.
+         */
+        post: operations["speedtestSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/speedtest/download": {
         parameters: {
             query?: never;
@@ -4570,12 +4590,42 @@ export interface operations {
             default: components["responses"]["Error"];
         };
     };
+    speedtestSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: {
+                            token: string;
+                            expiresInMs: number;
+                            maxRequests: number;
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
     speedtestDownload: {
         parameters: {
             query?: {
                 bytes?: number;
             };
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4596,7 +4646,10 @@ export interface operations {
     speedtestUpload: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4626,7 +4679,10 @@ export interface operations {
     speedtestPing: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };

@@ -42,7 +42,10 @@ func randomChunk() []byte {
 }
 
 // Tool is net.speedtest.
-type Tool struct{ deps tools.Deps }
+type Tool struct {
+	deps     tools.Deps
+	sessions *sessions
+}
 
 func (*Tool) ID() string { return "net.speedtest" }
 
@@ -56,10 +59,34 @@ func (*Tool) Enabled(d tools.Deps) (bool, tools.Reason) {
 
 func (t *Tool) Mount(r chi.Router, d tools.Deps) {
 	t.deps = d
-	bulk := r.With(d.RateLimit(limits.Light), d.Slot, d.Timeout(60*time.Second))
+	if t.sessions == nil {
+		t.sessions = newSessions()
+	}
+	// A test is one heavy request (the session); its many pieces are bounded by the session
+	// instead of the per-request limiter, which a fast link would exhaust within seconds.
+	r.With(d.RateLimit(limits.Heavy)).Post("/speedtest/session", t.createSession)
+	light := t.sessions.orLimit(d.RateLimit(limits.Light))
+	bulk := r.With(light, d.Slot, d.Timeout(60*time.Second))
 	bulk.Get("/speedtest/download", t.download)
 	bulk.Post("/speedtest/upload", t.upload)
-	r.With(d.RateLimit(limits.Light)).Get("/speedtest/ping", t.ping)
+	r.With(light).Get("/speedtest/ping", t.ping)
+}
+
+// Session is the POST /speedtest/session payload.
+type Session struct {
+	Token       string `json:"token"`
+	ExpiresInMs int64  `json:"expiresInMs"`
+	MaxRequests int    `json:"maxRequests"`
+}
+
+func (t *Tool) createSession(w http.ResponseWriter, r *http.Request) {
+	tok, err := t.sessions.create(time.Now())
+	if err != nil {
+		httpapi.Error(w, r, &httpapi.APIError{Code: httpapi.CodeInternal, Message: "cannot start a test", Err: err})
+		return
+	}
+	noStore(w)
+	httpapi.JSON(w, r, Session{Token: tok, ExpiresInMs: SessionTTL.Milliseconds(), MaxRequests: SessionMaxRequests}, &httpapi.Meta{Tool: t.ID(), Vantage: "server"})
 }
 
 func noStore(w http.ResponseWriter) {
