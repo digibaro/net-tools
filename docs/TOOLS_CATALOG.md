@@ -191,7 +191,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
 | CLI-01 | Browser ↔ server latency | HTTP RTT from browser to NetTools api, jitter graph | B+S | `fetch` to `/api/v1/echo` | — | 2 | ✅ |
-| CLI-02 | WebRTC IP leak test | Local/public IPs exposed via ICE candidates | B | `RTCPeerConnection` | STUN (stun.l.google.com, stun.cloudflare.com) | 3 | ⬜ |
+| CLI-02 | WebRTC IP leak test | Local/public IPs exposed via ICE candidates | B | `RTCPeerConnection` | STUN (stun.l.google.com, stun.cloudflare.com) | 3 | ✅ |
 | CLI-03 | Browser connection info | Network Information API, IPv4/IPv6 reachability, DoH in use? | B | `navigator.connection` + fetch to v4/v6-only endpoints | ipify v4/v6 endpoints | 2 | ✅ |
 | CLI-04 | Request headers echo | Headers the server receives from your browser (proxy detection) | S | `/api/v1/echo` | — | 1 | ✅ |
 

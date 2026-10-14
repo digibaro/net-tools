@@ -2224,3 +2224,30 @@ tools:
       tryAgain: (try again later)
       tls: (TLS handshake failure)
       other: (application-defined)
+  webrtc-leak-test:
+    title: WebRTC IP leak test
+    description: See which local and public IP addresses your browser reveals through WebRTC, and whether it bypasses your VPN.
+    intro: Your browser gathers ICE candidates using public STUN servers (Google, Cloudflare) — exactly what any website could do.
+    run: Test again
+    unsupported: This browser does not support WebRTC, so it cannot leak addresses this way.
+    localLeak: Your local network address is exposed to websites.
+    noLocalLeak: No local network address is exposed (hidden behind an mDNS name or not gathered).
+    mismatch: 'WebRTC reveals {webrtc}, but websites see you as {http} over HTTP — your real address may bypass the VPN or proxy.'
+    publicSame: 'WebRTC reveals your public address {list}, the same one websites see anyway.'
+    noPublic: No public address was gathered (STUN blocked or WebRTC restricted).
+    candidates: 'ICE candidates ({n})'
+    types:
+      host: Host (local)
+      srflx: Server reflexive (public)
+      prflx: Peer reflexive
+      relay: Relay (TURN)
+    kinds:
+      mdns: mDNS name (hidden)
+      private: Private address
+      public: Public address
+      unknown: Unknown
+    columns:
+      type: Type
+      address: Address
+      kind: Kind
+      protocol: Protocol

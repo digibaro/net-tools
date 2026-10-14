@@ -94,6 +94,7 @@ import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as vlsmPlanner } from './vlsm-planner'
+import { tool as webrtcLeakTest } from './webrtc-leak-test'
 import { tool as websocketTester } from './websocket-tester'
 import { tool as wellKnownFiles } from './well-known-files'
 import { tool as whatIsMyIp } from './what-is-my-ip'
@@ -117,7 +118,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
-  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo] },
+  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories
