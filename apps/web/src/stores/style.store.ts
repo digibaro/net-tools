@@ -1,7 +1,8 @@
+import type { Accent } from '@/themes'
 import { useMediaQuery, useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, watchEffect } from 'vue'
-import { THEME_COLOR } from '@/themes'
+import { ACCENTS, DEFAULT_ACCENT, THEME_COLOR } from '@/themes'
 
 export type ColorMode = 'light' | 'dark' | 'auto'
 export const COLOR_MODES: ColorMode[] = ['light', 'dark', 'auto']
@@ -40,8 +41,15 @@ export const useStyleStore = defineStore('style', () => {
     colorMode.value = nextColorMode(colorMode.value)
   }
 
+  const accent = useStorage<Accent>('nettools:accent', DEFAULT_ACCENT, undefined, {
+    serializer: {
+      read: v => (ACCENTS.includes(v as Accent) ? v as Accent : DEFAULT_ACCENT),
+      write: v => v,
+    },
+  })
+
   const isMenuCollapsed = useStorage('nettools:menu-collapsed', false)
   const isSmallScreen = useMediaQuery('(max-width: 700px)')
 
-  return { colorMode, isDarkTheme, cycle, isMenuCollapsed, isSmallScreen }
+  return { colorMode, isDarkTheme, cycle, accent, isMenuCollapsed, isSmallScreen }
 })

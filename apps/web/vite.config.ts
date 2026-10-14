@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 import VueI18n from '@intlify/unplugin-vue-i18n/vite'
@@ -8,6 +9,14 @@ import { defineConfig } from 'vitest/config'
 import { cspScriptHashes } from './build/csp-hashes.ts'
 
 const apiProxy = process.env.VITE_API_PROXY ?? 'http://localhost:8081'
+
+function appVersion(): string {
+  const v = process.env.VITE_APP_VERSION
+  if (v && v !== 'dev')
+    return v.replace(/^v/, '')
+  const pkg = JSON.parse(readFileSync(new URL('./package.json', import.meta.url), 'utf8')) as { version: string }
+  return `${pkg.version}-dev`
+}
 
 export default defineConfig({
   plugins: [
@@ -50,7 +59,8 @@ export default defineConfig({
     },
   },
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.VITE_APP_VERSION ?? 'dev'),
+    // Release builds pass the tag; local and dev builds show the package version with -dev.
+    __APP_VERSION__: JSON.stringify(appVersion()),
   },
   server: {
     proxy: {

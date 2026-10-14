@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import type { ColorMode } from '@/stores/style.store'
-import { NButton, NFormItem, NRadioButton, NRadioGroup, NSelect } from 'naive-ui'
+import type { Accent } from '@/themes'
+import { NButton, NFormItem, NRadio, NRadioButton, NRadioGroup, NSelect } from 'naive-ui'
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import AccentSwatch from '@/components/AccentSwatch.vue'
 import { availableLocales, setLocale } from '@/plugins/i18n.plugin'
 import { COLOR_MODES, useStyleStore } from '@/stores/style.store'
 import { useToolStore } from '@/stores/tool.store'
+import { ACCENTS } from '@/themes'
 import CCard from '@/ui/c-card.vue'
 
 const { t, locale } = useI18n()
@@ -23,6 +26,15 @@ const localeOptions = computed(() => availableLocales.map(l => ({ label: t(`loca
       <NFormItem :label="t('theme.title')" :show-feedback="false">
         <NRadioGroup :value="style.colorMode" name="color-mode" @update:value="(v: ColorMode) => (style.colorMode = v)">
           <NRadioButton v-for="mode in COLOR_MODES" :key="mode" :value="mode" :label="t(`theme.${mode}`)" :data-testid="`theme-radio-${mode}`" />
+        </NRadioGroup>
+      </NFormItem>
+      <NFormItem :label="t('theme.accent')" :show-feedback="false" class="mt-3">
+        <NRadioGroup :value="style.accent" name="accent" @update:value="(v: Accent) => (style.accent = v)">
+          <div class="flex flex-wrap gap-x-4 gap-y-2">
+            <NRadio v-for="a in ACCENTS" :key="a" :value="a" :data-testid="`accent-radio-${a}`">
+              <span class="inline-flex items-center gap-1.5"><AccentSwatch :accent="a" />{{ t(`theme.accents.${a}`) }}</span>
+            </NRadio>
+          </div>
         </NRadioGroup>
       </NFormItem>
     </CCard>

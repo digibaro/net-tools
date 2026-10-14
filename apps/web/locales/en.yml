@@ -1,6 +1,10 @@
 app:
   name: NET-TOOLS
   tagline: Network tools and troubleshooting utilities
+footer:
+  version: 'v{version}'
+  copyright: '© {year} {holder}'
+  license: 'License:'
 locales:
   en: English
 nav:
@@ -15,6 +19,14 @@ search:
   placeholder: Search tools…
   noResults: No matching tools
 theme:
+  accent: Accent colour
+  accents:
+    green: Green
+    blue: Blue
+    indigo: Indigo
+    purple: Purple
+    orange: Orange
+    red: Red
   title: Theme
   light: Light
   dark: Dark
