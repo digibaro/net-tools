@@ -1626,3 +1626,13 @@ tools:
       online: Online
       secure: Secure context (HTTPS)
       doh: Encrypted DNS
+  is-it-down:
+    title: Is it down? (global check)
+    description: Check whether a site or host answers from probes around the world — down for everyone or just for you?
+    target: Site, host or IP
+    check: Check
+    run: Check worldwide
+    overall:
+      up: '{target} answers from every location tested.'
+      partial: '{target} answers from some locations only — a regional or partial outage.'
+      down: '{target} does not answer from any location tested — it looks down for everyone.'
