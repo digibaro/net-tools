@@ -115,7 +115,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-08 | Certificate Transparency search | Certificates issued for a domain (subdomain discovery) | P | — | crt.sh JSON (`?output=json`) | 3 | ✅ |
 | TLS-09 | STARTTLS check | SMTP/IMAP/POP3/FTP/XMPP STARTTLS + cert | S | `net/smtp` & raw dialogs | — | 3 | ✅ |
 | TLS-10 | SSH server audit | Banner, host key fingerprints, KEX/cipher algorithms | S | `x/crypto/ssh` handshake (no auth) | — | 3 | ✅ |
-| TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ⬜ |
+| TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ✅ |
 
 ## 6. Email
 

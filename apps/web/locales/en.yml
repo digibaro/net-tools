@@ -2598,3 +2598,39 @@ tools:
       latestScan: Latest scan
       latestURL: Latest scanned URL
       score: Score
+  key-converter:
+    title: JWK / PEM / SSH key converter
+    description: Convert RSA, ECDSA and Ed25519 keys between PEM (PKCS#1, PKCS#8, SEC1, SPKI), JWK and OpenSSH formats, with fingerprints.
+    input: Key
+    placeholder: Paste a PEM key, JWK, OpenSSH key or certificate
+    note: Conversion happens entirely in your browser; nothing is sent to the server or put in the link. Encrypted private keys are not supported.
+    public: Public key
+    private: Private key
+    privateWarning: This is a private key. It stays in your browser, but treat anything you paste into a web page as potentially exposed — prefer converting production keys offline.
+    showPrivate: Show private key formats
+    rows:
+      type: Type
+      source: Detected format
+      kind: Kind
+      comment: Comment
+      sshSha256: SSH fingerprint
+      jwkThumbprint: JWK thumbprint (RFC 7638)
+      spkiSha256: SPKI SHA-256 (pin)
+    outputs:
+      jwkPublic: JWK (public)
+      pemSpki: PEM public key (SPKI)
+      sshPublic: OpenSSH public key
+      pemPkcs1Public: PEM RSA public key (PKCS#1)
+      jwkPrivate: JWK (private)
+      pemPkcs8: PEM private key (PKCS#8)
+      pemPkcs1Private: PEM RSA private key (PKCS#1)
+      pemSec1: PEM EC private key (SEC1)
+      opensshPrivate: OpenSSH private key (unencrypted)
+    errors:
+      unrecognized: Not a recognized key format.
+      encrypted: Encrypted private keys are not supported — decrypt it locally first.
+      unsupportedAlg: 'Unsupported key algorithm ({detail}).'
+      unsupportedCurve: Unsupported curve — P-256, P-384, P-521 and Ed25519 are supported.
+      rsaJwkNoPrimes: RSA private JWKs need p, q, dp, dq and qi.
+      invalid: 'The key could not be decoded ({detail}).'
+      noDerivation: This browser cannot derive the public key; paste a key that includes it.
