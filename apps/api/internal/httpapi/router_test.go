@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"log/slog"
 	"net/http"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-chi/chi/v5"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
 
@@ -24,7 +26,7 @@ type fakeTool struct {
 }
 
 func (f fakeTool) ID() string { return f.id }
-func (f fakeTool) Enabled(config.Config) (bool, tools.Reason) {
+func (f fakeTool) Enabled(tools.Deps) (bool, tools.Reason) {
 	return f.enabled, f.reason
 }
 
@@ -126,7 +128,7 @@ func TestVersion(t *testing.T) {
 }
 
 func TestCapabilitiesEmpty(t *testing.T) {
-	h := newTestRouter(t, Options{Tools: tools.All()})
+	h := newTestRouter(t, Options{Tools: nil})
 	rec, body := get(t, h, "/api/v1/capabilities")
 	if rec.Code != http.StatusOK {
 		t.Fatalf("status %d", rec.Code)
@@ -205,8 +207,8 @@ func TestPanicIsInternalError(t *testing.T) {
 
 type panicTool struct{}
 
-func (panicTool) ID() string                                 { return "panic" }
-func (panicTool) Enabled(config.Config) (bool, tools.Reason) { return true, "" }
+func (panicTool) ID() string                              { return "panic" }
+func (panicTool) Enabled(tools.Deps) (bool, tools.Reason) { return true, "" }
 func (panicTool) Mount(r chi.Router, _ tools.Deps) {
 	r.Get("/panic", func(http.ResponseWriter, *http.Request) { panic("boom") })
 }
@@ -275,6 +277,17 @@ func TestToAPIError(t *testing.T) {
 		if code.Status() != want {
 			t.Errorf("%s.Status() = %d, want %d", code, code.Status(), want)
 		}
+	}
+}
+
+func TestToAPIErrorCoderAndTimeout(t *testing.T) {
+	_, err := (&target.Resolver{}).Resolve(context.Background(), "http://x", target.Opts{Field: "host"})
+	got := ToAPIError(fmt.Errorf("wrapped: %w", err))
+	if got.Code != CodeInvalidInput || got.Details["field"] != "host" || got.Code.Status() != 400 {
+		t.Errorf("got %+v", got)
+	}
+	if got := ToAPIError(fmt.Errorf("x: %w", context.DeadlineExceeded)); got.Code != CodeTimeout {
+		t.Errorf("timeout mapped to %s", got.Code)
 	}
 }
 

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { ApiError, apiGet, getVersion } from './client'
+import { ApiError, apiGet, apiPost, getVersion } from './client'
 
 function fakeFetch(status: number, body: unknown, raw = false): typeof fetch {
   return vi.fn(async () => new Response(raw ? String(body) : JSON.stringify(body), { status }))
@@ -11,6 +11,12 @@ describe('apiGet', () => {
     const f = fakeFetch(200, { ok: true, data: version })
     await expect(getVersion({ fetch: f })).resolves.toEqual(version)
     expect(f).toHaveBeenCalledWith('/api/v1/version', expect.objectContaining({ headers: { Accept: 'application/json' } }))
+  })
+
+  it('posts JSON', async () => {
+    const f = fakeFetch(200, { ok: true, data: { hops: [] } })
+    await expect(apiPost('/v1/http/request', { url: 'x' }, { fetch: f })).resolves.toEqual({ hops: [] })
+    expect(f).toHaveBeenCalledWith('/api/v1/http/request', expect.objectContaining({ method: 'POST', body: '{"url":"x"}' }))
   })
 
   it('throws ApiError with code, status and details for an error envelope', async () => {

@@ -89,6 +89,533 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Query a record type against a resolver */
+        get: operations["dnsLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/reverse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** PTR lookup with forward confirmation */
+        get: operations["dnsReverse"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/caa": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** CAA records with RFC 8659 tree climbing */
+        get: operations["dnsCaa"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/consistency": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Compare SOA serials and NS sets across all authoritative servers */
+        get: operations["dnsConsistency"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/propagation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** The same query against many public resolvers, grouped by answer */
+        get: operations["dnsPropagation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/trace/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Iterative resolution from the root servers (SSE)
+         * @description Server-Sent Events: `meta`, then one `step` event (DnsTraceStep) per server queried, then
+         *     `done` ({summary: DnsTraceSummary, durationMs}) or `error` (ApiError). Validation errors are
+         *     also delivered as an `error` event.
+         */
+        get: operations["dnsTraceStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/encrypted": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Test a DNS-over-TLS or DNS-over-HTTPS endpoint */
+        get: operations["dnsEncrypted"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ping/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ICMP echo with live replies (SSE)
+         * @description Events: meta, reply (PingReply)*, done ({summary: PingSummary, durationMs}) or error.
+         */
+        get: operations["pingStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tcping/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Repeated TCP connects with timing (SSE)
+         * @description Events: meta, reply|timeout (PingReply)*, done ({summary: PingSummary, durationMs}) or error.
+         */
+        get: operations["tcpingStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/traceroute/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Traceroute via mtr (3 probes per hop, SSE)
+         * @description Events: meta, hop (TraceHop)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error.
+         */
+        get: operations["tracerouteStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/mtr/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * MTR (continuous traceroute with per-hop statistics, SSE)
+         * @description Events: meta, hop (TraceHop, throttled updates)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error.
+         */
+        get: operations["mtrStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/port/check": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Check up to 10 TCP (or UDP, best effort) ports from the server */
+        get: operations["portCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ntp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Query an NTP server (offset, stratum, delay, refid) */
+        get: operations["ntpCheck"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/server/netinfo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Interfaces, routes and resolvers of the api container (SERVER_INFO_ENABLED) */
+        get: operations["serverNetinfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/request": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a request and inspect the response (optionally following redirects) */
+        post: operations["httpRequest"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/redirects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Follow and list every redirect hop */
+        get: operations["httpRedirects"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/timing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** DNS / connect / TLS / TTFB / transfer timing */
+        get: operations["httpTiming"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/security-headers": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Grade security headers of the final response */
+        get: operations["httpSecurityHeaders"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/cors": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Send a CORS preflight (and a safe actual request) and evaluate it */
+        get: operations["httpCors"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tls/inspect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** TLS handshake details and certificate chain of host:port (optional STARTTLS) */
+        get: operations["tlsInspect"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/tls/expiry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Certificate expiry for up to BULK_MAX_TARGETS hosts */
+        post: operations["tlsExpiry"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/mx": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** MX records and SMTP reachability with STARTTLS */
+        get: operations["emailMx"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/spf": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Parse and expand an SPF record, count DNS lookups */
+        get: operations["emailSpf"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/dmarc": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Parse and validate a DMARC policy */
+        get: operations["emailDmarc"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/dkim": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Fetch and analyze a DKIM key */
+        get: operations["emailDkim"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/asn/lookup": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Origin ASN, prefix, AS name and registry for an IP (Team Cymru DNS) */
+        get: operations["asnLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/whois": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** WHOIS over port 43 with referral following */
+        get: operations["whois"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/rdap": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** RDAP lookup for a domain, IP or ASN (IANA bootstrap) */
+        get: operations["rdapLookup"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/domain/expiry": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Domain registration and expiry dates via RDAP */
+        get: operations["domainExpiry"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/geo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** IP geolocation from the local GeoLite2 / DB-IP Lite database */
+        get: operations["geo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -158,7 +685,7 @@ export interface components {
         Capability: {
             enabled: boolean;
             /** @enum {string} */
-            reason?: "disabled_by_admin" | "provider_key_missing" | "requires_lan_mode" | "binary_missing";
+            reason?: "disabled_by_admin" | "provider_key_missing" | "requires_lan_mode" | "binary_missing" | "data_missing";
         };
         Echo: {
             ip: string;
@@ -175,6 +702,560 @@ export interface components {
                 value: string;
             }[];
         };
+        /**
+         * @default A
+         * @enum {string}
+         */
+        DnsRecordType: "A" | "AAAA" | "CNAME" | "MX" | "NS" | "TXT" | "SOA" | "SRV" | "CAA" | "PTR" | "DS" | "DNSKEY" | "HTTPS" | "SVCB" | "TLSA" | "NAPTR" | "ANY";
+        DnsRecord: {
+            name: string;
+            type: string;
+            ttl: number;
+            class: string;
+            data: string;
+        };
+        DnsFlags: {
+            aa: boolean;
+            tc: boolean;
+            rd: boolean;
+            ra: boolean;
+            ad: boolean;
+            cd: boolean;
+        };
+        DnsLookup: {
+            name: string;
+            type: string;
+            resolver: string;
+            transport: string;
+            /**
+             * @example NOERROR
+             * @example NXDOMAIN
+             * @example SERVFAIL
+             */
+            rcode: string;
+            flags: components["schemas"]["DnsFlags"];
+            answer: components["schemas"]["DnsRecord"][];
+            authority: components["schemas"]["DnsRecord"][];
+            additional: components["schemas"]["DnsRecord"][];
+            rttMs: number;
+        };
+        DnsReverse: {
+            ip: string;
+            ptrName: string;
+            resolver: string;
+            rcode: string;
+            rttMs: number;
+            names: {
+                name: string;
+                forwardAddresses: string[];
+                forwardConfirmed: boolean;
+            }[];
+        };
+        CaaRecord: {
+            flag: number;
+            critical: boolean;
+            tag: string;
+            value: string;
+        };
+        DnsCaa: {
+            name: string;
+            /** @description Where the effective CAA set was found; empty if none */
+            relevantName: string;
+            resolver: string;
+            issue: string[];
+            issueWild: string[];
+            iodef: string[];
+            unknownCritical: string[];
+            steps: {
+                name: string;
+                rcode: string;
+                records: components["schemas"]["CaaRecord"][];
+            }[];
+        };
+        DnsConsistency: {
+            zone: string;
+            nameservers: string[];
+            serialsConsistent: boolean;
+            nsSetsConsistent: boolean;
+            allAuthoritative: boolean;
+            servers: {
+                name: string;
+                address: string;
+                serial: number | null;
+                mname: string;
+                rname: string;
+                authoritative: boolean;
+                nsSet: string[];
+                rttMs: number;
+                error: string;
+            }[];
+        };
+        DnsPropagation: {
+            name: string;
+            type: string;
+            consensus: boolean;
+            groups: {
+                answers: string[];
+                rcode: string;
+                count: number;
+            }[];
+            rows: {
+                resolver: string;
+                provider: string;
+                location: string;
+                address: string;
+                rcode: string;
+                answers: string[];
+                ttl: number | null;
+                rttMs: number;
+                error: string;
+                /** @description Index into groups; -1 when the resolver failed */
+                group: number;
+            }[];
+        };
+        SseDone: {
+            summary: unknown;
+            durationMs: number;
+        };
+        DnsTraceStep: {
+            step: number;
+            zone: string;
+            server: string;
+            address: string;
+            rcode: string;
+            aa: boolean;
+            rttMs: number;
+            answer: components["schemas"]["DnsRecord"][];
+            referral: string[];
+            note: string;
+        };
+        DnsTraceSummary: {
+            steps: number;
+            rcode: string;
+            answers: number;
+        };
+        DnsEncrypted: {
+            endpoint: string;
+            transport: string;
+            address: string;
+            minMs: number;
+            avgMs: number;
+            maxMs: number;
+            answer: components["schemas"]["DnsRecord"][];
+            queries: {
+                rttMs: number;
+                rcode: string;
+                error: string;
+            }[];
+            tls: {
+                version: string;
+                cipher: string;
+                alpn: string;
+                subject: string;
+                issuer: string;
+                notAfter: string;
+                dnsNames: string[];
+                verified: boolean;
+                verifyError: string;
+                handshakeMs: number;
+            };
+        };
+        PingReply: {
+            seq: number;
+            rttMs?: number;
+            ttl?: number;
+            from: string;
+            bytes?: number;
+            error?: string;
+        };
+        PingSummary: {
+            sent: number;
+            received: number;
+            lossPct: number;
+            minMs: number;
+            avgMs: number;
+            maxMs: number;
+            stddevMs: number;
+            jitterMs: number;
+        };
+        TraceHop: {
+            hop: number;
+            ip: string;
+            host: string;
+            sent: number;
+            recv: number;
+            /** @description percent */
+            loss: number;
+            lastMs: number;
+            avgMs: number;
+            bestMs: number;
+            worstMs: number;
+            stddevMs: number;
+            rttMs: number[];
+            asn: number | null;
+        };
+        PortCheck: {
+            target: string;
+            address: string;
+            rows: {
+                port: number;
+                proto: string;
+                /** @enum {string} */
+                state: "open" | "closed" | "filtered" | "open|filtered" | "error";
+                service: string;
+                rttMs: number;
+                detail: string;
+            }[];
+        };
+        NtpCheck: {
+            server: string;
+            address: string;
+            version: number;
+            stratum: number;
+            referenceId: string;
+            referenceTime: string;
+            serverTime: string;
+            offsetMs: number;
+            rttMs: number;
+            precisionMs: number;
+            rootDelayMs: number;
+            rootDispersionMs: number;
+            rootDistanceMs: number;
+            leap: string;
+            kissCode: string;
+            valid: boolean;
+            problem: string;
+        };
+        ServerNetinfo: {
+            hostname: string;
+            lanMode: boolean;
+            gateways: string[];
+            interfaces: {
+                name: string;
+                mtu: number;
+                mac: string;
+                flags: string[];
+                addresses: string[];
+            }[];
+            routes: {
+                family: number;
+                destination: string;
+                gateway: string;
+                interface: string;
+                metric: number;
+                default: boolean;
+            }[];
+            resolvers: {
+                nameservers: string[];
+                search: string[];
+                options: string[];
+            };
+        };
+        HttpHeader: {
+            name: string;
+            value: string;
+        };
+        HttpRequestBody: {
+            url: string;
+            /**
+             * @default GET
+             * @enum {string}
+             */
+            method: "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+            headers?: {
+                [key: string]: string;
+            };
+            body?: string;
+            /** @default false */
+            followRedirects: boolean;
+        };
+        HttpHop: {
+            url: string;
+            method: string;
+            remoteAddr: string;
+            status: number;
+            statusText: string;
+            proto: string;
+            headers: components["schemas"]["HttpHeader"][];
+            location: string;
+            contentType: string;
+            bodyPreview: string;
+            bodyBytes: number;
+            bodyTruncated: boolean;
+            /** @description set when this hop was not fetched (e.g. redirect into a denied range) */
+            error: string;
+            errorCode: string;
+            timing: {
+                resolveMs: number;
+                connectMs: number;
+                tlsMs: number;
+                ttfbMs: number;
+                transferMs: number;
+                totalMs: number;
+            };
+            tls: null | {
+                version: string;
+                cipher: string;
+                alpn: string;
+                serverName: string;
+                subject: string;
+                issuer: string;
+                notAfter: string;
+                verifyError: string;
+            };
+        };
+        HttpHops: {
+            hops: components["schemas"]["HttpHop"][];
+        };
+        SecurityHeaders: {
+            url: string;
+            status: number;
+            /** @enum {string} */
+            grade: "A+" | "A" | "B" | "C" | "D" | "F";
+            score: number;
+            hop: components["schemas"]["HttpHop"];
+            checks: {
+                id: string;
+                header: string;
+                /** @enum {string} */
+                status: "pass" | "warn" | "fail" | "info";
+                value: string;
+                detail: string;
+            }[];
+        };
+        Cors: {
+            allowed: boolean;
+            needsPreflight: boolean;
+            requestedMethod: string;
+            requestHeaders: string[];
+            preflight: null | components["schemas"]["HttpHop"];
+            actual: null | components["schemas"]["HttpHop"];
+            findings: {
+                code: string;
+                ok: boolean;
+                value: string;
+            }[];
+        };
+        TlsCert: {
+            subject: string;
+            issuer: string;
+            serial: string;
+            notBefore: string;
+            notAfter: string;
+            daysLeft: number;
+            dnsNames: string[];
+            ipAddresses: string[];
+            keyAlgorithm: string;
+            signatureAlgorithm: string;
+            isCA: boolean;
+            sha256: string;
+            selfSigned: boolean;
+        };
+        TlsSession: {
+            version: string;
+            cipher: string;
+            alpn: string;
+            serverName: string;
+            ocspStapled: boolean;
+            chain: components["schemas"]["TlsCert"][];
+            verified: boolean;
+            verifyError: string;
+            handshakeMs: number;
+            starttls: string;
+            connectedTo: string;
+        };
+        TlsExpiry: {
+            rows: {
+                target: string;
+                address: string;
+                notAfter: string;
+                daysLeft: number | null;
+                issuer: string;
+                subject: string;
+                verified: boolean;
+                verifyError: string;
+                error: string;
+                errorCode: string;
+            }[];
+        };
+        EmailMx: {
+            domain: string;
+            nullMx: boolean;
+            implicit: boolean;
+            probed: boolean;
+            hosts: {
+                preference: number;
+                host: string;
+                addresses: string[];
+                error: string;
+                probes: {
+                    address: string;
+                    connected: boolean;
+                    connectMs: number;
+                    banner: string;
+                    extensions: string[];
+                    starttls: boolean;
+                    tls: null | components["schemas"]["TlsSession"];
+                    error: string;
+                }[];
+            }[];
+        };
+        SpfTerm: {
+            raw: string;
+            qualifier: string;
+            kind: string;
+            value: string;
+            lookup: boolean;
+            include?: components["schemas"]["SpfRecord"];
+        };
+        SpfRecord: {
+            domain: string;
+            record: string;
+            error: string;
+            terms: components["schemas"]["SpfTerm"][];
+        };
+        EmailSpf: {
+            domain: string;
+            record: components["schemas"]["SpfRecord"];
+            lookups: number;
+            voidLookups: number;
+            all: string;
+            problems: string[];
+            warnings: string[];
+        };
+        DmarcReportUri: {
+            uri: string;
+            external: boolean;
+            authorized: boolean | null;
+        };
+        EmailDmarc: {
+            domain: string;
+            foundAt: string;
+            orgDomain: string;
+            record: string;
+            tags: {
+                [key: string]: string;
+            };
+            policy: string;
+            subPolicy: string;
+            pct: number;
+            adkim: string;
+            aspf: string;
+            rua: components["schemas"]["DmarcReportUri"][];
+            ruf: components["schemas"]["DmarcReportUri"][];
+            problems: string[];
+            warnings: string[];
+        };
+        EmailDkim: {
+            domain: string;
+            selector: string;
+            name: string;
+            record: string;
+            tags: {
+                [key: string]: string;
+            };
+            keyType: string;
+            keyBits: number;
+            testing: boolean;
+            revoked: boolean;
+            problems: string[];
+            warnings: string[];
+        };
+        AsnOrigin: {
+            asn: number;
+            prefix: string;
+            country: string;
+            registry: string;
+            allocated: string;
+            asName: string;
+        };
+        AsnLookup: {
+            ip: string;
+            announced: boolean;
+            origins: components["schemas"]["AsnOrigin"][];
+        };
+        Whois: {
+            query: string;
+            /** @enum {string} */
+            kind: "domain" | "ip" | "asn";
+            chain: {
+                server: string;
+                query: string;
+                text: string;
+                truncated: boolean;
+                error: string;
+            }[];
+            parsed: {
+                registrar: string;
+                created: string;
+                updated: string;
+                expires: string;
+                status: string[];
+                nameservers: string[];
+                org: string;
+                country: string;
+                netRange: string;
+            };
+        };
+        RdapRecord: {
+            query: string;
+            /** @enum {string} */
+            kind: "domain" | "ip" | "asn";
+            handle: string;
+            name: string;
+            status: string[];
+            events: {
+                action: string;
+                date: string;
+            }[];
+            nameservers: string[];
+            entities: {
+                handle: string;
+                roles: string[];
+                name: string;
+                org: string;
+                email: string;
+                country: string;
+            }[];
+            registrar: string;
+            country: string;
+            range: string;
+            type: string;
+            port43: string;
+            server: string;
+        };
+        DomainExpiry: {
+            domain: string;
+            registered: string;
+            expires: string;
+            updated: string;
+            daysLeft: number | null;
+            registrar: string;
+            status: string[];
+            server: string;
+        };
+        Geo: {
+            ip: string;
+            public: boolean;
+            found: boolean;
+            prefix: string;
+            city: string;
+            region: string;
+            postal: string;
+            country: string;
+            countryCode: string;
+            continent: string;
+            latitude: number | null;
+            longitude: number | null;
+            accuracyKm: number;
+            timeZone: string;
+            asn: number | null;
+            asOrg: string;
+            /** @enum {string} */
+            asnSource: "" | "mmdb" | "cymru";
+            source: string;
+            database: string;
+        };
     };
     responses: {
         /** @description Error envelope */
@@ -188,7 +1269,10 @@ export interface components {
             };
         };
     };
-    parameters: never;
+    parameters: {
+        /** @description Restrict to IPv4 (4) or IPv6 (6) */
+        Family: 0 | 4 | 6;
+    };
     requestBodies: never;
     headers: never;
     pathItems: never;
@@ -319,6 +1403,812 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["Echo"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsLookup: {
+        parameters: {
+            query: {
+                name: string;
+                type?: components["schemas"]["DnsRecordType"];
+                /** @description system, a preset id (cloudflare, google, quad9, opendns), ip[:port], host[:port] or an https DoH URL */
+                resolver?: string;
+                transport?: "udp" | "tcp" | "dot" | "doh";
+                dnssec?: boolean;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsLookup"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsReverse: {
+        parameters: {
+            query: {
+                ip: string;
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsReverse"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsCaa: {
+        parameters: {
+            query: {
+                name: string;
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsCaa"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsConsistency: {
+        parameters: {
+            query: {
+                zone: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsConsistency"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsPropagation: {
+        parameters: {
+            query: {
+                name: string;
+                type?: "A" | "AAAA" | "CNAME" | "MX" | "NS" | "TXT" | "SOA" | "CAA" | "SRV" | "PTR";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsPropagation"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsTraceStream: {
+        parameters: {
+            query: {
+                name: string;
+                type?: components["schemas"]["DnsRecordType"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    dnsEncrypted: {
+        parameters: {
+            query: {
+                /** @description preset id, host[:port] / ip[:port] (DoT) or https URL (DoH) */
+                endpoint: string;
+                transport?: "dot" | "doh";
+                name?: string;
+                type?: components["schemas"]["DnsRecordType"];
+                count?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnsEncrypted"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    pingStream: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description 1..PING_MAX_COUNT */
+                count?: number;
+                /** @description ms, PING_MIN_INTERVAL_MS..5000 */
+                interval?: number;
+                size?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    tcpingStream: {
+        parameters: {
+            query: {
+                target: string;
+                port?: number;
+                count?: number;
+                interval?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    tracerouteStream: {
+        parameters: {
+            query: {
+                target: string;
+                proto?: "icmp" | "udp" | "tcp";
+                /** @description TCP mode only */
+                port?: number;
+                /** @description 1..TRACEROUTE_MAX_HOPS */
+                maxHops?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    mtrStream: {
+        parameters: {
+            query: {
+                target: string;
+                proto?: "icmp" | "udp" | "tcp";
+                port?: number;
+                maxHops?: number;
+                /** @description 1..MTR_MAX_CYCLES */
+                cycles?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    portCheck: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description comma list and small ranges, at most 10 ports */
+                ports: string;
+                proto?: "tcp" | "udp";
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["PortCheck"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    ntpCheck: {
+        parameters: {
+            query: {
+                server: string;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["NtpCheck"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    serverNetinfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["ServerNetinfo"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpRequest: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HttpRequestBody"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpRedirects: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpTiming: {
+        parameters: {
+            query: {
+                url: string;
+                follow?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpHops"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpSecurityHeaders: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SecurityHeaders"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpCors: {
+        parameters: {
+            query: {
+                url: string;
+                origin: string;
+                method?: "GET" | "HEAD" | "POST" | "PUT" | "PATCH" | "DELETE" | "OPTIONS";
+                /** @description comma-separated request header names */
+                headers?: string;
+                credentials?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Cors"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    tlsInspect: {
+        parameters: {
+            query: {
+                /** @description host or host:port */
+                host: string;
+                port?: number;
+                /** @description server name to send (defaults to host) */
+                sni?: string;
+                starttls?: "" | "smtp" | "imap" | "pop3" | "ftp";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["TlsSession"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    tlsExpiry: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    targets: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["TlsExpiry"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailMx: {
+        parameters: {
+            query: {
+                domain: string;
+                /** @description set false to skip the port 25 probes */
+                probe?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailMx"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailSpf: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailSpf"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailDmarc: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailDmarc"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailDkim: {
+        parameters: {
+            query: {
+                domain: string;
+                selector: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EmailDkim"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    asnLookup: {
+        parameters: {
+            query: {
+                ip: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["AsnLookup"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    whois: {
+        parameters: {
+            query: {
+                /** @description domain, IP address or AS number */
+                query: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Whois"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    rdapLookup: {
+        parameters: {
+            query: {
+                /** @description domain, IP address or AS number */
+                query: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RdapRecord"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    domainExpiry: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DomainExpiry"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    geo: {
+        parameters: {
+            query: {
+                ip: string;
+                /** @description only `local` is implemented */
+                source?: "local";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Geo"];
                     };
                 };
             };

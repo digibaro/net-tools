@@ -1,0 +1,8 @@
+# e2e stack: the production-like public profile with relaxed rate limits, because the full
+# Playwright suite runs many heavy (streaming) requests from one client IP within a minute.
+# Usage: make up-e2e   (or: docker compose -f docker-compose.yml -f docker-compose.e2e.yml up -d)
+services:
+  api:
+    environment:
+      RATE_LIMIT_RPM: "1000"
+      RATE_LIMIT_HEAVY_RPM: "300"

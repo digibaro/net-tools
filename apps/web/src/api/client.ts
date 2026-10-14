@@ -32,13 +32,19 @@ function isRecord(v: unknown): v is Record<string, unknown> {
 
 /** GET an enveloped endpoint (docs/API_SPEC.md §1.1); resolves to `data` or throws ApiError. */
 export async function apiGet<T>(path: string, options: RequestOptions = {}): Promise<T> {
+  return apiRequest<T>(path, { headers: { Accept: 'application/json' } }, options)
+}
+
+/** POST JSON to an enveloped endpoint. */
+export async function apiPost<T>(path: string, body: unknown, options: RequestOptions = {}): Promise<T> {
+  return apiRequest<T>(path, { method: 'POST', headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, options)
+}
+
+async function apiRequest<T>(path: string, init: RequestInit, options: RequestOptions): Promise<T> {
   const doFetch = options.fetch ?? globalThis.fetch
   let res: Response
   try {
-    res = await doFetch(`${API_BASE}${path}`, {
-      headers: { Accept: 'application/json' },
-      signal: options.signal,
-    })
+    res = await doFetch(`${API_BASE}${path}`, { ...init, signal: options.signal })
   }
   catch (err) {
     if (err instanceof DOMException && err.name === 'AbortError')

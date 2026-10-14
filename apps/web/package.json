@@ -16,6 +16,7 @@
     "gen:api": "openapi-typescript ../api/openapi.yaml -o src/api/schema.d.ts"
   },
   "dependencies": {
+    "@noble/curves": "^2.4.0",
     "@peculiar/x509": "^2.1.0",
     "@vicons/tabler": "^0.13.0",
     "@vueuse/core": "^15.0.0",

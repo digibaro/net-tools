@@ -13,6 +13,8 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 | `homelab` | `true` + `lan` profile | on | relaxed | Single user on home network |
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
+The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
+routes and is therefore off in `public` and on in the other profiles.
 The UI shows the active profile on the About page.
 
 ## 2. Target validation — `internal/target`
@@ -67,6 +69,16 @@ IDN homographs normalized, a fake resolver returning public then private IP (reb
 | `HTTP_MAX_BODY_BYTES` | 1 MiB | Response body read cap |
 | `TOOL_TIMEOUT_DEFAULT` | 15 s | Per request; streaming max 120 s |
 | `BULK_MAX_TARGETS` | 50 | For bulk tools (expiry, propagation) |
+
+Fixed limits for tools that follow data from third parties (not configurable):
+
+| Tool | Limit |
+|---|---|
+| SPF (EM-02) | Walk stops after 10 DNS-querying terms (RFC 7208 permerror), include depth 12 |
+| DMARC (EM-03) | 10 report URIs per tag checked for external authorization |
+| MX / SMTP (EM-01) | 10 MX hosts, 64 KiB and 100 lines per reply read before STARTTLS, 15 s per probe |
+| WHOIS (BGP-06) | 3 referrals, ports 43 and 4321 only, 256 KiB per answer, 10 s per server |
+| RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body |
 
 Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immediate peer is in
 `TRUSTED_PROXIES` (default: the `web` container network).

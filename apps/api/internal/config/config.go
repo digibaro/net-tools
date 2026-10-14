@@ -45,11 +45,13 @@ type Limits struct {
 
 // Features are admin feature flags.
 type Features struct {
-	Portscan        bool
-	Iperf           bool
-	SNMP            bool
-	AXFR            bool
-	OpenRelayTest   bool
+	Portscan      bool
+	Iperf         bool
+	SNMP          bool
+	AXFR          bool
+	OpenRelayTest bool
+	// ServerInfo exposes the server's interfaces/routes (CON-13); off in the public profile.
+	ServerInfo      bool
 	LAN             bool
 	MetricsEnabled  bool
 	LogHashIPs      bool
@@ -132,6 +134,7 @@ func LoadFrom(lookup LookupFunc, readFile ReadFileFunc) (Config, error) {
 			SNMP:           p.boolean("SNMP_ENABLED", false),
 			AXFR:           p.boolean("AXFR_ENABLED", true),
 			OpenRelayTest:  p.boolean("OPEN_RELAY_TEST_ENABLED", false),
+			ServerInfo:     p.boolean("SERVER_INFO_ENABLED", relaxed),
 			LAN:            p.boolean("NETTOOLS_LAN", false),
 			MetricsEnabled: p.boolean("METRICS_ENABLED", false),
 			LogHashIPs:     p.boolean("LOG_HASH_IPS", false),

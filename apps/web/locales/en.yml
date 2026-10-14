@@ -61,6 +61,7 @@ capabilities:
     provider_key_missing: Requires an API key that is not configured on the server.
     requires_lan_mode: Requires LAN mode (host networking) on the server.
     binary_missing: A required program is not installed on the server.
+    data_missing: A required data file (for example the GeoIP database) is not installed on the server.
     api_unreachable: The NetTools server cannot be reached. Browser-only tools still work.
     unavailable: Not available on this server.
 apiErrors:
@@ -93,6 +94,7 @@ common:
   on: On
   off: Off
   clear: Clear
+  stop: Stop
   generate: Generate
   yes: Yes
   no: No
@@ -118,6 +120,115 @@ about:
   noServerTools: No server tools are registered yet.
   attributions: License & attributions
   license: NetTools is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
+dns:
+  resolver: Resolver
+  flags: Flags
+  rtt: Response time
+  records: '{count} answer record(s)'
+  sections:
+    answer: Answer
+    authority: Authority
+    additional: Additional
+  columns:
+    name: Name
+    ttl: TTL
+    type: Type
+    data: Data
+ping:
+  sentReceived: Sent / received
+  loss: Packet loss
+  rtt: RTT min / avg / max
+  stddev: Standard deviation
+  jitter: Jitter
+  chart: Round-trip time per probe; red marks are lost probes
+  target: Host or IP address
+  count: Count
+  interval: Interval (ms)
+  run: Start
+trace:
+  protocol: Protocol
+  cycles: Cycles
+  hops: 'Hops ({count})'
+  columns:
+    host: Host
+    asn: AS
+    loss: Loss
+    sent: Sent
+    last: Last
+    avg: Avg
+    best: Best
+    worst: Worst
+    stddev: StDev
+    rtts: Round-trip times
+http:
+  url: URL
+  tls: TLS
+  certificate: Certificate
+  until: 'until {date}'
+  verification: Verification
+  verified: Valid certificate
+  location: Location
+  headers: 'Response headers ({count})'
+  body: 'Body ({bytes} bytes)'
+  truncated: The body was truncated.
+  name: Name
+  value: Value
+  total: total
+  timingBar: 'Request timing, {total} ms in total'
+  phases:
+    resolve: DNS
+    connect: Connect
+    tls: TLS
+    ttfb: Wait
+    transfer: Transfer
+  invalidUrl: Enter an http or https URL.
+registry:
+  query: Domain, IP address or AS number
+  invalidQuery: Enter a domain (example.com), an IP address or an AS number (AS13335).
+  fields:
+    name: Name
+    handle: Handle
+    registrar: Registrar
+    org: Organization
+    country: Country
+    range: Range
+    type: Type
+    created: Registered
+    updated: Last changed
+    expires: Expires
+    status: Status
+    nameservers: Name servers
+    server: RDAP server
+email:
+  domain: Domain
+  findings:
+    dns-error: The DNS lookup failed.
+    no-record: No record was found.
+    nxdomain: The domain does not exist.
+    multiple-records: More than one record exists — receivers treat this as an error.
+    include-loop: The SPF includes form a loop.
+    include-missing: An included domain has no SPF record (permanent error at receivers).
+    plus-all: '"+all" lets anyone send mail as this domain.'
+    neutral-all: '"?all" expresses no policy; prefer "~all" or "-all".'
+    no-all: The record does not end with an "all" mechanism.
+    too-many-lookups: More than 10 DNS lookups — receivers return a permanent error.
+    too-many-void-lookups: More than 2 lookups return nothing — receivers may return a permanent error.
+    ptr-deprecated: The "ptr" mechanism is deprecated and slow.
+    unknown-mechanism: The record contains an unknown mechanism.
+    syntax: The record has a syntax error.
+    policy-none: Policy "none" only monitors; it does not protect the domain.
+    partial-pct: The policy applies to only part of the mail (pct below 100).
+    no-rua: No aggregate reports (rua) are requested.
+    missing-policy: The required p= tag is missing.
+    invalid-policy: The policy value is not none, quarantine or reject.
+    invalid-pct: The pct value is not between 0 and 100.
+    unauthorized-external-report: An external report address has not authorized receiving reports for this domain.
+    bad-version: The record version is not DKIM1.
+    revoked: The key is revoked (empty p=).
+    bad-key: The public key cannot be decoded.
+    weak-key: The RSA key is shorter than 1024 bits and is ignored by receivers.
+    short-key: The RSA key is shorter than the recommended 2048 bits.
+    testing: The key is in testing mode (t=y).
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -706,3 +817,783 @@ tools:
       ip: Client address
       protocol: Protocol
       method: Method
+  dns-lookup:
+    title: DNS lookup
+    description: Query any DNS record type against the system resolver, a public resolver or your own, over UDP, TCP, DoT or DoH.
+    name: Domain name
+    type: Record type
+    vantage: Run from
+    fromServer: This server
+    fromBrowser: Your browser (DoH)
+    resolver: Resolver
+    custom: Custom resolver
+    transport: Transport
+    dnssec: Request DNSSEC (DO bit)
+    dohProvider: DoH provider
+    browserNote: The query is sent directly from your browser to the provider, so it shows what public DNS returns.
+    run: Look up
+    invalidName: Enter a domain name (or an IP address for PTR).
+    resolvers:
+      system: System resolver (server)
+      cloudflare: Cloudflare (1.1.1.1)
+      google: Google (8.8.8.8)
+      quad9: Quad9 (9.9.9.9)
+      opendns: OpenDNS
+      custom: Custom…
+    transports:
+      udp: UDP
+      tcp: TCP
+      dot: DNS over TLS
+      doh: DNS over HTTPS
+  reverse-dns:
+    title: Reverse DNS (PTR)
+    description: Look up the hostname of an IP address and check that it resolves back (forward-confirmed reverse DNS).
+    ip: IP address
+    run: Look up
+    invalid: Enter an IPv4 or IPv6 address.
+    ptrName: PTR query name
+    verdict:
+      confirmed: Forward-confirmed — every PTR name resolves back to this address.
+      partial: Partly confirmed — some PTR names do not resolve back to this address.
+      unconfirmed: Not confirmed — the PTR names do not resolve back to this address.
+      none: No PTR record exists for this address.
+    columns:
+      name: PTR name
+      forward: Forward addresses
+      confirmed: Confirmed
+  caa-checker:
+    title: CAA checker
+    description: Which certificate authorities may issue for a domain, following CAA tree climbing (RFC 8659).
+    name: Domain name
+    run: Check CAA
+    steps: Lookup steps
+    anyCa: Any CA
+    noCa: No CA
+    verdict:
+      any: No CAA records apply, so any certificate authority may issue for this name.
+      restricted: 'Only these certificate authorities may issue: {cas}.'
+      none-allowed: CAA forbids every certificate authority from issuing (issue ";").
+      critical: An unknown critical CAA property is present, so certificate authorities must refuse to issue.
+    fields:
+      relevant: CAA set found at
+      wildcard: Wildcard certificates
+      iodef: Violation reports (iodef)
+    columns:
+      name: Name
+      rcode: Response
+      record: CAA record
+  dns-consistency:
+    title: SOA / NS consistency
+    description: Ask every authoritative nameserver of a zone for its SOA serial and NS set, and compare them.
+    zone: Zone (domain apex)
+    run: Check
+    checks:
+      serials:
+        ok: SOA serials match
+        fail: SOA serials differ
+      nsSets:
+        ok: NS sets match
+        fail: NS sets differ
+      authoritative:
+        ok: All answers authoritative
+        fail: Some answers not authoritative (lame delegation)
+      reachable:
+        ok: All servers answered
+        fail: Some servers did not answer
+    columns:
+      name: Nameserver
+      address: Address
+      serial: Serial
+      aa: AA
+      rtt: RTT
+      ns: NS set
+      error: Problem
+  dns-propagation:
+    title: DNS propagation check
+    description: Send the same DNS query to 18 public resolvers around the world and compare their answers.
+    run: Check propagation
+    consensus: All resolvers return the same answer.
+    split: 'Resolvers disagree: {groups} different answers, {agreement}% match the most common one.'
+    groups: Distinct answers
+    resolvers: Resolvers
+    failed: No answer
+    columns:
+      group: Answer
+      count: Resolvers
+      rcode: Response
+      answers: Records
+      resolver: Resolver
+      address: Address
+      location: Location
+      ttl: TTL
+      rtt: RTT
+  dns-trace:
+    title: Delegation trace
+    description: Follow DNS delegation from the root servers down to the authoritative answer, like dig +trace.
+    run: Trace
+    steps: 'Delegation steps ({count})'
+    summary: '{rcode}, {answers} answer(s)'
+  encrypted-dns-tester:
+    title: DoH / DoT tester
+    description: Test a DNS-over-TLS or DNS-over-HTTPS endpoint — TLS version, certificate, ALPN and query latency.
+    endpoint: Endpoint
+    queryName: Query name
+    hint: 'Use a preset (cloudflare, google, quad9, opendns), host[:port] for DoT or an https URL for DoH.'
+    invalid: Enter a preset, host[:port] or an https URL (DoH).
+    run: Test
+    tls: TLS and latency
+    verified: The certificate is valid for this endpoint.
+    notVerified: 'Certificate problem: {error}'
+    days: '{days} days'
+    fields:
+      address: Address
+      protocol: TLS
+      handshake: Handshake time
+      subject: Certificate subject
+      issuer: Issuer
+      names: Certificate names
+      expires: Expires
+      latency: Query latency
+  ping:
+    title: Ping
+    description: Send ICMP echo requests from the server and watch round-trip time, loss and jitter live.
+    invalid: Enter a host name or an IP address.
+  tcp-ping:
+    title: TCP ping
+    description: Measure TCP connect time to a host and port — works where ICMP is blocked.
+    port: Port
+  traceroute:
+    title: Traceroute
+    description: Show the network path from the server to a host, hop by hop, using ICMP, UDP or TCP probes.
+  mtr:
+    title: MTR
+    description: Continuous traceroute with per-hop packet loss and latency statistics, updated live.
+  port-check:
+    title: Port check
+    description: Check whether up to 10 TCP ports (or UDP ports, best effort) are open on a host, as seen from the server.
+    ports: Ports
+    udp: UDP (best effort)
+    run: Check ports
+    invalidPorts: Enter up to 10 ports, e.g. 22,80,443 or 8000-8005.
+    result: 'Results for {address}'
+    vantage: Results are as seen from the NetTools server; firewalls may treat other sources differently.
+    states:
+      open: Open
+      closed: Closed
+      filtered: Filtered
+      open|filtered: Open or filtered
+      error: Error
+  ntp-check:
+    title: NTP check
+    description: Query an NTP server for its time, stratum, reference, delay and the offset from this server's clock.
+    server: NTP server
+    run: Query
+    invalid: 'The answer is not usable: {problem}'
+    quality:
+      good: 'Healthy — offset {offset} ms from the NetTools server clock.'
+      fair: 'Offset {offset} ms from the NetTools server clock (either clock may be off).'
+      poor: 'Large offset of {offset} ms from the NetTools server clock.'
+    fields:
+      address: Address
+      offset: Clock offset
+      rtt: Round-trip delay
+      stratum: Stratum
+      refid: Reference ID
+      referenceTime: Reference time
+      serverTime: Server time
+      rootDelay: Root delay
+      rootDispersion: Root dispersion
+      precision: Precision
+      leap: Leap indicator
+      version: Version
+  server-network-info:
+    title: Server network info
+    description: Interfaces, addresses, routes, gateways and DNS resolvers of the NetTools server (container or host in LAN mode).
+    summary: Overview
+    interfaces: Interfaces
+    routes: Routes
+    direct: directly connected
+    columns:
+      hostname: Hostname
+      gateways: Default gateways
+      resolvers: DNS resolvers
+      search: Search domains
+      lanMode: LAN mode
+      name: Interface
+      addresses: Addresses
+      flags: Flags
+      destination: Destination
+      gateway: Gateway
+      interface: Interface
+      metric: Metric
+  http-request:
+    title: HTTP request inspector
+    description: Send an HTTP request from the server with any method, headers and body, and inspect status, headers, timing and body.
+    method: Method
+    headers: 'Request headers (one "Name: value" per line)'
+    body: Request body
+    follow: Follow redirects
+    privacy: Headers and body are sent to the target from the NetTools server and are never added to the page URL.
+    run: Send request
+    hop: 'Hop {n}'
+    invalidHeader: 'Invalid or not allowed header line: {line}'
+  redirect-tracer:
+    title: Redirect chain tracer
+    description: Follow a URL through every redirect and see status, Location and timing at each hop.
+    run: Trace redirects
+    chain: Redirect chain
+    summary: '{redirects} redirect(s), final status {status} at {url}.'
+    upgrade: The chain upgrades from HTTP to HTTPS.
+    downgrade: Warning — the chain downgrades from HTTPS to HTTP.
+    stopped: 'The chain was stopped: {code}.'
+  http-timing:
+    title: HTTP timing breakdown
+    description: How long DNS, TCP connect, TLS handshake, server wait (TTFB) and download take for a URL, like curl -w.
+    run: Measure
+    breakdown: Timing breakdown
+    phase: Phase
+    duration: Duration
+    start: Starts at
+    rating:
+      fast: 'Fast: first byte after {ttfb} ms, {total} ms in total.'
+      ok: 'Acceptable: first byte after {ttfb} ms, {total} ms in total.'
+      slow: 'Slow server response: first byte after {ttfb} ms, {total} ms in total.'
+  security-headers:
+    title: Security headers analyzer
+    description: Grade a website's HTTP security headers (CSP, HSTS, framing, nosniff, referrer and permissions policies, cookies) with fixes.
+    run: Analyze
+    score: 'Score {score} / 100'
+    status:
+      pass: Pass
+      warn: Warn
+      fail: Fail
+      info: Info
+    checks:
+      hsts:
+        ok: HSTS is enabled with a long max-age.
+        preload: HSTS is enabled with includeSubDomains and preload.
+        short-max-age: HSTS max-age is shorter than 180 days.
+        missing: No HSTS header — browsers may connect over plain HTTP first.
+        not-https: The final page is not served over HTTPS.
+      csp:
+        ok: Content-Security-Policy restricts scripts without unsafe-inline.
+        missing: No Content-Security-Policy.
+        report-only: Only a report-only CSP is set; it does not block anything.
+        unsafe-inline: script-src allows 'unsafe-inline' without nonces or hashes.
+        unsafe-eval: script-src allows 'unsafe-eval'.
+        wildcard: 'script-src allows any host (*, https: or http:).'
+        no-script-src: CSP has neither script-src nor default-src.
+      framing:
+        frame-ancestors: CSP frame-ancestors controls who may frame the page.
+        xfo: X-Frame-Options prevents framing (clickjacking).
+        missing: No framing protection (X-Frame-Options or CSP frame-ancestors).
+      nosniff:
+        ok: MIME sniffing is disabled.
+        missing: X-Content-Type-Options nosniff is missing.
+      referrer:
+        ok: A Referrer-Policy is set.
+        missing: No Referrer-Policy (browser default applies).
+        leaky: The Referrer-Policy sends full URLs to other sites.
+      permissions:
+        ok: A Permissions-Policy is set.
+        missing: No Permissions-Policy restricting powerful browser features.
+      crossoriginopenerpolicy:
+        ok: Cross-Origin-Opener-Policy isolates the browsing context.
+        missing: Cross-Origin-Opener-Policy is not set (optional hardening).
+      crossoriginresourcepolicy:
+        ok: Cross-Origin-Resource-Policy is set.
+        missing: Cross-Origin-Resource-Policy is not set (optional hardening).
+      crossoriginembedderpolicy:
+        ok: Cross-Origin-Embedder-Policy is set.
+        missing: Cross-Origin-Embedder-Policy is not set (needed only for cross-origin isolation).
+      leak:
+        version: This header reveals software versions.
+      cookie:
+        cookie: 'Cookie {value} is missing: {detail}.'
+  cors-tester:
+    title: CORS tester
+    description: Send a CORS preflight with your Origin, method and headers and see whether a browser would allow the request.
+    origin: Origin (the page making the request)
+    headers: Request headers (comma-separated, optional)
+    credentials: Send credentials (cookies / Authorization)
+    note: Only GET and HEAD are also sent as the actual request, so testing never changes data on the server.
+    run: Test CORS
+    invalidOrigin: An origin looks like https://app.example.com (no path).
+    invalidHeaders: Enter header names separated by commas.
+    allowed: A browser would allow this cross-origin request.
+    blocked: A browser would block this cross-origin request.
+    preflightSent: A preflight was required and sent.
+    simple: No preflight is needed for this request.
+    evaluation: Evaluation
+    preflight: Preflight response (OPTIONS)
+    actual: Actual response
+    findings:
+      preflight-status: Preflight answered with a 2xx status
+      allow-origin: Access-Control-Allow-Origin on the preflight allows this origin
+      allow-credentials: Access-Control-Allow-Credentials allows credentials
+      allow-methods: Access-Control-Allow-Methods includes the method
+      allow-headers: Access-Control-Allow-Headers includes the request headers
+      max-age: Preflight may be cached (Access-Control-Max-Age)
+      actual-allow-origin: Access-Control-Allow-Origin on the response allows this origin
+      vary-origin: The response varies by Origin (needed when the origin is echoed)
+      null-origin: Access-Control-Allow-Origin is "null", which is unsafe
+  tls-inspector:
+    title: TLS certificate inspector
+    description: Connect to host:port (optionally via STARTTLS), show the TLS session and every certificate in the chain, and verify it.
+    host: Host (or host:port)
+    starttls: Protocol
+    directTls: Direct TLS
+    sni: Server name (SNI)
+    sniPlaceholder: defaults to the host name
+    run: Inspect
+    session: Session
+    leaf: Server certificate
+    intermediate: 'Chain certificate {n}'
+    valid: 'The certificate chain is valid; the server certificate expires in {days} days.'
+    legacy: '{version} is outdated and should be disabled.'
+    expired: Expired
+    daysLeft: '{days} days left'
+    fields:
+      connected: Connected to
+      protocol: Protocol and cipher
+      ocsp: OCSP stapled
+      handshake: Handshake time
+    cert:
+      subject: Subject
+      issuer: Issuer
+      san: Alternative names
+      validity: Valid
+      key: Key and signature
+      serial: Serial
+  tls-expiry:
+    title: Certificate expiry checker
+    description: Check how many days are left on the TLS certificates of one or many hosts at once.
+    input: Hosts (one host[:port] per line)
+    run: 'Check {count} host(s)'
+    tooMany: 'At most {max} hosts per check.'
+    valid: Valid
+    columns:
+      target: Host
+      days: Days left
+      expires: Expires
+      issuer: Issuer
+      status: Status
+  mx-lookup:
+    title: MX lookup + SMTP check
+    description: List a domain's mail servers and test each on port 25 — banner, ESMTP extensions, STARTTLS and certificate.
+    probe: Connect to port 25 (SMTP)
+    run: Look up
+    nullMx: This domain publishes a null MX (RFC 7505) — it does not accept email.
+    implicit: No MX records — senders fall back to the domain's own address (implicit MX).
+    status:
+      ok: STARTTLS, valid certificate
+      no-starttls: No STARTTLS
+      cert: STARTTLS, certificate problem
+      unreachable: Unreachable
+  spf-checker:
+    title: SPF checker
+    description: Parse a domain's SPF record, expand every include, count DNS lookups against the limit of 10 and flag mistakes.
+    run: Check SPF
+    ok: The SPF record is valid.
+    lookups: '{n} of 10 DNS lookups used'
+    tree: Expanded record
+  dmarc-checker:
+    title: DMARC checker
+    description: Parse a domain's DMARC policy, alignment and report addresses, including authorization of external report destinations.
+    run: Check DMARC
+    ok: The DMARC record is valid.
+    subdomains: subdomains
+    strength:
+      strong: Enforced
+      weak: Partly enforced
+      none: Not enforced
+    fields:
+      foundAt: Record found at
+      policy: Policy
+      pct: Applies to
+      alignment: Alignment
+      rua: Aggregate reports (rua)
+      ruf: Failure reports (ruf)
+  dkim-checker:
+    title: DKIM checker
+    description: Fetch a DKIM public key by selector and check its type, size and flags.
+    selector: Selector
+    run: Check DKIM
+    ok: The DKIM key is valid.
+    invalidSelector: A selector is a label such as google or selector1.
+    fields:
+      name: Record
+      key: Key
+      flags: Tags
+  ip-to-asn:
+    title: IP → ASN
+    description: Find the autonomous system (ASN), announced prefix, AS name, country and registry for an IP address.
+    run: Look up
+    notAnnounced: '{ip} is not announced in the global BGP table (private, reserved or unrouted).'
+    source: Data from the Team Cymru IP-to-ASN service (DNS interface).
+    columns:
+      asn: ASN
+      name: AS name
+      prefix: Prefix
+      country: Country
+      registry: Registry
+      allocated: Allocated
+  whois-lookup:
+    title: WHOIS lookup
+    description: Query WHOIS for a domain, IP address or AS number, following referrals from IANA to the registry and registrar.
+    run: Look up
+    summary: Summary
+    bestEffort: Extracted on a best-effort basis — WHOIS has no standard format. See the raw answers below.
+    raw: Raw responses
+    chain: Servers queried
+    truncated: The response was truncated.
+  rdap-lookup:
+    title: RDAP lookup
+    description: Structured registration data for a domain, IP network or AS number, found through the IANA RDAP bootstrap.
+    run: Look up
+    entities: Contacts
+    columns:
+      roles: Roles
+      name: Name / organization
+      email: Email
+      country: Country
+      handle: Handle
+  domain-expiry:
+    title: Domain expiry checker
+    description: See when a domain was registered and when it expires, with the registrar and status, from RDAP.
+    run: Check
+    daysLeft: '{n} days left'
+    expired: Expired
+    unknown: No expiry date published
+  ip-geolocation:
+    title: IP geolocation
+    description: Approximate country, region, city, time zone and network (ASN) of an IP address, from a local GeoIP database.
+    run: Locate
+    notPublic: '{ip} is a private or reserved address and has no public location.'
+    notFound: '{ip} is not in the GeoIP database.'
+    openMap: Open in OpenStreetMap
+    source: 'Database: {db}. Locations are approximate, often only accurate to the country or region.'
+    fields:
+      country: Country
+      region: Region
+      city: City
+      postal: Postal code
+      continent: Continent
+      coordinates: Coordinates
+      accuracy: Accuracy
+      timeZone: Time zone
+      asn: Network (ASN)
+      prefix: Network block
+  vlsm-planner:
+    title: VLSM planner
+    description: Split a network into subnets sized for the number of hosts each one needs, largest first, and see the space left over.
+    network: Network to divide
+    requirements: Subnets (one per line, name and number of hosts)
+    requirementsPlaceholder: "Office 100\nWiFi 50\nLink 2"
+    p2p: Use /31 for 2-host links (RFC 3021)
+    used: '{used} of {total} addresses allocated ({pct} %)'
+    free: Unallocated space
+    columns:
+      name: Name
+      hosts: Hosts
+      cidr: Subnet
+      first: First usable
+      last: Last usable
+      usable: Usable
+      efficiency: Used
+    errors:
+      network: Enter a network in CIDR notation, such as 10.0.0.0/16.
+      requirements: Each line needs a host count, optionally preceded by a name (Office 100).
+      no-fit: The subnets do not fit in this network. Use a larger network or fewer hosts.
+      too-many: 'At most {max} subnets.'
+  ipv4-in-ipv6:
+    title: IPv4 in IPv6 (mapped, 6to4, NAT64)
+    description: Embed an IPv4 address in IPv6 (::ffff:, 6to4, NAT64 with any RFC 6052 prefix) or find the IPv4 address inside an IPv6 one, Teredo included.
+    input: IPv4 or IPv6 address
+    prefix: NAT64 prefix (/32, /40, /48, /56, /64 or /96)
+    invalid: Enter an IPv4 or IPv6 address.
+    invalidPrefix: Use an IPv6 prefix of length 32, 40, 48, 56, 64 or 96 with bits 64–71 set to zero (RFC 6052).
+    embedTitle: IPv6 forms
+    extractTitle: Embedded IPv4 address
+    none: No IPv4 address is embedded in a well-known prefix.
+    deprecated: deprecated
+    columns:
+      kind: Form
+      ipv6: IPv6
+      ipv4: IPv4
+      detail: Detail
+    kinds:
+      mapped: IPv4-mapped (::ffff:0:0/96)
+      nat64: NAT64 well-known prefix (64:ff9b::/96)
+      nat64Local: NAT64 local-use prefix (64:ff9b:1::/48)
+      nat64Custom: NAT64 network-specific prefix
+      sixToFour: 6to4 site prefix (2002::/16)
+      teredo: Teredo client (2001::/32)
+      compat: IPv4-compatible (::/96)
+  random-ip-generator:
+    title: Random IP generator
+    description: Generate random IPv4 or IPv6 addresses inside a prefix, for test data and examples.
+    prefix: Prefix
+    count: How many
+    unique: No duplicates
+    usable: Skip network / broadcast addresses
+    regenerate: Generate again
+    invalid: Enter a prefix such as 10.0.0.0/8 or 2001:db8::/32.
+    tooSmall: The prefix has fewer usable addresses than requested. Allow duplicates or use a larger prefix.
+  optical-power:
+    title: Optical power & link budget
+    description: Convert between dBm, mW and W, and check a fibre link budget — losses, received power and remaining margin.
+    convertTitle: Power conversion
+    power: Power
+    unit: Unit
+    positive: Linear power (mW, µW, W) must be greater than zero.
+    budgetTitle: Fibre link budget
+    presets:
+      smf1310: Single-mode 1310 nm
+      smf1550: Single-mode 1550 nm
+      mmf850: Multimode 850 nm
+      mmf1300: Multimode 1300 nm
+    fields:
+      tx: Transmit power (dBm)
+      sens: Receiver sensitivity (dBm)
+      overload: Receiver overload (dBm)
+      km: Fibre length (km)
+      att: Attenuation (dB/km)
+      conn: Connector pairs
+      connLoss: Loss per connector (dB)
+      splices: Splices
+      spliceLoss: Loss per splice (dB)
+      margin: Safety margin (dB)
+    results:
+      fiber: Fibre loss
+      connectors: Connector loss
+      splices: Splice loss
+      total: Total loss
+      rx: Expected receive power
+      budget: Power budget (Tx − sensitivity)
+      headroom: Headroom after margin
+    ok: 'The link works with {db} dB to spare.'
+    fail: 'The link is short by {db} dB. Reduce losses or use stronger optics.'
+    overload: 'The receiver is overloaded. Add an attenuator of at least {db} dB.'
+  zone-builder:
+    title: Zone file & record builder
+    description: Build BIND-style DNS records — A, AAAA, MX, SRV, CAA, TXT with automatic 255-byte splitting, SPF — and assemble a zone file with SOA.
+    zoneTitle: Zone
+    addTitle: Add a record
+    recordsTitle: Records
+    records: Records (one per line, edit freely)
+    outputTitle: Zone file
+    add: Add to zone
+    download: 'Download {file}'
+    spfType: SPF (TXT)
+    spfTooMany: '{n} DNS lookups — SPF allows at most 10; receivers will reject the record.'
+    headerInvalid: Check the origin, primary name server and email; the SOA header cannot be built.
+    fields:
+      origin: Origin (zone name)
+      defaultTtl: Default TTL (seconds)
+      primary: Primary name server
+      email: Responsible email
+      type: Type
+      name: Name
+      srvBase: Name (below the service labels)
+      ttl: TTL (optional)
+      address: Address
+      target: Target
+      preference: Preference
+      text: Text
+      service: Service
+      protocol: Protocol
+      priority: Priority
+      weight: Weight
+      port: Port
+      tag: Tag
+      value: Value
+      critical: Critical (issuer-critical flag 128)
+      spfMx: Allow the domain's MX servers (mx)
+      spfA: Allow the domain's own address (a)
+      spfIncludes: Include domains (include:)
+      spfIp4: IPv4 networks
+      spfIp6: IPv6 networks
+      spfAll: Everything else
+    errors:
+      name: "Enter a name — {'@'} for the zone itself, a relative name (www) or an absolute one ending in a dot."
+      ttl: The TTL must be a whole number of seconds.
+      address: Enter a valid address.
+      target: Enter a host name (relative, or absolute with a trailing dot).
+      number: Numbers must be between 0 and 65535.
+      text: Enter the text.
+      value: Check the value.
+      service: Service and protocol are labels such as sip and tcp.
+  email-header-analyzer:
+    title: Email header analyzer
+    description: Paste email headers to see the delivery path hop by hop, delays between servers, and SPF, DKIM and DMARC results.
+    input: Message headers
+    placeholder: Paste the full headers ("Show original" / "View source" in your mail client).
+    privacy: The headers are analyzed in your browser and are not sent anywhere or kept in the page address.
+    summary: Message
+    auth: Authentication
+    noAuth: No Authentication-Results header was found.
+    dkimSig: 'DKIM signature by {domain}, selector {selector} ({alg}).'
+    checkKey: Check the key
+    hops: 'Delivery path ({n} hops)'
+    total: 'Total transit time: {total}.'
+    slow: 'The slowest hop took {delay}.'
+    noHops: No Received headers were found.
+    columns:
+      delay: Delay
+      from: From
+      by: By
+      with: Protocol
+      date: Time
+  csr-tool:
+    title: CSR decoder & generator
+    description: Decode a certificate signing request, or generate a private key and CSR with SANs — entirely in your browser.
+    decode: Decode
+    generate: Generate
+    csrInput: CSR (PEM)
+    invalidCsr: This is not a PEM certificate signing request.
+    sigOk: Signature valid
+    sigBad: Signature invalid
+    sans: Subject alternative names (host names or IPs)
+    includeCn: Add the common name to the SANs
+    sanPreview: 'SANs: {list}'
+    keyType: Key type
+    generateButton: Generate key and CSR
+    csrTitle: Certificate signing request
+    keyTitle: Private key
+    keyWarning: Generated in your browser and never sent anywhere. Save it now — it cannot be recovered, and anyone with this key can use the certificate.
+    download: 'Download {file}'
+    keyTypes:
+      ec-p256: ECDSA P-256 (recommended)
+      ec-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096
+    subject:
+      cn: Common name (CN)
+      o: Organization (O)
+      ou: Organizational unit (OU)
+      l: City (L)
+      st: State or province (ST)
+      c: Country code (C)
+      email: Email
+    placeholders:
+      cn: www.example.com
+      o: Example Ltd
+      ou: IT
+      l: Amsterdam
+      st: Noord-Holland
+      c: NL
+      email: "admin{'@'}example.com"
+    fields:
+      subject: Subject
+      sans: Alternative names
+      publicKey: Public key
+      signature: Signature algorithm
+      spki: Public key SHA-256
+    errors:
+      cn: The common name is required (at most 64 characters).
+      c: The country is a two-letter code such as NL or US.
+      email: Enter a valid email address.
+      san: Each alternative name must be a host name, a wildcard (*.example.com) or an IP address.
+  cert-key-matcher:
+    title: Certificate / key matcher
+    description: Check that a certificate, a private key and a CSR belong together by comparing their public keys — in your browser.
+    inputs:
+      certificate: Certificate
+      key: Private key
+      csr: CSR
+    privacy: Everything is checked in your browser. The private key is not sent anywhere and is not stored in the page address.
+    match: The public keys match — these belong together.
+    mismatch: The public keys differ — these do not belong together.
+    keys: Public keys
+    how: Compared by the SHA-256 of each public key (SubjectPublicKeyInfo). Works for RSA, ECDSA and Ed25519.
+    errors:
+      invalid: This is not a valid PEM block of this type.
+      no-key: No PEM private key found.
+      encrypted: The key is encrypted. Decrypt it first (openssl pkey -in key.pem -out plain.pem).
+      unsupported: This key type or format is not supported.
+  wireguard-config:
+    title: WireGuard config generator
+    description: Generate WireGuard keys and matching server and client configurations, with a QR code per client for the mobile apps.
+    privacy: Keys are generated in your browser with a secure random source. They are never sent anywhere or stored in the page address.
+    regenerate: New keys
+    auto: auto
+    serverTitle: Server (wg0.conf)
+    download: 'Download {file}'
+    qrAlt: 'QR code with the configuration for {name}'
+    routing:
+      full: All traffic
+      split: Tunnel network only
+      custom: Custom
+    fields:
+      endpoint: Server endpoint (host or IP, optional :port)
+      port: Listen port
+      address4: Tunnel IPv4 address of the server
+      address6: Tunnel IPv6 address (optional)
+      dns: DNS servers for clients
+      peers: Clients
+      mtu: MTU
+      keepalive: Keepalive (s)
+      routing: Route through the tunnel
+      allowedIps: Allowed IPs
+      psk: Preshared keys
+    errors:
+      endpoint: Enter a host name or IP address.
+      port: The port must be between 1 and 65535.
+      address4: Enter the server address with a prefix of /30 or larger, such as 10.8.0.1/24.
+      address6: Enter an IPv6 address with prefix, such as fd42:42::1/64.
+      dns: DNS servers must be IP addresses.
+      mtu: The MTU must be between 1280 and 9000 (0 for automatic).
+      peers: 'Between 1 and {max} clients.'
+      allowedIps: Enter one or more networks in CIDR notation.
+      full: The tunnel network is too small for this many clients.
+  browser-latency:
+    title: Browser ↔ server latency
+    description: Measure HTTP round-trip time and jitter from your browser to this NetTools server, with a live graph.
+    stop: Stop
+    progress: Measurement progress
+    note: Each sample is a small HTTP request over an already open connection, so it includes browser and server processing on top of the network round trip.
+    unreachable: No request reached the server.
+    fields:
+      medianP95: Median / 95th percentile
+      protocol: HTTP version
+      ip: Your address as seen by the server
+    quality:
+      excellent: Excellent
+      good: Good
+      fair: Fair
+      poor: Poor
+  connection-info:
+    title: Browser connection info
+    description: Check IPv4 and IPv6 connectivity from your browser, the connection type it reports, and how this page was loaded (HTTP version, DNS, TLS, time to first byte).
+    ipTitle: Connectivity
+    ipNote: IPv4 and IPv6 are tested with requests to api.ipify.org and api6.ipify.org.
+    refresh: Test again
+    noConnectivity: No connectivity
+    estimateTitle: Connection estimate
+    noEstimate: This browser does not expose the Network Information API (only Chromium-based browsers do).
+    timingTitle: How this page was loaded
+    browserTitle: Browser
+    dohNote: Web pages cannot detect encrypted DNS (DoH). Check your browser's secure DNS setting or use the encrypted DNS tester.
+    stack:
+      dual: Dual stack
+      v4-only: IPv4 only
+      v6-only: IPv6 only
+      none: No connectivity
+    fields:
+      toServer: To this server
+      type: Connection type
+      effectiveType: Effective type
+      downlink: Downlink
+      rtt: Round-trip time
+      saveData: Data saver
+      protocol: HTTP version
+      dns: DNS lookup
+      connect: Connect (TCP + TLS)
+      tls: TLS handshake
+      ttfb: Time to first byte
+      download: Download
+      online: Online
+      secure: Secure context (HTTPS)
+      doh: Encrypted DNS

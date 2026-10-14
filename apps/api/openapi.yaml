@@ -107,7 +107,669 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Echo" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/lookup:
+    get:
+      operationId: dnsLookup
+      summary: Query a record type against a resolver
+      tags: [dns]
+      x-capability: dns.lookup
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string, maxLength: 253 } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+        - { name: resolver, in: query, description: "system, a preset id (cloudflare, google, quad9, opendns), ip[:port], host[:port] or an https DoH URL", schema: { type: string, default: system } }
+        - { name: transport, in: query, schema: { type: string, enum: [udp, tcp, dot, doh], default: udp } }
+        - { name: dnssec, in: query, schema: { type: boolean, default: false } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsLookup" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/reverse:
+    get:
+      operationId: dnsReverse
+      summary: PTR lookup with forward confirmation
+      tags: [dns]
+      x-capability: dns.reverse
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsReverse" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/caa:
+    get:
+      operationId: dnsCaa
+      summary: CAA records with RFC 8659 tree climbing
+      tags: [dns]
+      x-capability: dns.caa
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsCaa" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/consistency:
+    get:
+      operationId: dnsConsistency
+      summary: Compare SOA serials and NS sets across all authoritative servers
+      tags: [dns]
+      x-capability: dns.consistency
+      parameters:
+        - { name: zone, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsConsistency" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/propagation:
+    get:
+      operationId: dnsPropagation
+      summary: The same query against many public resolvers, grouped by answer
+      tags: [dns]
+      x-capability: dns.propagation
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, CAA, SRV, PTR], default: A } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsPropagation" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/trace/stream:
+    get:
+      operationId: dnsTraceStream
+      summary: Iterative resolution from the root servers (SSE)
+      description: |
+        Server-Sent Events: `meta`, then one `step` event (DnsTraceStep) per server queried, then
+        `done` ({summary: DnsTraceSummary, durationMs}) or `error` (ApiError). Validation errors are
+        also delivered as an `error` event.
+      tags: [dns]
+      x-capability: dns.trace
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/dns/encrypted:
+    get:
+      operationId: dnsEncrypted
+      summary: Test a DNS-over-TLS or DNS-over-HTTPS endpoint
+      tags: [dns]
+      x-capability: dns.encrypted
+      parameters:
+        - { name: endpoint, in: query, required: true, description: "preset id, host[:port] / ip[:port] (DoT) or https URL (DoH)", schema: { type: string } }
+        - { name: transport, in: query, schema: { type: string, enum: [dot, doh], default: dot } }
+        - { name: name, in: query, schema: { type: string, default: example.com } }
+        - { name: type, in: query, schema: { $ref: "#/components/schemas/DnsRecordType" } }
+        - { name: count, in: query, schema: { type: integer, minimum: 1, maximum: 5, default: 3 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsEncrypted" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/ping/stream:
+    get:
+      operationId: pingStream
+      summary: ICMP echo with live replies (SSE)
+      description: "Events: meta, reply (PingReply)*, done ({summary: PingSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.ping
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: count, in: query, description: "1..PING_MAX_COUNT", schema: { type: integer, default: 5 } }
+        - { name: interval, in: query, description: "ms, PING_MIN_INTERVAL_MS..5000", schema: { type: integer, default: 1000 } }
+        - { name: size, in: query, schema: { type: integer, minimum: 16, maximum: 1472, default: 56 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/tcping/stream:
+    get:
+      operationId: tcpingStream
+      summary: Repeated TCP connects with timing (SSE)
+      description: "Events: meta, reply|timeout (PingReply)*, done ({summary: PingSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.tcping
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: count, in: query, schema: { type: integer, default: 5 } }
+        - { name: interval, in: query, schema: { type: integer, default: 1000 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/traceroute/stream:
+    get:
+      operationId: tracerouteStream
+      summary: Traceroute via mtr (3 probes per hop, SSE)
+      description: "Events: meta, hop (TraceHop)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.traceroute
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: proto, in: query, schema: { type: string, enum: [icmp, udp, tcp], default: icmp } }
+        - { name: port, in: query, description: "TCP mode only", schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: maxHops, in: query, description: "1..TRACEROUTE_MAX_HOPS", schema: { type: integer, default: 30 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/mtr/stream:
+    get:
+      operationId: mtrStream
+      summary: MTR (continuous traceroute with per-hop statistics, SSE)
+      description: "Events: meta, hop (TraceHop, throttled updates)*, done ({summary: {hops: TraceHop[]}, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.mtr
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: proto, in: query, schema: { type: string, enum: [icmp, udp, tcp], default: icmp } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: maxHops, in: query, schema: { type: integer, default: 30 } }
+        - { name: cycles, in: query, description: "1..MTR_MAX_CYCLES", schema: { type: integer, default: 10 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/port/check:
+    get:
+      operationId: portCheck
+      summary: Check up to 10 TCP (or UDP, best effort) ports from the server
+      tags: [connectivity]
+      x-capability: net.portcheck
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: ports, in: query, required: true, description: "comma list and small ranges, at most 10 ports", schema: { type: string, examples: ["22,80,443"] } }
+        - { name: proto, in: query, schema: { type: string, enum: [tcp, udp], default: tcp } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PortCheck" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/ntp:
+    get:
+      operationId: ntpCheck
+      summary: Query an NTP server (offset, stratum, delay, refid)
+      tags: [connectivity]
+      x-capability: net.ntp
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/NtpCheck" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/server/netinfo:
+    get:
+      operationId: serverNetinfo
+      summary: Interfaces, routes and resolvers of the api container (SERVER_INFO_ENABLED)
+      tags: [connectivity]
+      x-capability: net.serverinfo
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/ServerNetinfo" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/request:
+    post:
+      operationId: httpRequest
+      summary: Send a request and inspect the response (optionally following redirects)
+      tags: [web]
+      x-capability: web.request
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/HttpRequestBody" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/redirects:
+    get:
+      operationId: httpRedirects
+      summary: Follow and list every redirect hop
+      tags: [web]
+      x-capability: web.redirects
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/timing:
+    get:
+      operationId: httpTiming
+      summary: DNS / connect / TLS / TTFB / transfer timing
+      tags: [web]
+      x-capability: web.timing
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+        - { name: follow, in: query, schema: { type: boolean, default: false } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpHops" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/security-headers:
+    get:
+      operationId: httpSecurityHeaders
+      summary: Grade security headers of the final response
+      tags: [web]
+      x-capability: web.secheaders
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SecurityHeaders" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/cors:
+    get:
+      operationId: httpCors
+      summary: Send a CORS preflight (and a safe actual request) and evaluate it
+      tags: [web]
+      x-capability: web.cors
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+        - { name: origin, in: query, required: true, schema: { type: string } }
+        - { name: method, in: query, schema: { type: string, enum: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS], default: GET } }
+        - { name: headers, in: query, description: "comma-separated request header names", schema: { type: string } }
+        - { name: credentials, in: query, schema: { type: boolean, default: false } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Cors" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/tls/inspect:
+    get:
+      operationId: tlsInspect
+      summary: TLS handshake details and certificate chain of host:port (optional STARTTLS)
+      tags: [tls]
+      x-capability: tls.inspect
+      parameters:
+        - { name: host, in: query, required: true, description: "host or host:port", schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+        - { name: sni, in: query, description: "server name to send (defaults to host)", schema: { type: string } }
+        - { name: starttls, in: query, schema: { type: string, enum: ["", smtp, imap, pop3, ftp] } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/TlsSession" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/tls/expiry:
+    post:
+      operationId: tlsExpiry
+      summary: Certificate expiry for up to BULK_MAX_TARGETS hosts
+      tags: [tls]
+      x-capability: tls.expiry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [targets]
+              properties:
+                targets: { type: array, items: { type: string }, minItems: 1, maxItems: 50 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/TlsExpiry" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/mx:
+    get:
+      operationId: emailMx
+      summary: MX records and SMTP reachability with STARTTLS
+      tags: [email]
+      x-capability: email.mx
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+        - { name: probe, in: query, description: "set false to skip the port 25 probes", schema: { type: boolean, default: true } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailMx" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/spf:
+    get:
+      operationId: emailSpf
+      summary: Parse and expand an SPF record, count DNS lookups
+      tags: [email]
+      x-capability: email.spf
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailSpf" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/dmarc:
+    get:
+      operationId: emailDmarc
+      summary: Parse and validate a DMARC policy
+      tags: [email]
+      x-capability: email.dmarc
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailDmarc" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/dkim:
+    get:
+      operationId: emailDkim
+      summary: Fetch and analyze a DKIM key
+      tags: [email]
+      x-capability: email.dkim
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+        - { name: selector, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailDkim" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/asn/lookup:
+    get:
+      operationId: asnLookup
+      summary: Origin ASN, prefix, AS name and registry for an IP (Team Cymru DNS)
+      tags: [bgp]
+      x-capability: bgp.ip2asn
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/AsnLookup" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/whois:
+    get:
+      operationId: whois
+      summary: WHOIS over port 43 with referral following
+      tags: [registry]
+      x-capability: reg.whois
+      parameters:
+        - { name: query, in: query, required: true, description: "domain, IP address or AS number", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Whois" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/rdap:
+    get:
+      operationId: rdapLookup
+      summary: RDAP lookup for a domain, IP or ASN (IANA bootstrap)
+      tags: [registry]
+      x-capability: reg.rdap
+      parameters:
+        - { name: query, in: query, required: true, description: "domain, IP address or AS number", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RdapRecord" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/domain/expiry:
+    get:
+      operationId: domainExpiry
+      summary: Domain registration and expiry dates via RDAP
+      tags: [registry]
+      x-capability: reg.expiry
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DomainExpiry" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/geo:
+    get:
+      operationId: geo
+      summary: IP geolocation from the local GeoLite2 / DB-IP Lite database
+      tags: [reputation]
+      x-capability: rep.geo
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+        - { name: source, in: query, description: "only `local` is implemented", schema: { type: string, enum: [local], default: local } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Geo" }
+        default: { $ref: "#/components/responses/Error" }
 components:
+  parameters:
+    Family:
+      name: family
+      in: query
+      description: Restrict to IPv4 (4) or IPv6 (6)
+      schema: { type: integer, enum: [0, 4, 6] }
   responses:
     Error:
       description: Error envelope
@@ -210,7 +872,7 @@ components:
         enabled: { type: boolean }
         reason:
           type: string
-          enum: [disabled_by_admin, provider_key_missing, requires_lan_mode, binary_missing]
+          enum: [disabled_by_admin, provider_key_missing, requires_lan_mode, binary_missing, data_missing]
     Echo:
       type: object
       required: [ip, family, protocol, scheme, method, userAgent, headers]
@@ -229,3 +891,691 @@ components:
             properties:
               name: { type: string }
               value: { type: string }
+    DnsRecordType:
+      type: string
+      enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, SRV, CAA, PTR, DS, DNSKEY, HTTPS, SVCB, TLSA, NAPTR, ANY]
+      default: A
+    DnsRecord:
+      type: object
+      required: [name, type, ttl, class, data]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        ttl: { type: integer }
+        class: { type: string }
+        data: { type: string }
+    DnsFlags:
+      type: object
+      required: [aa, tc, rd, ra, ad, cd]
+      properties:
+        aa: { type: boolean }
+        tc: { type: boolean }
+        rd: { type: boolean }
+        ra: { type: boolean }
+        ad: { type: boolean }
+        cd: { type: boolean }
+    DnsLookup:
+      type: object
+      required: [name, type, resolver, transport, rcode, flags, answer, authority, additional, rttMs]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        resolver: { type: string }
+        transport: { type: string }
+        rcode: { type: string, examples: [NOERROR, NXDOMAIN, SERVFAIL] }
+        flags: { $ref: "#/components/schemas/DnsFlags" }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        authority: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        additional: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        rttMs: { type: number }
+    DnsReverse:
+      type: object
+      required: [ip, ptrName, resolver, rcode, names, rttMs]
+      properties:
+        ip: { type: string }
+        ptrName: { type: string }
+        resolver: { type: string }
+        rcode: { type: string }
+        rttMs: { type: number }
+        names:
+          type: array
+          items:
+            type: object
+            required: [name, forwardAddresses, forwardConfirmed]
+            properties:
+              name: { type: string }
+              forwardAddresses: { type: array, items: { type: string } }
+              forwardConfirmed: { type: boolean }
+    CaaRecord:
+      type: object
+      required: [flag, critical, tag, value]
+      properties:
+        flag: { type: integer }
+        critical: { type: boolean }
+        tag: { type: string }
+        value: { type: string }
+    DnsCaa:
+      type: object
+      required: [name, relevantName, steps, issue, issueWild, iodef, unknownCritical, resolver]
+      properties:
+        name: { type: string }
+        relevantName: { type: string, description: "Where the effective CAA set was found; empty if none" }
+        resolver: { type: string }
+        issue: { type: array, items: { type: string } }
+        issueWild: { type: array, items: { type: string } }
+        iodef: { type: array, items: { type: string } }
+        unknownCritical: { type: array, items: { type: string } }
+        steps:
+          type: array
+          items:
+            type: object
+            required: [name, rcode, records]
+            properties:
+              name: { type: string }
+              rcode: { type: string }
+              records: { type: array, items: { $ref: "#/components/schemas/CaaRecord" } }
+    DnsConsistency:
+      type: object
+      required: [zone, nameservers, servers, serialsConsistent, nsSetsConsistent, allAuthoritative]
+      properties:
+        zone: { type: string }
+        nameservers: { type: array, items: { type: string } }
+        serialsConsistent: { type: boolean }
+        nsSetsConsistent: { type: boolean }
+        allAuthoritative: { type: boolean }
+        servers:
+          type: array
+          items:
+            type: object
+            required: [name, address, serial, mname, rname, authoritative, nsSet, rttMs, error]
+            properties:
+              name: { type: string }
+              address: { type: string }
+              serial: { type: [integer, "null"] }
+              mname: { type: string }
+              rname: { type: string }
+              authoritative: { type: boolean }
+              nsSet: { type: array, items: { type: string } }
+              rttMs: { type: number }
+              error: { type: string }
+    DnsPropagation:
+      type: object
+      required: [name, type, rows, groups, consensus]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        consensus: { type: boolean }
+        groups:
+          type: array
+          items:
+            type: object
+            required: [answers, rcode, count]
+            properties:
+              answers: { type: array, items: { type: string } }
+              rcode: { type: string }
+              count: { type: integer }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [resolver, provider, location, address, rcode, answers, ttl, rttMs, error, group]
+            properties:
+              resolver: { type: string }
+              provider: { type: string }
+              location: { type: string }
+              address: { type: string }
+              rcode: { type: string }
+              answers: { type: array, items: { type: string } }
+              ttl: { type: [integer, "null"] }
+              rttMs: { type: number }
+              error: { type: string }
+              group: { type: integer, description: "Index into groups; -1 when the resolver failed" }
+    SseDone:
+      type: object
+      required: [summary, durationMs]
+      properties:
+        summary: {}
+        durationMs: { type: number }
+    DnsTraceStep:
+      type: object
+      required: [step, zone, server, address, rcode, aa, rttMs, answer, referral, note]
+      properties:
+        step: { type: integer }
+        zone: { type: string }
+        server: { type: string }
+        address: { type: string }
+        rcode: { type: string }
+        aa: { type: boolean }
+        rttMs: { type: number }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        referral: { type: array, items: { type: string } }
+        note: { type: string }
+    DnsTraceSummary:
+      type: object
+      required: [steps, rcode, answers]
+      properties:
+        steps: { type: integer }
+        rcode: { type: string }
+        answers: { type: integer }
+    DnsEncrypted:
+      type: object
+      required: [endpoint, transport, address, tls, queries, answer, minMs, avgMs, maxMs]
+      properties:
+        endpoint: { type: string }
+        transport: { type: string }
+        address: { type: string }
+        minMs: { type: number }
+        avgMs: { type: number }
+        maxMs: { type: number }
+        answer: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+        queries:
+          type: array
+          items:
+            type: object
+            required: [rttMs, rcode, error]
+            properties:
+              rttMs: { type: number }
+              rcode: { type: string }
+              error: { type: string }
+        tls:
+          type: object
+          required: [version, cipher, alpn, subject, issuer, notAfter, dnsNames, verified, verifyError, handshakeMs]
+          properties:
+            version: { type: string }
+            cipher: { type: string }
+            alpn: { type: string }
+            subject: { type: string }
+            issuer: { type: string }
+            notAfter: { type: string }
+            dnsNames: { type: array, items: { type: string } }
+            verified: { type: boolean }
+            verifyError: { type: string }
+            handshakeMs: { type: number }
+    PingReply:
+      type: object
+      required: [seq, from]
+      properties:
+        seq: { type: integer }
+        rttMs: { type: number }
+        ttl: { type: integer }
+        from: { type: string }
+        bytes: { type: integer }
+        error: { type: string }
+    PingSummary:
+      type: object
+      required: [sent, received, lossPct, minMs, avgMs, maxMs, stddevMs, jitterMs]
+      properties:
+        sent: { type: integer }
+        received: { type: integer }
+        lossPct: { type: number }
+        minMs: { type: number }
+        avgMs: { type: number }
+        maxMs: { type: number }
+        stddevMs: { type: number }
+        jitterMs: { type: number }
+    TraceHop:
+      type: object
+      required: [hop, ip, host, sent, recv, loss, lastMs, avgMs, bestMs, worstMs, stddevMs, rttMs, asn]
+      properties:
+        hop: { type: integer }
+        ip: { type: string }
+        host: { type: string }
+        sent: { type: integer }
+        recv: { type: integer }
+        loss: { type: number, description: "percent" }
+        lastMs: { type: number }
+        avgMs: { type: number }
+        bestMs: { type: number }
+        worstMs: { type: number }
+        stddevMs: { type: number }
+        rttMs: { type: array, items: { type: number } }
+        asn: { type: [integer, "null"] }
+    PortCheck:
+      type: object
+      required: [target, address, rows]
+      properties:
+        target: { type: string }
+        address: { type: string }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [port, proto, state, service, rttMs, detail]
+            properties:
+              port: { type: integer }
+              proto: { type: string }
+              state: { type: string, enum: [open, closed, filtered, "open|filtered", error] }
+              service: { type: string }
+              rttMs: { type: number }
+              detail: { type: string }
+    NtpCheck:
+      type: object
+      required: [server, address, version, stratum, referenceId, referenceTime, serverTime, offsetMs, rttMs, precisionMs, rootDelayMs, rootDispersionMs, rootDistanceMs, leap, kissCode, valid, problem]
+      properties:
+        server: { type: string }
+        address: { type: string }
+        version: { type: integer }
+        stratum: { type: integer }
+        referenceId: { type: string }
+        referenceTime: { type: string }
+        serverTime: { type: string }
+        offsetMs: { type: number }
+        rttMs: { type: number }
+        precisionMs: { type: number }
+        rootDelayMs: { type: number }
+        rootDispersionMs: { type: number }
+        rootDistanceMs: { type: number }
+        leap: { type: string }
+        kissCode: { type: string }
+        valid: { type: boolean }
+        problem: { type: string }
+    ServerNetinfo:
+      type: object
+      required: [hostname, lanMode, interfaces, routes, gateways, resolvers]
+      properties:
+        hostname: { type: string }
+        lanMode: { type: boolean }
+        gateways: { type: array, items: { type: string } }
+        interfaces:
+          type: array
+          items:
+            type: object
+            required: [name, mtu, mac, flags, addresses]
+            properties:
+              name: { type: string }
+              mtu: { type: integer }
+              mac: { type: string }
+              flags: { type: array, items: { type: string } }
+              addresses: { type: array, items: { type: string } }
+        routes:
+          type: array
+          items:
+            type: object
+            required: [family, destination, gateway, interface, metric, default]
+            properties:
+              family: { type: integer }
+              destination: { type: string }
+              gateway: { type: string }
+              interface: { type: string }
+              metric: { type: integer }
+              default: { type: boolean }
+        resolvers:
+          type: object
+          required: [nameservers, search, options]
+          properties:
+            nameservers: { type: array, items: { type: string } }
+            search: { type: array, items: { type: string } }
+            options: { type: array, items: { type: string } }
+    HttpHeader:
+      type: object
+      required: [name, value]
+      properties:
+        name: { type: string }
+        value: { type: string }
+    HttpRequestBody:
+      type: object
+      required: [url]
+      additionalProperties: false
+      properties:
+        url: { type: string }
+        method: { type: string, enum: [GET, HEAD, POST, PUT, PATCH, DELETE, OPTIONS], default: GET }
+        headers: { type: object, additionalProperties: { type: string }, maxProperties: 30 }
+        body: { type: string, maxLength: 65536 }
+        followRedirects: { type: boolean, default: false }
+    HttpHop:
+      type: object
+      required: [url, method, remoteAddr, status, statusText, proto, headers, location, timing, tls, bodyPreview, bodyBytes, bodyTruncated, contentType, error, errorCode]
+      properties:
+        url: { type: string }
+        method: { type: string }
+        remoteAddr: { type: string }
+        status: { type: integer }
+        statusText: { type: string }
+        proto: { type: string }
+        headers: { type: array, items: { $ref: "#/components/schemas/HttpHeader" } }
+        location: { type: string }
+        contentType: { type: string }
+        bodyPreview: { type: string }
+        bodyBytes: { type: integer }
+        bodyTruncated: { type: boolean }
+        error: { type: string, description: "set when this hop was not fetched (e.g. redirect into a denied range)" }
+        errorCode: { type: string }
+        timing:
+          type: object
+          required: [resolveMs, connectMs, tlsMs, ttfbMs, transferMs, totalMs]
+          properties:
+            resolveMs: { type: number }
+            connectMs: { type: number }
+            tlsMs: { type: number }
+            ttfbMs: { type: number }
+            transferMs: { type: number }
+            totalMs: { type: number }
+        tls:
+          oneOf:
+            - type: "null"
+            - type: object
+              required: [version, cipher, alpn, serverName, subject, issuer, notAfter, verifyError]
+              properties:
+                version: { type: string }
+                cipher: { type: string }
+                alpn: { type: string }
+                serverName: { type: string }
+                subject: { type: string }
+                issuer: { type: string }
+                notAfter: { type: string }
+                verifyError: { type: string }
+    HttpHops:
+      type: object
+      required: [hops]
+      properties:
+        hops: { type: array, items: { $ref: "#/components/schemas/HttpHop" } }
+    SecurityHeaders:
+      type: object
+      required: [url, status, grade, score, checks, hop]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        grade: { type: string, enum: [A+, A, B, C, D, F] }
+        score: { type: integer }
+        hop: { $ref: "#/components/schemas/HttpHop" }
+        checks:
+          type: array
+          items:
+            type: object
+            required: [id, header, status, value, detail]
+            properties:
+              id: { type: string }
+              header: { type: string }
+              status: { type: string, enum: [pass, warn, fail, info] }
+              value: { type: string }
+              detail: { type: string }
+    Cors:
+      type: object
+      required: [allowed, needsPreflight, findings, preflight, actual, requestedMethod, requestHeaders]
+      properties:
+        allowed: { type: boolean }
+        needsPreflight: { type: boolean }
+        requestedMethod: { type: string }
+        requestHeaders: { type: array, items: { type: string } }
+        preflight: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/HttpHop" }] }
+        actual: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/HttpHop" }] }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [code, ok, value]
+            properties:
+              code: { type: string }
+              ok: { type: boolean }
+              value: { type: string }
+    TlsCert:
+      type: object
+      required: [subject, issuer, serial, notBefore, notAfter, daysLeft, dnsNames, ipAddresses, keyAlgorithm, signatureAlgorithm, isCA, sha256, selfSigned]
+      properties:
+        subject: { type: string }
+        issuer: { type: string }
+        serial: { type: string }
+        notBefore: { type: string }
+        notAfter: { type: string }
+        daysLeft: { type: integer }
+        dnsNames: { type: array, items: { type: string } }
+        ipAddresses: { type: array, items: { type: string } }
+        keyAlgorithm: { type: string }
+        signatureAlgorithm: { type: string }
+        isCA: { type: boolean }
+        sha256: { type: string }
+        selfSigned: { type: boolean }
+    TlsSession:
+      type: object
+      required: [version, cipher, alpn, serverName, ocspStapled, chain, verified, verifyError, handshakeMs, starttls, connectedTo]
+      properties:
+        version: { type: string }
+        cipher: { type: string }
+        alpn: { type: string }
+        serverName: { type: string }
+        ocspStapled: { type: boolean }
+        chain: { type: array, items: { $ref: "#/components/schemas/TlsCert" } }
+        verified: { type: boolean }
+        verifyError: { type: string }
+        handshakeMs: { type: number }
+        starttls: { type: string }
+        connectedTo: { type: string }
+    TlsExpiry:
+      type: object
+      required: [rows]
+      properties:
+        rows:
+          type: array
+          items:
+            type: object
+            required: [target, address, notAfter, daysLeft, issuer, subject, verified, verifyError, error, errorCode]
+            properties:
+              target: { type: string }
+              address: { type: string }
+              notAfter: { type: string }
+              daysLeft: { type: [integer, "null"] }
+              issuer: { type: string }
+              subject: { type: string }
+              verified: { type: boolean }
+              verifyError: { type: string }
+              error: { type: string }
+              errorCode: { type: string }
+    EmailMx:
+      type: object
+      required: [domain, hosts, nullMx, implicit, probed]
+      properties:
+        domain: { type: string }
+        nullMx: { type: boolean }
+        implicit: { type: boolean }
+        probed: { type: boolean }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [preference, host, addresses, probes, error]
+            properties:
+              preference: { type: integer }
+              host: { type: string }
+              addresses: { type: array, items: { type: string } }
+              error: { type: string }
+              probes:
+                type: array
+                items:
+                  type: object
+                  required: [address, connected, connectMs, banner, extensions, starttls, tls, error]
+                  properties:
+                    address: { type: string }
+                    connected: { type: boolean }
+                    connectMs: { type: number }
+                    banner: { type: string }
+                    extensions: { type: array, items: { type: string } }
+                    starttls: { type: boolean }
+                    tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
+                    error: { type: string }
+    SpfTerm:
+      type: object
+      required: [raw, qualifier, kind, value, lookup]
+      properties:
+        raw: { type: string }
+        qualifier: { type: string }
+        kind: { type: string }
+        value: { type: string }
+        lookup: { type: boolean }
+        include: { $ref: "#/components/schemas/SpfRecord" }
+    SpfRecord:
+      type: object
+      required: [domain, record, terms, error]
+      properties:
+        domain: { type: string }
+        record: { type: string }
+        error: { type: string }
+        terms: { type: array, items: { $ref: "#/components/schemas/SpfTerm" } }
+    EmailSpf:
+      type: object
+      required: [domain, record, lookups, voidLookups, all, problems, warnings]
+      properties:
+        domain: { type: string }
+        record: { $ref: "#/components/schemas/SpfRecord" }
+        lookups: { type: integer }
+        voidLookups: { type: integer }
+        all: { type: string }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+    DmarcReportUri:
+      type: object
+      required: [uri, external, authorized]
+      properties:
+        uri: { type: string }
+        external: { type: boolean }
+        authorized: { type: [boolean, "null"] }
+    EmailDmarc:
+      type: object
+      required: [domain, foundAt, orgDomain, record, tags, policy, subPolicy, pct, adkim, aspf, rua, ruf, problems, warnings]
+      properties:
+        domain: { type: string }
+        foundAt: { type: string }
+        orgDomain: { type: string }
+        record: { type: string }
+        tags: { type: object, additionalProperties: { type: string } }
+        policy: { type: string }
+        subPolicy: { type: string }
+        pct: { type: integer }
+        adkim: { type: string }
+        aspf: { type: string }
+        rua: { type: array, items: { $ref: "#/components/schemas/DmarcReportUri" } }
+        ruf: { type: array, items: { $ref: "#/components/schemas/DmarcReportUri" } }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+    EmailDkim:
+      type: object
+      required: [domain, selector, name, record, tags, keyType, keyBits, testing, revoked, problems, warnings]
+      properties:
+        domain: { type: string }
+        selector: { type: string }
+        name: { type: string }
+        record: { type: string }
+        tags: { type: object, additionalProperties: { type: string } }
+        keyType: { type: string }
+        keyBits: { type: integer }
+        testing: { type: boolean }
+        revoked: { type: boolean }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+    AsnOrigin:
+      type: object
+      required: [asn, prefix, country, registry, allocated, asName]
+      properties:
+        asn: { type: integer }
+        prefix: { type: string }
+        country: { type: string }
+        registry: { type: string }
+        allocated: { type: string }
+        asName: { type: string }
+    AsnLookup:
+      type: object
+      required: [ip, announced, origins]
+      properties:
+        ip: { type: string }
+        announced: { type: boolean }
+        origins: { type: array, items: { $ref: "#/components/schemas/AsnOrigin" } }
+    Whois:
+      type: object
+      required: [query, kind, chain, parsed]
+      properties:
+        query: { type: string }
+        kind: { type: string, enum: [domain, ip, asn] }
+        chain:
+          type: array
+          items:
+            type: object
+            required: [server, query, text, truncated, error]
+            properties:
+              server: { type: string }
+              query: { type: string }
+              text: { type: string }
+              truncated: { type: boolean }
+              error: { type: string }
+        parsed:
+          type: object
+          required: [registrar, created, updated, expires, status, nameservers, org, country, netRange]
+          properties:
+            registrar: { type: string }
+            created: { type: string }
+            updated: { type: string }
+            expires: { type: string }
+            status: { type: array, items: { type: string } }
+            nameservers: { type: array, items: { type: string } }
+            org: { type: string }
+            country: { type: string }
+            netRange: { type: string }
+    RdapRecord:
+      type: object
+      required: [query, kind, handle, name, status, events, nameservers, entities, registrar, country, range, type, port43, server]
+      properties:
+        query: { type: string }
+        kind: { type: string, enum: [domain, ip, asn] }
+        handle: { type: string }
+        name: { type: string }
+        status: { type: array, items: { type: string } }
+        events:
+          type: array
+          items:
+            type: object
+            required: [action, date]
+            properties:
+              action: { type: string }
+              date: { type: string }
+        nameservers: { type: array, items: { type: string } }
+        entities:
+          type: array
+          items:
+            type: object
+            required: [handle, roles, name, org, email, country]
+            properties:
+              handle: { type: string }
+              roles: { type: array, items: { type: string } }
+              name: { type: string }
+              org: { type: string }
+              email: { type: string }
+              country: { type: string }
+        registrar: { type: string }
+        country: { type: string }
+        range: { type: string }
+        type: { type: string }
+        port43: { type: string }
+        server: { type: string }
+    DomainExpiry:
+      type: object
+      required: [domain, registered, expires, updated, daysLeft, registrar, status, server]
+      properties:
+        domain: { type: string }
+        registered: { type: string }
+        expires: { type: string }
+        updated: { type: string }
+        daysLeft: { type: [integer, "null"] }
+        registrar: { type: string }
+        status: { type: array, items: { type: string } }
+        server: { type: string }
+    Geo:
+      type: object
+      required: [ip, public, found, prefix, city, region, postal, country, countryCode, continent, latitude, longitude, accuracyKm, timeZone, asn, asOrg, asnSource, source, database]
+      properties:
+        ip: { type: string }
+        public: { type: boolean }
+        found: { type: boolean }
+        prefix: { type: string }
+        city: { type: string }
+        region: { type: string }
+        postal: { type: string }
+        country: { type: string }
+        countryCode: { type: string }
+        continent: { type: string }
+        latitude: { type: [number, "null"] }
+        longitude: { type: [number, "null"] }
+        accuracyKm: { type: integer }
+        timeZone: { type: string }
+        asn: { type: [integer, "null"] }
+        asOrg: { type: string }
+        asnSource: { type: string, enum: ["", mmdb, cymru] }
+        source: { type: string }
+        database: { type: string }

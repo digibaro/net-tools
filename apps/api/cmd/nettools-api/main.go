@@ -13,6 +13,7 @@ import (
 	"log/slog"
 	"net"
 	"net/http"
+	"net/netip"
 	"os"
 	"os/signal"
 	"runtime"
@@ -20,8 +21,10 @@ import (
 	"time"
 
 	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/geoip"
 	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/all"
 )
 
 // Set via -ldflags "-X main.version=… -X main.commit=… -X main.buildDate=…".
@@ -62,13 +65,24 @@ func serve() error {
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: cfg.LogLevel}))
 	slog.SetDefault(logger)
 
+	resolver := target.NewResolver(target.Policy{
+		AllowPrivate: cfg.Features.AllowPrivate,
+		Deny:         cfg.Features.DenyCIDRs,
+		Allow:        cfg.Features.AllowCIDRs,
+		Self:         selfAddrs(logger),
+	})
+
 	handler := httpapi.NewRouter(httpapi.Options{
 		Config: cfg,
 		Logger: logger,
+		Target: resolver,
 		Build: httpapi.BuildInfo{
 			Version: version, Commit: commit, BuildDate: buildDate, GoVersion: runtime.Version(),
 		},
-		Tools: tools.All(),
+		Tools: all.Tools(),
+		Ready: []httpapi.ReadyCheck{{Name: "geoip", Check: func(context.Context) error {
+			return geoip.ReadyCheck(cfg.DataDir, cfg.Features.GeoIPCityDB, cfg.Features.GeoIPASNDB)
+		}}},
 	})
 
 	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
@@ -148,4 +162,20 @@ func healthURL(listen string) (string, error) {
 		host = "127.0.0.1"
 	}
 	return "http://" + net.JoinHostPort(host, port) + "/api/healthz", nil
+}
+
+// selfAddrs returns this host's interface addresses; targets matching them count as private.
+func selfAddrs(logger *slog.Logger) []netip.Addr {
+	addrs, err := net.InterfaceAddrs()
+	if err != nil {
+		logger.Warn("cannot list interface addresses", slog.Any("err", err))
+		return nil
+	}
+	var out []netip.Addr
+	for _, a := range addrs {
+		if p, err := netip.ParsePrefix(a.String()); err == nil {
+			out = append(out, p.Addr())
+		}
+	}
+	return out
 }

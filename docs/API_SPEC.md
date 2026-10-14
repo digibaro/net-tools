@@ -75,14 +75,15 @@ Error:
       "dns.lookup":        { "enabled": true },
       "net.portscan":      { "enabled": false, "reason": "disabled_by_admin" },
       "rep.abuseipdb":     { "enabled": false, "reason": "provider_key_missing" },
-      "lan.wol":           { "enabled": false, "reason": "requires_lan_mode" }
+      "lan.wol":           { "enabled": false, "reason": "requires_lan_mode" },
+      "rep.geo":           { "enabled": false, "reason": "data_missing" }
     },
     "limits": { "pingMaxCount": 20, "tracerouteMaxHops": 30, "portscanMaxPorts": 1024 }
   }
 }
 ```
 
-Reasons: `disabled_by_admin`, `provider_key_missing`, `requires_lan_mode`, `binary_missing`.
+Reasons: `disabled_by_admin`, `provider_key_missing`, `requires_lan_mode`, `binary_missing`, `data_missing` (a required data file such as the GeoIP mmdb is not mounted).
 
 ## 3. Tool endpoints (v1)
 
