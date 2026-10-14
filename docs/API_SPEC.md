@@ -154,6 +154,7 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/geo` | `ip`, `source=local|ipinfo` (ip-api not used: non-commercial only) | rep.geo |
 | GET | `/api/v1/reputation/internetdb` | `ip` (passive exposure, keyless) | rep.internetdb |
 | GET | `/api/v1/reputation/abuseipdb` | `ip` (needs `ABUSEIPDB_KEY`) | rep.abuseipdb |
+| GET | `/api/v1/reputation/url` | `url` (URL or domain; any of SAFEBROWSING_KEY, VIRUSTOTAL_KEY, URLSCAN_KEY) | rep.url |
 | GET | `/api/v1/tor-exit` | `ip` | rep.tor |
 | GET | `/api/v1/ct` | `domain`, `includeExpired` | tls.ct |
 

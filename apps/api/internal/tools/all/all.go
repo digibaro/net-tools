@@ -96,6 +96,7 @@ func Tools() []tools.Tool {
 		&ctsearch.Tool{},
 		&reputation.InternetDBTool{},
 		&reputation.AbuseIPDBTool{},
+		&reputation.URLTool{},
 		&torcheck.Tool{},
 		&hstspreload.Tool{},
 		&cloudranges.Tool{},

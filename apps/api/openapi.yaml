@@ -1643,6 +1643,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/IrrResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/reputation/url:
+    get:
+      operationId: reputationUrl
+      summary: URL / domain reputation (Google Safe Browsing, VirusTotal, urlscan.io)
+      description: Passive lookups only; nothing is submitted for scanning. Providers without a configured key are reported as skipped.
+      tags: [reputation]
+      x-capability: rep.url
+      parameters:
+        - { name: url, in: query, required: true, description: "http(s) URL or domain name", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/UrlReputation" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3482,3 +3504,26 @@ components:
               exact: { type: boolean }
               greaterEqual: { type: integer }
               lessEqual: { type: integer }
+    UrlReputation:
+      type: object
+      required: [input, url, domain, verdict, providers]
+      properties:
+        input: { type: string }
+        url: { type: string }
+        domain: { type: string }
+        verdict: { $ref: "#/components/schemas/UrlVerdict" }
+        providers:
+          type: array
+          items:
+            type: object
+            required: [provider, verdict, summary, details, link, error]
+            properties:
+              provider: { type: string }
+              verdict: { $ref: "#/components/schemas/UrlVerdict" }
+              summary: { type: string }
+              details: { type: object, additionalProperties: { type: string } }
+              link: { type: string }
+              error: { type: string }
+    UrlVerdict:
+      type: string
+      enum: [clean, suspicious, malicious, unknown, skipped, error]

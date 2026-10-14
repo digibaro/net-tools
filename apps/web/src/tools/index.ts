@@ -106,6 +106,7 @@ import { tool as tlsScanner } from './tls-scanner'
 import { tool as torExitCheck } from './tor-exit-check'
 import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
+import { tool as urlReputation } from './url-reputation'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as vlsmPlanner } from './vlsm-planner'
 import { tool as wakeOnLan } from './wake-on-lan'
@@ -130,7 +131,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest, dmarcReportViewer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer] },
-  { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
+  { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck, urlReputation] },
   { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig, routerSnippets] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },

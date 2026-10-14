@@ -2561,3 +2561,40 @@ tools:
       notDmarc: '{file}: not a DMARC aggregate report.'
       doctype: '{file}: contains a DTD, which DMARC reports never have — refused.'
       unreadable: '{file}: could not be read.'
+  url-reputation:
+    title: URL / domain reputation
+    description: Check a URL or domain against Google Safe Browsing, VirusTotal and urlscan.io for malware and phishing verdicts.
+    input: URL or domain
+    invalid: Enter a URL (https://example.com/path) or a public domain name.
+    run: Check
+    note: The URL is sent to the configured providers. Lookups are passive — nothing is submitted for a new scan, so the URL is not published.
+    skipped: No API key configured on this server.
+    open: 'Open in {provider}'
+    overall:
+      malicious: '{domain} is flagged as malicious by at least one provider.'
+      suspicious: '{domain} looks suspicious to at least one provider.'
+      clean: No provider flags {domain}.
+      unknown: The providers have no data about {domain}.
+      skipped: No provider was queried.
+      error: The lookup failed.
+    verdicts:
+      clean: Clean
+      suspicious: Suspicious
+      malicious: Malicious
+      unknown: No data
+      skipped: Skipped
+      error: Error
+    details:
+      threatTypes: Threat types
+      object: Matched object
+      malicious: Malicious engines
+      suspicious: Suspicious engines
+      harmless: Harmless engines
+      undetected: Undetected
+      reputation: Community score
+      lastAnalysis: Last analysis
+      categories: Categories
+      scans: Public scans
+      latestScan: Latest scan
+      latestURL: Latest scanned URL
+      score: Score

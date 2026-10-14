@@ -156,7 +156,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | REP-02 | IP reputation | Abuse score, reports | P | — | AbuseIPDB (key) | 3 | ✅ |
 | REP-03 | Passive exposure | Open ports, CPEs, known vulns (passive, no scanning) | P | — | Shodan InternetDB (keyless) | 3 | ✅ |
 | REP-04 | Tor exit node check | Is IP a current Tor exit | S | cached Tor bulk exit list | Tor Onionoo | 3 | ✅ |
-| REP-05 | URL / domain reputation | Malware/phishing verdicts | P | — | Google Safe Browsing (key), VirusTotal (key), urlscan.io (key) | 4 | ⬜ |
+| REP-05 | URL / domain reputation | Malware/phishing verdicts | P | — | Google Safe Browsing (key), VirusTotal (key), urlscan.io (key) | 4 | ✅ |
 
 ## 9. LAN (requires `lan` profile)
 

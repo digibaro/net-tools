@@ -1386,6 +1386,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/reputation/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * URL / domain reputation (Google Safe Browsing, VirusTotal, urlscan.io)
+         * @description Passive lookups only; nothing is submitted for scanning. Providers without a configured key are reported as skipped.
+         */
+        get: operations["reputationUrl"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2835,6 +2855,24 @@ export interface components {
                 lessEqual?: number;
             }[];
         };
+        UrlReputation: {
+            input: string;
+            url: string;
+            domain: string;
+            verdict: components["schemas"]["UrlVerdict"];
+            providers: {
+                provider: string;
+                verdict: components["schemas"]["UrlVerdict"];
+                summary: string;
+                details: {
+                    [key: string]: string;
+                };
+                link: string;
+                error: string;
+            }[];
+        };
+        /** @enum {string} */
+        UrlVerdict: "clean" | "suspicious" | "malicious" | "unknown" | "skipped" | "error";
     };
     responses: {
         /** @description Error envelope */
@@ -4901,6 +4939,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["IrrResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    reputationUrl: {
+        parameters: {
+            query: {
+                /** @description http(s) URL or domain name */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["UrlReputation"];
                     };
                 };
             };
