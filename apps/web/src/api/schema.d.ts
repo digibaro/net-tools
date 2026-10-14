@@ -1312,6 +1312,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/iperf/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bandwidth test against an iperf3 server (SSE)
+         * @description Events: meta, interval (IperfInterval)* once per second, done ({summary: IperfSummary, durationMs}) or error.
+         */
+        get: operations["iperfStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2669,6 +2689,28 @@ export interface components {
                 service: string;
                 error: string;
             };
+        };
+        IperfInterval: {
+            start: number;
+            end: number;
+            mbps: number;
+            bytes: number;
+            retransmits?: number;
+            packets?: number;
+        };
+        IperfSummary: {
+            protocol: string;
+            reverse: boolean;
+            seconds: number;
+            sentMbps: number;
+            receivedMbps: number;
+            sentBytes: number;
+            retransmits?: number;
+            jitterMs?: number;
+            lostPercent?: number;
+            lostPackets?: number;
+            server: string;
+            version: string;
         };
     };
     responses: {
@@ -4621,6 +4663,39 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    iperfStream: {
+        parameters: {
+            query: {
+                server: string;
+                port?: number;
+                proto?: "tcp" | "udp";
+                /** @description seconds, at most IPERF_MAX_SECONDS */
+                duration?: number;
+                /** @description server sends (download) */
+                reverse?: boolean;
+                parallel?: number;
+                /** @description UDP target in Mbit/s */
+                bitrate?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }

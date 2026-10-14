@@ -2369,3 +2369,30 @@ tools:
       gateway: Default gateway
       gatewayMac: Gateway MAC
       externalIp: External address (reported by the router)
+  iperf:
+    title: Bandwidth test (iperf3)
+    description: Measure TCP or UDP throughput, jitter and loss between the NetTools server and an iperf3 server.
+    serverLabel: iperf3 server
+    port: Port
+    protocol: Protocol
+    duration: Seconds
+    parallel: Streams
+    bitrate: UDP Mbit/s
+    reverse: Reverse (server sends)
+    run: Start test
+    note: The test runs between the NetTools server and the iperf3 server, not your browser. Public iperf3 servers often allow one test at a time and may answer "busy".
+    direction: Direction
+    upload: NetTools → server
+    download: server → NetTools
+    sent: Sent
+    received: Received
+    retransmits: TCP retransmits
+    jitter: Jitter
+    loss: Packet loss
+    server: Server
+    columns:
+      time: Interval
+      rate: Bitrate
+      bytes: Transferred
+      retransmits: Retransmits
+      packets: Packets

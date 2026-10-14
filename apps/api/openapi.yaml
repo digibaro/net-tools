@@ -1548,6 +1548,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/GatewayResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/iperf/stream:
+    get:
+      operationId: iperfStream
+      summary: Bandwidth test against an iperf3 server (SSE)
+      description: "Events: meta, interval (IperfInterval)* once per second, done ({summary: IperfSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.iperf
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 5201 } }
+        - { name: proto, in: query, schema: { type: string, enum: [tcp, udp], default: tcp } }
+        - { name: duration, in: query, description: "seconds, at most IPERF_MAX_SECONDS", schema: { type: integer, minimum: 1, default: 10 } }
+        - { name: reverse, in: query, description: "server sends (download)", schema: { type: boolean, default: false } }
+        - { name: parallel, in: query, schema: { type: integer, minimum: 1, maximum: 4, default: 1 } }
+        - { name: bitrate, in: query, description: "UDP target in Mbit/s", schema: { type: integer, minimum: 1, maximum: 1000, default: 10 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -3281,3 +3303,29 @@ components:
             model: { type: string }
             service: { type: string }
             error: { type: string }
+    IperfInterval:
+      type: object
+      required: [start, end, mbps, bytes]
+      properties:
+        start: { type: number }
+        end: { type: number }
+        mbps: { type: number }
+        bytes: { type: integer }
+        retransmits: { type: integer }
+        packets: { type: integer }
+    IperfSummary:
+      type: object
+      required: [protocol, reverse, seconds, sentMbps, receivedMbps, sentBytes, server, version]
+      properties:
+        protocol: { type: string }
+        reverse: { type: boolean }
+        seconds: { type: number }
+        sentMbps: { type: number }
+        receivedMbps: { type: number }
+        sentBytes: { type: integer }
+        retransmits: { type: integer }
+        jitterMs: { type: number }
+        lostPercent: { type: number }
+        lostPackets: { type: integer }
+        server: { type: string }
+        version: { type: string }

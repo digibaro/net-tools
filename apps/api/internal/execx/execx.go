@@ -54,6 +54,8 @@ func DefaultCandidates() map[string][]string {
 	return map[string][]string{
 		"mtr":        {"/usr/bin/mtr", "/usr/sbin/mtr"},
 		"traceroute": {"/usr/bin/traceroute", "/usr/sbin/traceroute"},
+		"iperf3":     {"/usr/bin/iperf3"},
+		"bgpq4":      {"/usr/bin/bgpq4"},
 	}
 }
 

@@ -72,7 +72,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CON-05 | Port check | Is TCP (or UDP best-effort) port open from the server | S | `net.Dialer` | check-host.net API | 2 | ✅ |
 | CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ✅ |
 | CON-07 | Path MTU discovery | Find max non-fragmented packet size to target | S | `pro-bing` with DF + size bisection | — | 3 | ✅ |
-| CON-08 | Bandwidth test (iperf3) | TCP/UDP throughput to an iperf3 server | S | `iperf3 -c … --json` via execx | public iperf3 servers list (user-supplied) | 4 | ⬜ |
+| CON-08 | Bandwidth test (iperf3) | TCP/UDP throughput to an iperf3 server | S | `iperf3 -c … --json` via execx | public iperf3 servers list (user-supplied) | 4 | ✅ |
 | CON-09 | Browser speed test | Download/upload/latency between browser and server | B+S | LibreSpeed container (`speedtest` profile) | Cloudflare speed test endpoints | 3 | ✅ |
 | CON-10 | Global ping / "is it down" | Ping/HTTP from many countries, map view | P | — | Globalping API, check-host.net | 3 | ✅ |
 | CON-11 | NTP check | Query NTP server: offset, stratum, delay, refid | S | `github.com/beevik/ntp` | — | 2 | ✅ |
