@@ -2307,3 +2307,16 @@ tools:
       ip: IP address
       mac: MAC address
       vendor: Vendor
+  mdns-browser:
+    title: mDNS / Bonjour browser
+    description: Discover the services devices announce on the local network — printers, AirPlay, Chromecast, file shares, smart-home hubs.
+    service: Service type (optional)
+    seconds: Listen (s)
+    run: Browse
+    note: Queries are sent from the NetTools server (LAN mode); only devices on its network segment answer.
+    found: 'Services ({n})'
+    columns:
+      name: Name
+      type: Type
+      host: Host:port
+      addresses: Addresses

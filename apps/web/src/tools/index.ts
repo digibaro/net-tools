@@ -56,6 +56,7 @@ import { tool as latencyMatrix } from './latency-matrix'
 import { tool as lookingGlass } from './looking-glass'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
+import { tool as mdnsBrowser } from './mdns-browser'
 import { tool as mtaStsChecker } from './mta-sts-checker'
 import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
@@ -120,7 +121,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
-  { id: 'lan', components: [wakeOnLan, arpScan] },
+  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]

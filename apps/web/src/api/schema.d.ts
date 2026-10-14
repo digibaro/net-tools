@@ -1235,6 +1235,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/mdns/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Browse mDNS / DNS-SD services on the local network (LAN mode, SSE)
+         * @description Events: meta, service (MdnsService)*, done ({summary: {types, services}, durationMs}) or error.
+         */
+        get: operations["lanMdnsStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2530,6 +2550,15 @@ export interface components {
                 ip: string;
                 mac: string;
             }[];
+        };
+        MdnsService: {
+            instance: string;
+            type: string;
+            host: string;
+            port: number;
+            addresses: string[];
+            txt: string[];
+            from: string;
         };
     };
     responses: {
@@ -4370,6 +4399,30 @@ export interface operations {
             query: {
                 /** @description directly connected IPv4 subnet, /22 or smaller */
                 cidr: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanMdnsStream: {
+        parameters: {
+            query?: {
+                /** @description optional service type, e.g. _http._tcp */
+                service?: string;
+                seconds?: number;
             };
             header?: never;
             path?: never;

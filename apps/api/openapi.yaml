@@ -1475,6 +1475,22 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/lan/mdns/stream:
+    get:
+      operationId: lanMdnsStream
+      summary: Browse mDNS / DNS-SD services on the local network (LAN mode, SSE)
+      description: "Events: meta, service (MdnsService)*, done ({summary: {types, services}, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.mdns
+      parameters:
+        - { name: service, in: query, description: "optional service type, e.g. _http._tcp", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 5 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -3130,3 +3146,14 @@ components:
             properties:
               ip: { type: string }
               mac: { type: string }
+    MdnsService:
+      type: object
+      required: [instance, type, host, port, addresses, txt, from]
+      properties:
+        instance: { type: string }
+        type: { type: string }
+        host: { type: string }
+        port: { type: integer }
+        addresses: { type: array, items: { type: string } }
+        txt: { type: array, items: { type: string } }
+        from: { type: string }

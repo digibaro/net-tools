@@ -115,5 +115,6 @@ func Tools() []tools.Tool {
 		&portscan.Tool{},
 		&lan.WOLTool{},
 		&lan.ARPScanTool{},
+		&lan.MDNSTool{},
 	}
 }
