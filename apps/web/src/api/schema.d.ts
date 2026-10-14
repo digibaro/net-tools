@@ -1198,6 +1198,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/wol": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a Wake-on-LAN magic packet (LAN mode) */
+        post: operations["lanWol"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -4277,6 +4294,46 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    lanWol: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mac: string;
+                    /** @description 255.255.255.255 (default) or a broadcast address in private space */
+                    broadcast?: string;
+                    /**
+                     * @default 9
+                     * @enum {integer}
+                     */
+                    port?: 7 | 9;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: {
+                            mac: string;
+                            destination: string;
+                            bytes: number;
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

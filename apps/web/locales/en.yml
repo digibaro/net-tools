@@ -2283,3 +2283,14 @@ tools:
     columns:
       port: Port
       service: Service
+  wake-on-lan:
+    title: Wake-on-LAN
+    description: Send a magic packet from the NetTools server to power on a device on its local network.
+    mac: MAC address
+    broadcast: Broadcast address (optional)
+    port: UDP port
+    send: Send magic packet
+    invalidMac: Enter a MAC address such as 00:11:22:33:44:55.
+    invalidBroadcast: Use 255.255.255.255 or a broadcast address in a private network, such as 192.168.1.255.
+    note: The packet is sent from the NetTools server, which must be on the same network (LAN mode) as the device.
+    sent: 'Magic packet for {mac} sent to {to}.'

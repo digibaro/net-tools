@@ -162,7 +162,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| LAN-01 | Wake-on-LAN | Send magic packet to MAC (broadcast / directed) | S L | UDP broadcast | — | 4 | ⬜ |
+| LAN-01 | Wake-on-LAN | Send magic packet to MAC (broadcast / directed) | S L | UDP broadcast | — | 4 | ✅ |
 | LAN-02 | ARP scan / host discovery | Live hosts in local subnet with MAC + vendor | S L | `mdlayher/arp` (needs NET_RAW) or `arp-scan` | — | 4 | ⬜ |
 | LAN-03 | mDNS / Bonjour browser | Discover `_services._dns-sd._udp` | S L | `hashicorp/mdns` / `grandcat/zeroconf` | — | 4 | ⬜ |
 | LAN-04 | SSDP / UPnP discovery | Discover UPnP devices, read descriptions | S L | UDP multicast M-SEARCH | — | 4 | ⬜ |

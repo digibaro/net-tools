@@ -1424,6 +1424,42 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/lan/wol:
+    post:
+      operationId: lanWol
+      summary: Send a Wake-on-LAN magic packet (LAN mode)
+      tags: [lan]
+      x-capability: lan.wol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mac]
+              properties:
+                mac: { type: string }
+                broadcast: { type: string, description: "255.255.255.255 (default) or a broadcast address in private space" }
+                port: { type: integer, enum: [7, 9], default: 9 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [mac, destination, bytes]
+                        properties:
+                          mac: { type: string }
+                          destination: { type: string }
+                          bytes: { type: integer }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3064,3 +3100,4 @@ components:
             properties:
               port: { type: integer }
               service: { type: string }
+
