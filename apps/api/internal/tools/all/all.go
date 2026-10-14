@@ -29,6 +29,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/remote"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/reputation"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/revocation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ripestat"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
@@ -93,5 +94,6 @@ func Tools() []tools.Tool {
 		&web.CookiesTool{},
 		&web.WellKnownTool{},
 		&web.ProtocolsTool{},
+		&revocation.Tool{},
 	}
 }

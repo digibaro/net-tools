@@ -1203,6 +1203,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/HttpProtocols" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tls/revocation:
+    get:
+      operationId: tlsRevocation
+      summary: "Revocation status of a server certificate via stapled OCSP, the OCSP responder and CRLs"
+      tags: [tls]
+      x-capability: tls.revocation
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Revocation" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2640,3 +2662,39 @@ components:
             quicVersion: { type: string }
             tlsVersion: { type: string }
             error: { type: string }
+    Revocation:
+      type: object
+      required: [host, subject, serial, issuer, status, ocsp, crl]
+      properties:
+        host: { type: string }
+        subject: { type: string }
+        serial: { type: string }
+        issuer: { type: string }
+        status: { type: string, enum: [good, revoked, unknown] }
+        ocsp:
+          type: array
+          items:
+            type: object
+            required: [source, status, thisUpdate, nextUpdate, revokedAt, reason, error]
+            properties:
+              source: { type: string }
+              status: { type: string }
+              thisUpdate: { type: string }
+              nextUpdate: { type: string }
+              revokedAt: { type: string }
+              reason: { type: string }
+              error: { type: string }
+        crl:
+          type: array
+          items:
+            type: object
+            required: [url, status, entries, thisUpdate, nextUpdate, revokedAt, reason, error]
+            properties:
+              url: { type: string }
+              status: { type: string }
+              entries: { type: integer }
+              thisUpdate: { type: string }
+              nextUpdate: { type: string }
+              revokedAt: { type: string }
+              reason: { type: string }
+              error: { type: string }

@@ -1995,3 +1995,25 @@ tools:
   starttls-check:
     title: STARTTLS check
     description: Upgrade a plaintext SMTP, IMAP, POP3, FTP or XMPP connection with STARTTLS and inspect the TLS version, cipher and certificate.
+  revocation-check:
+    title: OCSP / CRL revocation check
+    description: Check whether a server's certificate has been revoked, using its stapled OCSP response, the CA's OCSP responder and its CRLs.
+    host: Host
+    run: Check
+    ocsp: OCSP
+    crl: Certificate revocation lists
+    noOcsp: The certificate names no OCSP responder and the server staples no response.
+    noCrl: The certificate names no CRL distribution point.
+    stapled: Stapled by the server
+    updated: 'Produced {this}, next update {next}'
+    revokedAt: 'revoked {at} ({reason})'
+    crlInfo: '{n} revoked entries, issued {this}, next {next}'
+    crlOnly: This CA publishes revocation only through CRLs (as Let's Encrypt has since 2025).
+    status:
+      good: Good
+      revoked: Revoked
+      unknown: Unknown
+    verdict:
+      good: 'The certificate for {cn} (issued by {issuer}) is not revoked.'
+      revoked: 'The certificate for {cn} has been REVOKED by {issuer}. Browsers may refuse it.'
+      unknown: 'The revocation status of the certificate for {cn} could not be determined.'

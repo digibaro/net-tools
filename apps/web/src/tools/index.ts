@@ -70,6 +70,7 @@ import { tool as redirectTracer } from './redirect-tracer'
 import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
+import { tool as revocationCheck } from './revocation-check'
 import { tool as rpkiValidator } from './rpki-validator'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
@@ -101,7 +102,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder, zoneTransferTest, wildcardDetector, dnsBenchmark, dnssecValidator] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols] },
-  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck] },
+  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },

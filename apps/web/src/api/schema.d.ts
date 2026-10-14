@@ -979,6 +979,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tls/revocation": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Revocation status of a server certificate via stapled OCSP, the OCSP responder and CRLs */
+        get: operations["tlsRevocation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2108,6 +2125,33 @@ export interface components {
                 error: string;
             };
         };
+        Revocation: {
+            host: string;
+            subject: string;
+            serial: string;
+            issuer: string;
+            /** @enum {string} */
+            status: "good" | "revoked" | "unknown";
+            ocsp: {
+                source: string;
+                status: string;
+                thisUpdate: string;
+                nextUpdate: string;
+                revokedAt: string;
+                reason: string;
+                error: string;
+            }[];
+            crl: {
+                url: string;
+                status: string;
+                entries: number;
+                thisUpdate: string;
+                nextUpdate: string;
+                revokedAt: string;
+                reason: string;
+                error: string;
+            }[];
+        };
     };
     responses: {
         /** @description Error envelope */
@@ -2784,7 +2828,7 @@ export interface operations {
                 port?: number;
                 /** @description server name to send (defaults to host) */
                 sni?: string;
-                starttls?: "" | "smtp" | "imap" | "pop3" | "ftp";
+                starttls?: "" | "smtp" | "imap" | "pop3" | "ftp" | "xmpp";
             };
             header?: never;
             path?: never;
@@ -3601,6 +3645,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["HttpProtocols"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    tlsRevocation: {
+        parameters: {
+            query: {
+                host: string;
+                port?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Revocation"];
                     };
                 };
             };

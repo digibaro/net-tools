@@ -58,6 +58,10 @@ type Session struct {
 	HandshakeMs float64 `json:"handshakeMs"`
 	StartTLS    string  `json:"starttls"`
 	ConnectedTo string  `json:"connectedTo"`
+	// Certs is the presented chain (leaf first) and OCSPResponse the stapled response, for
+	// tools that need the raw data (revocation checks); neither is serialized.
+	Certs        []*x509.Certificate `json:"-"`
+	OCSPResponse []byte              `json:"-"`
 }
 
 // Options for Handshake.
@@ -108,6 +112,7 @@ func Handshake(ctx context.Context, addr string, o Options) (*Session, error) {
 		ServerName: sni, OCSPStapled: len(st.OCSPResponse) > 0, HandshakeMs: rttstats.Ms(time.Since(start)),
 		StartTLS: o.StartTLS, ConnectedTo: addr, Chain: []Cert{},
 	}
+	s.Certs, s.OCSPResponse = st.PeerCertificates, st.OCSPResponse
 	for _, c := range st.PeerCertificates {
 		s.Chain = append(s.Chain, Summarize(c, o.Now))
 	}
