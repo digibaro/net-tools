@@ -529,7 +529,7 @@ paths:
         - { name: host, in: query, required: true, description: "host or host:port", schema: { type: string } }
         - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
         - { name: sni, in: query, description: "server name to send (defaults to host)", schema: { type: string } }
-        - { name: starttls, in: query, schema: { type: string, enum: ["", smtp, imap, pop3, ftp] } }
+        - { name: starttls, in: query, schema: { type: string, enum: ["", smtp, imap, pop3, ftp, xmpp] } }
       responses:
         "200":
           description: OK

@@ -1992,3 +1992,6 @@ tools:
       altSvc: Alt-Svc
       http3: HTTP/3 (QUIC)
       address: Address
+  starttls-check:
+    title: STARTTLS check
+    description: Upgrade a plaintext SMTP, IMAP, POP3, FTP or XMPP connection with STARTTLS and inspect the TLS version, cipher and certificate.
