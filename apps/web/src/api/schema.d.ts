@@ -1459,7 +1459,7 @@ export interface components {
             asn: number | null;
             asOrg: string;
             /** @enum {string} */
-            asnSource: "" | "mmdb" | "cymru";
+            asnSource: "" | "mmdb" | "cymru" | "ipinfo";
             source: string;
             database: string;
         };
@@ -2686,8 +2686,8 @@ export interface operations {
         parameters: {
             query: {
                 ip: string;
-                /** @description only `local` is implemented */
-                source?: "local";
+                /** @description local = GeoIP database in DATA_DIR; ipinfo = ipinfo.io (IPINFO_TOKEN). Default: local when a database is installed, else ipinfo */
+                source?: "local" | "ipinfo";
             };
             header?: never;
             path?: never;

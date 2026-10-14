@@ -16,9 +16,11 @@ import { flag, isIpAddress, mapUrl } from './ip-geolocation.service'
 
 const { t } = useI18n()
 const ip = useQueryParam({ name: 'ip', defaultValue: '' })
+// Optional: force "local" or "ipinfo"; by default the server picks what is available.
+const source = useQueryParam({ name: 'source', defaultValue: '' })
 const validation = useValidation({ source: ip, rules: [{ validator: isIpAddress, message: t('tools.reverse-dns.invalid') }] })
 const { data, error, loading, run } = useApi<Geo>('/v1/geo')
-const submit = () => ip.value && validation.value.isValid && run({ ip: ip.value.trim() })
+const submit = () => ip.value && validation.value.isValid && run({ ip: ip.value.trim(), source: source.value || undefined })
 onMounted(async () => {
   if (!ip.value) {
     // Start with the visitor's own address as the server sees it.

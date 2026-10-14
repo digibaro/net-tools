@@ -749,7 +749,7 @@ paths:
       x-capability: rep.geo
       parameters:
         - { name: ip, in: query, required: true, schema: { type: string } }
-        - { name: source, in: query, description: "only `local` is implemented", schema: { type: string, enum: [local], default: local } }
+        - { name: source, in: query, description: "local = GeoIP database in DATA_DIR; ipinfo = ipinfo.io (IPINFO_TOKEN). Default: local when a database is installed, else ipinfo", schema: { type: string, enum: [local, ipinfo] } }
       responses:
         "200":
           description: OK
@@ -1829,7 +1829,7 @@ components:
         timeZone: { type: string }
         asn: { type: [integer, "null"] }
         asOrg: { type: string }
-        asnSource: { type: string, enum: ["", mmdb, cymru] }
+        asnSource: { type: string, enum: ["", mmdb, cymru, ipinfo] }
         source: { type: string }
         database: { type: string }
     RemoteMeta:

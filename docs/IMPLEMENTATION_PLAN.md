@@ -48,7 +48,7 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 - [ ] Globalping (`remote/stream`) + "Worldwide" vantage switch in ping/traceroute/mtr/dns/http.
 - [ ] RIPEstat (BGP-02..05), PeeringDB (BGP-09), crt.sh (TLS-08), Observatory (WEB-04 option),
       HSTS preload (WEB-10), InternetDB/AbuseIPDB (REP-02/03), Tor (REP-04), cloud ranges (BGP-12).
-- [ ] REP-01 `source=ipinfo`: ipinfo.io provider (token required, `provider_key_missing` without it),
+- [x] REP-01 `source=ipinfo`: ipinfo.io provider (token required, `provider_key_missing` without it),
       used as fallback when no local GeoIP database is mounted. ip-api.com is not used (free tier is
       non-commercial only).
 - [ ] Remaining Phase 3 rows (DNSSEC, resolver bench, AXFR, wildcard, TLS scan, OCSP, STARTTLS, SSH

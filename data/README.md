@@ -2,8 +2,8 @@ Mounted read-only at `/data` in the `api` container. Put optional data files her
 
 ## GeoIP (IP geolocation tool, REP-01)
 
-The tool is enabled when a city database is present; it is shown as unavailable
-(`data_missing`) otherwise. The API looks for these names, first match wins:
+The tool is enabled when a city database is present or `IPINFO_TOKEN` is set (ipinfo.io is
+then used as the source); it is shown as unavailable (`data_missing`) otherwise. The API looks for these names, first match wins:
 
 | Kind | File names | Override |
 |---|---|---|
