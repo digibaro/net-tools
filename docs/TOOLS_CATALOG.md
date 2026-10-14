@@ -52,7 +52,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | DNS-04 | Delegation trace | Iterative resolution from root (`dig +trace` equivalent) | S | `miekg/dns` iterative | — | 2 | ✅ |
 | DNS-05 | DNSSEC validator | Validate chain (DS/DNSKEY/RRSIG), show where it breaks | S | `miekg/dns` + validation | — | 3 | ⬜ |
 | DNS-06 | DoH / DoT tester | Query a DoH/DoT endpoint, show latency and response | S | `miekg/dns` + `net/http` | — | 2 | ✅ |
-| DNS-07 | Resolver benchmark | Latency/success of N resolvers over M queries | S | fan-out | — | 3 | ⬜ |
+| DNS-07 | Resolver benchmark | Latency/success of N resolvers over M queries | S | fan-out | — | 3 | ✅ |
 | DNS-08 | Zone transfer (AXFR) test | Check if NS servers allow AXFR (security audit) | S | `miekg/dns` | — | 3 | ✅ |
 | DNS-09 | SOA / NS consistency | Compare SOA serials and NS sets across all authoritative servers | S | `miekg/dns` | — | 2 | ✅ |
 | DNS-10 | CAA checker | CAA records with tree climbing per RFC 8659 | S | `miekg/dns` | — | 2 | ✅ |

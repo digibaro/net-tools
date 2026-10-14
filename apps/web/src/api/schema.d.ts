@@ -874,6 +874,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/benchmark/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Benchmark DNS resolvers (SSE)
+         * @description Events: meta, resolver (DnsBenchResolver)* as each finishes, done ({summary: DnsBenchSummary, durationMs}) or error.
+         */
+        get: operations["dnsBenchmarkStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1837,6 +1857,25 @@ export interface components {
                 rcode: string;
                 answers: components["schemas"]["DnsRecord"][];
             }[];
+        };
+        DnsBenchResolver: {
+            name: string;
+            address: string;
+            queries: number;
+            answered: number;
+            failed: number;
+            minMs: number;
+            avgMs: number;
+            medianMs: number;
+            p95Ms: number;
+            maxMs: number;
+            firstMs: number;
+            errors: string[];
+        };
+        DnsBenchSummary: {
+            ranking: components["schemas"]["DnsBenchResolver"][];
+            names: string[];
+            rounds: number;
         };
     };
     responses: {
@@ -3179,6 +3218,34 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    dnsBenchmarkStream: {
+        parameters: {
+            query?: {
+                /** @description quick = system + 4 presets, full = system + 18 public resolvers */
+                set?: "quick" | "full";
+                /** @description up to 3 extra resolvers (ip[:port] or preset id) */
+                custom?: string;
+                /** @description up to 10 comma-separated names (default: popular domains) */
+                names?: string;
+                rounds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }

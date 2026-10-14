@@ -1880,3 +1880,22 @@ tools:
     none: 'No wildcard: random names under {domain} do not exist.'
     answers: Wildcard answers
     probes: Random names tested
+  dns-benchmark:
+    title: DNS resolver benchmark
+    description: Compare how fast and reliable public DNS resolvers are from this server, with your own resolvers added.
+    set: Resolvers
+    quick: System + 4 popular
+    full: System + 18 public
+    rounds: Rounds
+    custom: Extra resolvers (up to 3)
+    names: Names to query
+    namesPlaceholder: 'google.com, wikipedia.org (default: 10 popular domains)'
+    run: Run benchmark
+    progress: Benchmark progress
+    note: Measured from this server, not from your device. The first round may include cache misses; later rounds show cached performance.
+    columns:
+      resolver: Resolver
+      median: Median ms
+      avg: Avg ms
+      success: Answered
+      errors: Errors

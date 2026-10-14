@@ -1079,6 +1079,24 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnsWildcard" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/benchmark/stream:
+    get:
+      operationId: dnsBenchmarkStream
+      summary: Benchmark DNS resolvers (SSE)
+      description: "Events: meta, resolver (DnsBenchResolver)* as each finishes, done ({summary: DnsBenchSummary, durationMs}) or error."
+      tags: [dns]
+      x-capability: dns.benchmark
+      parameters:
+        - { name: set, in: query, description: "quick = system + 4 presets, full = system + 18 public resolvers", schema: { type: string, enum: [quick, full], default: quick } }
+        - { name: custom, in: query, description: "up to 3 extra resolvers (ip[:port] or preset id)", schema: { type: string } }
+        - { name: names, in: query, description: "up to 10 comma-separated names (default: popular domains)", schema: { type: string } }
+        - { name: rounds, in: query, schema: { type: integer, minimum: 1, maximum: 3, default: 2 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2303,3 +2321,26 @@ components:
               name: { type: string }
               rcode: { type: string }
               answers: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+    DnsBenchResolver:
+      type: object
+      required: [name, address, queries, answered, failed, minMs, avgMs, medianMs, p95Ms, maxMs, firstMs, errors]
+      properties:
+        name: { type: string }
+        address: { type: string }
+        queries: { type: integer }
+        answered: { type: integer }
+        failed: { type: integer }
+        minMs: { type: number }
+        avgMs: { type: number }
+        medianMs: { type: number }
+        p95Ms: { type: number }
+        maxMs: { type: number }
+        firstMs: { type: number }
+        errors: { type: array, items: { type: string } }
+    DnsBenchSummary:
+      type: object
+      required: [ranking, names, rounds]
+      properties:
+        ranking: { type: array, items: { $ref: "#/components/schemas/DnsBenchResolver" } }
+        names: { type: array, items: { type: string } }
+        rounds: { type: integer }
