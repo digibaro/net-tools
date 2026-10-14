@@ -81,6 +81,7 @@ import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as tcpPing } from './tcp-ping'
 import { tool as tlsExpiry } from './tls-expiry'
 import { tool as tlsInspector } from './tls-inspector'
+import { tool as tlsScanner } from './tls-scanner'
 import { tool as torExitCheck } from './tor-exit-check'
 import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
@@ -102,7 +103,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder, zoneTransferTest, wildcardDetector, dnsBenchmark, dnssecValidator] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols] },
-  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck] },
+  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },

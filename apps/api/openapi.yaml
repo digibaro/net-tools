@@ -1225,6 +1225,22 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Revocation" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tls/scan/stream:
+    get:
+      operationId: tlsScanStream
+      summary: Scan supported TLS versions, cipher suites and key-exchange groups (SSE)
+      description: "Events: meta, probe (TlsScanProbe)*, done ({summary: TlsScanSummary, durationMs}) or error."
+      tags: [tls]
+      x-capability: tls.scan
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 443 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2698,3 +2714,23 @@ components:
               revokedAt: { type: string }
               reason: { type: string }
               error: { type: string }
+    TlsScanProbe:
+      type: object
+      required: [kind, version, name, id, supported, weak]
+      properties:
+        kind: { type: string, enum: [version, cipher, group] }
+        version: { type: string }
+        name: { type: string }
+        id: { type: integer }
+        supported: { type: boolean }
+        weak: { type: array, items: { type: string } }
+    TlsScanSummary:
+      type: object
+      required: [versions, ciphers, groups, problems, warnings, rating]
+      properties:
+        versions: { type: array, items: { type: string } }
+        ciphers: { type: object, additionalProperties: { type: array, items: { type: string } } }
+        groups: { type: array, items: { type: string } }
+        problems: { type: array, items: { type: string } }
+        warnings: { type: array, items: { type: string } }
+        rating: { type: string, enum: [good, fair, weak] }

@@ -2017,3 +2017,24 @@ tools:
       good: 'The certificate for {cn} (issued by {issuer}) is not revoked.'
       revoked: 'The certificate for {cn} has been REVOKED by {issuer}. Browsers may refuse it.'
       unknown: 'The revocation status of the certificate for {cn} could not be determined.'
+  tls-scanner:
+    title: TLS protocol & cipher scanner
+    description: Find every TLS version, cipher suite and key-exchange group a server accepts, and flag legacy or weak choices.
+    run: Scan
+    note: One handshake per option (about 50), from this server. SSLv3 and suites Go cannot offer (e.g. CAMELLIA, ARIA) are not tested.
+    versions: Protocol versions
+    ciphers: 'Cipher suites — {version}'
+    groups: Key-exchange groups
+    rating:
+      good: Modern configuration
+      fair: Acceptable, with room for improvement
+      weak: Weak configuration
+    findings:
+      no-tls: No TLS handshake succeeded.
+      legacy-versions: TLS 1.0 or 1.1 is enabled; both are deprecated (RFC 8996).
+      no-tls13: TLS 1.3 is not supported.
+      rc4: RC4 cipher suites are enabled (broken).
+      3des: 3DES cipher suites are enabled (Sweet32).
+      no-forward-secrecy: Suites with RSA key exchange are enabled (no forward secrecy).
+      cbc: CBC-mode suites are enabled; prefer AEAD (GCM, ChaCha20-Poly1305).
+      no-post-quantum: The hybrid post-quantum group X25519MLKEM768 is not offered.

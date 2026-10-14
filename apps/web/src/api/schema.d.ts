@@ -996,6 +996,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tls/scan/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Scan supported TLS versions, cipher suites and key-exchange groups (SSE)
+         * @description Events: meta, probe (TlsScanProbe)*, done ({summary: TlsScanSummary, durationMs}) or error.
+         */
+        get: operations["tlsScanStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2151,6 +2171,26 @@ export interface components {
                 reason: string;
                 error: string;
             }[];
+        };
+        TlsScanProbe: {
+            /** @enum {string} */
+            kind: "version" | "cipher" | "group";
+            version: string;
+            name: string;
+            id: number;
+            supported: boolean;
+            weak: string[];
+        };
+        TlsScanSummary: {
+            versions: string[];
+            ciphers: {
+                [key: string]: string[];
+            };
+            groups: string[];
+            problems: string[];
+            warnings: string[];
+            /** @enum {string} */
+            rating: "good" | "fair" | "weak";
         };
     };
     responses: {
@@ -3675,6 +3715,29 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    tlsScanStream: {
+        parameters: {
+            query: {
+                host: string;
+                port?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }
