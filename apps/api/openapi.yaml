@@ -1299,6 +1299,22 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/EmailMtaSts" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/latency-matrix/stream:
+    get:
+      operationId: latencyMatrixStream
+      summary: Ping up to 10 targets in parallel and compare (SSE)
+      description: "Events: meta, row (LatencyRow)* as each target finishes, done ({summary: {rows: LatencyRow[]}, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.latmatrix
+      parameters:
+        - { name: targets, in: query, required: true, description: "1-10 comma-separated hosts or IPs", schema: { type: string } }
+        - { name: count, in: query, description: "1..PING_MAX_COUNT", schema: { type: integer, default: 5 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2881,3 +2897,12 @@ components:
             certificate: { type: string }
             problems: { type: array, items: { type: string } }
             warnings: { type: array, items: { type: string } }
+    LatencyRow:
+      type: object
+      required: [target, address, stats, rtts, error]
+      properties:
+        target: { type: string }
+        address: { type: string }
+        stats: { $ref: "#/components/schemas/PingSummary" }
+        rtts: { type: array, items: { type: [number, "null"] } }
+        error: { type: string }

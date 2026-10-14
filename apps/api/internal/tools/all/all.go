@@ -21,6 +21,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/latmatrix"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/observatory"
@@ -102,5 +103,6 @@ func Tools() []tools.Tool {
 		&tlsscan.Tool{},
 		&sshaudit.Tool{},
 		&dnsbl.Tool{},
+		&latmatrix.Tool{},
 	}
 }

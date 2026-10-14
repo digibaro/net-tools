@@ -2110,3 +2110,10 @@ tools:
       policy: Policy file
       logo: Logo (SVG)
       vmc: Certificate (VMC)
+  latency-matrix:
+    title: Latency comparison
+    description: Ping up to ten hosts at the same time from this server and rank them by round-trip time.
+    targets: Targets (up to 10)
+    tooMany: At most 10 targets.
+    invalid: 'Not a host name or IP: {list}'
+    noReply: no reply
