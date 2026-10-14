@@ -109,7 +109,7 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
   `IPINFO_TOKEN`, `ABUSEIPDB_KEY`, `PEERINGDB_KEY`, `SSLLABS_EMAIL`, `VIRUSTOTAL_KEY`,
   `URLSCAN_KEY`, `SAFEBROWSING_KEY`, `MAXMIND_LICENSE_KEY` (only for the optional updater).
 - Never log keys or full upstream URLs containing keys. Redact in errors.
-- Outbound provider calls: timeout 10 s, response size cap 5 MiB, user-agent
+- Outbound provider calls: timeout 10 s (30 s for crt.sh, which is often slow), response size cap 5 MiB, user-agent
   `NetTools/<version> (+<PUBLIC_URL>)`.
 
 ## 7. Auth

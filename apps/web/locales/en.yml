@@ -1733,3 +1733,20 @@ tools:
       facility: Facility
       city: City
       country: Country
+  ct-search:
+    title: Certificate Transparency search
+    description: List certificates issued for a domain and its subdomains from Certificate Transparency logs — audit issuance and discover host names.
+    includeExpired: Include expired certificates
+    run: Search
+    slowNote: Results come from crt.sh, which can take up to half a minute for large domains.
+    namesTitle: 'Host names ({n})'
+    summary: '{certs} certificates name {names} host names.'
+    copyHosts: Copy host names
+    certsTitle: Certificates
+    expired: expired
+    truncated: Only the newest 500 certificates are listed.
+    columns:
+      issuer: Issuer
+      names: Names
+      from: Valid from
+      until: Valid until

@@ -12,6 +12,7 @@ import { tool as cidrRangeConverter } from './cidr-range-converter'
 import { tool as connectionInfo } from './connection-info'
 import { tool as corsTester } from './cors-tester'
 import { tool as csrTool } from './csr-tool'
+import { tool as ctSearch } from './ct-search'
 import { tool as dataUnitConverter } from './data-unit-converter'
 import { tool as dkimChecker } from './dkim-checker'
 import { tool as dmarcChecker } from './dmarc-checker'
@@ -86,7 +87,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
-  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher] },
+  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup] },
   { id: 'reputation', components: [ipGeolocation] },

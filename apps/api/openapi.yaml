@@ -889,6 +889,28 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/PeeringDbNetwork" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/ct:
+    get:
+      operationId: ctSearch
+      summary: "Certificates for a domain and its subdomains in Certificate Transparency logs (crt.sh)"
+      tags: [tls]
+      x-capability: tls.ct
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+        - { name: includeExpired, in: query, schema: { type: boolean, default: false } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CtSearch" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1928,4 +1950,33 @@ components:
               role: { type: string }
               name: { type: string }
               email: { type: string }
+              url: { type: string }
+    CtSearch:
+      type: object
+      required: [domain, total, certs, names, issuers, truncated]
+      properties:
+        domain: { type: string }
+        total: { type: integer }
+        truncated: { type: boolean }
+        names: { type: array, items: { type: string } }
+        issuers:
+          type: array
+          items:
+            type: object
+            required: [name, count]
+            properties:
+              name: { type: string }
+              count: { type: integer }
+        certs:
+          type: array
+          items:
+            type: object
+            required: [id, issuer, names, notBefore, notAfter, expired, url]
+            properties:
+              id: { type: integer }
+              issuer: { type: string }
+              names: { type: array, items: { type: string } }
+              notBefore: { type: string }
+              notAfter: { type: string }
+              expired: { type: boolean }
               url: { type: string }

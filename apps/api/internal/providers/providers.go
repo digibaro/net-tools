@@ -19,8 +19,11 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 )
 
-// Timeout bounds every provider call.
-const Timeout = 10 * time.Second
+// Timeout bounds every provider call unless a request asks for more (at most MaxTimeout).
+const (
+	Timeout    = 10 * time.Second
+	MaxTimeout = 30 * time.Second
+)
 
 // DefaultTTL applies when a request sets none (RIPEstat, PeeringDB, RDAP: 10 min).
 const DefaultTTL = 10 * time.Minute
@@ -33,7 +36,8 @@ type Client struct {
 
 // New builds a client whose dials go through res.
 func New(res *target.Resolver, userAgent string) *Client {
-	return &Client{HTTP: netx.PolicyClient(res, userAgent, Timeout), cache: cache.New[[]byte](2000)}
+	// The transport allows MaxTimeout; each request's context applies its own (shorter) limit.
+	return &Client{HTTP: netx.PolicyClient(res, userAgent, MaxTimeout), cache: cache.New[[]byte](2000)}
 }
 
 // Request describes one GET.
@@ -46,6 +50,8 @@ type Request struct {
 	TTL time.Duration
 	// CacheKey defaults to URL; set it when the URL or headers carry a key.
 	CacheKey string
+	// Timeout overrides the 10 s default for slow providers (e.g. crt.sh), capped at MaxTimeout.
+	Timeout time.Duration
 	// Method defaults to GET; any other method is never cached.
 	Method string
 	// Body is sent as JSON when set.
@@ -151,7 +157,11 @@ func (c *Client) GetJSON(ctx context.Context, r Request, out any) error {
 }
 
 func (c *Client) fetch(ctx context.Context, r Request) ([]byte, error) {
-	ctx, cancel := context.WithTimeout(ctx, Timeout)
+	timeout := Timeout
+	if r.Timeout > 0 {
+		timeout = min(r.Timeout, MaxTimeout)
+	}
+	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
 	method := r.Method
 	if method == "" {
