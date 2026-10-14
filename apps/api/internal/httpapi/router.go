@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/netip"
+	"slices"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -113,7 +114,7 @@ func NewRouter(o Options) http.Handler {
 		middleware.Recover(func(w http.ResponseWriter, r *http.Request) {
 			Error(w, r, NewError(CodeInternal, "internal error"))
 		}),
-		limitBody(maxRequestBody),
+		limitBody(maxRequestBody, "/api/v1/speedtest/upload"), // the speed test enforces its own, larger cap
 	)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, NewError(CodeNotFound, "no such endpoint"))
@@ -220,10 +221,11 @@ func handleCapabilities(deps tools.Deps, all []tools.Tool) http.HandlerFunc {
 	}
 }
 
-func limitBody(n int64) func(http.Handler) http.Handler {
+// limitBody caps request bodies at n bytes, except for the listed paths (which must cap their own).
+func limitBody(n int64, exempt ...string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Body != nil {
+			if r.Body != nil && !slices.Contains(exempt, r.URL.Path) {
 				r.Body = http.MaxBytesReader(w, r.Body, n)
 			}
 			next.ServeHTTP(w, r)

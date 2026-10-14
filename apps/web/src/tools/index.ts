@@ -80,6 +80,7 @@ import { tool as revocationCheck } from './revocation-check'
 import { tool as rpkiValidator } from './rpki-validator'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
+import { tool as speedTest } from './speed-test'
 import { tool as spfChecker } from './spf-checker'
 import { tool as sshAudit } from './ssh-audit'
 import { tool as starttlsCheck } from './starttls-check'
@@ -118,7 +119,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
-  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest] },
+  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories

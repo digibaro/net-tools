@@ -13,6 +13,9 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 | `homelab` | `true` + `lan` profile | on | relaxed | Single user on home network |
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
+The speed test (CON-09, `SPEEDTEST_ENABLED`) serves bulk traffic (up to 100 MiB down / 32 MiB up per
+request) and is likewise off by default in the public profile.
+
 The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
 routes and is therefore off in `public` and on in the other profiles.
 The UI shows the active profile on the About page.

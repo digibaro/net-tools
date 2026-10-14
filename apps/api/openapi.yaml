@@ -1353,6 +1353,61 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Ipv6Readiness" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/speedtest/download:
+    get:
+      operationId: speedtestDownload
+      summary: Random, uncompressible bytes for a download measurement
+      tags: [connectivity]
+      x-capability: net.speedtest
+      parameters:
+        - { name: bytes, in: query, schema: { type: integer, minimum: 1048576, maximum: 104857600, default: 26214400 } }
+      responses:
+        "200":
+          description: Raw bytes
+          content:
+            application/octet-stream:
+              schema: { type: string, format: binary }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/speedtest/upload:
+    post:
+      operationId: speedtestUpload
+      summary: Receives and discards up to 32 MiB for an upload measurement
+      tags: [connectivity]
+      x-capability: net.speedtest
+      requestBody:
+        content:
+          application/octet-stream:
+            schema: { type: string, format: binary }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [bytes, ms]
+                        properties:
+                          bytes: { type: integer }
+                          ms: { type: number }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/speedtest/ping:
+    get:
+      operationId: speedtestPing
+      summary: Minimal response for latency samples
+      tags: [connectivity]
+      x-capability: net.speedtest
+      responses:
+        "200":
+          description: pong
+          content:
+            text/plain:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2976,3 +3031,4 @@ components:
               reachable: { type: [boolean, "null"] }
               port: { type: integer }
               error: { type: string }
+

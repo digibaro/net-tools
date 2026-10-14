@@ -2251,3 +2251,18 @@ tools:
       address: Address
       kind: Kind
       protocol: Protocol
+  speed-test:
+    title: Browser ↔ server speed test
+    description: Measure download, upload and latency between your browser and this NetTools server.
+    intro: Transfers random data with three parallel streams for about ten seconds per direction.
+    start: Start test
+    again: Test again
+    note: This measures the path to this server, not your Internet connection as a whole — choose a server close to the network you want to test.
+    download: Download
+    upload: Upload
+    latency: Latency
+    failed: 'The test failed: {error}'
+    phase:
+      latency: Measuring latency
+      download: Measuring download
+      upload: Measuring upload
