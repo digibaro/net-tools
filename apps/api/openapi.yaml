@@ -1182,6 +1182,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/WellKnown" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/protocols:
+    get:
+      operationId: httpProtocols
+      summary: "HTTP/2 (ALPN) and HTTP/3 (Alt-Svc and a QUIC handshake) support"
+      tags: [web]
+      x-capability: web.protocols
+      parameters:
+        - { name: url, in: query, required: true, description: "https URL", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HttpProtocols" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2588,3 +2609,34 @@ components:
             entries: { type: integer }
             newest: { type: string }
             capped: { type: boolean }
+    HttpProtocols:
+      type: object
+      required: [url, address, alpn, tlsVersion, http2, httpVersion, altSvc, http3]
+      properties:
+        url: { type: string }
+        address: { type: string }
+        alpn: { type: string }
+        tlsVersion: { type: string }
+        http2: { type: boolean }
+        httpVersion: { type: string }
+        altSvc:
+          type: array
+          items:
+            type: object
+            required: [protocol, host, port, maxAge]
+            properties:
+              protocol: { type: string }
+              host: { type: string }
+              port: { type: integer }
+              maxAge: { type: integer }
+        http3:
+          type: object
+          required: [advertised, port, ok, handshakeMs, quicVersion, tlsVersion, error]
+          properties:
+            advertised: { type: boolean }
+            port: { type: integer }
+            ok: { type: boolean }
+            handshakeMs: { type: number }
+            quicVersion: { type: string }
+            tlsVersion: { type: string }
+            error: { type: string }

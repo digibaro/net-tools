@@ -10,6 +10,7 @@ require (
 	github.com/openrdap/rdap v0.10.2
 	github.com/oschwald/maxminddb-golang/v2 v2.8.0
 	github.com/prometheus-community/pro-bing v0.9.1
+	github.com/quic-go/quic-go v0.63.0
 	golang.org/x/net v0.61.0
 	golang.org/x/time v0.16.0
 )

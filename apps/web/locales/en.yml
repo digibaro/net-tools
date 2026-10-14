@@ -1978,3 +1978,17 @@ tools:
       expires-far: Expires is more than a year ahead; RFC 9116 recommends less.
       legacy-location: Served at /security.txt; the standard location is /.well-known/security.txt.
       unsigned: Not PGP-signed (optional, but lets researchers verify it).
+  http-protocols:
+    title: HTTP/2 & HTTP/3 check
+    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN, the Alt-Svc header and performs a real QUIC handshake.
+    run: Check
+    httpsOnly: HTTP/2 and HTTP/3 need an https:// URL.
+    h3ok: 'QUIC handshake on UDP port {port} in {ms} ms ({version})'
+    notAdvertised: HTTP/3 works but is not advertised in Alt-Svc, so browsers will not use it.
+    advertisedBroken: Alt-Svc advertises HTTP/3 but the QUIC handshake failed from this server (UDP may be blocked on either side).
+    fields:
+      http2: HTTP/2
+      used: Version used for a request
+      altSvc: Alt-Svc
+      http3: HTTP/3 (QUIC)
+      address: Address

@@ -962,6 +962,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/http/protocols": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** HTTP/2 (ALPN) and HTTP/3 (Alt-Svc and a QUIC handshake) support */
+        get: operations["httpProtocols"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2066,6 +2083,29 @@ export interface components {
                 entries: number;
                 newest: string;
                 capped: boolean;
+            };
+        };
+        HttpProtocols: {
+            url: string;
+            address: string;
+            alpn: string;
+            tlsVersion: string;
+            http2: boolean;
+            httpVersion: string;
+            altSvc: {
+                protocol: string;
+                host: string;
+                port: number;
+                maxAge: number;
+            }[];
+            http3: {
+                advertised: boolean;
+                port: number;
+                ok: boolean;
+                handshakeMs: number;
+                quicVersion: string;
+                tlsVersion: string;
+                error: string;
             };
         };
     };
@@ -3535,6 +3575,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["WellKnown"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpProtocols: {
+        parameters: {
+            query: {
+                /** @description https URL */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["HttpProtocols"];
                     };
                 };
             };
