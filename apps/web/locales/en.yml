@@ -1,5 +1,5 @@
 app:
-  name: NetTools
+  name: NET-TOOLS
   tagline: Network tools and troubleshooting utilities
 locales:
   en: English
@@ -47,10 +47,10 @@ runMode:
     description: Runs entirely in your browser; nothing is sent to the server. Works offline.
   server:
     label: Server
-    description: Runs on the NetTools server, from its network vantage point.
+    description: Runs on the NET-TOOLS server, from its network vantage point.
   public-api:
     label: Public API
-    description: Uses a third-party service through the NetTools server.
+    description: Uses a third-party service through the NET-TOOLS server.
   hybrid:
     label: Hybrid
     description: Runs on the server by default, with an optional public-service mode.
@@ -62,7 +62,7 @@ capabilities:
     requires_lan_mode: Requires LAN mode (host networking) on the server.
     binary_missing: A required program is not installed on the server.
     data_missing: A required data file (for example the GeoIP database) is not installed on the server.
-    api_unreachable: The NetTools server cannot be reached. Browser-only tools still work.
+    api_unreachable: The NET-TOOLS server cannot be reached. Browser-only tools still work.
     unavailable: Not available on this server.
 apiErrors:
   INVALID_INPUT: Invalid input
@@ -107,7 +107,7 @@ settings:
   favoritesCount: 'You have {count} favorite tools.'
   clearFavorites: Remove all favorites
 about:
-  intro: NetTools bundles network tools and troubleshooting utilities in one self-hosted app.
+  intro: NET-TOOLS bundles network tools and troubleshooting utilities in one self-hosted app.
   build: Build
   webVersion: Web version
   apiVersion: API version
@@ -119,7 +119,7 @@ about:
   capabilities: Server capabilities
   noServerTools: No server tools are registered yet.
   attributions: License & attributions
-  license: NetTools is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
+  license: NET-TOOLS is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
 dns:
   resolver: Resolver
   flags: Flags
@@ -513,7 +513,7 @@ tools:
     title: MAC address lookup (OUI)
     description: Find the vendor of a MAC address from the bundled IEEE OUI registry; works offline.
     input: MAC addresses or OUIs (one per line)
-    hint: Uses the IEEE MA-L (OUI) registry bundled with NetTools; nothing is sent to any server.
+    hint: Uses the IEEE MA-L (OUI) registry bundled with NET-TOOLS; nothing is sent to any server.
     invalid: '{count} invalid entries ignored: {entries}'
     unknown: Unknown (not in the IEEE MA-L registry)
     localNoVendor: Locally administered (no vendor)
@@ -566,7 +566,7 @@ tools:
       mac: MAC address
   what-is-my-ip:
     title: What is my IP
-    description: Your public IPv4 and IPv6 addresses as seen from the Internet, and the address the NetTools server sees.
+    description: Your public IPv4 and IPv6 addresses as seen from the Internet, and the address the NET-TOOLS server sees.
     refresh: Refresh
     ipv4: IPv4
     ipv6: IPv6
@@ -575,7 +575,7 @@ tools:
     protocol: Protocol
     notAvailable: Not available
     publicTitle: As seen from the Internet
-    serverTitle: As seen by this NetTools server
+    serverTitle: As seen by this NET-TOOLS server
     ipifyNote: Looked up directly from your browser via ipify.org (api.ipify.org / api6.ipify.org), which sees your address. "Not available" usually means no connectivity for that family.
     relation:
       private: The server sees a private address, so it is on your local network or behind the same NAT. Use the Internet view for your public address.
@@ -885,17 +885,17 @@ tools:
       password: 'WPA passwords need 8–63 characters; WEP keys 5, 13, 10 or 26 characters.'
   request-headers:
     title: Request headers echo
-    description: See the HTTP headers the NetTools server receives from your browser, and whether a proxy is in the path.
+    description: See the HTTP headers the NET-TOOLS server receives from your browser, and whether a proxy is in the path.
     refresh: Refresh
     connection: Connection
     headers: 'Request headers ({count})'
-    addedByNetTools: Added by NetTools
+    addedByNetTools: Added by NET-TOOLS
     noProxy: No signs of an extra proxy
     proxyDetected: A proxy or middlebox is probably in the path
     hints:
       via: A Via header is present (added by HTTP proxies).
       forwarded: A Forwarded header is present (RFC 7239, added by proxies).
-      multi-hop: X-Forwarded-For lists more than one hop, so another proxy forwarded the request before NetTools.
+      multi-hop: X-Forwarded-For lists more than one hop, so another proxy forwarded the request before NET-TOOLS.
       cdn: CDN headers are present (Cloudflare, Akamai, Fastly, CloudFront or Azure Front Door).
       compression-stripped: Accept-Encoding is missing, which is typical for intercepting proxies and antivirus scanners.
     columns:
@@ -1065,7 +1065,7 @@ tools:
     run: Check ports
     invalidPorts: Enter up to 10 ports, e.g. 22,80,443 or 8000-8005.
     result: 'Results for {address}'
-    vantage: Results are as seen from the NetTools server; firewalls may treat other sources differently.
+    vantage: Results are as seen from the NET-TOOLS server; firewalls may treat other sources differently.
     states:
       open: Open
       closed: Closed
@@ -1079,9 +1079,9 @@ tools:
     run: Query
     invalid: 'The answer is not usable: {problem}'
     quality:
-      good: 'Healthy — offset {offset} ms from the NetTools server clock.'
-      fair: 'Offset {offset} ms from the NetTools server clock (either clock may be off).'
-      poor: 'Large offset of {offset} ms from the NetTools server clock.'
+      good: 'Healthy — offset {offset} ms from the NET-TOOLS server clock.'
+      fair: 'Offset {offset} ms from the NET-TOOLS server clock (either clock may be off).'
+      poor: 'Large offset of {offset} ms from the NET-TOOLS server clock.'
     fields:
       address: Address
       offset: Clock offset
@@ -1097,7 +1097,7 @@ tools:
       version: Version
   server-network-info:
     title: Server network info
-    description: Interfaces, addresses, routes, gateways and DNS resolvers of the NetTools server (container or host in LAN mode).
+    description: Interfaces, addresses, routes, gateways and DNS resolvers of the NET-TOOLS server (container or host in LAN mode).
     summary: Overview
     interfaces: Interfaces
     routes: Routes
@@ -1122,7 +1122,7 @@ tools:
     headers: 'Request headers (one "Name: value" per line)'
     body: Request body
     follow: Follow redirects
-    privacy: Headers and body are sent to the target from the NetTools server and are never added to the page URL.
+    privacy: Headers and body are sent to the target from the NET-TOOLS server and are never added to the page URL.
     run: Send request
     hop: 'Hop {n}'
     invalidHeader: 'Invalid or not allowed header line: {line}'
@@ -1644,7 +1644,7 @@ tools:
       full: The tunnel network is too small for this many clients.
   browser-latency:
     title: Browser ↔ server latency
-    description: Measure HTTP round-trip time and jitter from your browser to this NetTools server, with a live graph.
+    description: Measure HTTP round-trip time and jitter from your browser to this NET-TOOLS server, with a live graph.
     stop: Stop
     progress: Measurement progress
     note: Each sample is a small HTTP request over an already open connection, so it includes browser and server processing on top of the network round trip.
@@ -2253,7 +2253,7 @@ tools:
       protocol: Protocol
   speed-test:
     title: Browser ↔ server speed test
-    description: Measure download, upload and latency between your browser and this NetTools server.
+    description: Measure download, upload and latency between your browser and this NET-TOOLS server.
     intro: Transfers random data with three parallel streams for about ten seconds per direction.
     start: Start test
     again: Test again
@@ -2285,22 +2285,22 @@ tools:
       service: Service
   wake-on-lan:
     title: Wake-on-LAN
-    description: Send a magic packet from the NetTools server to power on a device on its local network.
+    description: Send a magic packet from the NET-TOOLS server to power on a device on its local network.
     mac: MAC address
     broadcast: Broadcast address (optional)
     port: UDP port
     send: Send magic packet
     invalidMac: Enter a MAC address such as 00:11:22:33:44:55.
     invalidBroadcast: Use 255.255.255.255 or a broadcast address in a private network, such as 192.168.1.255.
-    note: The packet is sent from the NetTools server, which must be on the same network (LAN mode) as the device.
+    note: The packet is sent from the NET-TOOLS server, which must be on the same network (LAN mode) as the device.
     sent: 'Magic packet for {mac} sent to {to}.'
   arp-scan:
     title: ARP scan (LAN devices)
-    description: Find the devices on a local network with their MAC addresses and vendors, using ARP from the NetTools server.
+    description: Find the devices on a local network with their MAC addresses and vendors, using ARP from the NET-TOOLS server.
     subnet: Local subnet
     invalid: Enter an IPv4 subnet of /22 or smaller, such as 192.168.1.0/24.
     run: Scan
-    note: Only subnets directly connected to the NetTools server can be scanned (LAN mode). Devices that ignore ARP do not show up.
+    note: Only subnets directly connected to the NET-TOOLS server can be scanned (LAN mode). Devices that ignore ARP do not show up.
     found: 'Devices ({n})'
     summary: '{n} of {scanned} addresses answered on {subnet} via {iface}.'
     columns:
@@ -2313,7 +2313,7 @@ tools:
     service: Service type (optional)
     seconds: Listen (s)
     run: Browse
-    note: Queries are sent from the NetTools server (LAN mode); only devices on its network segment answer.
+    note: Queries are sent from the NET-TOOLS server (LAN mode); only devices on its network segment answer.
     found: 'Services ({n})'
     columns:
       name: Name
@@ -2325,7 +2325,7 @@ tools:
     description: Find UPnP devices on the local network — routers, media servers, smart TVs — with their names and models.
     seconds: Listen (s)
     run: Discover
-    note: The search is sent from the NetTools server (LAN mode). Device descriptions are only read from the device that answered.
+    note: The search is sent from the NET-TOOLS server (LAN mode). Device descriptions are only read from the device that answered.
     found: 'Devices ({n})'
     descError: Description not read
     columns:
@@ -2342,7 +2342,7 @@ tools:
     invalidInterface: Enter an interface name such as eth0, or leave empty for the default route.
     seconds: Listen (s)
     run: Probe
-    note: Sends one DHCPDISCOVER from the NetTools server (LAN mode) and never requests a lease, so no address is taken.
+    note: Sends one DHCPDISCOVER from the NET-TOOLS server (LAN mode) and never requests a lease, so no address is taken.
     verdict:
       none: 'No DHCP server answered on {iface} within {seconds} s.'
       single: 'One DHCP server answered on {iface}.'
@@ -2357,9 +2357,9 @@ tools:
       lease: Lease
   gateway-info:
     title: Gateway / NAT info
-    description: Show the default gateway of the NetTools server and the external address its router reports over NAT-PMP, PCP and UPnP — and spot double NAT or CGNAT.
+    description: Show the default gateway of the NET-TOOLS server and the external address its router reports over NAT-PMP, PCP and UPnP — and spot double NAT or CGNAT.
     run: Inspect gateway
-    note: Queries only the default gateway of the NetTools server (LAN mode). PCP is checked with ANNOUNCE, which creates no port mapping.
+    note: Queries only the default gateway of the NET-TOOLS server (LAN mode). PCP is checked with ANNOUNCE, which creates no port mapping.
     yes: Yes
     no: Not supported
     doubleNat: 'The router reports {ip} as its external address, which is private or carrier-grade NAT space — there is another NAT in front of it (double NAT / CGNAT).'
@@ -2371,7 +2371,7 @@ tools:
       externalIp: External address (reported by the router)
   iperf:
     title: Bandwidth test (iperf3)
-    description: Measure TCP or UDP throughput, jitter and loss between the NetTools server and an iperf3 server.
+    description: Measure TCP or UDP throughput, jitter and loss between the NET-TOOLS server and an iperf3 server.
     serverLabel: iperf3 server
     port: Port
     protocol: Protocol
@@ -2380,10 +2380,10 @@ tools:
     bitrate: UDP Mbit/s
     reverse: Reverse (server sends)
     run: Start test
-    note: The test runs between the NetTools server and the iperf3 server, not your browser. Public iperf3 servers often allow one test at a time and may answer "busy".
+    note: The test runs between the NET-TOOLS server and the iperf3 server, not your browser. Public iperf3 servers often allow one test at a time and may answer "busy".
     direction: Direction
-    upload: NetTools → server
-    download: server → NetTools
+    upload: NET-TOOLS → server
+    download: server → NET-TOOLS
     sent: Sent
     received: Received
     retransmits: TCP retransmits
@@ -2418,7 +2418,7 @@ tools:
     invalidOid: Use numeric OIDs such as 1.3.6.1.2.1.1.5.0.
     oneOid: A walk takes exactly one OID.
     run: Query
-    note: Queries are sent from the NetTools server. Community strings and passwords are sent only with the request — they are not stored or added to the shareable link.
+    note: Queries are sent from the NET-TOOLS server. Community strings and passwords are sent only with the request — they are not stored or added to the shareable link.
     found: 'Values ({n})'
     truncated: 'Walk stopped after {n} rows. Raise the limit or walk a narrower subtree.'
     presets:
@@ -2495,7 +2495,7 @@ tools:
     sources: IRR sources
     allSources: All sources (default order)
     run: Expand
-    note: Runs bgpq4 on the NetTools server against the NTT IRR mirror. Large sets can take up to 30 seconds.
+    note: Runs bgpq4 on the NET-TOOLS server against the NTT IRR mirror. Large sets can take up to 30 seconds.
     found:
       prefixes: '{set}: {n} prefixes'
       asns: '{set}: {n} origin ASNs'

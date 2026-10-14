@@ -349,7 +349,7 @@ func (t *GatewayTool) handle(w http.ResponseWriter, r *http.Request) {
 	b, _ := t.ReadFile("/proc/net/route")
 	routes := ParseDefaultRoutes(b)
 	if len(routes) == 0 || !routes[0].Gateway.IsValid() || routes[0].Gateway.IsUnspecified() {
-		httpapi.Error(w, r, &httpapi.APIError{Code: httpapi.CodeInternal, Message: "no IPv4 default gateway found on the NetTools server"})
+		httpapi.Error(w, r, &httpapi.APIError{Code: httpapi.CodeInternal, Message: "no IPv4 default gateway found on the NET-TOOLS server"})
 		return
 	}
 	rt := routes[0]

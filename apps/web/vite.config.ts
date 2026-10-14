@@ -23,8 +23,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'script-defer',
       manifest: {
-        name: 'NetTools',
-        short_name: 'NetTools',
+        name: 'NET-TOOLS',
+        short_name: 'NET-TOOLS',
         description: 'Self-hosted network tools and troubleshooting utilities',
         theme_color: '#18181c',
         background_color: '#ffffff',
