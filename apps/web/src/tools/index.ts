@@ -84,6 +84,7 @@ import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
 import { tool as revocationCheck } from './revocation-check'
+import { tool as routerSnippets } from './router-snippets'
 import { tool as rpkiValidator } from './rpki-validator'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
@@ -128,7 +129,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig, routerSnippets] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]
 

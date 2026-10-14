@@ -2456,3 +2456,28 @@ tools:
       status: Result
       case: Attempt
       reply: Server reply
+  router-snippets:
+    title: Router config snippets
+    description: Turn a list of prefixes into a prefix-list or access-list for Cisco, Juniper, Arista, BIRD or MikroTik.
+    input: Prefixes (one per line)
+    invalid: 'Not a prefix: {entries} ({count} in total).'
+    platform: Platform
+    name: List name
+    invalidName: Start with a letter; letters, digits, - and _ only.
+    kind: Generate
+    action: Action
+    aggregate: Aggregate first
+    upTo4: IPv4 or longer up to /
+    upTo6: IPv6 or longer up to /
+    note: Leave "or longer up to" at 0 for exact matches. IPv6 entries go into a separate list with a -V6 suffix where the platform needs one.
+    output: 'Configuration ({n} prefixes)'
+    kinds:
+      prefixList: Prefix-list
+      acl: ACL / filter
+    platforms:
+      ios: Cisco IOS / IOS-XE
+      iosxr: Cisco IOS-XR
+      eos: Arista EOS
+      junos: Juniper Junos
+      bird: BIRD 2
+      routeros: MikroTik RouterOS 7
