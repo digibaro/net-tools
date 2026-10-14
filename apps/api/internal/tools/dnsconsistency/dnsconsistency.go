@@ -91,34 +91,22 @@ func (t *Tool) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	msg, _, err := dnsx.Query(ctx, sys, zone, dns.TypeNS)
+	names, servers, err := dnsx.ZoneServers(ctx, sys, zone, MaxNameservers, MaxServers)
 	if err != nil {
 		httpapi.Error(w, r, dnslookup.Upstream(err))
 		return
 	}
-	res := Result{Zone: zone, Nameservers: []string{}, Servers: []Server{}}
-	for _, rr := range msg.Answer {
-		if ns, ok := rr.(*dns.NS); ok && len(res.Nameservers) < MaxNameservers {
-			res.Nameservers = append(res.Nameservers, strings.ToLower(ns.Ns))
-		}
-	}
+	res := Result{Zone: zone, Nameservers: names, Servers: []Server{}}
 	if len(res.Nameservers) == 0 {
 		httpapi.Error(w, r, httpapi.InvalidInput("zone", "no NS records found; is this the zone apex?"))
 		return
 	}
-	slices.Sort(res.Nameservers)
-
-	for _, ns := range res.Nameservers {
-		addrs, err := dnsx.Addresses(ctx, sys, ns)
-		if err != nil || len(addrs) == 0 {
-			res.Servers = append(res.Servers, Server{Name: ns, NSSet: []string{}, Error: "nameserver name does not resolve"})
-			continue
+	for _, zs := range servers {
+		s := Server{Name: zs.Name, NSSet: []string{}, Error: zs.Error}
+		if zs.Addr.IsValid() {
+			s.Address = zs.Addr.String()
 		}
-		for _, a := range addrs {
-			if len(res.Servers) < MaxServers {
-				res.Servers = append(res.Servers, Server{Name: ns, Address: a.String(), NSSet: []string{}})
-			}
-		}
+		res.Servers = append(res.Servers, s)
 	}
 
 	var wg sync.WaitGroup

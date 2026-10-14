@@ -11,8 +11,10 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/xml"
 	"errors"
 	"fmt"
+	"io"
 	"net"
 	"strings"
 	"time"
@@ -21,7 +23,7 @@ import (
 )
 
 // StartTLS protocols supported before the handshake.
-var StartTLSProtocols = []string{"", "smtp", "imap", "pop3", "ftp"}
+var StartTLSProtocols = []string{"", "smtp", "imap", "pop3", "ftp", "xmpp"}
 
 // RootsForTests replaces the system trust store when set.
 var RootsForTests *x509.CertPool
@@ -56,6 +58,10 @@ type Session struct {
 	HandshakeMs float64 `json:"handshakeMs"`
 	StartTLS    string  `json:"starttls"`
 	ConnectedTo string  `json:"connectedTo"`
+	// Certs is the presented chain (leaf first) and OCSPResponse the stapled response, for
+	// tools that need the raw data (revocation checks); neither is serialized.
+	Certs        []*x509.Certificate `json:"-"`
+	OCSPResponse []byte              `json:"-"`
 }
 
 // Options for Handshake.
@@ -90,7 +96,7 @@ func Handshake(ctx context.Context, addr string, o Options) (*Session, error) {
 		_ = raw.SetDeadline(dl)
 	}
 	if o.StartTLS != "" {
-		if err := startTLS(raw, o.StartTLS); err != nil {
+		if err := startTLS(raw, o.StartTLS, o.ServerName); err != nil {
 			return nil, fmt.Errorf("starttls: %w", err)
 		}
 	}
@@ -106,6 +112,7 @@ func Handshake(ctx context.Context, addr string, o Options) (*Session, error) {
 		ServerName: sni, OCSPStapled: len(st.OCSPResponse) > 0, HandshakeMs: rttstats.Ms(time.Since(start)),
 		StartTLS: o.StartTLS, ConnectedTo: addr, Chain: []Cert{},
 	}
+	s.Certs, s.OCSPResponse = st.PeerCertificates, st.OCSPResponse
 	for _, c := range st.PeerCertificates {
 		s.Chain = append(s.Chain, Summarize(c, o.Now))
 	}
@@ -183,9 +190,12 @@ func colonHex(b []byte) string {
 	return strings.Join(parts, ":")
 }
 
-// startTLS runs the plaintext upgrade dialog for proto.
-func startTLS(c net.Conn, proto string) error {
-	r := bufio.NewReader(c)
+// maxPlaintext bounds what a server may send before the TLS upgrade.
+const maxPlaintext = 64 << 10
+
+// startTLS runs the plaintext upgrade dialog for proto. domain is the XMPP stream target.
+func startTLS(c net.Conn, proto, domain string) error {
+	r := bufio.NewReader(io.LimitReader(c, maxPlaintext))
 	readLine := func() (string, error) {
 		l, err := r.ReadString('\n')
 		return strings.TrimRight(l, "\r\n"), err //nolint:wrapcheck // wrapped by caller
@@ -262,8 +272,50 @@ func startTLS(c net.Conn, proto string) error {
 				return fmt.Errorf("STARTTLS refused: %s", truncate(l))
 			}
 		}
+	case "xmpp":
+		// RFC 6120 §5: open a client stream, expect <starttls/> in the features, then <proceed/>.
+		if err := send(fmt.Sprintf("<?xml version='1.0'?><stream:stream to='%s' xmlns='jabber:client' xmlns:stream='http://etherx.jabber.org/streams' version='1.0'>", xmlEscape(domain))); err != nil {
+			return err
+		}
+		features, err := readUntil(r, "</stream:features>")
+		if err != nil {
+			return err
+		}
+		if !strings.Contains(features, "urn:ietf:params:xml:ns:xmpp-tls") {
+			return errors.New("the server does not offer STARTTLS")
+		}
+		if err := send("<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>"); err != nil {
+			return err
+		}
+		reply, err := readUntil(r, "/>")
+		if err != nil {
+			return err
+		}
+		if !strings.Contains(reply, "<proceed") {
+			return fmt.Errorf("STARTTLS refused: %s", truncate(reply))
+		}
+		return nil
 	}
 	return fmt.Errorf("unsupported protocol %q", proto)
+}
+
+// readUntil reads XML until marker appears (bounded by maxPlaintext via the reader).
+func readUntil(r *bufio.Reader, marker string) (string, error) {
+	var b strings.Builder
+	for !strings.Contains(b.String(), marker) {
+		chunk, err := r.ReadString('>')
+		b.WriteString(chunk)
+		if err != nil {
+			return b.String(), fmt.Errorf("read: %w", err)
+		}
+	}
+	return b.String(), nil
+}
+
+func xmlEscape(s string) string {
+	var b strings.Builder
+	_ = xml.EscapeText(&b, []byte(s))
+	return b.String()
 }
 
 func truncate(s string) string {

@@ -3,6 +3,7 @@ import type { DataTableColumns } from 'naive-ui'
 import { NA, NDataTable } from 'naive-ui'
 import { computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { RouterLink } from 'vue-router'
 import ResultActions from './ResultActions.vue'
 
 export interface ResultColumn {
@@ -13,6 +14,8 @@ export interface ResultColumn {
   width?: number
   /** Row key holding a URL; the cell renders as an external link. */
   hrefKey?: string
+  /** Row key holding an in-app path; the cell renders as a router link. */
+  routeKey?: string
 }
 
 type Row = Record<string, unknown>
@@ -38,10 +41,13 @@ const tableColumns = computed<DataTableColumns<Row>>(() => props.columns.map(c =
   title: c.title,
   width: c.width,
   className: c.mono ? 'font-mono' : undefined,
-  render: c.hrefKey
+  render: c.hrefKey || c.routeKey
     ? (row: Row) => {
-        const href = row[c.hrefKey!]
         const text = String(row[c.key] ?? '')
+        const to = c.routeKey ? row[c.routeKey] : undefined
+        if (typeof to === 'string' && to)
+          return h(RouterLink, { to }, () => text)
+        const href = c.hrefKey ? row[c.hrefKey] : undefined
         return typeof href === 'string' && href ? h(NA, { href, target: '_blank', rel: 'noopener noreferrer' }, () => text) : text
       }
     : undefined,

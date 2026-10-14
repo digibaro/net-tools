@@ -182,6 +182,74 @@ http:
     ttfb: Wait
     transfer: Transfer
   invalidUrl: Enter an http or https URL.
+remote:
+  vantage: Run from
+  server: This server
+  worldwide: Worldwide (Globalping)
+  locations: Locations
+  locationsPlaceholder: Germany, Europe, US+AWS (empty = anywhere)
+  limit: Probes
+  title: 'Worldwide results for {target}'
+  answered: '{up} of {done} probes got an answer ({total} requested).'
+  incomplete: Some probes did not finish in time.
+  progress: Measurement progress
+  resolver: resolver
+  raw: Raw output
+  attribution: Measured by Globalping (globalping.io) community probes.
+  verdict:
+    up: Reachable
+    down: No answer
+    error: Failed
+  columns:
+    ip: Address
+    host: Host
+    avg: Avg
+    loss: Loss
+    dns: DNS
+    tcp: TCP
+    tls: TLS
+    firstByte: First byte
+    total: Total
+bgp:
+  asn: AS number
+  prefix: Prefix or IP address
+  lookUp: Look up
+  invalidAsn: Enter an AS number such as AS13335.
+  invalidPrefix: Enter a prefix such as 1.1.1.0/24 or an IP address.
+  announced: Announced
+  notAnnounced: Not announced
+  visibility: '{seen} of {total} RIS peers ({pct} %)'
+  prefixCount: '{v4} IPv4 and {v6} IPv6 ({total} announced)'
+  neighbourCount: '{up} upstream, {down} downstream ({total} total)'
+  prefixesTitle: 'Announced prefixes ({n})'
+  neighboursTitle: Neighbours
+  powerNote: Power is the number of RIS peers that see the adjacency; higher means more important.
+  relation:
+    left: Upstream
+    right: Downstream
+    uncertain: Uncertain
+  fields:
+    holder: Holder
+    registry: Registry
+    prefixes: Prefixes
+    neighbours: Neighbours
+    visibility: Visibility
+    firstSeen: First seen
+    lastSeen: Last seen
+  columns:
+    prefix: Prefix
+    relation: Relation
+    power: Power
+    routeObjects: Route objects (IRR)
+    origin: Origin
+    maxLength: Max length
+    validity: Validity
+    asPath: AS path
+    peers: Peers
+    collector: Collector
+    peer: Peer
+    community: Communities
+    updated: Updated
 registry:
   query: Domain, IP address or AS number
   invalidQuery: Enter a domain (example.com), an IP address or an AS number (AS13335).
@@ -229,6 +297,27 @@ email:
     weak-key: The RSA key is shorter than 1024 bits and is ignored by receivers.
     short-key: The RSA key is shorter than the recommended 2048 bits.
     testing: The key is in testing mode (t=y).
+    no-id: The MTA-STS record has no id= tag.
+    policy-unreachable: The policy file on the mta-sts subdomain cannot be fetched.
+    policy-not-found: The policy file returned an error (not 200).
+    policy-certificate: The policy host's certificate is not valid — senders ignore the policy.
+    policy-content-type: The policy file is not served as text/plain.
+    policy-version: The policy file does not declare version STSv1.
+    policy-mode: The policy mode is not enforce, testing or none.
+    policy-max-age: max_age is missing or longer than one year.
+    short-max-age: max_age is under one day; senders will re-fetch the policy very often.
+    policy-no-mx: The policy lists no MX patterns.
+    mode-testing: Mode is testing — failures are reported but mail is still delivered.
+    mode-none: Mode is none — the policy is switched off.
+    mx-not-covered: Some MX hosts are not matched by the policy.
+    bad-rua: 'A report address is neither mailto: nor https://.'
+    no-logo: No logo (l=) is published.
+    logo-not-https-svg: The logo must be an SVG served over HTTPS.
+    logo-unreachable: The logo cannot be fetched.
+    logo-not-tiny-ps: The logo is not SVG Tiny PS (baseProfile="tiny-ps"), which BIMI requires.
+    logo-too-large: The logo is larger than 32 KB.
+    no-vmc: No VMC/CMC certificate (a=); Gmail and Apple Mail show logos only with one.
+    dmarc-not-enforced: BIMI requires DMARC at p=quarantine or p=reject with pct=100.
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -1047,6 +1136,7 @@ tools:
     downgrade: Warning — the chain downgrades from HTTPS to HTTP.
     stopped: 'The chain was stopped: {code}.'
   http-timing:
+    worldwideNote: Probes request HTTPS HEAD / on the host and report status, TLS version and timings.
     title: HTTP timing breakdown
     description: How long DNS, TCP connect, TLS handshake, server wait (TTFB) and download take for a URL, like curl -w.
     run: Measure
@@ -1059,6 +1149,10 @@ tools:
       ok: 'Acceptable: first byte after {ttfb} ms, {total} ms in total.'
       slow: 'Slow server response: first byte after {ttfb} ms, {total} ms in total.'
   security-headers:
+    observatory:
+      compare: Compare with Mozilla Observatory
+      grade: 'Observatory: {grade} ({score})'
+      details: Full Observatory report
     title: Security headers analyzer
     description: Grade a website's HTTP security headers (CSP, HSTS, framing, nosniff, referrer and permissions policies, cookies) with fixes.
     run: Analyze
@@ -1597,3 +1691,578 @@ tools:
       online: Online
       secure: Secure context (HTTPS)
       doh: Encrypted DNS
+  is-it-down:
+    title: Is it down? (global check)
+    description: Check whether a site or host answers from probes around the world — down for everyone or just for you?
+    target: Site, host or IP
+    check: Check
+    run: Check worldwide
+    overall:
+      up: '{target} answers from every location tested.'
+      partial: '{target} answers from some locations only — a regional or partial outage.'
+      down: '{target} does not answer from any location tested — it looks down for everyone.'
+  asn-info:
+    title: ASN info
+    description: Who holds an AS number, which prefixes it announces and who its upstreams and downstreams are, from RIPEstat.
+  prefix-status:
+    title: Prefix routing status
+    description: Is a prefix announced in BGP, how widely is it seen, which AS originates it, and is there more than one origin (MOAS)?
+    moas: '{n} different ASes originate this prefix (MOAS) — this can be intentional (anycast, DDoS protection) or a hijack.'
+    origins: Origin AS
+    related: Related prefixes
+    less: Less specific (covering)
+    more: More specific
+  rpki-validator:
+    title: RPKI validator
+    description: Check whether a prefix and origin AS are valid, invalid or unknown under RPKI route origin validation, and see the ROAs involved.
+    origin: Origin AS
+    run: Validate
+    verdict: '{prefix} originated by AS{asn}: {status}'
+    roas: Matching ROAs
+    source: 'Validated by {validator} via RIPEstat.'
+    status:
+      valid: Valid
+      invalid_asn: Invalid — a ROA exists for another origin AS
+      invalid_length: Invalid — the prefix is more specific than the ROA allows
+      unknown: Not found — no ROA covers this prefix
+  looking-glass:
+    title: BGP looking glass
+    description: See the routes that RIPE RIS route collectors hold for a prefix — AS paths, communities and peers.
+    summary: 'AS paths to {prefix}'
+    seen: '{routes} routes at {collectors} collectors; origin: {origins}.'
+    routes: Routes per collector peer
+    truncated: 'Showing {shown} of {total} routes.'
+  peeringdb-lookup:
+    title: PeeringDB lookup
+    description: A network's peering policy, internet exchanges, facilities and contacts from PeeringDB.
+    notFound: 'AS{asn} has no PeeringDB record.'
+    open: Open in PeeringDB
+    maxPrefixes: '{v4} IPv4 / {v6} IPv6 (suggested max-prefix)'
+    ixs: 'Internet exchanges ({n})'
+    facilities: 'Facilities ({n})'
+    contacts: Contacts
+    fields:
+      name: Name
+      type: Network type
+      policy: Peering policy
+      policyUrl: Policy URL
+      asSet: IRR AS-SET
+      prefixes: Prefixes
+      website: Website
+      lookingGlass: Looking glass
+      updated: Updated
+    columns:
+      ix: Exchange
+      speed: Port
+      rs: Route server
+      facility: Facility
+      city: City
+      country: Country
+  ct-search:
+    title: Certificate Transparency search
+    description: List certificates issued for a domain and its subdomains from Certificate Transparency logs — audit issuance and discover host names.
+    includeExpired: Include expired certificates
+    run: Search
+    slowNote: Results come from crt.sh, which can take up to half a minute for large domains.
+    namesTitle: 'Host names ({n})'
+    summary: '{certs} certificates name {names} host names.'
+    copyHosts: Copy host names
+    certsTitle: Certificates
+    expired: expired
+    truncated: Only the newest 500 certificates are listed.
+    columns:
+      issuer: Issuer
+      names: Names
+      from: Valid from
+      until: Valid until
+  passive-exposure:
+    title: Passive exposure (InternetDB)
+    description: Open ports, software and known vulnerabilities Shodan has seen on an IP address — without scanning it.
+    note: Data from Shodan InternetDB, updated weekly. Nothing is sent to the address itself.
+    notFound: '{ip} has not been seen by Shodan: no open services recorded.'
+    ports: Open ports
+    hostnames: Host names
+    software: Software (CPE)
+    vulns: '{n} known vulnerabilities are associated with the software found. Verify before acting — versions are guessed from banners.'
+  ip-reputation:
+    title: IP reputation (AbuseIPDB)
+    description: Abuse confidence score and recent abuse reports for an IP address from AbuseIPDB.
+    score: 'Abuse confidence: {score} %'
+    open: Open in AbuseIPDB
+    recent: Recent reports (90 days)
+    whitelisted: allow-listed
+    reportCount: '{n} reports from {users} users'
+    level:
+      clean: Low risk
+      suspicious: Suspicious
+      malicious: Likely malicious
+    fields:
+      reports: Reports
+      last: Last reported
+      isp: Network
+      usage: Usage type
+      country: Country
+      flags: Flags
+    columns:
+      when: When
+      categories: Categories
+      comment: Comment
+      country: From
+    categories:
+      '1': DNS compromise
+      '2': DNS poisoning
+      '3': Fraud orders
+      '4': DDoS attack
+      '5': FTP brute force
+      '6': Ping of death
+      '7': Phishing
+      '8': Fraud VoIP
+      '9': Open proxy
+      '10': Web spam
+      '11': Email spam
+      '12': Blog spam
+      '13': VPN IP
+      '14': Port scan
+      '15': Hacking
+      '16': SQL injection
+      '17': Spoofing
+      '18': Brute force
+      '19': Bad web bot
+      '20': Exploited host
+      '21': Web app attack
+      '22': SSH
+      '23': IoT targeted
+  tor-exit-check:
+    title: Tor exit node check
+    description: Find out whether an IP address is a Tor exit node or relay, using the Tor Project's exit list and relay directory.
+    run: Check
+    relays: Tor relays on this address
+    relayError: 'Relay details are unavailable: {error}'
+    source: 'Exit list from check.torproject.org ({n} exits, refreshed hourly); relays from Onionoo.'
+    verdict:
+      exit: '{ip} is a Tor exit node: traffic from it may come from any Tor user.'
+      relay: '{ip} runs a Tor relay but is not an exit: it does not send Tor traffic to the Internet.'
+      none: '{ip} is not part of the Tor network.'
+    columns:
+      nickname: Relay
+      flags: Flags
+      network: Network
+      country: Country
+      seen: First – last seen
+      running: Running
+  hsts-preload:
+    title: HSTS preload status
+    description: Is a domain on the browsers' HSTS preload list, and does it meet the requirements to be added?
+    run: Check
+    viaParent: 'Covered by the preload entry for {parent}.'
+    meets: The domain meets the preload requirements.
+    fails: 'The domain does not meet {n} preload requirement(s):'
+    checkError: 'The requirements check failed: {error}'
+    source: Data from hstspreload.org, which checks the site itself for the requirements.
+    status:
+      preloaded: Preloaded
+      pending: Pending inclusion
+      unknown: Not preloaded
+      rejected: Rejected
+      removed: Removed
+      pending-removal: Pending removal
+  cloud-ip-lookup:
+    title: Cloud / CDN IP lookup
+    description: Find which cloud or CDN provider, service and region an IP address belongs to, from the providers' published range lists.
+    found: '{ip} belongs to {provider}.'
+    none: '{ip} is not in any of the published cloud or CDN ranges.'
+    matches: Matching ranges (most specific first)
+    sources: 'Lists checked: {list}.'
+    failed: 'Unavailable right now: {list}.'
+    columns:
+      provider: Provider
+      prefix: Range
+      service: Service
+      region: Region
+  zone-transfer-test:
+    title: Zone transfer (AXFR) test
+    description: Check whether any of a zone's name servers hands out the whole zone to anyone (open AXFR) — a common DNS misconfiguration.
+    zone: Zone
+    run: Test
+    open: At least one name server allows zone transfers to anyone. Restrict AXFR to your secondary servers.
+    closed: 'None of the {n} name servers allows a zone transfer.'
+    records: '{n} records transferred'
+    truncated: stopped at 10,000
+    state:
+      open: Transfer allowed
+      refused: Refused
+      error: Not tested
+  wildcard-detector:
+    title: Wildcard DNS detector
+    description: Find out whether a domain has wildcard records (*.domain) by looking up random names that cannot exist otherwise.
+    run: Detect
+    found: '{domain} has a wildcard: any name under it resolves ({types}).'
+    foundVarying: '{domain} answers for any name ({types}), with different answers per name — likely a wildcard with load balancing or synthesized records.'
+    none: 'No wildcard: random names under {domain} do not exist.'
+    answers: Wildcard answers
+    probes: Random names tested
+  dns-benchmark:
+    title: DNS resolver benchmark
+    description: Compare how fast and reliable public DNS resolvers are from this server, with your own resolvers added.
+    set: Resolvers
+    quick: System + 4 popular
+    full: System + 18 public
+    rounds: Rounds
+    custom: Extra resolvers (up to 3)
+    names: Names to query
+    namesPlaceholder: 'google.com, wikipedia.org (default: 10 popular domains)'
+    run: Run benchmark
+    progress: Benchmark progress
+    note: Measured from this server, not from your device. The first round may include cache misses; later rounds show cached performance.
+    columns:
+      resolver: Resolver
+      median: Median ms
+      avg: Avg ms
+      success: Answered
+      errors: Errors
+  dnssec-validator:
+    title: DNSSEC validator
+    description: Validate the DNSSEC chain of trust from the root down to a name, and see exactly where it breaks — missing DS, mismatched keys, expired or invalid signatures.
+    run: Validate
+    chain: Chain of trust
+    answer: '{name} {type}'
+    ad: the resolver also validated it (AD flag)
+    note: Records are fetched from 1.1.1.1 with checking disabled and validated here against the IANA root trust anchors (KSK-2017 and KSK-2024).
+    status:
+      secure: Secure
+      insecure: Insecure (unsigned)
+      bogus: Bogus
+      indeterminate: Indeterminate
+  compression-check:
+    title: HTTP compression check
+    description: Which compression a page supports — gzip, Brotli, Zstandard, deflate — and how many bytes each saves.
+    run: Check
+    best: 'Best supported encoding: {enc}.'
+    none: The server sends this page uncompressed whatever the client asks for.
+    varyMissing: The response is compressed but Vary does not include Accept-Encoding; shared caches may serve the wrong variant.
+    columns:
+      requested: Asked for
+      served: Served
+      supported: Supported
+      size: Transfer size
+      saving: Saving
+  cookie-inspector:
+    title: Cookie inspector
+    description: See every cookie a site sets, including during redirects, and check Secure, HttpOnly, SameSite, prefixes and lifetime.
+    run: Inspect
+    none: '{url} sets no cookies on a first visit.'
+    count: '{n} cookies set on a first visit (values are masked).'
+    value: 'Value {value} ({n} characters)'
+    session: Session cookie
+    expires: 'Expires {date}'
+    setBy: 'set by {url}'
+    severity:
+      success: OK
+      warning: Review
+      error: Broken
+    findings:
+      samesite-none-insecure: SameSite=None without Secure — browsers reject this cookie.
+      secure-prefix: __Secure- cookies must be set with Secure over HTTPS — browsers reject it.
+      host-prefix: __Host- cookies need Secure, Path=/ and no Domain over HTTPS — browsers reject it.
+      too-large: Name and value exceed 4096 bytes — browsers drop it.
+      invalid: The Set-Cookie header cannot be parsed.
+      not-secure: Set over HTTPS without Secure — it will also be sent over plain HTTP.
+      plain-http: Set over plain HTTP — readable and modifiable on the network.
+      session-not-httponly: Looks like a session or auth cookie but is readable by JavaScript (no HttpOnly).
+      no-samesite: No SameSite attribute — browsers default to Lax.
+      long-lived: Expires more than 400 days ahead — browsers cap the lifetime at 400 days.
+      domain-wide: Domain is set — the cookie is shared with all subdomains.
+      deleted: Max-Age zero or negative — this header deletes the cookie.
+  well-known-files:
+    title: robots.txt, sitemap & security.txt
+    description: Fetch and check a site's robots.txt, sitemap and security.txt (RFC 9116) in one go.
+    site: Site
+    run: Check
+    blocksAll: robots.txt disallows everything for all crawlers (User-agent * / Disallow /).
+    group: '{disallow} disallow, {allow} allow rules'
+    noSecurityTxt: No security.txt — researchers have no published way to report vulnerabilities.
+    sitemap: Sitemap
+    sitemapUrls: '{n} URLs'
+    sitemapIndex: 'Sitemap index with {n} sitemaps'
+    newest: 'newest change {date}'
+    capped: only the first 512 kB was read
+    state:
+      found: Found
+      missing: Not found
+      error: 'Error ({status})'
+    findings:
+      no-contact: Contact is required (RFC 9116).
+      no-expires: Expires is required (RFC 9116).
+      multiple-expires: Expires must appear only once.
+      bad-expires: Expires is not an RFC 3339 date.
+      expired: The file has expired — researchers should not trust it.
+      expires-far: Expires is more than a year ahead; RFC 9116 recommends less.
+      legacy-location: Served at /security.txt; the standard location is /.well-known/security.txt.
+      unsigned: Not PGP-signed (optional, but lets researchers verify it).
+  http-protocols:
+    title: HTTP/2 & HTTP/3 check
+    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN, the Alt-Svc header and performs a real QUIC handshake.
+    run: Check
+    httpsOnly: HTTP/2 and HTTP/3 need an https:// URL.
+    h3ok: 'QUIC handshake on UDP port {port} in {ms} ms ({version})'
+    notAdvertised: HTTP/3 works but is not advertised in Alt-Svc, so browsers will not use it.
+    advertisedBroken: Alt-Svc advertises HTTP/3 but the QUIC handshake failed from this server (UDP may be blocked on either side).
+    fields:
+      http2: HTTP/2
+      used: Version used for a request
+      altSvc: Alt-Svc
+      http3: HTTP/3 (QUIC)
+      address: Address
+  starttls-check:
+    title: STARTTLS check
+    description: Upgrade a plaintext SMTP, IMAP, POP3, FTP or XMPP connection with STARTTLS and inspect the TLS version, cipher and certificate.
+  revocation-check:
+    title: OCSP / CRL revocation check
+    description: Check whether a server's certificate has been revoked, using its stapled OCSP response, the CA's OCSP responder and its CRLs.
+    host: Host
+    run: Check
+    ocsp: OCSP
+    crl: Certificate revocation lists
+    noOcsp: The certificate names no OCSP responder and the server staples no response.
+    noCrl: The certificate names no CRL distribution point.
+    stapled: Stapled by the server
+    updated: 'Produced {this}, next update {next}'
+    revokedAt: 'revoked {at} ({reason})'
+    crlInfo: '{n} revoked entries, issued {this}, next {next}'
+    crlOnly: This CA publishes revocation only through CRLs (as Let's Encrypt has since 2025).
+    status:
+      good: Good
+      revoked: Revoked
+      unknown: Unknown
+    verdict:
+      good: 'The certificate for {cn} (issued by {issuer}) is not revoked.'
+      revoked: 'The certificate for {cn} has been REVOKED by {issuer}. Browsers may refuse it.'
+      unknown: 'The revocation status of the certificate for {cn} could not be determined.'
+  tls-scanner:
+    title: TLS protocol & cipher scanner
+    description: Find every TLS version, cipher suite and key-exchange group a server accepts, and flag legacy or weak choices.
+    run: Scan
+    note: One handshake per option (about 50), from this server. SSLv3 and suites Go cannot offer (e.g. CAMELLIA, ARIA) are not tested.
+    versions: Protocol versions
+    ciphers: 'Cipher suites — {version}'
+    groups: Key-exchange groups
+    rating:
+      good: Modern configuration
+      fair: Acceptable, with room for improvement
+      weak: Weak configuration
+    findings:
+      no-tls: No TLS handshake succeeded.
+      legacy-versions: TLS 1.0 or 1.1 is enabled; both are deprecated (RFC 8996).
+      no-tls13: TLS 1.3 is not supported.
+      rc4: RC4 cipher suites are enabled (broken).
+      3des: 3DES cipher suites are enabled (Sweet32).
+      no-forward-secrecy: Suites with RSA key exchange are enabled (no forward secrecy).
+      cbc: CBC-mode suites are enabled; prefer AEAD (GCM, ChaCha20-Poly1305).
+      no-post-quantum: The hybrid post-quantum group X25519MLKEM768 is not offered.
+  ssh-audit:
+    title: SSH server audit
+    description: Read an SSH server's banner, host key fingerprints and offered algorithms, and flag weak ones and Terrapin — without logging in.
+    run: Audit
+    note: No credentials are sent; connections end before authentication.
+    server: Server
+    banner: Banner
+    hostKeys: Host keys (SHA-256 fingerprints)
+    algorithms: Offered algorithms
+    lists:
+      kex: Key exchange
+      hostKey: Host key types
+      ciphers: Ciphers
+      macs: MACs
+      compression: Compression
+  blacklist-check:
+    title: Email blacklist (DNSBL) check
+    description: Check a mail server IP or a domain against about 25 DNS blocklists — Spamhaus, SpamCop, Barracuda and more.
+    target: IP address or domain
+    run: Check
+    note: For a domain, its own domain blocklists and its IPv4 address are checked. Spamhaus refuses queries from public resolvers; such lists show as errors, not as clean.
+    listed: 'Listed on {n} of {total} lists: {lists}.'
+    clean: 'Not listed on any of the {total} lists checked.'
+    errors: '{n} lists could not be checked.'
+    lists: Blocklists
+    delist: Removal / lookup
+    status:
+      listed: Listed
+      clean: Clean
+      error: Error
+  mta-sts-checker:
+    title: MTA-STS, TLS-RPT & BIMI checker
+    description: Check a mail domain's MTA-STS policy (and that it covers every MX), TLS reporting record and BIMI brand logo.
+    run: Check
+    stsOk: The MTA-STS policy is valid and covers all MX hosts.
+    rptOk: 'TLS reports go to {list}.'
+    bimiOk: The BIMI record and logo are valid.
+    unmatched: 'MX hosts not matched by the policy: {list}. Senders enforcing MTA-STS will refuse to deliver to them.'
+    state:
+      absent: Not set up
+      ok: OK
+      warn: Review
+      fail: Problems
+    fields:
+      record: Record
+      mode: Mode
+      maxAge: Max age
+      mx: Allowed MX
+      policy: Policy file
+      logo: Logo (SVG)
+      vmc: Certificate (VMC)
+  latency-matrix:
+    title: Latency comparison
+    description: Ping up to ten hosts at the same time from this server and rank them by round-trip time.
+    targets: Targets (up to 10)
+    tooMany: At most 10 targets.
+    invalid: 'Not a host name or IP: {list}'
+    noReply: no reply
+  path-mtu:
+    title: Path MTU discovery
+    description: Find the largest packet that reaches a host without fragmentation, using ICMP probes with the Don't-Fragment bit set.
+    max: Largest size to test
+    jumbo: 9000 (jumbo)
+    run: Discover
+    found: 'Path MTU from this server: {mtu} bytes.'
+    probes: Probes
+    fields:
+      mtu: Path MTU
+      mss: TCP MSS
+      address: Address
+      probes: Probes sent
+    causes:
+      ethernet: Standard Ethernet — nothing on the path reduces it.
+      pppoe: Typical of a PPPoE (DSL) link.
+      ipip: Typical of an IP-in-IP tunnel.
+      gre: Typical of a GRE tunnel.
+      ipv6-tunnel: Typical of a 6in4 tunnel.
+      wireguard: Typical of a WireGuard tunnel.
+      vpn: Typical of a VPN or IPsec tunnel.
+      ipv6-minimum: The IPv6 minimum MTU.
+      jumbo: Jumbo frames all the way.
+  ipv6-readiness:
+    title: IPv6 readiness
+    description: Is a domain fully reachable over IPv6? Checks AAAA records for the website, name servers and mail servers, and connects to them over IPv6.
+    run: Check
+    score: 'IPv6 score: {score} / 100'
+    noServerV6: This server has no IPv6 connectivity, so addresses were checked in DNS only, not connected to.
+    tryWorldwide: Test reachability from probes worldwide
+    verdict:
+      ready: '{domain} is fully ready for IPv6: website, DNS and mail all have IPv6 addresses.'
+      partial: '{domain} is partly reachable over IPv6.'
+      not-ready: '{domain} is not reachable over IPv6.'
+    state:
+      ok: IPv6 OK
+      no-aaaa: No AAAA
+      unreachable: Not reachable
+      untested: AAAA (not connected)
+    roles:
+      web: Website
+      www: www
+      ns: DNS
+      mx: Mail
+  curl-builder:
+    title: curl command builder & parser
+    description: Paste a curl command to see what it does, or build one from a form — headers, body, auth and options, safely quoted.
+    parseTitle: Parse a command
+    paste: curl command
+    unknown: 'Options kept but not shown in the form: {list}'
+    buildTitle: Build
+    method: Method
+    headers: Headers (one per line)
+    body: Body
+    user: Basic auth (user:password)
+    follow: Follow redirects (-L)
+    compressed: Accept compression (--compressed)
+    insecure: Skip TLS verification (-k)
+    verbose: Verbose (-v)
+    maxTime: Max time (s)
+    commandTitle: Command
+    openHttpRequest: Send with the HTTP request tool
+    errors:
+      syntax: Unbalanced quotes in the command.
+      not-curl: The command must start with curl.
+  websocket-tester:
+    title: WebSocket tester
+    description: Connect to a WebSocket from your browser, send messages and watch replies, close codes and timing.
+    url: WebSocket URL
+    protocols: Subprotocols (optional)
+    invalid: Enter a ws:// or wss:// URL.
+    connect: Connect
+    disconnect: Disconnect
+    note: The connection is made from your browser. Pages served over HTTPS can only open wss:// connections.
+    messages: Messages
+    message: Message
+    send: Send
+    clear: Clear log
+    state:
+      closed: Closed
+      connecting: Connecting
+      open: Open
+    dir:
+      in: received
+      out: sent
+      sys: event
+    events:
+      connecting: 'Connecting to {url}…'
+      open: 'Connected in {ms} ms ({info})'
+      error: Connection error (details are hidden by the browser; check the URL, certificate and server logs)
+      close: 'Connection closed: {code} {meaning} — reason: {reason}'
+    close:
+      normal: (normal closure)
+      goingAway: (going away)
+      protocolError: (protocol error)
+      unsupported: (unsupported data)
+      noStatus: (no status received)
+      abnormal: (closed without a close frame — network error, TLS failure or refused)
+      invalidData: (invalid payload data)
+      policy: (policy violation)
+      tooBig: (message too big)
+      extension: (missing extension)
+      serverError: (internal server error)
+      restart: (service restart)
+      tryAgain: (try again later)
+      tls: (TLS handshake failure)
+      other: (application-defined)
+  webrtc-leak-test:
+    title: WebRTC IP leak test
+    description: See which local and public IP addresses your browser reveals through WebRTC, and whether it bypasses your VPN.
+    intro: Your browser gathers ICE candidates using public STUN servers (Google, Cloudflare) — exactly what any website could do.
+    run: Test again
+    unsupported: This browser does not support WebRTC, so it cannot leak addresses this way.
+    localLeak: Your local network address is exposed to websites.
+    noLocalLeak: No local network address is exposed (hidden behind an mDNS name or not gathered).
+    mismatch: 'WebRTC reveals {webrtc}, but websites see you as {http} over HTTP — your real address may bypass the VPN or proxy.'
+    publicSame: 'WebRTC reveals your public address {list}, the same one websites see anyway.'
+    noPublic: No public address was gathered (STUN blocked or WebRTC restricted).
+    candidates: 'ICE candidates ({n})'
+    types:
+      host: Host (local)
+      srflx: Server reflexive (public)
+      prflx: Peer reflexive
+      relay: Relay (TURN)
+    kinds:
+      mdns: mDNS name (hidden)
+      private: Private address
+      public: Public address
+      unknown: Unknown
+    columns:
+      type: Type
+      address: Address
+      kind: Kind
+      protocol: Protocol
+  speed-test:
+    title: Browser ↔ server speed test
+    description: Measure download, upload and latency between your browser and this NetTools server.
+    intro: Transfers random data with three parallel streams for about ten seconds per direction.
+    start: Start test
+    again: Test again
+    note: This measures the path to this server, not your Internet connection as a whole — choose a server close to the network you want to test.
+    download: Download
+    upload: Upload
+    latency: Latency
+    failed: 'The test failed: {error}'
+    phase:
+      latency: Measuring latency
+      download: Measuring download
+      upload: Measuring upload

@@ -48,7 +48,8 @@ const results = computed<Command[]>(() => {
   const toolCommands = (q ? search.value(q, 12) : tools.favorites.length ? tools.favorites : tools.tools.slice(0, 8))
     .map(tool => ({ id: tool.path, label: tool.name, hint: tool.description, icon: tool.icon, run: () => router.push(tool.path) }))
   const others = staticCommands.value.filter(c => !q || c.label.toLowerCase().includes(q))
-  return [...toolCommands, ...others]
+  // A typed page or theme name ("about", "dark") beats fuzzy tool matches.
+  return q ? [...others, ...toolCommands] : [...toolCommands, ...others]
 })
 
 watch(query, () => {

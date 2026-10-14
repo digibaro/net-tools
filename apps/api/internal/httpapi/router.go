@@ -7,6 +7,7 @@ import (
 	"log/slog"
 	"net/http"
 	"net/netip"
+	"slices"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -15,6 +16,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/execx"
 	"github.com/digibaro/net-tools/apps/api/internal/limits"
 	"github.com/digibaro/net-tools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/providers"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
@@ -70,12 +72,14 @@ func BuildDeps(o *Options) tools.Deps {
 		o.Pool = limits.NewPool(cfg.Limits.ConcurrencyGlobal, cfg.Limits.ConcurrencyPerIP)
 	}
 	limiter := o.Limiter
+	ua := "NetTools/" + o.Build.Version + " (+" + cfg.PublicURL + ")"
 	return tools.Deps{
-		Config: cfg,
-		Logger: o.Logger,
-		Target: o.Target,
-		Exec:   o.Exec,
-		Pool:   o.Pool,
+		Providers: providers.New(o.Target, ua),
+		Config:    cfg,
+		Logger:    o.Logger,
+		Target:    o.Target,
+		Exec:      o.Exec,
+		Pool:      o.Pool,
 		RateLimit: func(c limits.Class) tools.Middleware {
 			return limiter.Middleware(c, func(r *http.Request) netip.Addr { return middleware.GetClientIP(r.Context()) },
 				func(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +87,7 @@ func BuildDeps(o *Options) tools.Deps {
 				})
 		},
 		Timeout:   limits.Timeout,
-		UserAgent: "NetTools/" + o.Build.Version + " (+" + cfg.PublicURL + ")",
+		UserAgent: ua,
 		Slot: func(next http.Handler) http.Handler {
 			pool := o.Pool
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +114,7 @@ func NewRouter(o Options) http.Handler {
 		middleware.Recover(func(w http.ResponseWriter, r *http.Request) {
 			Error(w, r, NewError(CodeInternal, "internal error"))
 		}),
-		limitBody(maxRequestBody),
+		limitBody(maxRequestBody, "/api/v1/speedtest/upload"), // the speed test enforces its own, larger cap
 	)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		Error(w, r, NewError(CodeNotFound, "no such endpoint"))
@@ -217,10 +221,11 @@ func handleCapabilities(deps tools.Deps, all []tools.Tool) http.HandlerFunc {
 	}
 }
 
-func limitBody(n int64) func(http.Handler) http.Handler {
+// limitBody caps request bodies at n bytes, except for the listed paths (which must cap their own).
+func limitBody(n int64, exempt ...string) func(http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			if r.Body != nil {
+			if r.Body != nil && !slices.Contains(exempt, r.URL.Path) {
 				r.Body = http.MaxBytesReader(w, r.Body, n)
 			}
 			next.ServeHTTP(w, r)

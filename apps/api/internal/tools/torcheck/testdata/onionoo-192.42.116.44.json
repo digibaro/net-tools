@@ -1,0 +1,61 @@
+{
+ "version": "8.0",
+ "build_revision": "89598ea",
+ "relays_published": "2026-10-14 08:00:00",
+ "relays": [
+  {
+   "nickname": "NTH44R8",
+   "fingerprint": "2B854489CE4D996281302EC5A7DA3DFE65962525",
+   "or_addresses": [
+    "192.42.116.44:9007",
+    "[2001:67c:e60:c0c:192:42:116:44]:9007"
+   ],
+   "exit_addresses": [
+    "192.42.116.44"
+   ],
+   "last_seen": "2026-10-14 08:00:00",
+   "first_seen": "2024-01-01 00:00:00",
+   "running": true,
+   "flags": [
+    "Exit",
+    "Fast",
+    "Running",
+    "Stable",
+    "Valid"
+   ],
+   "country": "nl",
+   "country_name": "Netherlands",
+   "as": "AS215125",
+   "as_name": "Church of Cyberology",
+   "contact": "email:mail[]nothingtohide.nl url:nothingtohide.nl proof:uri-rsa abuse:abuse[]nothingtohide.nl ciissversion:2"
+  },
+  {
+   "nickname": "NTH44R4",
+   "fingerprint": "72CF80278DEB75680069FCE3BCFE5BBAA209702C",
+   "or_addresses": [
+    "192.42.116.44:9003",
+    "[2001:67c:e60:c0c:192:42:116:44]:9003"
+   ],
+   "exit_addresses": [
+    "192.42.116.44"
+   ],
+   "last_seen": "2026-10-14 08:00:00",
+   "first_seen": "2024-01-01 00:00:00",
+   "running": true,
+   "flags": [
+    "Exit",
+    "Fast",
+    "Running",
+    "Stable",
+    "Valid"
+   ],
+   "country": "nl",
+   "country_name": "Netherlands",
+   "as": "AS215125",
+   "as_name": "Church of Cyberology",
+   "contact": "email:mail[]nothingtohide.nl url:nothingtohide.nl proof:uri-rsa abuse:abuse[]nothingtohide.nl ciissversion:2"
+  }
+ ],
+ "bridges_published": "2026-10-14 07:55:27",
+ "bridges": []
+}

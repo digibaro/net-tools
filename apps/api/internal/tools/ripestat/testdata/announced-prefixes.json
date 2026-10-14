@@ -1,0 +1,111 @@
+{
+ "messages": [
+  [
+   "info",
+   "Results exclude routes with very low visibility (less than 10 RIS full-feed peers seeing)."
+  ]
+ ],
+ "see_also": [],
+ "version": "1.2",
+ "data_call_name": "announced-prefixes",
+ "data_call_status": "supported",
+ "cached": false,
+ "query_id": "20261014140844-e963ecc9-738e-4251-b939-696c70c35c42",
+ "process_time": 3694,
+ "server_id": "app186",
+ "build_version": "v0.11.23-2026.10.12",
+ "pipeline": "1460464",
+ "status": "ok",
+ "status_code": 200,
+ "time": "2026-10-14T14:08:48.137446",
+ "data": {
+  "prefixes": [
+   {
+    "prefix": "104.22.64.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "104.29.126.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "162.159.206.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "104.22.85.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "104.28.36.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "104.22.179.0/24",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "2400:cb00:a301::/48",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "2400:cb00:bc01::/48",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   },
+   {
+    "prefix": "2606:54c1:10::/48",
+    "timelines": [
+     {
+      "starttime": "2026-09-30T08:00:00",
+      "endtime": "2026-10-14T08:00:00"
+     }
+    ]
+   }
+  ],
+  "query_starttime": "2026-09-30T08:00:00",
+  "query_endtime": "2026-10-14T08:00:00",
+  "resource": "13335",
+  "latest_time": "2026-10-14T08:00:00",
+  "earliest_time": "2000-08-01T00:00:00"
+ }
+}

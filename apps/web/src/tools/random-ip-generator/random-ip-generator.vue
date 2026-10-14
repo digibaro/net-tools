@@ -30,7 +30,7 @@ const list = computed(() => (Array.isArray(result.value) ? result.value : []))
     <CInputText v-model:value="prefix" :label="t('tools.random-ip-generator.prefix')" placeholder="10.0.0.0/8 or 2001:db8::/32" :validation="validation" monospace test-id="prefix" />
     <div class="flex flex-wrap items-end gap-x-6 gap-y-2">
       <NFormItem :label="t('tools.random-ip-generator.count')" :show-feedback="false">
-        <NInputNumber :show-button="false" v-model:value="count" :min="1" :max="MAX_COUNT" class="w-32" :input-props="{ 'aria-label': t('tools.random-ip-generator.count') }" data-testid="count" />
+        <NInputNumber v-model:value="count" :show-button="false" :min="1" :max="MAX_COUNT" class="w-32" :input-props="{ 'aria-label': t('tools.random-ip-generator.count') }" data-testid="count" />
       </NFormItem>
       <NFormItem :label="t('tools.random-ip-generator.unique')" :show-feedback="false">
         <NSwitch v-model:value="unique" :aria-label="t('tools.random-ip-generator.unique')" />

@@ -15,14 +15,16 @@ import CSelect from '@/ui/c-select.vue'
 import { isValidHost } from '@/utils/host'
 import { DEFAULT_PORTS, expiryType, isLegacyVersion, STARTTLS } from './tls-inspector.service'
 
+/** Also used by the STARTTLS check (TLS-09): mode "starttls" starts with SMTP and hides direct TLS. */
+const props = withDefaults(defineProps<{ mode?: 'tls' | 'starttls' }>(), { mode: 'tls' })
 const { t } = useI18n()
 const host = useQueryParam({ name: 'host', defaultValue: '' })
-const port = useQueryParam({ name: 'port', defaultValue: 443 })
+const starttls = useQueryParam({ name: 'starttls', defaultValue: props.mode === 'starttls' ? 'smtp' : '' })
+const port = useQueryParam({ name: 'port', defaultValue: DEFAULT_PORTS[starttls.value] ?? 443 })
 const sni = useQueryParam({ name: 'sni', defaultValue: '' })
-const starttls = useQueryParam({ name: 'starttls', defaultValue: '' })
 watch(starttls, s => (port.value = DEFAULT_PORTS[s] ?? 443))
 const hostValidation = useValidation({ source: () => host.value.replace(/:\d+$/, ''), rules: [{ validator: isValidHost, message: t('tools.ping.invalid') }] })
-const starttlsOptions = computed(() => STARTTLS.map(s => ({ label: s ? s.toUpperCase() : t('tools.tls-inspector.directTls'), value: s })))
+const starttlsOptions = computed(() => STARTTLS.filter(s => props.mode === 'tls' || s).map(s => ({ label: s ? s.toUpperCase() : t('tools.tls-inspector.directTls'), value: s })))
 const { data, error, loading, run } = useApi<TlsSession>('/v1/tls/inspect')
 const submit = () => host.value && hostValidation.value.isValid && run({ host: host.value, port: port.value, sni: sni.value || undefined, starttls: starttls.value || undefined })
 onMounted(() => {

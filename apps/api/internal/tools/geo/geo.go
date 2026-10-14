@@ -5,6 +5,7 @@ import (
 	"context"
 	"net/http"
 	"net/netip"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -16,6 +17,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/geoip"
 	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
 	"github.com/digibaro/net-tools/apps/api/internal/limits"
+	"github.com/digibaro/net-tools/apps/api/internal/providers"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
 )
@@ -27,6 +29,9 @@ type Tool struct {
 	asn  *geoip.DB
 	// TXT resolves ASNs via Team Cymru when no ASN database is present.
 	TXT asn.TXTFunc
+	// IPInfoBase overrides https://ipinfo.io (tests).
+	IPInfoBase string
+	deps       tools.Deps
 }
 
 func (*Tool) ID() string { return "rep.geo" }
@@ -42,16 +47,20 @@ func (t *Tool) open(cfg config.Config) {
 	})
 }
 
-// Enabled requires a city database; the ASN database is optional.
+// Enabled requires a city database or an ipinfo.io token; the ASN database is optional.
 func (t *Tool) Enabled(d tools.Deps) (bool, tools.Reason) {
 	t.open(d.Config)
-	if t.city == nil {
+	if t.city == nil && !d.Config.HasSecret("IPINFO_TOKEN") {
 		return false, tools.ReasonDataMissing
 	}
 	return true, ""
 }
 
 func (t *Tool) Mount(r chi.Router, d tools.Deps) {
+	t.deps = d
+	if t.IPInfoBase == "" {
+		t.IPInfoBase = "https://ipinfo.io"
+	}
 	if t.TXT == nil {
 		t.TXT = asn.SystemTXT
 	}
@@ -84,20 +93,80 @@ type Result struct {
 func (t *Tool) handle(w http.ResponseWriter, r *http.Request) {
 	q := params.New(r.URL.Query())
 	raw := q.String("ip", "", true, 64)
-	source := q.Enum("source", "local", "local")
+	def := "local"
+	if t.city == nil {
+		def = "ipinfo" // enabled without a database means a token is configured
+	}
+	source := q.Enum("source", def, "local", "ipinfo")
 	if err := q.Err(); err != nil {
 		httpapi.Error(w, r, err)
 		return
 	}
-	_ = source // only the local database is implemented; providers come later (catalog REP-01)
 	ip, err := netip.ParseAddr(strings.Trim(raw, "[]"))
 	if err != nil || ip.Zone() != "" {
 		httpapi.Error(w, r, httpapi.InvalidInput("ip", "enter an IPv4 or IPv6 address"))
 		return
 	}
 	ip = ip.Unmap()
-	res := Lookup(r.Context(), t.city, t.asn, t.TXT, ip)
-	httpapi.JSON(w, r, res, &httpapi.Meta{Tool: t.ID(), Vantage: "server"})
+	switch {
+	case source == "ipinfo":
+		res, err := t.ipinfo(r.Context(), ip)
+		if err != nil {
+			httpapi.Error(w, r, err)
+			return
+		}
+		httpapi.JSON(w, r, res, &httpapi.Meta{Tool: t.ID(), Vantage: "ipinfo"})
+	case t.city == nil:
+		httpapi.Error(w, r, &httpapi.APIError{Code: httpapi.CodeToolDisabled, Message: "no local GeoIP database is installed on this server", Details: map[string]any{"field": "source"}})
+	default:
+		res := Lookup(r.Context(), t.city, t.asn, t.TXT, ip)
+		httpapi.JSON(w, r, res, &httpapi.Meta{Tool: t.ID(), Vantage: "server"})
+	}
+}
+
+// ipinfo geolocates through ipinfo.io (IPINFO_TOKEN, sent as a header so it never appears in
+// URLs, cache keys or logs).
+func (t *Tool) ipinfo(ctx context.Context, ip netip.Addr) (Result, error) {
+	res := Result{IP: ip.String(), Public: asn.IsPublic(ip), Source: "ipinfo", Database: "ipinfo.io"}
+	tok := t.deps.Config.Features.ProviderSecrets["IPINFO_TOKEN"]
+	if tok == "" {
+		return res, &httpapi.APIError{Code: httpapi.CodeProviderKeyMissing, Message: "ipinfo.io needs IPINFO_TOKEN, which is not configured on this server"}
+	}
+	if !res.Public {
+		return res, nil
+	}
+	var d struct {
+		City     string `json:"city"`
+		Region   string `json:"region"`
+		Country  string `json:"country"`
+		Loc      string `json:"loc"`
+		Org      string `json:"org"`
+		Postal   string `json:"postal"`
+		Timezone string `json:"timezone"`
+		Bogon    bool   `json:"bogon"`
+	}
+	err := t.deps.Providers.GetJSON(ctx, providers.Request{Provider: "ipinfo.io", URL: t.IPInfoBase + "/" + ip.String() + "/json", Header: http.Header{"Authorization": {"Bearer " + tok}}, TTL: 24 * time.Hour}, &d)
+	if err != nil {
+		return res, err //nolint:wrapcheck // client-safe provider error
+	}
+	res.Found = d.Country != ""
+	res.City, res.Region, res.Postal, res.TimeZone, res.CountryCode = d.City, d.Region, d.Postal, d.Timezone, d.Country
+	res.Country = d.Country
+	if lat, lon, ok := strings.Cut(d.Loc, ","); ok {
+		if la, err := strconv.ParseFloat(lat, 64); err == nil {
+			res.Latitude = &la
+		}
+		if lo, err := strconv.ParseFloat(lon, 64); err == nil {
+			res.Longitude = &lo
+		}
+	}
+	if num, name, ok := strings.Cut(d.Org, " "); ok && strings.HasPrefix(num, "AS") {
+		if n, err := strconv.ParseUint(num[2:], 10, 32); err == nil {
+			v := uint32(n)
+			res.ASN, res.ASOrg, res.ASNSource = &v, name, "ipinfo"
+		}
+	}
+	return res, nil
 }
 
 // Lookup geolocates ip. Private and reserved addresses are reported without a lookup.

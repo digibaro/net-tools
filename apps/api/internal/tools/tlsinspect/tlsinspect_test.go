@@ -65,7 +65,7 @@ func TestTLSSSRF(t *testing.T) {
 		"host=169.254.169.254:443":        "TARGET_BLOCKED",
 		"host=[::1]:8443":                 "TARGET_PRIVATE_DENIED",
 		"host=example.com&port=0":         "INVALID_INPUT",
-		"host=example.com&starttls=xmpp":  "INVALID_INPUT",
+		"host=example.com&starttls=nntp":  "INVALID_INPUT",
 		"host=example.com&sni=bad%20name": "INVALID_INPUT",
 	} {
 		strict.Get("/api/v1/tls/inspect?"+q).ExpectError(t, code)

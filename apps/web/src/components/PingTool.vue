@@ -5,9 +5,13 @@ import { computed, onMounted, ref, shallowRef } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
 import PingRun from '@/components/PingRun.vue'
+import RemoteResults from '@/components/RemoteResults.vue'
+import VantageSwitch from '@/components/VantageSwitch.vue'
 import { useQueryParam } from '@/composables/useQueryParam'
+import { useRemote } from '@/composables/useRemote'
 import { useSse } from '@/composables/useSse'
 import { useValidation } from '@/composables/useValidation'
+import { useVantage } from '@/composables/useVantage'
 import { useCapabilitiesStore } from '@/stores/capabilities.store'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
@@ -35,10 +39,22 @@ const { status, error, start, stop } = useSse(props.path, {
   timeout: d => replies.value.push(d as Reply),
   done: d => (summary.value = (d as { summary: Summary }).summary),
 })
-const running = computed(() => status.value === 'running')
+const { vantage, locations, limit, available, worldwide } = useVantage()
+// Globalping has ICMP ping only; TCP ping always runs from this server.
+const remoteOn = computed(() => props.kind === 'icmp' && worldwide.value)
+const remote = useRemote()
+const running = computed(() => status.value === 'running' || remote.status.value === 'running')
+function stopAll() {
+  stop()
+  remote.stop()
+}
 function run() {
   if (!target.value || !validation.value.isValid)
     return
+  if (remoteOn.value) {
+    remote.start({ type: 'ping', target: target.value, locations: locations.value, limit: limit.value })
+    return
+  }
   replies.value = []
   summary.value = undefined
   start({ target: target.value, count: Math.min(count.value, maxCount.value), interval: Math.max(interval.value, minInterval.value), port: props.kind === 'tcp' ? port.value : undefined })
@@ -58,7 +74,8 @@ onMounted(() => {
           <NInputNumber v-model:value="port" :min="1" :max="65535" :show-button="false" :input-props="{ 'aria-label': t('tools.tcp-ping.port') }" data-testid="port" />
         </NFormItem>
       </div>
-      <div class="grid grid-cols-2 max-w-md gap-x-4">
+      <VantageSwitch v-if="kind === 'icmp'" v-model:vantage="vantage" v-model:locations="locations" v-model:limit="limit" :available="available" />
+      <div v-if="!remoteOn" class="grid grid-cols-2 max-w-md gap-x-4">
         <NFormItem :label="t('ping.count')" :show-feedback="false" class="mb-3">
           <NInputNumber v-model:value="count" :min="1" :max="maxCount" :show-button="false" :input-props="{ 'aria-label': t('ping.count') }" />
         </NFormItem>
@@ -70,14 +87,17 @@ onMounted(() => {
         <NButton type="primary" attr-type="submit" :loading="running" :disabled="!target || !validation.isValid || running" data-testid="run">
           {{ t('ping.run') }}
         </NButton>
-        <NButton v-if="running" data-testid="stop" @click="stop">
+        <NButton v-if="running" data-testid="stop" @click="stopAll">
           {{ t('common.stop') }}
         </NButton>
       </div>
     </form>
   </CCard>
-  <ApiError v-if="error" :error="error" />
-  <CCard v-if="replies.length || summary" :title="t('common.result')" data-testid="result">
-    <PingRun :replies="replies" :summary="summary" :kind="kind" />
-  </CCard>
+  <RemoteResults v-if="remoteOn" :meta="remote.meta.value" :probes="remote.probes.value" :summary="remote.summary.value" :status="remote.status.value" :error="remote.error.value" />
+  <template v-else>
+    <ApiError v-if="error" :error="error" />
+    <CCard v-if="replies.length || summary" :title="t('common.result')" data-testid="result">
+      <PingRun :replies="replies" :summary="summary" :kind="kind" />
+    </CCard>
+  </template>
 </template>

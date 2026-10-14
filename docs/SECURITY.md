@@ -13,6 +13,9 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 | `homelab` | `true` + `lan` profile | on | relaxed | Single user on home network |
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
+The speed test (CON-09, `SPEEDTEST_ENABLED`) serves bulk traffic (up to 100 MiB down / 32 MiB up per
+request) and is likewise off by default in the public profile.
+
 The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
 routes and is therefore off in `public` and on in the other profiles.
 The UI shows the active profile on the About page.
@@ -98,7 +101,9 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
 
 `web`:
 - `nginxinc/nginx-unprivileged`, port 8080, read-only FS with tmpfs for cache/run.
-- Headers: `Content-Security-Policy` (`default-src 'self'; connect-src 'self' https://api.ipify.org https://api6.ipify.org https://cloudflare-dns.com https://dns.google; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-<theme-script-hash>'; frame-ancestors 'none'`),
+- Headers: `Content-Security-Policy` (`default-src 'self'; connect-src 'self' https://api.ipify.org https://api6.ipify.org https://cloudflare-dns.com https://dns.google ws: wss:; img-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'sha256-<theme-script-hash>'; frame-ancestors 'none'`),
+  `ws: wss:` in connect-src is for the browser WebSocket tester (WEB-11): connections are opened only
+  on an explicit user action and carry no NetTools credentials.
   `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `Permissions-Policy`,
   HSTS only when behind TLS (`ENABLE_HSTS`).
 - `proxy_buffering off` + `X-Accel-Buffering: no` for SSE.
@@ -109,7 +114,7 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
   `IPINFO_TOKEN`, `ABUSEIPDB_KEY`, `PEERINGDB_KEY`, `SSLLABS_EMAIL`, `VIRUSTOTAL_KEY`,
   `URLSCAN_KEY`, `SAFEBROWSING_KEY`, `MAXMIND_LICENSE_KEY` (only for the optional updater).
 - Never log keys or full upstream URLs containing keys. Redact in errors.
-- Outbound provider calls: timeout 10 s, response size cap 5 MiB, user-agent
+- Outbound provider calls: timeout 10 s (30 s for crt.sh, which is often slow), response size cap 5 MiB, user-agent
   `NetTools/<version> (+<PUBLIC_URL>)`.
 
 ## 7. Auth
