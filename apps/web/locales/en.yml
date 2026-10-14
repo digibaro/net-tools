@@ -1807,3 +1807,21 @@ tools:
       '21': Web app attack
       '22': SSH
       '23': IoT targeted
+  tor-exit-check:
+    title: Tor exit node check
+    description: Find out whether an IP address is a Tor exit node or relay, using the Tor Project's exit list and relay directory.
+    run: Check
+    relays: Tor relays on this address
+    relayError: 'Relay details are unavailable: {error}'
+    source: 'Exit list from check.torproject.org ({n} exits, refreshed hourly); relays from Onionoo.'
+    verdict:
+      exit: '{ip} is a Tor exit node: traffic from it may come from any Tor user.'
+      relay: '{ip} runs a Tor relay but is not an exit: it does not send Tor traffic to the Internet.'
+      none: '{ip} is not part of the Tor network.'
+    columns:
+      nickname: Relay
+      flags: Flags
+      network: Network
+      country: Country
+      seen: First – last seen
+      running: Running

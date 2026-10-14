@@ -72,6 +72,7 @@ import { tool as subnetSplitter } from './subnet-splitter'
 import { tool as tcpPing } from './tcp-ping'
 import { tool as tlsExpiry } from './tls-expiry'
 import { tool as tlsInspector } from './tls-inspector'
+import { tool as torExitCheck } from './tor-exit-check'
 import { tool as traceroute } from './traceroute'
 import { tool as urlParser } from './url-parser'
 import { tool as userAgentParser } from './user-agent-parser'
@@ -92,7 +93,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup] },
-  { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation] },
+  { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo] },

@@ -953,6 +953,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/AbuseReport" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tor-exit:
+    get:
+      operationId: torExit
+      summary: "Is an IP a Tor exit node, and which relays use it"
+      tags: [reputation]
+      x-capability: rep.tor
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/TorCheck" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2060,3 +2081,28 @@ components:
               comment: { type: string }
               categories: { type: array, items: { type: integer } }
               country: { type: string }
+    TorCheck:
+      type: object
+      required: [ip, exitNode, listSize, relays, relayError]
+      properties:
+        ip: { type: string }
+        exitNode: { type: boolean }
+        listSize: { type: integer }
+        relayError: { type: string }
+        relays:
+          type: array
+          items:
+            type: object
+            required: [nickname, fingerprint, flags, running, firstSeen, lastSeen, country, as, asName, exit, url]
+            properties:
+              nickname: { type: string }
+              fingerprint: { type: string }
+              flags: { type: array, items: { type: string } }
+              running: { type: boolean }
+              firstSeen: { type: string }
+              lastSeen: { type: string }
+              country: { type: string }
+              as: { type: string }
+              asName: { type: string }
+              exit: { type: boolean }
+              url: { type: string }

@@ -26,6 +26,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tlsinspect"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/torcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/web"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/whois"
 )
@@ -73,5 +74,6 @@ func Tools() []tools.Tool {
 		&ctsearch.Tool{},
 		&reputation.InternetDBTool{},
 		&reputation.AbuseIPDBTool{},
+		&torcheck.Tool{},
 	}
 }
