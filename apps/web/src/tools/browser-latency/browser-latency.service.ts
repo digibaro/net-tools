@@ -51,12 +51,12 @@ export function stats(samples: (number | null)[]): Stats | undefined {
 }
 
 /** One timed request; null on error or timeout. Cache-busted so no intermediary can answer. */
-export async function probe(url: string, signal?: AbortSignal, now = () => performance.now()): Promise<number | null> {
+export async function probe(url: string, signal?: AbortSignal, now = () => performance.now(), headers: Record<string, string> = {}): Promise<number | null> {
   const timeout = AbortSignal.timeout(REQUEST_TIMEOUT)
   const combined = signal ? AbortSignal.any([signal, timeout]) : timeout
   const start = now()
   try {
-    const res = await fetch(`${url}${url.includes('?') ? '&' : '?'}_=${Date.now()}${Math.random().toString(36).slice(2, 6)}`, { cache: 'no-store', signal: combined, headers: { Accept: 'application/json' } })
+    const res = await fetch(`${url}${url.includes('?') ? '&' : '?'}_=${Date.now()}${Math.random().toString(36).slice(2, 6)}`, { cache: 'no-store', signal: combined, headers: { Accept: 'application/json', ...headers } })
     await res.arrayBuffer()
     return res.ok ? now() - start : null
   }

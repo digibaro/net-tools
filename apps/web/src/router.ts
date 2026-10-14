@@ -25,5 +25,6 @@ export const router = createRouter({
     ...toolRoutes,
     { path: '/:pathMatch(.*)*', name: 'not-found', component: () => import('./pages/NotFound.page.vue'), meta: { titleKey: 'notFound.title' } },
   ],
-  scrollBehavior: () => ({ top: 0 }),
+  // The first load already starts at the top; scrolling then would only force a layout.
+  scrollBehavior: (_to, from) => (from.matched.length ? { top: 0 } : false),
 })

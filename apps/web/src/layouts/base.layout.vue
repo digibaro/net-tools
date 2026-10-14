@@ -6,6 +6,7 @@ import { computed, defineAsyncComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import CollapsibleToolMenu from '@/components/CollapsibleToolMenu.vue'
+import SidebarFooter from '@/components/SidebarFooter.vue'
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 import { useStyleStore } from '@/stores/style.store'
 
@@ -68,6 +69,7 @@ function closeOnMobile() {
       </RouterLink>
       <!-- On small screens the collapsed sidebar is off-canvas; mount the menu only when opened. -->
       <CollapsibleToolMenu v-if="!style.isSmallScreen || mobileOpen" @navigate="closeOnMobile" />
+      <SidebarFooter />
     </NLayoutSider>
     <div v-if="style.isSmallScreen && mobileOpen" class="fixed inset-0 z-10 bg-black/40" aria-hidden="true" @click="mobileOpen = false" />
     <NLayout :native-scrollbar="false">

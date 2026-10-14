@@ -1127,6 +1127,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/speedtest/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Start a speed test (one heavy request); returns a token for its ping/download/upload requests
+         * @description The token is valid for 45 s and 600 requests. Requests carrying it skip the per-request limit; the concurrency slot and per-request size caps still apply.
+         */
+        post: operations["speedtestSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/speedtest/download": {
         parameters: {
             query?: never;
@@ -1170,6 +1190,234 @@ export interface paths {
         };
         /** Minimal response for latency samples */
         get: operations["speedtestPing"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/portscan/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bounded TCP connect scan of one host (SSE)
+         * @description Events: meta, port ({port, service})* for open ports, progress ({done, total}), done ({summary: PortscanSummary, durationMs}) or error.
+         */
+        get: operations["portscanStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/wol": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Send a Wake-on-LAN magic packet (LAN mode) */
+        post: operations["lanWol"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/arpscan/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ARP host discovery on a directly connected subnet (LAN mode, SSE)
+         * @description Events: meta, host ({ip, mac})*, done ({summary: ArpScanSummary, durationMs}) or error.
+         */
+        get: operations["lanArpScanStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/mdns/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Browse mDNS / DNS-SD services on the local network (LAN mode, SSE)
+         * @description Events: meta, service (MdnsService)*, done ({summary: {types, services}, durationMs}) or error.
+         */
+        get: operations["lanMdnsStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/ssdp/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * SSDP / UPnP device discovery on the local network (LAN mode, SSE)
+         * @description Events: meta, device (SsdpDevice)*, done ({summary: {devices}, durationMs}) or error.
+         */
+        get: operations["lanSsdpStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/dhcp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detect DHCP servers with a DISCOVER (rogue DHCP check, LAN mode)
+         * @description Broadcasts one DHCPDISCOVER and collects every OFFER; never sends REQUEST, so no lease is taken.
+         */
+        get: operations["lanDhcp"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/gateway": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Default gateway, NAT-PMP / PCP and UPnP IGD external address (LAN mode) */
+        get: operations["lanGateway"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/iperf/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bandwidth test against an iperf3 server (SSE)
+         * @description Events: meta, interval (IperfInterval)* once per second, done ({summary: IperfSummary, durationMs}) or error.
+         */
+        get: operations["iperfStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/snmp": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * SNMP v2c/v3 get or bounded walk
+         * @description Credentials are sent in the body only and are never logged or echoed.
+         */
+        post: operations["snmp"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/relay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Open relay test of a mail server (opt-in, no DATA sent) */
+        get: operations["emailRelay"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/bgp/irr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Expand an AS-SET / route-set / ASN from the IRR (bgpq4) */
+        get: operations["bgpIrr"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/reputation/url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * URL / domain reputation (Google Safe Browsing, VirusTotal, urlscan.io)
+         * @description Passive lookups only; nothing is submitted for scanning. Providers without a configured key are reported as skipped.
+         */
+        get: operations["reputationUrl"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2454,6 +2702,197 @@ export interface components {
                 error: string;
             }[];
         };
+        PortscanSummary: {
+            address: string;
+            scanned: number;
+            closed: number;
+            filtered: number;
+            complete: boolean;
+            open: {
+                port: number;
+                service: string;
+            }[];
+        };
+        ArpScanSummary: {
+            interface: string;
+            subnet: string;
+            scanned: number;
+            hosts: {
+                ip: string;
+                mac: string;
+            }[];
+        };
+        MdnsService: {
+            instance: string;
+            type: string;
+            host: string;
+            port: number;
+            addresses: string[];
+            txt: string[];
+            from: string;
+        };
+        SsdpDevice: {
+            address: string;
+            location: string;
+            server: string;
+            usn: string;
+            types: string[];
+            friendlyName: string;
+            manufacturer: string;
+            model: string;
+            deviceType: string;
+            presentationUrl: string;
+            error: string;
+        };
+        DhcpResult: {
+            interface: string;
+            mac: string;
+            seconds: number;
+            servers: number;
+            offers: {
+                server: string;
+                from: string;
+                relay: string;
+                offeredIp: string;
+                subnetMask: string;
+                routers: string[];
+                dns: string[];
+                domain: string;
+                leaseSeconds: number;
+            }[];
+        };
+        GatewayResult: {
+            interface: string;
+            gateway: string;
+            gatewayMac: string;
+            addresses: string[];
+            externalIp: string;
+            doubleNat: boolean;
+            natPmp: {
+                supported: boolean;
+                externalIp: string;
+                epoch: number;
+                pcp: boolean;
+                error: string;
+            };
+            upnp: {
+                supported: boolean;
+                externalIp: string;
+                friendlyName: string;
+                model: string;
+                service: string;
+                error: string;
+            };
+        };
+        IperfInterval: {
+            start: number;
+            end: number;
+            mbps: number;
+            bytes: number;
+            retransmits?: number;
+            packets?: number;
+        };
+        IperfSummary: {
+            protocol: string;
+            reverse: boolean;
+            seconds: number;
+            sentMbps: number;
+            receivedMbps: number;
+            sentBytes: number;
+            retransmits?: number;
+            jitterMs?: number;
+            lostPercent?: number;
+            lostPackets?: number;
+            server: string;
+            version: string;
+        };
+        SnmpRequest: {
+            target: string;
+            /** @default 161 */
+            port: number;
+            /**
+             * @default 2c
+             * @enum {string}
+             */
+            version: "2c" | "3";
+            community?: string;
+            v3?: {
+                user: string;
+                /** @enum {string} */
+                level: "noAuthNoPriv" | "authNoPriv" | "authPriv";
+                /** @enum {string} */
+                authProtocol?: "MD5" | "SHA" | "SHA224" | "SHA256" | "SHA384" | "SHA512";
+                authPassword?: string;
+                /** @enum {string} */
+                privProtocol?: "DES" | "AES" | "AES192" | "AES256" | "AES192C" | "AES256C";
+                privPassword?: string;
+                context?: string;
+            };
+            /** @enum {string} */
+            operation: "get" | "walk";
+            oids: string[];
+            /** @default 200 */
+            maxRows: number;
+        };
+        SnmpResult: {
+            address: string;
+            version: string;
+            operation: string;
+            truncated: boolean;
+            vars: {
+                oid: string;
+                type: string;
+                value: string;
+            }[];
+        };
+        RelayResult: {
+            address: string;
+            banner: string;
+            startTls: boolean;
+            open: boolean;
+            error: string;
+            cases: {
+                name: string;
+                mailFrom: string;
+                rcptTo: string;
+                mailReply: string;
+                rcptReply: string;
+                accepted: boolean;
+            }[];
+        };
+        IrrResult: {
+            set: string;
+            /** @enum {string} */
+            mode: "prefixes" | "asns";
+            family?: number;
+            aggregate: boolean;
+            sources: string[];
+            asns: number[];
+            prefixes: {
+                prefix: string;
+                exact: boolean;
+                greaterEqual?: number;
+                lessEqual?: number;
+            }[];
+        };
+        UrlReputation: {
+            input: string;
+            url: string;
+            domain: string;
+            verdict: components["schemas"]["UrlVerdict"];
+            providers: {
+                provider: string;
+                verdict: components["schemas"]["UrlVerdict"];
+                summary: string;
+                details: {
+                    [key: string]: string;
+                };
+                link: string;
+                error: string;
+            }[];
+        };
+        /** @enum {string} */
+        UrlVerdict: "clean" | "suspicious" | "malicious" | "unknown" | "skipped" | "error";
     };
     responses: {
         /** @description Error envelope */
@@ -4151,12 +4590,42 @@ export interface operations {
             default: components["responses"]["Error"];
         };
     };
+    speedtestSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: {
+                            token: string;
+                            expiresInMs: number;
+                            maxRequests: number;
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
     speedtestDownload: {
         parameters: {
             query?: {
                 bytes?: number;
             };
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4177,7 +4646,10 @@ export interface operations {
     speedtestUpload: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4207,7 +4679,10 @@ export interface operations {
     speedtestPing: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                /** @description session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM */
+                "X-Speedtest-Token"?: string;
+            };
             path?: never;
             cookie?: never;
         };
@@ -4222,6 +4697,334 @@ export interface operations {
                     "text/plain": string;
                 };
             };
+        };
+    };
+    portscanStream: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description preset (top100, web, mail, db, remote) or list/ranges, at most PORTSCAN_MAX_PORTS */
+                ports?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanWol: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    mac: string;
+                    /** @description 255.255.255.255 (default) or a broadcast address in private space */
+                    broadcast?: string;
+                    /**
+                     * @default 9
+                     * @enum {integer}
+                     */
+                    port?: 7 | 9;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: {
+                            mac: string;
+                            destination: string;
+                            bytes: number;
+                        };
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    lanArpScanStream: {
+        parameters: {
+            query: {
+                /** @description directly connected IPv4 subnet, /22 or smaller */
+                cidr: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanMdnsStream: {
+        parameters: {
+            query?: {
+                /** @description optional service type, e.g. _http._tcp */
+                service?: string;
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanSsdpStream: {
+        parameters: {
+            query?: {
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanDhcp: {
+        parameters: {
+            query?: {
+                /** @description defaults to the interface of the default route */
+                interface?: string;
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DhcpResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    lanGateway: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["GatewayResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    iperfStream: {
+        parameters: {
+            query: {
+                server: string;
+                port?: number;
+                proto?: "tcp" | "udp";
+                /** @description seconds, at most IPERF_MAX_SECONDS */
+                duration?: number;
+                /** @description server sends (download) */
+                reverse?: boolean;
+                parallel?: number;
+                /** @description UDP target in Mbit/s */
+                bitrate?: number;
+                /** @description Restrict to IPv4 (4) or IPv6 (6) */
+                family?: components["parameters"]["Family"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    snmp: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SnmpRequest"];
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SnmpResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailRelay: {
+        parameters: {
+            query: {
+                host: string;
+                port?: 25 | 587 | 2525;
+                /** @description the server's own mail domain (adds a spoofed-local-sender attempt) */
+                domain?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RelayResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    bgpIrr: {
+        parameters: {
+            query: {
+                /** @description AS number, as-set or route-set (e.g. AS-EXAMPLE, AS65000:AS-CUSTOMERS) */
+                set: string;
+                mode?: "prefixes" | "asns";
+                family?: "4" | "6";
+                aggregate?: boolean;
+                /** @description comma-separated IRR sources (RPKI, RIPE, ARIN, APNIC, AFRINIC, LACNIC, RADB, NTTCOM, LEVEL3, ALTDB, IDNIC, JPIRR) */
+                sources?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["IrrResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    reputationUrl: {
+        parameters: {
+            query: {
+                /** @description http(s) URL or domain name */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["UrlReputation"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

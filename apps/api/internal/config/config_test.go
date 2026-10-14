@@ -179,3 +179,24 @@ func TestSecretFileErrorWrapped(t *testing.T) {
 		t.Fatalf("err = %v, want wrapped fs.ErrNotExist", err)
 	}
 }
+
+func TestInlineCommentValuesAreUnset(t *testing.T) {
+	env := map[string]string{
+		"ALLOW_CIDRS":         "# if set, ONLY these targets are allowed",
+		"DENY_CIDRS":          "   # extra comma-separated CIDRs to block",
+		"SERVER_INFO_ENABLED": "# server interfaces/routes tool; default off in public, on otherwise",
+		"PORTSCAN_ENABLED":    "true",
+		"IPINFO_TOKEN":        "   # optional, enables ipinfo.io",
+		"ABUSEIPDB_KEY":       "real-key",
+	}
+	cfg, err := LoadFrom(func(k string) (string, bool) { v, ok := env[k]; return v, ok }, func(string) ([]byte, error) { return nil, nil })
+	if err != nil {
+		t.Fatalf("comment-only values must be ignored: %v", err)
+	}
+	if !cfg.Features.Portscan {
+		t.Error("real values must still apply")
+	}
+	if _, ok := cfg.Features.ProviderSecrets["IPINFO_TOKEN"]; ok || cfg.Features.ProviderSecrets["ABUSEIPDB_KEY"] != "real-key" {
+		t.Errorf("secrets = %v", cfg.Features.ProviderSecrets)
+	}
+}

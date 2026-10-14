@@ -2,11 +2,12 @@
 import { NAlert, NButton, NProgress } from 'naive-ui'
 import { computed, onBeforeUnmount, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { apiPost } from '@/api/client'
 import ResultActions from '@/components/ResultActions.vue'
 import CCard from '@/ui/c-card.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
 import { probe, stats } from '../browser-latency/browser-latency.service'
-import { DOWNLOAD_BYTES, drain, mbps, PHASE_MS, randomPayload, STREAMS, UPLOAD_BYTES } from './speed-test.service'
+import { DOWNLOAD_BYTES, drain, mbps, nextUploadSize, PHASE_MS, randomPayload, STREAMS, TOKEN_HEADER, UPLOAD_MAX_BYTES, UPLOAD_MIN_BYTES } from './speed-test.service'
 
 type Phase = 'idle' | 'latency' | 'download' | 'upload' | 'done' | 'error'
 const { t } = useI18n()
@@ -18,19 +19,21 @@ const live = ref(0)
 const failure = ref('')
 let controller: AbortController | undefined
 
-async function measureDownload(signal: AbortSignal) {
+async function measureDownload(signal: AbortSignal, headers: Record<string, string>) {
   let bytes = 0
   const start = performance.now()
   const stop = AbortSignal.any([signal, AbortSignal.timeout(PHASE_MS)])
   await Promise.all(Array.from({ length: STREAMS }, async () => {
     try {
-      const res = await fetch(`/api/v1/speedtest/download?bytes=${DOWNLOAD_BYTES}&_=${Math.random()}`, { cache: 'no-store', signal: stop })
-      if (!res.ok)
-        throw new Error(`HTTP ${res.status}`)
-      await drain(res, (n) => {
-        bytes += n
-        live.value = mbps(bytes, performance.now() - start)
-      })
+      while (!stop.aborted) { // keep each stream busy for the whole phase
+        const res = await fetch(`/api/v1/speedtest/download?bytes=${DOWNLOAD_BYTES}&_=${Math.random()}`, { cache: 'no-store', signal: stop, headers })
+        if (!res.ok)
+          throw new Error(`HTTP ${res.status}`)
+        await drain(res, (n) => {
+          bytes += n
+          live.value = mbps(bytes, performance.now() - start)
+        })
+      }
     }
     catch (e) {
       if (!stop.aborted)
@@ -40,19 +43,22 @@ async function measureDownload(signal: AbortSignal) {
   return mbps(bytes, performance.now() - start)
 }
 
-async function measureUpload(signal: AbortSignal) {
-  const payload = new Blob([randomPayload(UPLOAD_BYTES)])
+async function measureUpload(signal: AbortSignal, headers: Record<string, string>) {
+  const payload = new Blob([randomPayload(UPLOAD_MAX_BYTES)])
   let bytes = 0
   const start = performance.now()
   const deadline = start + PHASE_MS
   await Promise.all(Array.from({ length: STREAMS }, async () => {
+    let size = UPLOAD_MIN_BYTES
     while (performance.now() < deadline && !signal.aborted) {
-      const res = await fetch('/api/v1/speedtest/upload', { method: 'POST', body: payload, cache: 'no-store', signal, headers: { 'Content-Type': 'application/octet-stream' } })
+      const t0 = performance.now()
+      const res = await fetch('/api/v1/speedtest/upload', { method: 'POST', body: payload.slice(0, size), cache: 'no-store', signal, headers: { ...headers, 'Content-Type': 'application/octet-stream' } })
       if (!res.ok)
         throw new Error(`HTTP ${res.status}`)
       await res.arrayBuffer()
-      bytes += UPLOAD_BYTES
+      bytes += size
       live.value = mbps(bytes, performance.now() - start)
+      size = nextUploadSize(size, performance.now() - t0)
     }
   }))
   return mbps(bytes, performance.now() - start)
@@ -67,16 +73,19 @@ async function run() {
   latency.value = undefined
   try {
     phase.value = 'latency'
-    await probe('/api/v1/speedtest/ping', c.signal) // warm-up: opens the connection
+    // One session per test: the server rate-limits the session, not each of its many requests.
+    const session = await apiPost<{ token: string }>('/v1/speedtest/session', {})
+    const headers = { [TOKEN_HEADER]: session.token }
+    await probe('/api/v1/speedtest/ping', c.signal, undefined, headers) // warm-up: opens the connection
     const samples: (number | null)[] = []
     for (let i = 0; i < 10; i++)
-      samples.push(await probe('/api/v1/speedtest/ping', c.signal))
+      samples.push(await probe('/api/v1/speedtest/ping', c.signal, undefined, headers))
     latency.value = stats(samples)
     phase.value = 'download'
-    download.value = await measureDownload(c.signal)
+    download.value = await measureDownload(c.signal, headers)
     live.value = 0
     phase.value = 'upload'
-    upload.value = await measureUpload(c.signal)
+    upload.value = await measureUpload(c.signal, headers)
     phase.value = 'done'
   }
   catch (e) {

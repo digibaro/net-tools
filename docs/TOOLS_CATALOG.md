@@ -70,13 +70,13 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
 | CON-04 | MTR | Continuous traceroute+ping, per-hop loss/latency table | H | `mtr --raw` streamed | Globalping `mtr` | 2 | ✅ |
 | CON-05 | Port check | Is TCP (or UDP best-effort) port open from the server | S | `net.Dialer` | check-host.net API | 2 | ✅ |
-| CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ⬜ |
+| CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ✅ |
 | CON-07 | Path MTU discovery | Find max non-fragmented packet size to target | S | `pro-bing` with DF + size bisection | — | 3 | ✅ |
-| CON-08 | Bandwidth test (iperf3) | TCP/UDP throughput to an iperf3 server | S | `iperf3 -c … --json` via execx | public iperf3 servers list (user-supplied) | 4 | ⬜ |
+| CON-08 | Bandwidth test (iperf3) | TCP/UDP throughput to an iperf3 server | S | `iperf3 -c … --json` via execx | public iperf3 servers list (user-supplied) | 4 | ✅ |
 | CON-09 | Browser speed test | Download/upload/latency between browser and server | B+S | LibreSpeed container (`speedtest` profile) | Cloudflare speed test endpoints | 3 | ✅ |
 | CON-10 | Global ping / "is it down" | Ping/HTTP from many countries, map view | P | — | Globalping API, check-host.net | 3 | ✅ |
 | CON-11 | NTP check | Query NTP server: offset, stratum, delay, refid | S | `github.com/beevik/ntp` | — | 2 | ✅ |
-| CON-12 | SNMP get / walk | v2c/v3 get/walk of an OID subtree (bounded) | S | `gosnmp` | — | 4 | ⬜ |
+| CON-12 | SNMP get / walk | v2c/v3 get/walk of an OID subtree (bounded) | S | `gosnmp` | — | 4 | ✅ |
 | CON-13 | Server network info | Interfaces, addresses, routes, resolvers, gateway of the api container/host | S | `net.Interfaces`, `/proc/net/route` | — | 2 | ✅ |
 | CON-14 | IPv6 readiness | Does target have AAAA, is it reachable over v6 from server | S | DNS + dial | Globalping | 3 | ✅ |
 | CON-15 | Latency matrix | Ping multiple targets in parallel, compare | S | `pro-bing` fan-out | Globalping | 3 | ✅ |
@@ -115,7 +115,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-08 | Certificate Transparency search | Certificates issued for a domain (subdomain discovery) | P | — | crt.sh JSON (`?output=json`) | 3 | ✅ |
 | TLS-09 | STARTTLS check | SMTP/IMAP/POP3/FTP/XMPP STARTTLS + cert | S | `net/smtp` & raw dialogs | — | 3 | ✅ |
 | TLS-10 | SSH server audit | Banner, host key fingerprints, KEX/cipher algorithms | S | `x/crypto/ssh` handshake (no auth) | — | 3 | ✅ |
-| TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ⬜ |
+| TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ✅ |
 
 ## 6. Email
 
@@ -128,8 +128,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | EM-05 | MTA-STS / TLS-RPT / BIMI | Fetch policy file + DNS, validate | S | custom | — | 3 | ✅ |
 | EM-06 | Blacklist (DNSBL) check | Query IP/domain against ~30 RBLs | S | DNS queries | — | 3 | ✅ |
 | EM-07 | Email header analyzer | Paste headers → hop timeline, delays, auth results | B | custom parser | — | 2 | ✅ |
-| EM-08 | DMARC aggregate report viewer | Upload XML/zip/gz report → tables | B | `fflate` + XML parser | — | 4 | ⬜ |
-| EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ⬜ |
+| EM-08 | DMARC aggregate report viewer | Upload XML/zip/gz report → tables | B | `fflate` + XML parser | — | 4 | ✅ |
+| EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ✅ |
 
 ## 7. Routing, BGP & Registry
 
@@ -144,8 +144,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | BGP-07 | RDAP lookup | Structured registration data (domain, IP, ASN) | P | `openrdap` client | rdap.org bootstrap / IANA bootstrap | 2 | ✅ |
 | BGP-08 | Domain expiry checker | Registration and expiry dates via RDAP | P | `openrdap` | RDAP | 2 | ✅ |
 | BGP-09 | PeeringDB lookup | Networks, IXPs, facilities, peering policy for ASN | P | — | PeeringDB API (optional key) | 3 | ✅ |
-| BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ⬜ |
-| BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ⬜ |
+| BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ✅ |
+| BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ✅ |
 | BGP-12 | Cloud / CDN IP range lookup | Which provider/region owns this IP (AWS, GCP, Azure, Cloudflare, Fastly…) | S | cached published JSON lists refreshed daily | — | 3 | ✅ |
 
 ## 8. Reputation & Geolocation
@@ -156,18 +156,18 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | REP-02 | IP reputation | Abuse score, reports | P | — | AbuseIPDB (key) | 3 | ✅ |
 | REP-03 | Passive exposure | Open ports, CPEs, known vulns (passive, no scanning) | P | — | Shodan InternetDB (keyless) | 3 | ✅ |
 | REP-04 | Tor exit node check | Is IP a current Tor exit | S | cached Tor bulk exit list | Tor Onionoo | 3 | ✅ |
-| REP-05 | URL / domain reputation | Malware/phishing verdicts | P | — | Google Safe Browsing (key), VirusTotal (key), urlscan.io (key) | 4 | ⬜ |
+| REP-05 | URL / domain reputation | Malware/phishing verdicts | P | — | Google Safe Browsing (key), VirusTotal (key), urlscan.io (key) | 4 | ✅ |
 
 ## 9. LAN (requires `lan` profile)
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| LAN-01 | Wake-on-LAN | Send magic packet to MAC (broadcast / directed) | S L | UDP broadcast | — | 4 | ⬜ |
-| LAN-02 | ARP scan / host discovery | Live hosts in local subnet with MAC + vendor | S L | `mdlayher/arp` (needs NET_RAW) or `arp-scan` | — | 4 | ⬜ |
-| LAN-03 | mDNS / Bonjour browser | Discover `_services._dns-sd._udp` | S L | `hashicorp/mdns` / `grandcat/zeroconf` | — | 4 | ⬜ |
-| LAN-04 | SSDP / UPnP discovery | Discover UPnP devices, read descriptions | S L | UDP multicast M-SEARCH | — | 4 | ⬜ |
-| LAN-05 | DHCP probe | Detect DHCP servers (rogue DHCP check) | S L | `insomniacslk/dhcp` (needs NET_RAW/ADMIN) | — | 4 | ⬜ |
-| LAN-06 | Gateway / NAT info | Default gateway, NAT-PMP/PCP/UPnP external IP | S L | custom | — | 4 | ⬜ |
+| LAN-01 | Wake-on-LAN | Send magic packet to MAC (broadcast / directed) | S L | UDP broadcast | — | 4 | ✅ |
+| LAN-02 | ARP scan / host discovery | Live hosts in local subnet with MAC + vendor | S L | `mdlayher/arp` (needs NET_RAW) or `arp-scan` | — | 4 | ✅ |
+| LAN-03 | mDNS / Bonjour browser | Discover `_services._dns-sd._udp` | S L | `hashicorp/mdns` / `grandcat/zeroconf` | — | 4 | ✅ |
+| LAN-04 | SSDP / UPnP discovery | Discover UPnP devices, read descriptions | S L | UDP multicast M-SEARCH | — | 4 | ✅ |
+| LAN-05 | DHCP probe | Detect DHCP servers (rogue DHCP check) | S L | `insomniacslk/dhcp` (AF_PACKET, NET_RAW) | — | 4 | ✅ |
+| LAN-06 | Gateway / NAT info | Default gateway, NAT-PMP/PCP/UPnP external IP | S L | custom | — | 4 | ✅ |
 
 ## 10. Calculators & Reference
 
@@ -184,7 +184,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-09 | Subnet cheat sheet | /0–/32 and common v6 prefix table | B | generated | — | 1 | ✅ |
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ✅ |
 | CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ✅ |
-| CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ⬜ |
+| CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ✅ |
 
 ## 11. Client Diagnostics (runs in the user's browser)
 

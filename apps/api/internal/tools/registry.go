@@ -90,3 +90,19 @@ func RequireSecret(d Deps, name string) (bool, Reason) {
 	}
 	return true, ""
 }
+
+// RequireLAN enables a tool only in LAN mode (NETTOOLS_LAN, host networking).
+func RequireLAN(d Deps) (bool, Reason) {
+	if !d.Config.Features.LAN {
+		return false, ReasonRequiresLANMode
+	}
+	return true, ""
+}
+
+// RequireFlag enables a tool only when an admin feature flag is on.
+func RequireFlag(on bool) (bool, Reason) {
+	if !on {
+		return false, ReasonDisabledByAdmin
+	}
+	return true, ""
+}

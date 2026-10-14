@@ -181,7 +181,9 @@ func (t *Tool) scan(ctx context.Context, s scanner, emit stream.Emit) Summary {
 		if v == tls.VersionTLS13 {
 			if st, ok := s.try(ctx, &tls.Config{MinVersion: v, MaxVersion: v}); ok {
 				name := tls.CipherSuiteName(st.CipherSuite)
+				mu.Lock() // cipher goroutines of earlier versions may still be writing
 				sum.Ciphers[tls.VersionName(v)] = []string{name}
+				mu.Unlock()
 				send(Probe{Kind: "cipher", Version: tls.VersionName(v), Name: name, ID: st.CipherSuite, Supported: true})
 			}
 			continue

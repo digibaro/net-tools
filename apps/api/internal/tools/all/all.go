@@ -21,7 +21,10 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/iperf"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ipv6ready"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/irr"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/lan"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/latmatrix"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
@@ -30,12 +33,14 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/pmtu"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/portscan"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/remote"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/reputation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/revocation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ripestat"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/snmp"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/speedtest"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/sshaudit"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
@@ -72,6 +77,7 @@ func Tools() []tools.Tool {
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
 		&email.MXTool{},
+		&email.RelayTool{},
 		&email.SPFTool{},
 		&email.DMARCTool{},
 		&email.DKIMTool{},
@@ -90,6 +96,7 @@ func Tools() []tools.Tool {
 		&ctsearch.Tool{},
 		&reputation.InternetDBTool{},
 		&reputation.AbuseIPDBTool{},
+		&reputation.URLTool{},
 		&torcheck.Tool{},
 		&hstspreload.Tool{},
 		&cloudranges.Tool{},
@@ -110,5 +117,15 @@ func Tools() []tools.Tool {
 		&pmtu.Tool{},
 		&ipv6ready.Tool{},
 		&speedtest.Tool{},
+		&portscan.Tool{},
+		&iperf.Tool{},
+		&snmp.Tool{},
+		&irr.Tool{},
+		&lan.WOLTool{},
+		&lan.ARPScanTool{},
+		&lan.MDNSTool{},
+		&lan.SSDPTool{},
+		&lan.DHCPTool{},
+		&lan.GatewayTool{},
 	}
 }

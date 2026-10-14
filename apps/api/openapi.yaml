@@ -1353,6 +1353,32 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Ipv6Readiness" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/speedtest/session:
+    post:
+      operationId: speedtestSession
+      summary: Start a speed test (one heavy request); returns a token for its ping/download/upload requests
+      description: "The token is valid for 45 s and 600 requests. Requests carrying it skip the per-request limit; the concurrency slot and per-request size caps still apply."
+      tags: [connectivity]
+      x-capability: net.speedtest
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [token, expiresInMs, maxRequests]
+                        properties:
+                          token: { type: string }
+                          expiresInMs: { type: integer }
+                          maxRequests: { type: integer }
+        default: { $ref: "#/components/responses/Error" }
   /v1/speedtest/download:
     get:
       operationId: speedtestDownload
@@ -1361,6 +1387,7 @@ paths:
       x-capability: net.speedtest
       parameters:
         - { name: bytes, in: query, schema: { type: integer, minimum: 1048576, maximum: 104857600, default: 26214400 } }
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       responses:
         "200":
           description: Raw bytes
@@ -1374,6 +1401,8 @@ paths:
       summary: Receives and discards up to 32 MiB for an upload measurement
       tags: [connectivity]
       x-capability: net.speedtest
+      parameters:
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       requestBody:
         content:
           application/octet-stream:
@@ -1402,12 +1431,271 @@ paths:
       summary: Minimal response for latency samples
       tags: [connectivity]
       x-capability: net.speedtest
+      parameters:
+        - { name: X-Speedtest-Token, in: header, description: "session token from POST /v1/speedtest/session; requests with a valid token are bounded by the session instead of RATE_LIMIT_RPM", schema: { type: string } }
       responses:
         "200":
           description: pong
           content:
             text/plain:
               schema: { type: string }
+  /v1/portscan/stream:
+    get:
+      operationId: portscanStream
+      summary: Bounded TCP connect scan of one host (SSE)
+      description: "Events: meta, port ({port, service})* for open ports, progress ({done, total}), done ({summary: PortscanSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.portscan
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: ports, in: query, description: "preset (top100, web, mail, db, remote) or list/ranges, at most PORTSCAN_MAX_PORTS", schema: { type: string, default: top100 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/wol:
+    post:
+      operationId: lanWol
+      summary: Send a Wake-on-LAN magic packet (LAN mode)
+      tags: [lan]
+      x-capability: lan.wol
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mac]
+              properties:
+                mac: { type: string }
+                broadcast: { type: string, description: "255.255.255.255 (default) or a broadcast address in private space" }
+                port: { type: integer, enum: [7, 9], default: 9 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [mac, destination, bytes]
+                        properties:
+                          mac: { type: string }
+                          destination: { type: string }
+                          bytes: { type: integer }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/lan/arpscan/stream:
+    get:
+      operationId: lanArpScanStream
+      summary: ARP host discovery on a directly connected subnet (LAN mode, SSE)
+      description: "Events: meta, host ({ip, mac})*, done ({summary: ArpScanSummary, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.arpscan
+      parameters:
+        - { name: cidr, in: query, required: true, description: "directly connected IPv4 subnet, /22 or smaller", schema: { type: string } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/mdns/stream:
+    get:
+      operationId: lanMdnsStream
+      summary: Browse mDNS / DNS-SD services on the local network (LAN mode, SSE)
+      description: "Events: meta, service (MdnsService)*, done ({summary: {types, services}, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.mdns
+      parameters:
+        - { name: service, in: query, description: "optional service type, e.g. _http._tcp", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 5 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/ssdp/stream:
+    get:
+      operationId: lanSsdpStream
+      summary: SSDP / UPnP device discovery on the local network (LAN mode, SSE)
+      description: "Events: meta, device (SsdpDevice)*, done ({summary: {devices}, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.ssdp
+      parameters:
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/dhcp:
+    get:
+      operationId: lanDhcp
+      summary: Detect DHCP servers with a DISCOVER (rogue DHCP check, LAN mode)
+      description: Broadcasts one DHCPDISCOVER and collects every OFFER; never sends REQUEST, so no lease is taken.
+      tags: [lan]
+      x-capability: lan.dhcp
+      parameters:
+        - { name: interface, in: query, description: "defaults to the interface of the default route", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DhcpResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/lan/gateway:
+    get:
+      operationId: lanGateway
+      summary: Default gateway, NAT-PMP / PCP and UPnP IGD external address (LAN mode)
+      tags: [lan]
+      x-capability: lan.gateway
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/GatewayResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/iperf/stream:
+    get:
+      operationId: iperfStream
+      summary: Bandwidth test against an iperf3 server (SSE)
+      description: "Events: meta, interval (IperfInterval)* once per second, done ({summary: IperfSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.iperf
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 5201 } }
+        - { name: proto, in: query, schema: { type: string, enum: [tcp, udp], default: tcp } }
+        - { name: duration, in: query, description: "seconds, at most IPERF_MAX_SECONDS", schema: { type: integer, minimum: 1, default: 10 } }
+        - { name: reverse, in: query, description: "server sends (download)", schema: { type: boolean, default: false } }
+        - { name: parallel, in: query, schema: { type: integer, minimum: 1, maximum: 4, default: 1 } }
+        - { name: bitrate, in: query, description: "UDP target in Mbit/s", schema: { type: integer, minimum: 1, maximum: 1000, default: 10 } }
+        - { $ref: "#/components/parameters/Family" }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/snmp:
+    post:
+      operationId: snmp
+      summary: SNMP v2c/v3 get or bounded walk
+      description: Credentials are sent in the body only and are never logged or echoed.
+      tags: [connectivity]
+      x-capability: net.snmp
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SnmpRequest" }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SnmpResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/relay:
+    get:
+      operationId: emailRelay
+      summary: Open relay test of a mail server (opt-in, no DATA sent)
+      tags: [email]
+      x-capability: email.relay
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, enum: [25, 587, 2525], default: 25 } }
+        - { name: domain, in: query, description: "the server's own mail domain (adds a spoofed-local-sender attempt)", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RelayResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/irr:
+    get:
+      operationId: bgpIrr
+      summary: Expand an AS-SET / route-set / ASN from the IRR (bgpq4)
+      tags: [bgp]
+      x-capability: bgp.irr
+      parameters:
+        - { name: set, in: query, required: true, description: "AS number, as-set or route-set (e.g. AS-EXAMPLE, AS65000:AS-CUSTOMERS)", schema: { type: string } }
+        - { name: mode, in: query, schema: { type: string, enum: [prefixes, asns], default: prefixes } }
+        - { name: family, in: query, schema: { type: string, enum: ["4", "6"], default: "4" } }
+        - { name: aggregate, in: query, schema: { type: boolean, default: true } }
+        - { name: sources, in: query, description: "comma-separated IRR sources (RPKI, RIPE, ARIN, APNIC, AFRINIC, LACNIC, RADB, NTTCOM, LEVEL3, ALTDB, IDNIC, JPIRR)", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/IrrResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/reputation/url:
+    get:
+      operationId: reputationUrl
+      summary: URL / domain reputation (Google Safe Browsing, VirusTotal, urlscan.io)
+      description: Passive lookups only; nothing is submitted for scanning. Providers without a configured key are reported as skipped.
+      tags: [reputation]
+      x-capability: rep.url
+      parameters:
+        - { name: url, in: query, required: true, description: "http(s) URL or domain name", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/UrlReputation" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3031,4 +3319,242 @@ components:
               reachable: { type: [boolean, "null"] }
               port: { type: integer }
               error: { type: string }
-
+    PortscanSummary:
+      type: object
+      required: [address, scanned, open, closed, filtered, complete]
+      properties:
+        address: { type: string }
+        scanned: { type: integer }
+        closed: { type: integer }
+        filtered: { type: integer }
+        complete: { type: boolean }
+        open:
+          type: array
+          items:
+            type: object
+            required: [port, service]
+            properties:
+              port: { type: integer }
+              service: { type: string }
+    ArpScanSummary:
+      type: object
+      required: [interface, subnet, scanned, hosts]
+      properties:
+        interface: { type: string }
+        subnet: { type: string }
+        scanned: { type: integer }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [ip, mac]
+            properties:
+              ip: { type: string }
+              mac: { type: string }
+    MdnsService:
+      type: object
+      required: [instance, type, host, port, addresses, txt, from]
+      properties:
+        instance: { type: string }
+        type: { type: string }
+        host: { type: string }
+        port: { type: integer }
+        addresses: { type: array, items: { type: string } }
+        txt: { type: array, items: { type: string } }
+        from: { type: string }
+    SsdpDevice:
+      type: object
+      required: [address, location, server, usn, types, friendlyName, manufacturer, model, deviceType, presentationUrl, error]
+      properties:
+        address: { type: string }
+        location: { type: string }
+        server: { type: string }
+        usn: { type: string }
+        types: { type: array, items: { type: string } }
+        friendlyName: { type: string }
+        manufacturer: { type: string }
+        model: { type: string }
+        deviceType: { type: string }
+        presentationUrl: { type: string }
+        error: { type: string }
+    DhcpResult:
+      type: object
+      required: [interface, mac, seconds, offers, servers]
+      properties:
+        interface: { type: string }
+        mac: { type: string }
+        seconds: { type: integer }
+        servers: { type: integer }
+        offers:
+          type: array
+          items:
+            type: object
+            required: [server, from, relay, offeredIp, subnetMask, routers, dns, domain, leaseSeconds]
+            properties:
+              server: { type: string }
+              from: { type: string }
+              relay: { type: string }
+              offeredIp: { type: string }
+              subnetMask: { type: string }
+              routers: { type: array, items: { type: string } }
+              dns: { type: array, items: { type: string } }
+              domain: { type: string }
+              leaseSeconds: { type: integer }
+    GatewayResult:
+      type: object
+      required: [interface, gateway, gatewayMac, addresses, natPmp, upnp, externalIp, doubleNat]
+      properties:
+        interface: { type: string }
+        gateway: { type: string }
+        gatewayMac: { type: string }
+        addresses: { type: array, items: { type: string } }
+        externalIp: { type: string }
+        doubleNat: { type: boolean }
+        natPmp:
+          type: object
+          required: [supported, externalIp, epoch, pcp, error]
+          properties:
+            supported: { type: boolean }
+            externalIp: { type: string }
+            epoch: { type: integer }
+            pcp: { type: boolean }
+            error: { type: string }
+        upnp:
+          type: object
+          required: [supported, externalIp, friendlyName, model, service, error]
+          properties:
+            supported: { type: boolean }
+            externalIp: { type: string }
+            friendlyName: { type: string }
+            model: { type: string }
+            service: { type: string }
+            error: { type: string }
+    IperfInterval:
+      type: object
+      required: [start, end, mbps, bytes]
+      properties:
+        start: { type: number }
+        end: { type: number }
+        mbps: { type: number }
+        bytes: { type: integer }
+        retransmits: { type: integer }
+        packets: { type: integer }
+    IperfSummary:
+      type: object
+      required: [protocol, reverse, seconds, sentMbps, receivedMbps, sentBytes, server, version]
+      properties:
+        protocol: { type: string }
+        reverse: { type: boolean }
+        seconds: { type: number }
+        sentMbps: { type: number }
+        receivedMbps: { type: number }
+        sentBytes: { type: integer }
+        retransmits: { type: integer }
+        jitterMs: { type: number }
+        lostPercent: { type: number }
+        lostPackets: { type: integer }
+        server: { type: string }
+        version: { type: string }
+    SnmpRequest:
+      type: object
+      required: [target, operation, oids]
+      properties:
+        target: { type: string }
+        port: { type: integer, minimum: 1, maximum: 65535, default: 161 }
+        version: { type: string, enum: ["2c", "3"], default: "2c" }
+        community: { type: string, maxLength: 64 }
+        v3:
+          type: object
+          required: [user, level]
+          properties:
+            user: { type: string }
+            level: { type: string, enum: [noAuthNoPriv, authNoPriv, authPriv] }
+            authProtocol: { type: string, enum: [MD5, SHA, SHA224, SHA256, SHA384, SHA512] }
+            authPassword: { type: string }
+            privProtocol: { type: string, enum: [DES, AES, AES192, AES256, AES192C, AES256C] }
+            privPassword: { type: string }
+            context: { type: string }
+        operation: { type: string, enum: [get, walk] }
+        oids: { type: array, items: { type: string }, minItems: 1, maxItems: 20 }
+        maxRows: { type: integer, minimum: 1, maximum: 1000, default: 200 }
+    SnmpResult:
+      type: object
+      required: [address, version, operation, vars, truncated]
+      properties:
+        address: { type: string }
+        version: { type: string }
+        operation: { type: string }
+        truncated: { type: boolean }
+        vars:
+          type: array
+          items:
+            type: object
+            required: [oid, type, value]
+            properties:
+              oid: { type: string }
+              type: { type: string }
+              value: { type: string }
+    RelayResult:
+      type: object
+      required: [address, banner, startTls, cases, open, error]
+      properties:
+        address: { type: string }
+        banner: { type: string }
+        startTls: { type: boolean }
+        open: { type: boolean }
+        error: { type: string }
+        cases:
+          type: array
+          items:
+            type: object
+            required: [name, mailFrom, rcptTo, mailReply, rcptReply, accepted]
+            properties:
+              name: { type: string }
+              mailFrom: { type: string }
+              rcptTo: { type: string }
+              mailReply: { type: string }
+              rcptReply: { type: string }
+              accepted: { type: boolean }
+    IrrResult:
+      type: object
+      required: [set, mode, aggregate, sources, prefixes, asns]
+      properties:
+        set: { type: string }
+        mode: { type: string, enum: [prefixes, asns] }
+        family: { type: integer }
+        aggregate: { type: boolean }
+        sources: { type: array, items: { type: string } }
+        asns: { type: array, items: { type: integer, format: int64 } }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, exact]
+            properties:
+              prefix: { type: string }
+              exact: { type: boolean }
+              greaterEqual: { type: integer }
+              lessEqual: { type: integer }
+    UrlReputation:
+      type: object
+      required: [input, url, domain, verdict, providers]
+      properties:
+        input: { type: string }
+        url: { type: string }
+        domain: { type: string }
+        verdict: { $ref: "#/components/schemas/UrlVerdict" }
+        providers:
+          type: array
+          items:
+            type: object
+            required: [provider, verdict, summary, details, link, error]
+            properties:
+              provider: { type: string }
+              verdict: { $ref: "#/components/schemas/UrlVerdict" }
+              summary: { type: string }
+              details: { type: object, additionalProperties: { type: string } }
+              link: { type: string }
+              error: { type: string }
+    UrlVerdict:
+      type: string
+      enum: [clean, suspicious, malicious, unknown, skipped, error]

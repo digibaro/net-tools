@@ -1,4 +1,6 @@
 .env
+*.swp
+*.swo
 node_modules/
 /data/*
 !/data/README.md

@@ -14,7 +14,10 @@ DoS amplifier. Everything here is **mandatory** for server-side tools.
 
 Set with `NETTOOLS_PROFILE=public|internal|homelab`; individual env vars override profile defaults.
 The speed test (CON-09, `SPEEDTEST_ENABLED`) serves bulk traffic (up to 100 MiB down / 32 MiB up per
-request) and is likewise off by default in the public profile.
+request) and is likewise off by default in the public profile. A test starts with
+`POST /speedtest/session`, which counts against `RATE_LIMIT_HEAVY_RPM`; its token (45 s, 600 requests,
+at most 1000 open sessions) lets the test's ping/download/upload requests bypass `RATE_LIMIT_RPM`,
+while the per-IP concurrency slot and the per-request size caps still apply.
 
 The server network info tool (CON-13, `SERVER_INFO_ENABLED`) reveals the server's interfaces and
 routes and is therefore off in `public` and on in the other profiles.
@@ -80,6 +83,8 @@ Fixed limits for tools that follow data from third parties (not configurable):
 | SPF (EM-02) | Walk stops after 10 DNS-querying terms (RFC 7208 permerror), include depth 12 |
 | DMARC (EM-03) | 10 report URIs per tag checked for external authorization |
 | MX / SMTP (EM-01) | 10 MX hosts, 64 KiB and 100 lines per reply read before STARTTLS, 15 s per probe |
+| IRR expansion (BGP-10) | `bgpq4` via execx against the fixed default IRR host (rr.ntt.net); sources from an allow-list; 30 s, 1 MiB output |
+| Open relay test (EM-09) | Opt-in (`OPEN_RELAY_TEST_ENABLED`, off by default); ports 25/587/2525; 5 MAIL/RCPT attempts with RFC 2606 addresses, each followed by RSET — DATA is never sent; same read caps as EM-01; 30 s total |
 | WHOIS (BGP-06) | 3 referrals, ports 43 and 4321 only, 256 KiB per answer, 10 s per server |
 | RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body |
 
@@ -89,8 +94,8 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
 ## 5. Container hardening
 
 `api`:
-- `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). `NET_ADMIN` only in `lan` profile if
-  DHCP probe is enabled.
+- `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). The `lan` profile needs nothing more:
+  ARP scan and the DHCP probe use AF_PACKET sockets, which `NET_RAW` covers; `NET_ADMIN` is never added.
 - Runs as root **inside the container** with only `NET_RAW`, `read_only: true`, `tmpfs: /tmp`,
   `security_opt: [no-new-privileges:true]`. Alternative (stricter, more work): non-root user +
   `setcap cap_net_raw+ep` on `mtr-packet`/`traceroute`/api binary and drop `no-new-privileges`

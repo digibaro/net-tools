@@ -31,6 +31,11 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
     preset: simulated slow 4G + 4× CPU). The remaining mobile gap is startup cost of Naive UI's
     runtime CSS-in-JS plus Vue/router/i18n init; closing it needs pre-rendering the shell or a
     lighter shell — pending a decision.
+  - Status (2026-10-14, 150+ tools): mobile had dropped to 70 home / 69 tool page. Home cards now
+    render in batches of 6 per idle period and the first navigation skips the forced scroll:
+    79 home / 74 tool page (TBT 820 → 510 ms). Splitting the locale would add only ~2 points.
+    The remaining gap is startup blocking (~500 ms at 4× CPU) and FCP 2.3 s; ≥ 90 needs
+    pre-rendering or a lighter shell — pending a decision.
 
 ## Phase 2 — Core server tools (5–8 days)
 
@@ -58,16 +63,20 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 4 — Advanced & LAN (4–6 days)
 
-- [ ] `lan` compose override + LAN-* tools; capability reason `requires_lan_mode` when off.
-- [ ] Port scanner (CON-06), iperf3 (CON-08) + `iperf` profile, SNMP (CON-12), bgpq4 (BGP-10),
+- [x] `lan` compose override + LAN-* tools; capability reason `requires_lan_mode` when off.
+- [x] Port scanner (CON-06), iperf3 (CON-08) + `iperf` profile, SNMP (CON-12), bgpq4 (BGP-10),
       AS-path visualizer, DMARC report viewer, open relay test, reputation (REP-05), CAL-12, TLS-11.
 - **Exit**: all rows ✅ or ⏸ with a reason.
 
 ## Phase 5 — Hardening & release
 
-- [ ] All-in-one image option; multi-arch release workflow pushing to GHCR with SBOM + provenance.
+- [x] Multi-arch release workflow pushing to GHCR with SBOM + provenance (`.github/workflows/release.yml`,
+      triggered by a `vX.Y.Z` tag; first release v0.4.0 after Phase 4).
+- [ ] All-in-one image option.
 - [ ] Docs: README with screenshots (light + dark), configuration reference generated from config struct.
+      (README rewritten for users in v0.4.0; screenshots and generated reference still open.)
 - [ ] Load test streaming endpoints (k6) to validate concurrency limits.
+- [ ] Metrics endpoint for `METRICS_ENABLED` (accepted, not implemented yet).
 - [ ] v1.0.0 tag.
 
 ## Working agreements for Claude Code
