@@ -1825,3 +1825,19 @@ tools:
       country: Country
       seen: First – last seen
       running: Running
+  hsts-preload:
+    title: HSTS preload status
+    description: Is a domain on the browsers' HSTS preload list, and does it meet the requirements to be added?
+    run: Check
+    viaParent: 'Covered by the preload entry for {parent}.'
+    meets: The domain meets the preload requirements.
+    fails: 'The domain does not meet {n} preload requirement(s):'
+    checkError: 'The requirements check failed: {error}'
+    source: Data from hstspreload.org, which checks the site itself for the requirements.
+    status:
+      preloaded: Preloaded
+      pending: Pending inclusion
+      unknown: Not preloaded
+      rejected: Rejected
+      removed: Removed
+      pending-removal: Pending removal

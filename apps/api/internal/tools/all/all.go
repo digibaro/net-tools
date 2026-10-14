@@ -14,6 +14,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnstrace"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/peeringdb"
@@ -75,5 +76,6 @@ func Tools() []tools.Tool {
 		&reputation.InternetDBTool{},
 		&reputation.AbuseIPDBTool{},
 		&torcheck.Tool{},
+		&hstspreload.Tool{},
 	}
 }

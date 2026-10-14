@@ -974,6 +974,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/TorCheck" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/hsts-preload:
+    get:
+      operationId: hstsPreload
+      summary: "HSTS preload list status and submission requirements (hstspreload.org)"
+      tags: [web]
+      x-capability: web.hsts
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/HstsPreload" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2106,3 +2127,21 @@ components:
               asName: { type: string }
               exit: { type: boolean }
               url: { type: string }
+    HstsIssue:
+      type: object
+      required: [code, summary, message]
+      properties:
+        code: { type: string }
+        summary: { type: string }
+        message: { type: string }
+    HstsPreload:
+      type: object
+      required: [domain, status, preloadedDomain, preloadable, errors, warnings, checkError]
+      properties:
+        domain: { type: string }
+        status: { type: string }
+        preloadedDomain: { type: string }
+        preloadable: { type: boolean }
+        errors: { type: array, items: { $ref: "#/components/schemas/HstsIssue" } }
+        warnings: { type: array, items: { $ref: "#/components/schemas/HstsIssue" } }
+        checkError: { type: string }
