@@ -51,7 +51,7 @@ func TestASNInfo(t *testing.T) {
 	rs := Client{Base: fakeRIPEstat(t)}
 	var out ASNInfo
 	env(t, &ASNTool{RS: rs}).Get("/api/v1/asn/AS13335").Must(t).Decode(t, &out)
-	if out.ASN != 13335 || out.Holder != "CLOUDFLARENET - Cloudflare, Inc." || !out.Announced || len(out.PrefixesV4) != 2 || out.PrefixesV6[0] != "2606:4700::/32" || out.Upstreams != 2 || out.Neighbours[0].ASN != 3356 {
+	if out.ASN != 13335 || out.Holder != "CLOUDFLARENET - Cloudflare, Inc." || !out.Announced || len(out.PrefixesV4) != 6 || out.PrefixesV6[0] != "2400:cb00:a301::/48" || out.Upstreams != 318 || out.Downstreams != 1032 || out.Neighbours[0].ASN != 1299 || out.Neighbours[0].Power < out.Neighbours[1].Power {
 		t.Errorf("out = %+v", out)
 	}
 	env(t, &ASNTool{RS: rs}).Get("/api/v1/asn/not-an-asn").ExpectError(t, "INVALID_INPUT")
@@ -65,7 +65,7 @@ func TestPrefixStatus(t *testing.T) {
 		t.Errorf("host route = %q", out.Prefix)
 	}
 	e.Get("/api/v1/prefix/status?prefix=1.1.1.0/24").Must(t).Decode(t, &out)
-	if !out.Announced || out.SeenBy != 348 || out.MOAS || out.Origins[0].ASN != 13335 || out.FirstSeen.Time != "2018-03-27T08:00:00" || out.LessSpecifics[0].Origin != 64500 {
+	if !out.Announced || out.SeenBy != 109 || out.TotalPeers != 111 || out.MOAS || out.Origins[0].ASN != 13335 || out.FirstSeen.Origin != 19855 || out.FirstSeen.Time != "2001-11-14T00:00:00" || len(out.LessSpecifics) != 0 {
 		t.Errorf("out = %+v", out)
 	}
 	e.Get("/api/v1/prefix/status?prefix=203.0.113.0/24").Must(t).Decode(t, &out)
@@ -97,7 +97,7 @@ func TestRPKI(t *testing.T) {
 func TestLookingGlass(t *testing.T) {
 	var out LookingGlass
 	env(t, &LookingGlassTool{RS: Client{Base: fakeRIPEstat(t)}}).Get("/api/v1/lookingglass?prefix=1.1.1.0/24").Must(t).Decode(t, &out)
-	if out.Collectors != 2 || out.Total != 3 || len(out.Origins) != 1 || out.Origins[0] != 13335 || out.Routes[1].ASPath != "3333 174 13335" || out.Routes[2].Location != "London, United Kingdom" {
+	if out.Collectors != 2 || out.Total != 4 || len(out.Origins) != 1 || out.Origins[0] != 13335 || out.Routes[1].ASPath != "8218 13335" || out.Routes[2].Location != "Amsterdam, NL" {
 		t.Errorf("out = %+v", out)
 	}
 }

@@ -1,1 +1,98 @@
-{"messages":[],"data_call_name":"looking-glass","data":{"rrcs":[{"rrc":"RRC00","location":"Amsterdam, Netherlands","peers":[{"asn_origin":"13335","as_path":"1103 13335","community":"1103:1000","largeCommunity":"","extendedCommunity":"","last_updated":"2026-10-10T12:00:00","prefix":"1.1.1.0/24","peer":"195.66.224.175","origin":"IGP","next_hop":"195.66.224.175","latest_time":"2026-10-14T08:00:00"},{"asn_origin":13335,"as_path":"3333 174 13335","community":"174:21000 174:22013","last_updated":"2026-10-11T12:00:00","prefix":"1.1.1.0/24","peer":"193.0.0.56","origin":"IGP","next_hop":"193.0.0.56","latest_time":"2026-10-14T08:00:00"}]},{"rrc":"RRC01","location":"London, United Kingdom","peers":[{"asn_origin":"13335","as_path":"8455 13335","community":"","last_updated":"2026-10-12T12:00:00","prefix":"1.1.1.0/24","peer":"2001:7f8:4::2107:1","origin":"IGP","next_hop":"2001:7f8:4::2107:1","latest_time":"2026-10-14T08:00:00"}]}],"query_time":"2026-10-14T08:00:00","latest_time":"2026-10-14T08:00:00","parameters":{"resource":"1.1.1.0/24","look_back_limit":86400}},"status":"ok","status_code":200}
+{
+ "messages": [],
+ "see_also": [],
+ "version": "2.1",
+ "data_call_name": "looking-glass",
+ "data_call_status": "supported",
+ "cached": false,
+ "query_id": "20261014140850-6529ab46-d6cd-4012-a05b-ca4041056e57",
+ "process_time": 164,
+ "server_id": "app178",
+ "build_version": "v0.11.23-2026.10.12",
+ "pipeline": "1460464",
+ "status": "ok",
+ "status_code": 200,
+ "time": "2026-10-14T14:08:50.470954",
+ "data": {
+  "rrcs": [
+   {
+    "rrc": "RRC01",
+    "location": "London, GB",
+    "scope": "LINX / LONAP",
+    "peers": [
+     {
+      "asn_origin": "13335",
+      "as_path": "15692 13335",
+      "community": "15692:1000 15692:1100",
+      "largeCommunity": "",
+      "extendedCommunity": "",
+      "last_updated": "2026-09-23T05:52:18.610000",
+      "prefix": "1.1.1.0/24",
+      "peer": "5.57.80.113",
+      "origin": "IGP",
+      "next_hop": "5.57.81.75",
+      "latest_time": "2026-10-14T14:08:47.510000",
+      "community_info": {}
+     },
+     {
+      "asn_origin": "13335",
+      "as_path": "8218 13335",
+      "community": "8218:102 8218:20000 8218:20110",
+      "largeCommunity": "",
+      "extendedCommunity": "",
+      "last_updated": "2026-10-06T23:57:49.860000",
+      "prefix": "1.1.1.0/24",
+      "peer": "5.57.80.210",
+      "origin": "IGP",
+      "next_hop": "5.57.80.210",
+      "latest_time": "2026-10-14T14:08:47.510000",
+      "community_info": {}
+     }
+    ]
+   },
+   {
+    "rrc": "RRC00",
+    "location": "Amsterdam, NL",
+    "scope": "RIPE-NCC Multihop",
+    "peers": [
+     {
+      "asn_origin": "13335",
+      "as_path": "59919 13335",
+      "community": "13335:10039 59919:65002",
+      "largeCommunity": "",
+      "extendedCommunity": "",
+      "last_updated": "2026-09-14T00:27:33.900000",
+      "prefix": "1.1.1.0/24",
+      "peer": "5.178.95.254",
+      "origin": "IGP",
+      "next_hop": "5.178.95.254",
+      "latest_time": "2026-10-14T14:08:46.540000",
+      "community_info": {}
+     },
+     {
+      "asn_origin": "13335",
+      "as_path": "202365 13335",
+      "community": "",
+      "largeCommunity": "",
+      "extendedCommunity": "",
+      "last_updated": "2026-10-09T04:01:25.090000",
+      "prefix": "1.1.1.0/24",
+      "peer": "5.255.90.109",
+      "origin": "IGP",
+      "next_hop": "5.255.90.109",
+      "latest_time": "2026-10-14T14:08:47.540000",
+      "peer_location": "Dronten, NL",
+      "community_info": {}
+     }
+    ]
+   }
+  ],
+  "query_time": "2026-10-14T14:08:50",
+  "latest_time": "2026-10-14T14:08:43",
+  "parameters": {
+   "resource": "1.1.1.0/24",
+   "look_back_limit": 86400,
+   "cache": null
+  }
+ }
+}
