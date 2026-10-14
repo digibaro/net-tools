@@ -1,5 +1,6 @@
 import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
+import { tool as arpScan } from './arp-scan'
 import { tool as asnInfo } from './asn-info'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as bdpCalculator } from './bdp-calculator'
@@ -119,7 +120,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
-  { id: 'lan', components: [wakeOnLan] },
+  { id: 'lan', components: [wakeOnLan, arpScan] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]

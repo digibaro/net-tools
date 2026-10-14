@@ -2294,3 +2294,16 @@ tools:
     invalidBroadcast: Use 255.255.255.255 or a broadcast address in a private network, such as 192.168.1.255.
     note: The packet is sent from the NetTools server, which must be on the same network (LAN mode) as the device.
     sent: 'Magic packet for {mac} sent to {to}.'
+  arp-scan:
+    title: ARP scan (LAN devices)
+    description: Find the devices on a local network with their MAC addresses and vendors, using ARP from the NetTools server.
+    subnet: Local subnet
+    invalid: Enter an IPv4 subnet of /22 or smaller, such as 192.168.1.0/24.
+    run: Scan
+    note: Only subnets directly connected to the NetTools server can be scanned (LAN mode). Devices that ignore ARP do not show up.
+    found: 'Devices ({n})'
+    summary: '{n} of {scanned} addresses answered on {subnet} via {iface}.'
+    columns:
+      ip: IP address
+      mac: MAC address
+      vendor: Vendor

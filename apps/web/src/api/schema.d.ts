@@ -1215,6 +1215,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/arpscan/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * ARP host discovery on a directly connected subnet (LAN mode, SSE)
+         * @description Events: meta, host ({ip, mac})*, done ({summary: ArpScanSummary, durationMs}) or error.
+         */
+        get: operations["lanArpScanStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2500,6 +2520,15 @@ export interface components {
             open: {
                 port: number;
                 service: string;
+            }[];
+        };
+        ArpScanSummary: {
+            interface: string;
+            subnet: string;
+            scanned: number;
+            hosts: {
+                ip: string;
+                mac: string;
             }[];
         };
     };
@@ -4334,6 +4363,29 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    lanArpScanStream: {
+        parameters: {
+            query: {
+                /** @description directly connected IPv4 subnet, /22 or smaller */
+                cidr: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }

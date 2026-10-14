@@ -1460,6 +1460,21 @@ paths:
                           destination: { type: string }
                           bytes: { type: integer }
         default: { $ref: "#/components/responses/Error" }
+  /v1/lan/arpscan/stream:
+    get:
+      operationId: lanArpScanStream
+      summary: ARP host discovery on a directly connected subnet (LAN mode, SSE)
+      description: "Events: meta, host ({ip, mac})*, done ({summary: ArpScanSummary, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.arpscan
+      parameters:
+        - { name: cidr, in: query, required: true, description: "directly connected IPv4 subnet, /22 or smaller", schema: { type: string } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -3100,4 +3115,18 @@ components:
             properties:
               port: { type: integer }
               service: { type: string }
-
+    ArpScanSummary:
+      type: object
+      required: [interface, subnet, scanned, hosts]
+      properties:
+        interface: { type: string }
+        subnet: { type: string }
+        scanned: { type: integer }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [ip, mac]
+            properties:
+              ip: { type: string }
+              mac: { type: string }

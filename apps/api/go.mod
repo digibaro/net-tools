@@ -20,6 +20,11 @@ require (
 	github.com/alecthomas/kingpin/v2 v2.4.0 // indirect
 	github.com/alecthomas/units v0.0.0-20240927000941-0f3dac36c52b // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/josharian/native v1.1.0 // indirect
+	github.com/mdlayher/arp v0.0.0-20260923112748-e9ee4960293e // indirect
+	github.com/mdlayher/ethernet v0.0.0-20220221185849-529eae5b6118 // indirect
+	github.com/mdlayher/packet v1.1.2 // indirect
+	github.com/mdlayher/socket v0.4.1 // indirect
 	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/xhit/go-str2duration/v2 v2.1.0 // indirect
 	go4.org/netipx v0.0.0-20231129151722-fdeea329fbba // indirect

@@ -114,5 +114,6 @@ func Tools() []tools.Tool {
 		&speedtest.Tool{},
 		&portscan.Tool{},
 		&lan.WOLTool{},
+		&lan.ARPScanTool{},
 	}
 }
