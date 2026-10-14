@@ -9,6 +9,7 @@ import (
 	"net/netip"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
@@ -53,5 +54,24 @@ func TestWOL(t *testing.T) {
 	}
 	if ok, reason := (&WOLTool{}).Enabled(tools.Deps{Config: tooltest.Config(t, nil)}); ok || reason != tools.ReasonRequiresLANMode {
 		t.Errorf("without LAN mode: %v %s", ok, reason)
+	}
+}
+
+// The real sender on loopback: catches socket-option mistakes the fake sender hides.
+func TestUDPBroadcastSocket(t *testing.T) {
+	pc, err := net.ListenPacket("udp4", "127.0.0.1:0")
+	if err != nil {
+		t.Skip(err)
+	}
+	defer pc.Close()
+	dst := pc.LocalAddr().(*net.UDPAddr).AddrPort() //nolint:forcetypeassert // udp
+	mac, _ := net.ParseMAC("02:00:5e:00:00:01")
+	if err := udpBroadcast(context.Background(), dst, MagicPacket(mac)); err != nil {
+		t.Fatal(err)
+	}
+	buf := make([]byte, 200)
+	_ = pc.SetReadDeadline(time.Now().Add(2 * time.Second))
+	if n, _, err := pc.ReadFrom(buf); err != nil || n != 102 {
+		t.Errorf("received %d bytes, %v", n, err)
 	}
 }

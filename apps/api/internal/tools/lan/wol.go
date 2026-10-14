@@ -43,7 +43,10 @@ func udpBroadcast(ctx context.Context, dst netip.AddrPort, payload []byte) error
 		}); err != nil {
 			return err //nolint:wrapcheck // socket setup
 		}
-		return fmt.Errorf("SO_BROADCAST: %w", serr)
+		if serr != nil {
+			return fmt.Errorf("SO_BROADCAST: %w", serr)
+		}
+		return nil
 	}}
 	pc, err := lc.ListenPacket(ctx, "udp4", ":0")
 	if err != nil {

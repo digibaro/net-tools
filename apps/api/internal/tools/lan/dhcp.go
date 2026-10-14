@@ -23,8 +23,11 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
 )
 
-// MaxOffers bounds what one probe collects.
-const MaxOffers = 20
+// MaxOffers bounds what one probe collects; resendEvery paces DISCOVER retransmits.
+const (
+	MaxOffers   = 20
+	resendEvery = 1500 * time.Millisecond
+)
 
 // DHCPOpener opens a raw DHCP client socket (UDP 68) on an interface and returns its MAC.
 type DHCPOpener func(iface string) (net.PacketConn, net.HardwareAddr, error)
@@ -137,11 +140,17 @@ func probe(ctx context.Context, conn net.PacketConn, mac net.HardwareAddr, dur t
 	if _, err := conn.WriteTo(disc.ToBytes(), dst); err != nil {
 		return res, fmt.Errorf("send: %w", err)
 	}
+	// Like real clients, retransmit (same xid) while listening: one broadcast is easily lost.
+	nextSend := time.Now().Add(resendEvery)
 	seen := map[string]bool{}
 	servers := map[string]bool{}
 	deadline := time.Now().Add(dur)
 	buf := make([]byte, 1500)
 	for time.Now().Before(deadline) && ctx.Err() == nil && len(res.Offers) < MaxOffers {
+		if time.Now().After(nextSend) {
+			_, _ = conn.WriteTo(disc.ToBytes(), dst)
+			nextSend = time.Now().Add(resendEvery)
+		}
 		_ = conn.SetReadDeadline(time.Now().Add(250 * time.Millisecond))
 		n, from, err := conn.ReadFrom(buf)
 		if err != nil {

@@ -33,6 +33,7 @@ func TestParseRoutesAndARP(t *testing.T) {
 
 type fakeDHCP struct {
 	mu      sync.Mutex
+	drop    int // ignore this many DISCOVERs first (lossy network)
 	pending [][]byte
 	from    []string
 }
@@ -61,6 +62,10 @@ func (f *fakeDHCP) WriteTo(p []byte, addr net.Addr) (int, error) {
 	}
 	f.mu.Lock()
 	defer f.mu.Unlock()
+	if f.drop > 0 {
+		f.drop--
+		return len(p), nil
+	}
 	f.pending = [][]byte{
 		offer(req, "192.168.1.1", "192.168.1.50", false),
 		offer(req, "192.168.1.1", "192.168.1.50", false), // duplicate
@@ -98,12 +103,12 @@ func TestDHCP(t *testing.T) {
 				return nil, nil, errors.New("no such interface")
 			}
 			mac, _ := net.ParseMAC("02:00:00:00:00:01")
-			return &fakeDHCP{}, mac, nil
+			return &fakeDHCP{drop: 1}, mac, nil
 		},
 	}
 	env := tooltest.New(t, tool, tooltest.Options{Env: map[string]string{"NETTOOLS_LAN": "true"}})
 	var res DHCPResult
-	env.Get("/api/v1/lan/dhcp?seconds=1").Must(t).Decode(t, &res)
+	env.Get("/api/v1/lan/dhcp?seconds=3").Must(t).Decode(t, &res)
 	if opened != "eth0" || res.Interface != "eth0" || res.Servers != 2 || len(res.Offers) != 2 {
 		t.Fatalf("res = %+v", res)
 	}

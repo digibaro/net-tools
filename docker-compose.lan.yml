@@ -11,9 +11,12 @@ services:
     cap_add: [NET_RAW]            # ARP, DHCP probe (AF_PACKET) and ICMP need nothing more
     environment:
       NETTOOLS_LAN: "true"
-      API_LISTEN: 127.0.0.1:8081  # host loopback; web reaches it via host-gateway
+      API_LISTEN: 127.0.0.1:8081  # host loopback only: never reachable from the LAN
   web:
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # Host networking too, so nginx can proxy to the api on host loopback (a bridged container
+    # cannot reach 127.0.0.1 of the host). nginx listens on host port 8080; NETTOOLS_PORT does
+    # not apply in LAN mode.
+    network_mode: host
+    ports: !reset []
     environment:
-      API_UPSTREAM: http://host.docker.internal:8081
+      API_UPSTREAM: http://127.0.0.1:8081
