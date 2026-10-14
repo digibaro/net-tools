@@ -146,7 +146,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | BGP-09 | PeeringDB lookup | Networks, IXPs, facilities, peering policy for ASN | P | — | PeeringDB API (optional key) | 3 | ✅ |
 | BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ⬜ |
 | BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ⬜ |
-| BGP-12 | Cloud / CDN IP range lookup | Which provider/region owns this IP (AWS, GCP, Azure, Cloudflare, Fastly…) | S | cached published JSON lists refreshed daily | — | 3 | ⬜ |
+| BGP-12 | Cloud / CDN IP range lookup | Which provider/region owns this IP (AWS, GCP, Azure, Cloudflare, Fastly…) | S | cached published JSON lists refreshed daily | — | 3 | ✅ |
 
 ## 8. Reputation & Geolocation
 

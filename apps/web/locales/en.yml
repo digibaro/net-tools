@@ -1841,3 +1841,16 @@ tools:
       rejected: Rejected
       removed: Removed
       pending-removal: Pending removal
+  cloud-ip-lookup:
+    title: Cloud / CDN IP lookup
+    description: Find which cloud or CDN provider, service and region an IP address belongs to, from the providers' published range lists.
+    found: '{ip} belongs to {provider}.'
+    none: '{ip} is not in any of the published cloud or CDN ranges.'
+    matches: Matching ranges (most specific first)
+    sources: 'Lists checked: {list}.'
+    failed: 'Unavailable right now: {list}.'
+    columns:
+      provider: Provider
+      prefix: Range
+      service: Service
+      region: Region

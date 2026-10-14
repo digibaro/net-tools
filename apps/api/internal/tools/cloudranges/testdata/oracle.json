@@ -1,0 +1,93 @@
+{
+ "last_updated_timestamp": "2026-08-25T08:06:24.590745",
+ "regions": [
+  {
+   "region": "mx-monterrey-1",
+   "cidrs": [
+    {
+     "cidr": "40.233.0.0/19",
+     "tags": [
+      "OCI"
+     ]
+    },
+    {
+     "cidr": "139.177.96.0/21",
+     "tags": [
+      "OCI"
+     ]
+    }
+   ],
+   "ipv6_cidrs": [
+    {
+     "cidr": "2603:c028:8000::/35",
+     "tags": [
+      "OCI"
+     ]
+    },
+    {
+     "cidr": "2603:c002:2400::/40",
+     "tags": [
+      "OSN"
+     ]
+    },
+    {
+     "cidr": "2603:c002:a200::/40",
+     "tags": [
+      "OSN",
+      "OBJECT_STORAGE"
+     ]
+    },
+    {
+     "cidr": "2603:c015:2000::/36",
+     "tags": [
+      "OSN"
+     ]
+    }
+   ]
+  },
+  {
+   "region": "ca-toronto-1",
+   "cidrs": [
+    {
+     "cidr": "40.233.64.0/18",
+     "tags": [
+      "OCI"
+     ]
+    },
+    {
+     "cidr": "129.153.48.0/20",
+     "tags": [
+      "OCI"
+     ]
+    }
+   ],
+   "ipv6_cidrs": [
+    {
+     "cidr": "2603:c021::/35",
+     "tags": [
+      "OCI"
+     ]
+    },
+    {
+     "cidr": "2603:c002:400::/40",
+     "tags": [
+      "OSN"
+     ]
+    },
+    {
+     "cidr": "2603:c002:8400::/40",
+     "tags": [
+      "OSN",
+      "OBJECT_STORAGE"
+     ]
+    },
+    {
+     "cidr": "2603:c010:8000::/36",
+     "tags": [
+      "OSN"
+     ]
+    }
+   ]
+  }
+ ]
+}

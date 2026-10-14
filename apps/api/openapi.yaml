@@ -995,6 +995,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/HstsPreload" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/cloud-ranges:
+    get:
+      operationId: cloudRanges
+      summary: "Cloud/CDN provider, service and region publishing a range that contains the IP"
+      tags: [bgp]
+      x-capability: bgp.cloudranges
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CloudRanges" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2145,3 +2166,28 @@ components:
         errors: { type: array, items: { $ref: "#/components/schemas/HstsIssue" } }
         warnings: { type: array, items: { $ref: "#/components/schemas/HstsIssue" } }
         checkError: { type: string }
+    CloudRanges:
+      type: object
+      required: [ip, provider, matches, sources]
+      properties:
+        ip: { type: string }
+        provider: { type: string }
+        matches:
+          type: array
+          items:
+            type: object
+            required: [provider, prefix, service, region]
+            properties:
+              provider: { type: string }
+              prefix: { type: string }
+              service: { type: string }
+              region: { type: string }
+        sources:
+          type: array
+          items:
+            type: object
+            required: [name, ranges, error]
+            properties:
+              name: { type: string }
+              ranges: { type: integer }
+              error: { type: string }

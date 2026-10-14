@@ -4,6 +4,7 @@ package all
 import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/asnlookup"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/cloudranges"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ctsearch"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnscaa"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsconsistency"
@@ -77,5 +78,6 @@ func Tools() []tools.Tool {
 		&reputation.AbuseIPDBTool{},
 		&torcheck.Tool{},
 		&hstspreload.Tool{},
+		&cloudranges.Tool{},
 	}
 }
