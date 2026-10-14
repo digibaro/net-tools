@@ -16,7 +16,9 @@ server {
     include /etc/nginx/snippets/security-headers.conf;
 
     gzip on;
-    gzip_types text/css application/javascript application/json image/svg+xml;
+    gzip_static on;               # precompressed *.gz from the image build
+    gzip_vary on;
+    gzip_types text/css application/javascript application/json image/svg+xml application/manifest+json;
 
     # ── API (JSON + SSE) ─────────────────────────────────────────────
     location /api/ {
@@ -41,6 +43,12 @@ server {
     }
 
     location = /index.html {
+        include /etc/nginx/snippets/security-headers.conf;
+        add_header Cache-Control "no-cache";
+    }
+
+    # Service worker and manifest must be revalidated so updates roll out.
+    location ~ ^/(sw\.js|registerSW\.js|manifest\.webmanifest)$ {
         include /etc/nginx/snippets/security-headers.conf;
         add_header Cache-Control "no-cache";
     }

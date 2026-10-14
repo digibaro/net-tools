@@ -4,11 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#ffffff">
+    <meta name="description" content="Self-hosted network tools and troubleshooting utilities">
+    <!-- Anti-FOUC: apply the stored theme before CSS loads. Its sha256 is added to the CSP at build time. -->
+    <script>(function () { try { var m = localStorage.getItem('nettools:color-mode') || 'auto'; var d = m === 'dark' || (m !== 'light' && matchMedia('(prefers-color-scheme: dark)').matches); var e = document.documentElement; if (d) e.classList.add('dark'); e.style.colorScheme = d ? 'dark' : 'light'; document.querySelector('meta[name="theme-color"]').setAttribute('content', d ? '#18181c' : '#ffffff') } catch (_) {} })()</script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
     <title>NetTools</title>
+    <style>
+      html { background: #ffffff; color: #1f2225 } html.dark { background: #101014; color: #e6e6e8 }
+      /* App-shell placeholder painted before the JS bundle runs; Vue replaces it on mount. */
+      .nt-boot { font: 600 18px/1 system-ui, sans-serif; display: flex; align-items: center; gap: 10px; padding: 18px 20px; border-bottom: 1px solid rgba(128, 128, 128, 0.25) }
+      .nt-boot-text { font: 14px/1.5 system-ui, sans-serif; opacity: 0.7; padding: 20px }
+    </style>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app"><div class="nt-boot"><img src="/favicon.svg" alt="" width="28" height="28">NetTools</div><p class="nt-boot-text">Network tools and troubleshooting utilities</p></div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

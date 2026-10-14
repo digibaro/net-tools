@@ -1,0 +1,11 @@
+package {{pkg}}
+
+import (
+	"net/http"
+
+	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
+)
+
+func (Tool) handle(w http.ResponseWriter, r *http.Request) {
+	httpapi.Error(w, r, httpapi.NewError(httpapi.CodeInternal, "not implemented"))
+}

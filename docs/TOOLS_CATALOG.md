@@ -22,24 +22,24 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| IP-01 | What is my IP | Shows client public IPv4/IPv6 as seen by server + by outside | H | `api` echoes `X-Forwarded-For`/remote addr | ipify (`api.ipify.org`, `api6.ipify.org`) *(browser-direct OK)* | 1 | ⬜ |
-| IP-02 | IPv4 subnet calculator | Network, broadcast, mask, wildcard, host range, host count, class, private/public | B | `ipaddr.js` | — | 1 | ⬜ |
-| IP-03 | IPv6 subnet calculator | Prefix, range, number of /64s, compressed & expanded forms | B | `ip-address` + BigInt | — | 1 | ⬜ |
-| IP-04 | CIDR ↔ IP range | Convert CIDR to first/last IP and an arbitrary range to minimal CIDR list | B | custom | — | 1 | ⬜ |
-| IP-05 | CIDR aggregator / summarizer | Merge/deduplicate a list of prefixes (v4+v6) | B | custom (sorted merge) | — | 1 | ⬜ |
+| IP-01 | What is my IP | Shows client public IPv4/IPv6 as seen by server + by outside | H | `api` echoes `X-Forwarded-For`/remote addr | ipify (`api.ipify.org`, `api6.ipify.org`) *(browser-direct OK)* | 1 | ✅ |
+| IP-02 | IPv4 subnet calculator | Network, broadcast, mask, wildcard, host range, host count, class, private/public | B | `ipaddr.js` | — | 1 | ✅ |
+| IP-03 | IPv6 subnet calculator | Prefix, range, number of /64s, compressed & expanded forms | B | `ip-address` + BigInt | — | 1 | ✅ |
+| IP-04 | CIDR ↔ IP range | Convert CIDR to first/last IP and an arbitrary range to minimal CIDR list | B | custom | — | 1 | ✅ |
+| IP-05 | CIDR aggregator / summarizer | Merge/deduplicate a list of prefixes (v4+v6) | B | custom (sorted merge) | — | 1 | ✅ |
 | IP-06 | VLSM planner | Split a block into subnets by required host counts | B | custom | — | 2 | ⬜ |
-| IP-07 | Subnet splitter | Divide a prefix into N equal subnets / by new prefix length | B | custom | — | 1 | ⬜ |
-| IP-08 | IP in subnet checker | Is IP X inside any of the prefixes in a list? | B | `ipaddr.js` | — | 1 | ⬜ |
-| IP-09 | IPv4 format converter | Dotted ↔ decimal ↔ hex ↔ binary ↔ octal | B | custom | — | 1 | ⬜ |
-| IP-10 | IPv6 expand / compress | RFC 5952 canonical form, full form, reverse nibble | B | `ip-address` | — | 1 | ⬜ |
-| IP-11 | IPv6 ULA generator | RFC 4193 random /48 Unique Local prefix | B | WebCrypto | — | 1 | ⬜ |
+| IP-07 | Subnet splitter | Divide a prefix into N equal subnets / by new prefix length | B | custom | — | 1 | ✅ |
+| IP-08 | IP in subnet checker | Is IP X inside any of the prefixes in a list? | B | `ipaddr.js` | — | 1 | ✅ |
+| IP-09 | IPv4 format converter | Dotted ↔ decimal ↔ hex ↔ binary ↔ octal | B | custom | — | 1 | ✅ |
+| IP-10 | IPv6 expand / compress | RFC 5952 canonical form, full form, reverse nibble | B | `ip-address` | — | 1 | ✅ |
+| IP-11 | IPv6 ULA generator | RFC 4193 random /48 Unique Local prefix | B | WebCrypto | — | 1 | ✅ |
 | IP-12 | IPv4-mapped / 6to4 / NAT64 | Embed/extract IPv4 in IPv6 (::ffff:, 2002::, 64:ff9b::/96) | B | custom | — | 2 | ⬜ |
-| IP-13 | Special-purpose / bogon check | Identify RFC 1918, CGNAT, loopback, doc, multicast, reserved ranges | B | IANA special registry (bundled JSON) | — | 1 | ⬜ |
-| IP-14 | Wildcard / ACL mask calculator | Subnet mask ↔ wildcard (Cisco ACL) | B | custom | — | 1 | ⬜ |
-| IP-15 | Reverse DNS name builder | IP → `in-addr.arpa` / `ip6.arpa` name | B | custom | — | 1 | ⬜ |
-| IP-16 | MAC address lookup (OUI) | Vendor from MAC prefix | B | `oui-data` bundled | macvendors.com API | 1 | ⬜ |
-| IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ⬜ |
-| IP-18 | EUI-64 / link-local from MAC | Build IPv6 interface ID / fe80:: address from MAC | B | custom | — | 1 | ⬜ |
+| IP-13 | Special-purpose / bogon check | Identify RFC 1918, CGNAT, loopback, doc, multicast, reserved ranges | B | IANA special registry (bundled JSON) | — | 1 | ✅ |
+| IP-14 | Wildcard / ACL mask calculator | Subnet mask ↔ wildcard (Cisco ACL) | B | custom | — | 1 | ✅ |
+| IP-15 | Reverse DNS name builder | IP → `in-addr.arpa` / `ip6.arpa` name | B | custom | — | 1 | ✅ |
+| IP-16 | MAC address lookup (OUI) | Vendor from MAC prefix | B | `oui-data` bundled | macvendors.com API | 1 | ✅ |
+| IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ✅ |
+| IP-18 | EUI-64 / link-local from MAC | Build IPv6 interface ID / fe80:: address from MAC | B | custom | — | 1 | ✅ |
 | IP-19 | Random IP generator | Random IPs within a prefix (test data) | B | custom | — | 2 | ⬜ |
 
 ## 2. DNS
@@ -58,8 +58,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | DNS-10 | CAA checker | CAA records with tree climbing per RFC 8659 | S | `miekg/dns` | — | 2 | ⬜ |
 | DNS-11 | Wildcard detection | Detect wildcard records via random labels | S | `miekg/dns` | — | 3 | ⬜ |
 | DNS-12 | Zone file / record builder | Generate BIND-style records (SRV, TXT splitting, SPF) | B | custom | — | 2 | ⬜ |
-| DNS-13 | Punycode / IDN converter | Unicode domain ↔ `xn--` | B | `punycode` / `URL` | — | 1 | ⬜ |
-| DNS-14 | Domain parser | Split subdomain / registrable domain / public suffix | B | `tldts` | — | 1 | ⬜ |
+| DNS-13 | Punycode / IDN converter | Unicode domain ↔ `xn--` | B | `punycode` / `URL` | — | 1 | ✅ |
+| DNS-14 | Domain parser | Split subdomain / registrable domain / public suffix | B | `tldts` | — | 1 | ✅ |
 
 ## 3. Connectivity & Diagnostics
 
@@ -96,9 +96,9 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-09 | robots.txt / sitemap / security.txt | Fetch & parse well-known files | S | `net/http` | — | 3 | ⬜ |
 | WEB-10 | HSTS preload status | Is domain on the Chromium preload list | P | — | hstspreload.org API | 3 | ⬜ |
 | WEB-11 | WebSocket tester | Connect, send/receive messages, close codes | B | native `WebSocket` | — | 3 | ⬜ |
-| WEB-12 | URL parser / encoder | Components, query params, encode/decode | B | `URL` | — | 1 | ⬜ |
-| WEB-13 | User-agent parser | Browser/OS/device from UA string | B | `ua-parser-js` | — | 1 | ⬜ |
-| WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ⬜ |
+| WEB-12 | URL parser / encoder | Components, query params, encode/decode | B | `URL` | — | 1 | ✅ |
+| WEB-13 | User-agent parser | Browser/OS/device from UA string | B | `ua-parser-js` | — | 1 | ✅ |
+| WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ✅ |
 | WEB-15 | curl command builder / parser | Build curl from form; parse curl into fields | B | custom | — | 3 | ⬜ |
 
 ## 5. TLS & Certificates
@@ -109,7 +109,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-02 | Certificate expiry checker | Days left for one or many hosts | S | `crypto/tls` | — | 2 | ⬜ |
 | TLS-03 | TLS protocol & cipher scan | Supported TLS 1.0–1.3, cipher suites, weak configs | S | Go handshake loop (or `testssl.sh` opt-in image) | SSL Labs API v4 (registration required) | 3 | ⬜ |
 | TLS-04 | OCSP / CRL status | Revocation status of leaf cert | S | `x/crypto/ocsp` | — | 3 | ⬜ |
-| TLS-05 | Certificate decoder | Paste PEM/DER → human-readable fields | B | `@peculiar/x509` | — | 1 | ⬜ |
+| TLS-05 | Certificate decoder | Paste PEM/DER → human-readable fields | B | `@peculiar/x509` | — | 1 | ✅ |
 | TLS-06 | CSR decoder / generator | Decode CSR; generate key+CSR in browser | B | `@peculiar/x509` + WebCrypto | — | 2 | ⬜ |
 | TLS-07 | Cert / key matcher | Check that a cert, key and CSR belong together | B | WebCrypto | — | 2 | ⬜ |
 | TLS-08 | Certificate Transparency search | Certificates issued for a domain (subdomain discovery) | P | — | crt.sh JSON (`?output=json`) | 3 | ⬜ |
@@ -173,17 +173,17 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
-| CAL-01 | Bandwidth / transfer-time calculator | Size ÷ speed, with protocol overhead | B | custom | — | 1 | ⬜ |
-| CAL-02 | Bits/bytes unit converter | bit, B, Kb/KiB, Mbps ↔ MB/s, … | B | custom | — | 1 | ⬜ |
-| CAL-03 | BDP / TCP window calculator | Bandwidth-delay product, required window, max throughput for given window+RTT | B | custom | — | 1 | ⬜ |
-| CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ⬜ |
+| CAL-01 | Bandwidth / transfer-time calculator | Size ÷ speed, with protocol overhead | B | custom | — | 1 | ✅ |
+| CAL-02 | Bits/bytes unit converter | bit, B, Kb/KiB, Mbps ↔ MB/s, … | B | custom | — | 1 | ✅ |
+| CAL-03 | BDP / TCP window calculator | Bandwidth-delay product, required window, max throughput for given window+RTT | B | custom | — | 1 | ✅ |
+| CAL-04 | MTU / MSS calculator | Overheads for VLAN, QinQ, PPPoE, GRE, IPsec, WireGuard, VXLAN, GENEVE | B | custom table | — | 1 | ✅ |
 | CAL-05 | Optical power converter | dBm ↔ mW, link budget | B | custom | — | 2 | ⬜ |
-| CAL-06 | Port number reference | IANA service names/ports, searchable | B | bundled IANA CSV → JSON | — | 1 | ⬜ |
-| CAL-07 | Protocol / ICMP type reference | IP protocol numbers, ICMP/ICMPv6 types & codes | B | bundled JSON | — | 1 | ⬜ |
-| CAL-08 | DNS record type reference | Record types, RFCs, examples | B | bundled JSON | — | 1 | ⬜ |
-| CAL-09 | Subnet cheat sheet | /0–/32 and common v6 prefix table | B | generated | — | 1 | ⬜ |
+| CAL-06 | Port number reference | IANA service names/ports, searchable | B | bundled IANA CSV → JSON | — | 1 | ✅ |
+| CAL-07 | Protocol / ICMP type reference | IP protocol numbers, ICMP/ICMPv6 types & codes | B | bundled JSON | — | 1 | ✅ |
+| CAL-08 | DNS record type reference | Record types, RFCs, examples | B | bundled JSON | — | 1 | ✅ |
+| CAL-09 | Subnet cheat sheet | /0–/32 and common v6 prefix table | B | generated | — | 1 | ✅ |
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ⬜ |
-| CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ⬜ |
+| CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ✅ |
 | CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ⬜ |
 
 ## 11. Client Diagnostics (runs in the user's browser)
@@ -193,7 +193,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CLI-01 | Browser ↔ server latency | HTTP RTT from browser to NetTools api, jitter graph | B+S | `fetch` to `/api/v1/echo` | — | 2 | ⬜ |
 | CLI-02 | WebRTC IP leak test | Local/public IPs exposed via ICE candidates | B | `RTCPeerConnection` | STUN (stun.l.google.com, stun.cloudflare.com) | 3 | ⬜ |
 | CLI-03 | Browser connection info | Network Information API, IPv4/IPv6 reachability, DoH in use? | B | `navigator.connection` + fetch to v4/v6-only endpoints | ipify v4/v6 endpoints | 2 | ⬜ |
-| CLI-04 | Request headers echo | Headers the server receives from your browser (proxy detection) | S | `/api/v1/echo` | — | 1 | ⬜ |
+| CLI-04 | Request headers echo | Headers the server receives from your browser (proxy detection) | S | `/api/v1/echo` | — | 1 | ✅ |
 
 ---
 

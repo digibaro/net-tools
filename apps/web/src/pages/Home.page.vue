@@ -1,47 +1,55 @@
 <script setup lang="ts">
-import type { VersionInfo } from '@/api/client'
-import { NCard, NText } from 'naive-ui'
-import { onMounted, ref } from 'vue'
+import type { Tool } from '@/tools/tool'
+import { onMounted, onUnmounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { getVersion } from '@/api/client'
+import ToolCard from '@/components/ToolCard.vue'
+import { useToolStore } from '@/stores/tool.store'
 
+const store = useToolStore()
 const { t } = useI18n()
-const version = ref<VersionInfo>()
-const error = ref<string>()
 
-onMounted(async () => {
-  try {
-    version.value = await getVersion()
-  }
-  catch (err) {
-    error.value = err instanceof Error ? err.message : String(err)
-  }
+// Render sections progressively (one per idle period) so first load is not one long task.
+const visible = ref(2)
+let handle: number | undefined
+const idle = typeof requestIdleCallback === 'function'
+const schedule = (cb: () => void): number => (idle ? requestIdleCallback(cb, { timeout: 200 }) : setTimeout(cb, 16) as unknown as number)
+function step() {
+  visible.value++
+  if (visible.value < sections().length)
+    handle = schedule(step)
+}
+onMounted(() => {
+  handle = schedule(step)
 })
+onUnmounted(() => {
+  if (handle !== undefined)
+    idle ? cancelIdleCallback(handle) : clearTimeout(handle)
+})
+
+function sections(): { id: string, title: string, tools: Tool[] }[] {
+  return [
+    { id: 'favorites', title: t('home.favorites'), tools: store.favorites },
+    { id: 'new', title: t('home.newest'), tools: store.newTools.length === store.tools.length ? [] : store.newTools },
+    ...store.categories.map(c => ({ id: `category-${c.id}`, title: c.name, tools: c.components })),
+  ].filter(s => s.tools.length > 0)
+}
 </script>
 
 <template>
-  <main class="mx-auto max-w-2xl px-4 py-12">
-    <NCard>
-      <h1 class="m-0 text-2xl font-semibold">
-        {{ t('app.name') }}
-      </h1>
-      <p class="mb-6 mt-2">
-        <NText depth="3">
-          {{ t('app.tagline') }}
-        </NText>
-      </p>
-      <p>{{ t('home.placeholder') }}</p>
-      <p data-testid="api-status">
-        <NText v-if="version" depth="3">
-          {{ t('home.apiVersion', { version: version.version, commit: version.commit }) }}
-        </NText>
-        <NText v-else-if="error" type="error">
-          {{ t('home.apiError', { message: error }) }}
-        </NText>
-        <NText v-else depth="3">
-          {{ t('home.apiLoading') }}
-        </NText>
-      </p>
-    </NCard>
-  </main>
+  <div class="mx-auto max-w-6xl">
+    <h1 class="sr-only">
+      {{ t('app.name') }}
+    </h1>
+    <p v-if="!store.tools.length" class="nt-muted">
+      {{ t('home.empty') }}
+    </p>
+    <section v-for="section in sections().slice(0, visible)" :key="section.id" class="mb-8" :data-testid="`home-${section.id}`">
+      <h2 class="mb-3 mt-0 text-lg font-semibold">
+        {{ section.title }}
+      </h2>
+      <div class="grid grid-cols-1 gap-3 lg:grid-cols-3 sm:grid-cols-2 xl:grid-cols-4">
+        <ToolCard v-for="tool in section.tools" :key="tool.path" :tool="tool" />
+      </div>
+    </section>
+  </div>
 </template>

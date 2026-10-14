@@ -1,0 +1,23 @@
+// Package {{pkg}} implements the {{title}} tool.
+package {{pkg}}
+
+import (
+	"github.com/go-chi/chi/v5"
+
+	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools/apps/api/internal/tools"
+)
+
+// Tool implements tools.Tool.
+type Tool struct{}
+
+// ID is the capability id.
+func (Tool) ID() string { return "TODO.{{pkg}}" }
+
+// Enabled reports availability.
+func (Tool) Enabled(config.Config) (bool, tools.Reason) { return true, "" }
+
+// Mount registers routes under /api/v1.
+func (t Tool) Mount(r chi.Router, _ tools.Deps) {
+	r.Get("/{{name}}", t.handle)
+}

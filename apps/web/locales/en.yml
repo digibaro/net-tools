@@ -1,8 +1,708 @@
 app:
   name: NetTools
   tagline: Network tools and troubleshooting utilities
+locales:
+  en: English
+nav:
+  home: Home
+  about: About
+  settings: Settings
+  tools: Tools
+  toggleMenu: Toggle menu
+search:
+  title: Search
+  open: Search tools
+  placeholder: Search tools…
+  noResults: No matching tools
+theme:
+  title: Theme
+  light: Light
+  dark: Dark
+  auto: Auto
+  label: 'Theme: {mode}'
+  autoCurrently: 'Theme: Auto (currently {current})'
+  choose: Choose theme
+favorites:
+  add: Add to favorites
+  remove: Remove from favorites
 home:
-  placeholder: Tools are coming soon.
-  apiVersion: 'API {version} ({commit})'
-  apiLoading: Connecting to API…
-  apiError: 'API unreachable: {message}'
+  favorites: Favorites
+  newest: Newest tools
+  empty: No tools yet.
+categories:
+  ip: IP & Addressing
+  dns: DNS
+  connectivity: Connectivity & Diagnostics
+  web: HTTP & Web
+  tls: TLS & Certificates
+  email: Email
+  bgp: Routing, BGP & Registry
+  reputation: Reputation & Geolocation
+  lan: LAN
+  calculators: Calculators & Reference
+  client: Client Diagnostics
+runMode:
+  browser:
+    label: Browser
+    description: Runs entirely in your browser; nothing is sent to the server. Works offline.
+  server:
+    label: Server
+    description: Runs on the NetTools server, from its network vantage point.
+  public-api:
+    label: Public API
+    description: Uses a third-party service through the NetTools server.
+  hybrid:
+    label: Hybrid
+    description: Runs on the server by default, with an optional public-service mode.
+capabilities:
+  disabledTitle: This tool is unavailable
+  reasons:
+    disabled_by_admin: Disabled by the administrator.
+    provider_key_missing: Requires an API key that is not configured on the server.
+    requires_lan_mode: Requires LAN mode (host networking) on the server.
+    binary_missing: A required program is not installed on the server.
+    api_unreachable: The NetTools server cannot be reached. Browser-only tools still work.
+    unavailable: Not available on this server.
+apiErrors:
+  INVALID_INPUT: Invalid input
+  TARGET_UNRESOLVABLE: Target could not be resolved
+  TARGET_PRIVATE_DENIED: Private and internal targets are not allowed on this server
+  TARGET_BLOCKED: Target is blocked by server policy
+  TOOL_DISABLED: Tool disabled
+  PROVIDER_KEY_MISSING: Provider API key missing
+  TIMEOUT: The request timed out
+  RATE_LIMITED: Too many requests, please wait
+  BUSY: Server is busy, try again shortly
+  PROVIDER_ERROR: The upstream service failed
+  INTERNAL: Unexpected server error
+  NOT_FOUND: Endpoint not found
+  METHOD_NOT_ALLOWED: Method not allowed
+  NETWORK_ERROR: Network error
+  BAD_RESPONSE: Unexpected response from the server
+common:
+  copy: Copy
+  copied: Copied to clipboard
+  copyFailed: Could not copy to the clipboard
+  copyValue: 'Copy {label}'
+  copyText: Copy as text
+  copyJson: Copy as JSON
+  downloadJson: Download JSON
+  new: New
+  allowed: Allowed
+  denied: Denied
+  on: On
+  off: Off
+  clear: Clear
+  generate: Generate
+  yes: Yes
+  no: No
+  none: None
+  result: Result
+  invalid: Invalid value
+settings:
+  appearance: Appearance
+  language: Language
+  favoritesCount: 'You have {count} favorite tools.'
+  clearFavorites: Remove all favorites
+about:
+  intro: NetTools bundles network tools and troubleshooting utilities in one self-hosted app.
+  build: Build
+  webVersion: Web version
+  apiVersion: API version
+  buildDate: API build date
+  profile: Deployment profile
+  privateTargets: Private targets
+  lanMode: LAN mode
+  apiUnreachable: API unreachable
+  capabilities: Server capabilities
+  noServerTools: No server tools are registered yet.
+  attributions: License & attributions
+  license: NetTools is free software under the GNU GPL v3.0 or later. Its user experience is inspired by it-tools.
+notFound:
+  title: Page not found
+  description: The page you are looking for does not exist.
+  back: Back to home
+tools:
+  ipv4-subnet-calculator:
+    title: IPv4 subnet calculator
+    description: Network, broadcast, netmask, wildcard, host range and host count for an IPv4 address and prefix.
+    input: IPv4 address and prefix
+    hint: 'Accepts 192.168.1.10/24, 192.168.1.10 255.255.255.0 or a single address.'
+    invalid: Enter an IPv4 address with a prefix length (0–32) or a contiguous netmask.
+    fields:
+      network: Network
+      netmask: Netmask
+      wildcard: Wildcard mask
+      broadcast: Broadcast
+      hostRange: Host range
+      usableHosts: Usable hosts
+      totalAddresses: Total addresses
+      class: Class
+      type: Address type
+      binaryAddress: Address (binary)
+      binaryNetmask: Netmask (binary)
+      hex: Address (hex)
+      integer: Address (integer)
+      previous: Previous network
+      next: Next network
+  ipv6-subnet-calculator:
+    title: IPv6 subnet calculator
+    description: Prefix, address range, number of /64s, compressed and expanded forms for an IPv6 prefix.
+    input: IPv6 address and prefix
+    invalid: Enter an IPv6 address with an optional prefix length (0–128), e.g. 2001:db8::/48.
+    fields:
+      network: Network
+      networkExpanded: Network (expanded)
+      firstAddress: First address
+      lastAddress: Last address
+      lastAddressExpanded: Last address (expanded)
+      addressExpanded: Address (expanded)
+      totalAddresses: Total addresses
+      subnets64: /64 subnets
+      subnets48: /48 subnets
+      type: Address type
+      reverseZone: Reverse zone
+      previous: Previous network
+      next: Next network
+  cidr-range-converter:
+    title: CIDR ↔ IP range
+    description: Convert a CIDR block to its first and last address, or an arbitrary IP range to the minimal list of CIDR blocks.
+    input: CIDR block or IP range
+    invalid: Enter a CIDR (10.0.0.0/22) or a range of two addresses of the same family (10.0.0.5 - 10.0.1.9).
+    title-cidr: Range
+    title-range: CIDR blocks
+    summary: '{blocks} block(s) covering {total} addresses.'
+    truncated: 'Showing the first {max}.'
+    columns:
+      cidr: CIDR
+      first: First address
+      last: Last address
+      addresses: Addresses
+  cidr-aggregator:
+    title: CIDR aggregator
+    description: Merge and deduplicate a list of IPv4 and IPv6 prefixes into the smallest equivalent set.
+    input: Prefixes (one per line, or separated by commas or spaces)
+    output: Aggregated prefixes
+    summary: '{input} valid prefixes → {output} aggregated.'
+    invalid: '{count} invalid entries ignored: {entries}'
+  subnet-splitter:
+    title: Subnet splitter
+    description: Divide an IPv4 or IPv6 prefix into N equal subnets or into subnets of a new prefix length.
+    input: Prefix to split
+    invalid: Enter a prefix such as 10.0.0.0/16 or 2001:db8::/48.
+    mode: Split by
+    byCount: Number of subnets
+    byPrefix: New prefix length
+    count: Number of subnets
+    newPrefix: New prefix length
+    value: Split value
+    result: '{count} subnets of /{prefix}'
+    truncated: 'Showing the first {max}.'
+    impossible: That split is not possible for this prefix.
+    columns:
+      cidr: Subnet
+      first: First address
+      last: Last address
+      addresses: Addresses
+  ip-in-subnet:
+    title: IP in subnet checker
+    description: Check which IP addresses fall inside any prefix of a list (IPv4 and IPv6).
+    ips: IP addresses
+    prefixes: Prefixes
+    invalid: '{count} invalid entries ignored: {entries}'
+    result: '{matched} of {total} addresses matched'
+    columns:
+      ip: IP address
+      matched: Matched
+      prefixes: Matching prefixes (most specific first)
+  ipv4-format-converter:
+    title: IPv4 format converter
+    description: Convert an IPv4 address between dotted, decimal, hex, octal and binary notations.
+    input: IPv4 address in any notation
+    invalid: Not a valid IPv4 address in dotted, decimal, hex (0x…), octal (0…) or binary notation.
+    lenient: 'This shorthand is accepted by inet_aton() and most browsers and resolves to {ip} — a common trick to disguise addresses.'
+    fields:
+      dotted: Dotted decimal
+      decimal: Decimal (32-bit integer)
+      hex: Hexadecimal
+      hexDotted: Dotted hexadecimal
+      octalDotted: Dotted octal
+      binaryDotted: Dotted binary
+      binary: Binary
+      ipv4Mapped: IPv4-mapped IPv6
+  ipv6-expand-compress:
+    title: IPv6 expand / compress
+    description: Canonical RFC 5952 form, full expanded form and ip6.arpa reverse name of an IPv6 address.
+    input: IPv6 address
+    invalid: Enter a valid IPv6 address (zone ids like %eth0 are not supported).
+    fields:
+      compressed: Compressed (RFC 5952)
+      expanded: Expanded
+      expandedNoZeros: Expanded without leading zeros
+      reverse: Reverse pointer (ip6.arpa)
+      uri: URL form
+      hex: Hexadecimal
+      decimal: Decimal (128-bit integer)
+      type: Address type
+  ipv6-ula-generator:
+    title: IPv6 ULA generator
+    description: Generate a random RFC 4193 Unique Local Address /48 prefix with its /64 subnets.
+    mac: MAC address (optional)
+    hint: Follows RFC 4193 §3.2.2 (SHA-1 of the current time and an EUI-64). Without a MAC address, a random 64-bit value is used instead.
+    invalidMac: Not a valid MAC address.
+    fields:
+      prefix: ULA prefix
+      globalId: Global ID
+      subnets: /64 subnet range
+      subnetCount: Number of /64 subnets
+      examples: Example subnets
+  ip-special-check:
+    title: Special-purpose / bogon check
+    description: Identify private, CGNAT, loopback, documentation, multicast and other reserved IPv4/IPv6 ranges.
+    input: IP addresses (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    registry: IANA special-purpose registries
+    registryHint: Bundled from the IANA IPv4 and IPv6 Special-Purpose Address Registries, plus the multicast blocks.
+    columns:
+      ip: IP address
+      name: Purpose
+      range: Range
+      rfc: Reference
+      bogon: Bogon
+      globallyReachable: Globally reachable
+  wildcard-mask-calculator:
+    title: Wildcard / ACL mask calculator
+    description: Convert between subnet mask, prefix length and Cisco wildcard (inverse) mask, with ACL examples.
+    input: Prefix, netmask or wildcard mask
+    network: Network address (optional, for examples)
+    invalid: Enter a prefix (/24), a netmask (255.255.255.0) or a wildcard mask (0.0.0.255).
+    invalidNetwork: Enter an IPv4 address.
+    noPrefix: None (non-contiguous)
+    nonContiguous: This is a non-contiguous wildcard mask. It is valid in access lists but has no subnet-mask or prefix equivalent.
+    kinds:
+      prefix: Prefix length
+      netmask: Subnet mask
+      wildcard: Wildcard mask
+    fields:
+      kind: Input recognized as
+      prefix: Prefix length
+      netmask: Subnet mask
+      wildcard: Wildcard mask
+      binaryWildcard: Wildcard (binary)
+      matching: Matching addresses
+      acl: ACL example
+      ospf: OSPF example
+  reverse-dns-name:
+    title: Reverse DNS name builder
+    description: Build in-addr.arpa / ip6.arpa PTR names for addresses and reverse zone names for prefixes.
+    input: IP addresses or prefixes (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    classlessNote: 'RFC 2317 classless delegation: CNAMEs in {parent} point into this sub-zone.'
+    truncated: 'First zones of {total} shown.'
+    multiple: 'Not label-aligned: {count} zones cover this prefix.'
+    kinds:
+      ptr: PTR name
+      zone: Reverse zone
+      classless: Classless zone
+    columns:
+      input: Input
+      kind: Type
+      names: Name(s)
+      note: Note
+  mac-address-lookup:
+    title: MAC address lookup (OUI)
+    description: Find the vendor of a MAC address from the bundled IEEE OUI registry; works offline.
+    input: MAC addresses or OUIs (one per line)
+    hint: Uses the IEEE MA-L (OUI) registry bundled with NetTools; nothing is sent to any server.
+    invalid: '{count} invalid entries ignored: {entries}'
+    unknown: Unknown (not in the IEEE MA-L registry)
+    localNoVendor: Locally administered (no vendor)
+    admin:
+      universal: Universal (UAA)
+      local: Locally administered (LAA)
+    cast:
+      unicast: Unicast
+      multicast: Multicast
+      broadcast: Broadcast
+    columns:
+      input: Input
+      oui: OUI
+      vendor: Vendor
+      country: Country
+      administration: Administration
+      cast: Type
+  mac-formatter:
+    title: MAC formatter / generator
+    description: Normalize MAC addresses to colon, hyphen, Cisco dot or plain notation, and generate random locally administered MACs.
+    format: Output format
+    uppercase: Uppercase
+    formatTitle: Format MAC addresses
+    input: MAC addresses (one per line)
+    invalid: '{count} invalid entries ignored: {entries}'
+    generateTitle: Generate random MAC addresses
+    count: How many
+    prefix: Prefix (optional, 1–5 octets)
+    invalidPrefix: Enter 1 to 5 octets, e.g. 00:0c:29.
+    generateHint: Without a prefix, addresses are locally administered unicast and cannot collide with vendor-assigned ones.
+    formats:
+      colon: 'Colon (00:1a:2b:3c:4d:5e)'
+      hyphen: Hyphen (00-1a-2b-3c-4d-5e)
+      cisco: Cisco (001a.2b3c.4d5e)
+      plain: Plain (001a2b3c4d5e)
+  eui64-calculator:
+    title: EUI-64 / link-local from MAC
+    description: 'Build the modified EUI-64 interface ID, fe80:: link-local and SLAAC address from a MAC, or recover the MAC from an address.'
+    mac: MAC address
+    prefix: /64 prefix for SLAAC (optional)
+    address: IPv6 address with an EUI-64 interface ID
+    reverseTitle: Recover the MAC address
+    invalidMac: Not a valid MAC address.
+    invalidPrefix: Enter a /64 prefix, e.g. 2001:db8:1:2::/64.
+    invalidAddress: The interface ID of this address is not a modified EUI-64 (no ff:fe in the middle).
+    fields:
+      interfaceId: Interface ID (modified EUI-64)
+      linkLocal: Link-local address
+      slaac: SLAAC address
+      mac: MAC address
+  what-is-my-ip:
+    title: What is my IP
+    description: Your public IPv4 and IPv6 addresses as seen from the Internet, and the address the NetTools server sees.
+    refresh: Refresh
+    ipv4: IPv4
+    ipv6: IPv6
+    address: Address
+    family: Family
+    protocol: Protocol
+    notAvailable: Not available
+    publicTitle: As seen from the Internet
+    serverTitle: As seen by this NetTools server
+    ipifyNote: Looked up directly from your browser via ipify.org (api.ipify.org / api6.ipify.org), which sees your address. "Not available" usually means no connectivity for that family.
+    relation:
+      private: The server sees a private address, so it is on your local network or behind the same NAT. Use the Internet view for your public address.
+      different: The server sees a different public address than the Internet does — a proxy, VPN or NAT64 is probably in the path.
+  punycode-converter:
+    title: Punycode / IDN converter
+    description: Convert internationalized domain names between Unicode and their xn-- ASCII (Punycode) form.
+    input: Domain names (one per line)
+    invalid: '{count} invalid domain names: {entries}'
+    columns:
+      input: Input
+      ascii: ASCII (Punycode)
+      unicode: Unicode
+      idnLabels: IDN labels
+  domain-parser:
+    title: Domain parser
+    description: Split a hostname or URL into subdomain, registrable domain and public suffix using the Public Suffix List.
+    input: Hostname or URL
+    invalid: Enter a valid hostname or URL.
+    isIp: This is an IP address, not a domain name.
+    withPrivate: Full Public Suffix List
+    icannOnly: ICANN suffixes only
+    differs: The registrable domain differs when private suffixes (operated by companies, e.g. github.io) are ignored. Browsers use the full list for cookies.
+    suffixTypes:
+      icann: ICANN
+      private: Private (PSL private section)
+      unknown: Not in the Public Suffix List
+    fields:
+      hostname: Hostname
+      subdomain: Subdomain
+      domain: Registrable domain
+      domainWithoutSuffix: Domain without suffix
+      publicSuffix: Public suffix
+      suffixType: Suffix type
+  url-parser:
+    title: URL parser / encoder
+    description: Split a URL into its components and query parameters, and percent-encode or decode text.
+    input: URL
+    invalid: Enter an absolute URL including the scheme, e.g. https://example.com/path.
+    components: Components
+    params: 'Query parameters ({count})'
+    key: Name
+    value: Value
+    defaultPort: '(default: {port})'
+    codecTitle: Encode / decode
+    codecComponent: Component (encodeURIComponent)
+    codecUri: Full URI (encodeURI)
+    plain: Text to encode
+    encoded: Encoded
+    toDecode: Text to decode
+    decoded: Decoded
+    malformed: Malformed percent-encoding.
+    fields:
+      protocol: Scheme
+      username: Username
+      password: Password
+      hostname: Hostname
+      port: Port
+      pathname: Path
+      search: Query string
+      hash: Fragment
+      origin: Origin
+  user-agent-parser:
+    title: User-agent parser
+    description: Identify browser, rendering engine, operating system and device from a User-Agent string.
+    input: User-Agent string
+    useMine: Use my browser's User-Agent
+    unknown: Unknown
+    hintsTitle: User-Agent Client Hints (this browser)
+    hintsNote: Chromium browsers reduce the User-Agent string; these low-entropy client hints are more reliable.
+    types:
+      desktop: Desktop
+      mobile: Mobile
+      tablet: Tablet
+      smarttv: Smart TV
+      console: Game console
+      wearable: Wearable
+      embedded: Embedded
+    fields:
+      browser: Browser
+      engine: Engine
+      os: Operating system
+      device: Device
+      deviceType: Device type
+      cpu: CPU architecture
+      brands: Brands
+      platform: Platform
+      mobile: Mobile
+  http-status-codes:
+    title: HTTP status code reference
+    description: Searchable list of registered HTTP status codes with short explanations and RFC links.
+    search: Search by code or text
+    count: '{count} status codes'
+    classes:
+      all: All
+      '1': 1xx Informational
+      '2': 2xx Success
+      '3': 3xx Redirection
+      '4': 4xx Client error
+      '5': 5xx Server error
+    columns:
+      code: Code
+      phrase: Reason phrase
+      description: Meaning
+      reference: Reference
+  certificate-decoder:
+    title: Certificate decoder
+    description: Paste a PEM certificate or chain (or upload a DER file) to see its fields, extensions and fingerprints.
+    input: PEM certificate(s) or base64 DER
+    invalid: Could not parse an X.509 certificate.
+    upload: Upload a .pem, .crt or .der file
+    hint: Decoded entirely in your browser; nothing is uploaded.
+    nth: 'Certificate {n}'
+    selfSigned: Self-signed
+    validity:
+      valid: 'Valid ({days} days left)'
+      expired: Expired
+      not-yet-valid: Not yet valid
+    fields:
+      subject: Subject
+      issuer: Issuer
+      san: Subject Alternative Names
+      notBefore: Valid from
+      notAfter: Valid until
+      serial: Serial number
+      publicKey: Public key
+      signature: Signature algorithm
+      keyUsage: Key usage
+      eku: Extended key usage
+      basicConstraints: Basic constraints
+      policies: Certificate policies
+      ocsp: OCSP responder
+      caIssuers: CA issuers
+      crl: CRL distribution points
+      ski: Subject key identifier
+      aki: Authority key identifier
+      sha256: SHA-256 fingerprint
+      sha1: SHA-1 fingerprint
+  bandwidth-calculator:
+    title: Bandwidth / transfer-time calculator
+    description: How long a transfer takes at a given link speed, or which speed is needed for a deadline, including protocol overhead.
+    size: Data size
+    unit: Unit
+    rate: Link rate
+    time: Time available
+    overhead: Protocol overhead
+    customPercent: Overhead (%)
+    timeTitle: Transfer time
+    rateTitle: Required bandwidth
+    presets:
+      none: None (raw link rate)
+      tcp-ipv4: TCP/IPv4 over Ethernet, 1500 MTU (94.9 %)
+      tcp-ipv6: TCP/IPv6 over Ethernet, 1500 MTU (93.6 %)
+      udp-ipv4: UDP/IPv4 over Ethernet, 1500 MTU (95.7 %)
+      custom: Custom percentage
+    fields:
+      time: Transfer time
+      goodput: Effective throughput
+      efficiency: Efficiency
+      requiredRate: Required link rate
+      requiredRateBytes: Required link rate (bytes)
+  data-unit-converter:
+    title: Bits / bytes unit converter
+    description: Convert data sizes and rates between bits and bytes with decimal (k, M, G) and binary (Ki, Mi, Gi) prefixes.
+    size: Data size
+    rate: Data rate
+    value: Value
+    unit: Unit
+  bdp-calculator:
+    title: BDP / TCP window calculator
+    description: Bandwidth-delay product, required TCP window and window scaling, and maximum throughput for a window, RTT and loss rate.
+    rate: Link rate
+    unit: Unit
+    rtt: Round-trip time (ms)
+    bdpTitle: Bandwidth-delay product
+    windowTitle: Throughput limits
+    windowKiB: Receive window (KiB)
+    mss: MSS (bytes)
+    loss: Packet loss (%)
+    scalingNeeded: 'Yes, window scale factor ≥ {shift} (RFC 7323)'
+    scalingNotNeeded: No, fits in 64 KiB
+    mathisNote: The loss bound uses the Mathis et al. model (throughput ≤ MSS/RTT · 1.22/√p) and applies to Reno-style congestion control.
+    fields:
+      bdp: Bandwidth-delay product
+      window: Required TCP window
+      scaling: Window scaling needed
+      maxThroughput: Max throughput with this window
+      mathis: Max throughput with this loss rate
+  mtu-calculator:
+    title: MTU / MSS calculator
+    description: Inner MTU and TCP MSS after VLAN, QinQ, MPLS, PPPoE, GRE, IPsec, WireGuard, VXLAN or GENEVE encapsulation.
+    linkMtu: Link MTU (bytes)
+    encapsulations: Encapsulations
+    count: 'Number of {layer}'
+    invalid: The overhead is larger than the link MTU allows.
+    ipv6Minimum: The inner MTU is below 1280 bytes, the minimum IPv6 requires (RFC 8200).
+    layers:
+      vlan: 802.1Q VLAN tag
+      qinq: QinQ (802.1ad)
+      mpls: MPLS label
+      pppoe: PPPoE
+      gre: GRE (IPv4)
+      gre-key: GRE with key (IPv4)
+      ipip: IP-in-IP / 6in4
+      ipv6-tunnel: IPv6 tunnel (4in6 / 6in6)
+      ipsec-gcm: IPsec ESP tunnel, AES-GCM (IPv4)
+      ipsec-cbc: IPsec ESP tunnel, AES-CBC + SHA-1 (IPv4)
+      nat-t: IPsec NAT-T (UDP 4500)
+      wireguard-v4: WireGuard over IPv4
+      wireguard-v6: WireGuard over IPv6
+      vxlan-v4: VXLAN over IPv4
+      vxlan-v6: VXLAN over IPv6
+      geneve-v4: GENEVE over IPv4
+    fields:
+      overhead: Total overhead
+      innerMtu: Inner MTU
+      mssIpv4: TCP MSS (IPv4)
+      mssIpv6: TCP MSS (IPv6)
+  port-reference:
+    title: Port number reference
+    description: Search the IANA service name and port number registry by port, service name or description.
+    search: Port number or service
+    all: All
+    results: '{count} entries'
+    truncated: 'Showing the first {max}.'
+    none: No registered service matches.
+    source: Bundled from the IANA Service Name and Transport Protocol Port Number Registry (regenerate with scripts/gen-data.mjs).
+    columns:
+      port: Port
+      protocol: Transport
+      service: Service
+      description: Description
+      reference: Reference
+  protocol-reference:
+    title: Protocol / ICMP type reference
+    description: IP protocol numbers and ICMP / ICMPv6 types and codes from the IANA registries.
+    search: Search by number or name
+    source: Bundled from the IANA Protocol Numbers, ICMP and ICMPv6 Parameters registries; ICMPv6 codes curated from RFC 4443 and updates.
+    tabs:
+      ip: IP protocols
+      icmp: ICMP (IPv4)
+      icmpv6: ICMPv6
+    columns:
+      number: Number
+      keyword: Keyword
+      name: Name
+      ext: IPv6 extension header
+      reference: Reference
+      type: Type
+      code: Code
+  dns-record-types:
+    title: DNS record type reference
+    description: DNS resource record types with their numeric values, purpose, zone-file examples and RFCs.
+    search: Search by type, number or purpose
+    commonOnly: Common types only
+    count: '{count} record types'
+    source: Types and values from the IANA DNS Parameters registry; summaries and examples curated for common types.
+    columns:
+      type: Type
+      value: Value
+      summary: Purpose
+      example: Example
+      reference: Reference
+  subnet-cheat-sheet:
+    title: Subnet cheat sheet
+    description: Every IPv4 prefix from /0 to /32 with masks and host counts, and common IPv6 prefix sizes.
+    v4: IPv4 prefixes
+    v6: Common IPv6 prefixes
+    columns:
+      prefix: Prefix
+      netmask: Netmask
+      wildcard: Wildcard
+      addresses: Addresses
+      usable: Usable hosts
+      size: Size
+      subnets64: /64 subnets
+      use: Typical use
+    v6use:
+      '128': Single host, loopback
+      '127': Point-to-point link (RFC 6164)
+      '126': Point-to-point link (legacy)
+      '64': Standard LAN / SLAAC subnet
+      '60': Small site or home (some ISPs)
+      '56': Home or small site (RFC 6177)
+      '48': Site; smallest globally routable prefix
+      '32': Minimum LIR allocation (RIPE NCC)
+      '29': Typical larger LIR allocation
+  wifi-qr-generator:
+    title: Wi-Fi QR generator
+    description: Create a QR code that phones scan to join a Wi-Fi network (WPA2, WPA3, WEP or open).
+    ssid: Network name (SSID)
+    password: Password
+    securityLabel: Security
+    hidden: Hidden network
+    qr: QR code
+    qrAlt: 'QR code to join the Wi-Fi network {ssid}'
+    downloadPng: Download PNG
+    copyUri: Copy WIFI string
+    privacy: Generated in your browser. The password is never added to the page URL.
+    security:
+      WPA: WPA / WPA2 (Personal)
+      SAE: WPA3 (SAE)
+      WEP: WEP (insecure)
+      nopass: Open (no password)
+    invalid:
+      ssid: The SSID must be 1–32 bytes.
+      password: 'WPA passwords need 8–63 characters; WEP keys 5, 13, 10 or 26 characters.'
+  request-headers:
+    title: Request headers echo
+    description: See the HTTP headers the NetTools server receives from your browser, and whether a proxy is in the path.
+    refresh: Refresh
+    connection: Connection
+    headers: 'Request headers ({count})'
+    addedByNetTools: Added by NetTools
+    noProxy: No signs of an extra proxy
+    proxyDetected: A proxy or middlebox is probably in the path
+    hints:
+      via: A Via header is present (added by HTTP proxies).
+      forwarded: A Forwarded header is present (RFC 7239, added by proxies).
+      multi-hop: X-Forwarded-For lists more than one hop, so another proxy forwarded the request before NetTools.
+      cdn: CDN headers are present (Cloudflare, Akamai, Fastly, CloudFront or Azure Front Door).
+      compression-stripped: Accept-Encoding is missing, which is typical for intercepting proxies and antivirus scanners.
+    columns:
+      name: Header
+      value: Value
+      note: Note
+    fields:
+      ip: Client address
+      protocol: Protocol
+      method: Method
