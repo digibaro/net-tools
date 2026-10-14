@@ -186,6 +186,8 @@ func TestInlineCommentValuesAreUnset(t *testing.T) {
 		"DENY_CIDRS":          "   # extra comma-separated CIDRs to block",
 		"SERVER_INFO_ENABLED": "# server interfaces/routes tool; default off in public, on otherwise",
 		"PORTSCAN_ENABLED":    "true",
+		"IPINFO_TOKEN":        "   # optional, enables ipinfo.io",
+		"ABUSEIPDB_KEY":       "real-key",
 	}
 	cfg, err := LoadFrom(func(k string) (string, bool) { v, ok := env[k]; return v, ok }, func(string) ([]byte, error) { return nil, nil })
 	if err != nil {
@@ -193,5 +195,8 @@ func TestInlineCommentValuesAreUnset(t *testing.T) {
 	}
 	if !cfg.Features.Portscan {
 		t.Error("real values must still apply")
+	}
+	if _, ok := cfg.Features.ProviderSecrets["IPINFO_TOKEN"]; ok || cfg.Features.ProviderSecrets["ABUSEIPDB_KEY"] != "real-key" {
+		t.Errorf("secrets = %v", cfg.Features.ProviderSecrets)
 	}
 }

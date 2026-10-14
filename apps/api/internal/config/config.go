@@ -166,7 +166,7 @@ func LoadFrom(lookup LookupFunc, readFile ReadFileFunc) (Config, error) {
 
 	cfg.Features.ProviderSecrets = make(map[string]string, len(providerSecretVars))
 	for _, name := range providerSecretVars {
-		v, err := secret(lookup, readFile, name)
+		v, err := secret(p.lookup, readFile, name)
 		if err != nil {
 			p.errs = append(p.errs, err)
 			continue
