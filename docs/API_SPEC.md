@@ -150,7 +150,8 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/peeringdb/{asn}` | — | bgp.peeringdb |
 | GET | `/api/v1/cloud-ranges` | `ip` | bgp.cloudranges |
 | GET | `/api/v1/geo` | `ip`, `source=local|ipinfo|ipapi` | rep.geo |
-| GET | `/api/v1/reputation` | `ip`, `source=abuseipdb|internetdb` | rep.* |
+| GET | `/api/v1/reputation/internetdb` | `ip` (passive exposure, keyless) | rep.internetdb |
+| GET | `/api/v1/reputation/abuseipdb` | `ip` (needs `ABUSEIPDB_KEY`) | rep.abuseipdb |
 | GET | `/api/v1/tor-exit` | `ip` | rep.tor |
 | GET | `/api/v1/ct` | `domain`, `includeExpired` | tls.ct |
 

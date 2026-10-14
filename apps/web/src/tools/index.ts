@@ -31,6 +31,7 @@ import { tool as httpStatusCodes } from './http-status-codes'
 import { tool as httpTiming } from './http-timing'
 import { tool as ipGeolocation } from './ip-geolocation'
 import { tool as ipInSubnet } from './ip-in-subnet'
+import { tool as ipReputation } from './ip-reputation'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipToAsn } from './ip-to-asn'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
@@ -48,6 +49,7 @@ import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as mxLookup } from './mx-lookup'
 import { tool as ntpCheck } from './ntp-check'
 import { tool as opticalPower } from './optical-power'
+import { tool as passiveExposure } from './passive-exposure'
 import { tool as peeringdbLookup } from './peeringdb-lookup'
 import { tool as ping } from './ping'
 import { tool as portCheck } from './port-check'
@@ -90,7 +92,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup] },
-  { id: 'reputation', components: [ipGeolocation] },
+  { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo] },

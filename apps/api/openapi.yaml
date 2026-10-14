@@ -911,6 +911,48 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/CtSearch" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/reputation/internetdb:
+    get:
+      operationId: internetdb
+      summary: "Passive exposure of an IP from Shodan InternetDB (ports, CPEs, known CVEs)"
+      tags: [reputation]
+      x-capability: rep.internetdb
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Exposure" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/reputation/abuseipdb:
+    get:
+      operationId: abuseipdb
+      summary: "Abuse confidence score and recent reports (AbuseIPDB, key required)"
+      tags: [reputation]
+      x-capability: rep.abuseipdb
+      parameters:
+        - { name: ip, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/AbuseReport" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1980,3 +2022,41 @@ components:
               notAfter: { type: string }
               expired: { type: boolean }
               url: { type: string }
+    Exposure:
+      type: object
+      required: [ip, found, ports, hostnames, cpes, tags, vulns]
+      properties:
+        ip: { type: string }
+        found: { type: boolean }
+        ports: { type: array, items: { type: integer } }
+        hostnames: { type: array, items: { type: string } }
+        cpes: { type: array, items: { type: string } }
+        tags: { type: array, items: { type: string } }
+        vulns: { type: array, items: { type: string } }
+    AbuseReport:
+      type: object
+      required: [ip, score, totalReports, distinctUsers, lastReported, whitelisted, tor, country, usageType, isp, domain, hostnames, reports, url]
+      properties:
+        ip: { type: string }
+        score: { type: integer, minimum: 0, maximum: 100 }
+        totalReports: { type: integer }
+        distinctUsers: { type: integer }
+        lastReported: { type: string }
+        whitelisted: { type: boolean }
+        tor: { type: boolean }
+        country: { type: string }
+        usageType: { type: string }
+        isp: { type: string }
+        domain: { type: string }
+        hostnames: { type: array, items: { type: string } }
+        url: { type: string }
+        reports:
+          type: array
+          items:
+            type: object
+            required: [reportedAt, comment, categories, country]
+            properties:
+              reportedAt: { type: string }
+              comment: { type: string }
+              categories: { type: array, items: { type: integer } }
+              country: { type: string }

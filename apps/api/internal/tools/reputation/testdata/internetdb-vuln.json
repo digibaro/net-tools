@@ -1,0 +1,1 @@
+{"cpes":["cpe:/a:openbsd:openssh:7.4","cpe:/a:apache:http_server:2.4.6"],"hostnames":["host.example.net"],"ip":"203.0.113.10","ports":[22,80,443],"tags":["eol-product"],"vulns":["CVE-2021-41617","CVE-2017-15906"]}

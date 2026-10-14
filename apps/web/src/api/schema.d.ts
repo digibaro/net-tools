@@ -738,6 +738,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/reputation/internetdb": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Passive exposure of an IP from Shodan InternetDB (ports, CPEs, known CVEs) */
+        get: operations["internetdb"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/reputation/abuseipdb": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Abuse confidence score and recent reports (AbuseIPDB, key required) */
+        get: operations["abuseipdb"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1585,6 +1619,36 @@ export interface components {
                 notAfter: string;
                 expired: boolean;
                 url: string;
+            }[];
+        };
+        Exposure: {
+            ip: string;
+            found: boolean;
+            ports: number[];
+            hostnames: string[];
+            cpes: string[];
+            tags: string[];
+            vulns: string[];
+        };
+        AbuseReport: {
+            ip: string;
+            score: number;
+            totalReports: number;
+            distinctUsers: number;
+            lastReported: string;
+            whitelisted: boolean;
+            tor: boolean;
+            country: string;
+            usageType: string;
+            isp: string;
+            domain: string;
+            hostnames: string[];
+            url: string;
+            reports: {
+                reportedAt: string;
+                comment: string;
+                categories: number[];
+                country: string;
             }[];
         };
     };
@@ -2724,6 +2788,56 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["CtSearch"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    internetdb: {
+        parameters: {
+            query: {
+                ip: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Exposure"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    abuseipdb: {
+        parameters: {
+            query: {
+                ip: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["AbuseReport"];
                     };
                 };
             };

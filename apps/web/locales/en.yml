@@ -1750,3 +1750,60 @@ tools:
       names: Names
       from: Valid from
       until: Valid until
+  passive-exposure:
+    title: Passive exposure (InternetDB)
+    description: Open ports, software and known vulnerabilities Shodan has seen on an IP address — without scanning it.
+    note: Data from Shodan InternetDB, updated weekly. Nothing is sent to the address itself.
+    notFound: '{ip} has not been seen by Shodan: no open services recorded.'
+    ports: Open ports
+    hostnames: Host names
+    software: Software (CPE)
+    vulns: '{n} known vulnerabilities are associated with the software found. Verify before acting — versions are guessed from banners.'
+  ip-reputation:
+    title: IP reputation (AbuseIPDB)
+    description: Abuse confidence score and recent abuse reports for an IP address from AbuseIPDB.
+    score: 'Abuse confidence: {score} %'
+    open: Open in AbuseIPDB
+    recent: Recent reports (90 days)
+    whitelisted: allow-listed
+    reportCount: '{n} reports from {users} users'
+    level:
+      clean: Low risk
+      suspicious: Suspicious
+      malicious: Likely malicious
+    fields:
+      reports: Reports
+      last: Last reported
+      isp: Network
+      usage: Usage type
+      country: Country
+      flags: Flags
+    columns:
+      when: When
+      categories: Categories
+      comment: Comment
+      country: From
+    categories:
+      '1': DNS compromise
+      '2': DNS poisoning
+      '3': Fraud orders
+      '4': DDoS attack
+      '5': FTP brute force
+      '6': Ping of death
+      '7': Phishing
+      '8': Fraud VoIP
+      '9': Open proxy
+      '10': Web spam
+      '11': Email spam
+      '12': Blog spam
+      '13': VPN IP
+      '14': Port scan
+      '15': Hacking
+      '16': SQL injection
+      '17': Spoofing
+      '18': Brute force
+      '19': Bad web bot
+      '20': Exploited host
+      '21': Web app attack
+      '22': SSH
+      '23': IoT targeted

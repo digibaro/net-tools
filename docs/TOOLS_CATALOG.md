@@ -153,8 +153,8 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
 | REP-01 | IP geolocation | Country/city/ASN/ISP | H | MaxMind GeoLite2 / DB-IP Lite mmdb mounted in `/data` | ipinfo.io (token), ip-api.com (free non-commercial) | 2 | ✅ |
-| REP-02 | IP reputation | Abuse score, reports | P | — | AbuseIPDB (key) | 3 | ⬜ |
-| REP-03 | Passive exposure | Open ports, CPEs, known vulns (passive, no scanning) | P | — | Shodan InternetDB (keyless) | 3 | ⬜ |
+| REP-02 | IP reputation | Abuse score, reports | P | — | AbuseIPDB (key) | 3 | ✅ |
+| REP-03 | Passive exposure | Open ports, CPEs, known vulns (passive, no scanning) | P | — | Shodan InternetDB (keyless) | 3 | ✅ |
 | REP-04 | Tor exit node check | Is IP a current Tor exit | S | cached Tor bulk exit list | Tor Onionoo | 3 | ⬜ |
 | REP-05 | URL / domain reputation | Malware/phishing verdicts | P | — | Google Safe Browsing (key), VirusTotal (key), urlscan.io (key) | 4 | ⬜ |
 
