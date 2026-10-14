@@ -68,7 +68,7 @@ const f = (key: string) => t(`tools.wireguard-config.fields.${key}`)
       <CInputText v-model:value="dns" :label="f('dns')" placeholder="1.1.1.1" :validation="fieldError('dns')" monospace />
       <div class="grid grid-cols-3 gap-x-4">
         <NFormItem :label="f('peers')" :show-feedback="false" class="mb-3">
-          <NInputNumber :show-button="false" v-model:value="peers" :min="1" :max="MAX_PEERS" :input-props="{ 'aria-label': f('peers') }" data-testid="peers" />
+          <NInputNumber v-model:value="peers" :show-button="false" :min="1" :max="MAX_PEERS" :input-props="{ 'aria-label': f('peers') }" data-testid="peers" />
         </NFormItem>
         <NFormItem :label="f('mtu')" :show-feedback="false" class="mb-3">
           <NInputNumber v-model:value="mtu" :min="0" :max="9000" :show-button="false" :placeholder="t('tools.wireguard-config.auto')" :input-props="{ 'aria-label': f('mtu') }" />

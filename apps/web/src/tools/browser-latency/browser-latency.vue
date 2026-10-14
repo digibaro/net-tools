@@ -83,10 +83,10 @@ const progress = computed(() => Math.round(samples.value.length / Math.max(1, Ma
   <CCard>
     <div class="flex flex-wrap items-end gap-x-6">
       <NFormItem :label="t('ping.count')" :show-feedback="false" class="mb-3">
-        <NInputNumber :show-button="false" v-model:value="count" :min="1" :max="MAX_SAMPLES" class="w-32" :input-props="{ 'aria-label': t('ping.count') }" />
+        <NInputNumber v-model:value="count" :show-button="false" :min="1" :max="MAX_SAMPLES" class="w-32" :input-props="{ 'aria-label': t('ping.count') }" />
       </NFormItem>
       <NFormItem :label="t('ping.interval')" :show-feedback="false" class="mb-3">
-        <NInputNumber :show-button="false" v-model:value="interval" :min="MIN_INTERVAL" :max="5000" :step="250" class="w-36" :input-props="{ 'aria-label': t('ping.interval') }" />
+        <NInputNumber v-model:value="interval" :show-button="false" :min="MIN_INTERVAL" :max="5000" :step="250" class="w-36" :input-props="{ 'aria-label': t('ping.interval') }" />
       </NFormItem>
       <NButton v-if="!running" type="primary" class="mb-3" data-testid="run" @click="start">
         {{ t('ping.run') }}

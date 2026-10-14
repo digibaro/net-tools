@@ -99,7 +99,7 @@ const budgetRows = computed(() => {
     </div>
     <div class="grid gap-x-4 lg:grid-cols-3 sm:grid-cols-2">
       <NFormItem v-for="f in inputs" :key="f.key" :label="t(`tools.optical-power.fields.${f.key}`)" :show-feedback="false" class="mb-3">
-        <NInputNumber :show-button="false" v-model:value="fields[f.key].value" :step="f.step" :min="'min' in f ? f.min : undefined" :input-props="{ 'aria-label': t(`tools.optical-power.fields.${f.key}`) }" />
+        <NInputNumber v-model:value="fields[f.key].value" :show-button="false" :step="f.step" :min="'min' in f ? f.min : undefined" :input-props="{ 'aria-label': t(`tools.optical-power.fields.${f.key}`) }" />
       </NFormItem>
     </div>
   </CCard>

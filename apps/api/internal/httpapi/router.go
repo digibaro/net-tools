@@ -15,6 +15,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/execx"
 	"github.com/digibaro/net-tools/apps/api/internal/limits"
 	"github.com/digibaro/net-tools/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools/apps/api/internal/providers"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 	"github.com/digibaro/net-tools/apps/api/internal/tools"
 )
@@ -70,12 +71,14 @@ func BuildDeps(o *Options) tools.Deps {
 		o.Pool = limits.NewPool(cfg.Limits.ConcurrencyGlobal, cfg.Limits.ConcurrencyPerIP)
 	}
 	limiter := o.Limiter
+	ua := "NetTools/" + o.Build.Version + " (+" + cfg.PublicURL + ")"
 	return tools.Deps{
-		Config: cfg,
-		Logger: o.Logger,
-		Target: o.Target,
-		Exec:   o.Exec,
-		Pool:   o.Pool,
+		Providers: providers.New(o.Target, ua),
+		Config:    cfg,
+		Logger:    o.Logger,
+		Target:    o.Target,
+		Exec:      o.Exec,
+		Pool:      o.Pool,
 		RateLimit: func(c limits.Class) tools.Middleware {
 			return limiter.Middleware(c, func(r *http.Request) netip.Addr { return middleware.GetClientIP(r.Context()) },
 				func(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +86,7 @@ func BuildDeps(o *Options) tools.Deps {
 				})
 		},
 		Timeout:   limits.Timeout,
-		UserAgent: "NetTools/" + o.Build.Version + " (+" + cfg.PublicURL + ")",
+		UserAgent: ua,
 		Slot: func(next http.Handler) http.Handler {
 			pool := o.Pool
 			return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

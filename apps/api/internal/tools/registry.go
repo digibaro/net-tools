@@ -12,6 +12,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/config"
 	"github.com/digibaro/net-tools/apps/api/internal/execx"
 	"github.com/digibaro/net-tools/apps/api/internal/limits"
+	"github.com/digibaro/net-tools/apps/api/internal/providers"
 	"github.com/digibaro/net-tools/apps/api/internal/target"
 )
 
@@ -45,6 +46,8 @@ type Deps struct {
 	Slot Middleware
 	// UserAgent identifies outbound requests: NetTools/<version> (+PUBLIC_URL).
 	UserAgent string
+	// Providers calls public third-party APIs (policy-checked, cached, size- and time-bounded).
+	Providers *providers.Client
 }
 
 // Tool is one server-side capability.
@@ -79,3 +82,11 @@ func Capabilities(d Deps, all []Tool) map[string]Capability {
 
 // Always is an Enabled implementation for tools without preconditions.
 func Always(Deps) (bool, Reason) { return true, "" }
+
+// RequireSecret enables a tool only when the provider secret (e.g. "ABUSEIPDB_KEY") is set.
+func RequireSecret(d Deps, name string) (bool, Reason) {
+	if !d.Config.HasSecret(name) {
+		return false, ReasonProviderKeyMissing
+	}
+	return true, ""
+}
