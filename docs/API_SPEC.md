@@ -135,6 +135,7 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/email/dmarc` | `domain` | email.dmarc |
 | GET | `/api/v1/email/dkim` | `domain`, `selector` | email.dkim |
 | GET | `/api/v1/email/mtasts` | `domain` | email.mtasts |
+| GET | `/api/v1/email/relay` | `host`, `port=25\|587\|2525`, `domain?` (opt-in: `OPEN_RELAY_TEST_ENABLED`) | email.relay |
 | GET | `/api/v1/email/dnsbl/stream` | `target` (ip or domain) | email.dnsbl |
 
 ### Registry / BGP / Reputation (mostly provider-backed)

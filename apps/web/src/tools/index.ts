@@ -65,6 +65,7 @@ import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as mxLookup } from './mx-lookup'
 import { tool as ntpCheck } from './ntp-check'
+import { tool as openRelayTest } from './open-relay-test'
 import { tool as opticalPower } from './optical-power'
 import { tool as passiveExposure } from './passive-exposure'
 import { tool as pathMtu } from './path-mtu'
@@ -123,7 +124,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown, latencyMatrix, pathMtu, ipv6Readiness, portScanner, iperf, snmp] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit] },
-  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker] },
+  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo] },

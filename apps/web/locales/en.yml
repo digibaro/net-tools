@@ -2431,3 +2431,28 @@ tools:
       name: Name
       type: Type
       value: Value
+  open-relay-test:
+    title: Open relay test
+    description: Check whether your mail server relays mail for strangers — without sending any message.
+    host: Mail server
+    domain: Its mail domain (optional)
+    invalidDomain: Enter a domain such as example.com.
+    port: Port
+    run: Test relay
+    note: Test only servers you run. Each attempt stops after RCPT TO and is reset, so no message is ever sent. Addresses use reserved example domains.
+    relayed: Relayed
+    refused: Refused
+    verdict:
+      open: The server accepted a recipient outside its own domains — it is an open relay. Restrict relaying to authenticated users and your own networks.
+      closed: The server refused every relay attempt.
+      inconclusive: 'The test could not finish: {error}'
+    cases:
+      external: External sender to external recipient
+      nullSender: Null sender (bounce) to external recipient
+      percentHack: Percent-hack recipient
+      quoted: Quoted recipient
+      spoofedLocal: Spoofed local sender to external recipient
+    columns:
+      status: Result
+      case: Attempt
+      reply: Server reply

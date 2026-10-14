@@ -76,6 +76,7 @@ func Tools() []tools.Tool {
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
 		&email.MXTool{},
+		&email.RelayTool{},
 		&email.SPFTool{},
 		&email.DMARCTool{},
 		&email.DKIMTool{},

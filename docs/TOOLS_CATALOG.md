@@ -129,7 +129,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | EM-06 | Blacklist (DNSBL) check | Query IP/domain against ~30 RBLs | S | DNS queries | — | 3 | ✅ |
 | EM-07 | Email header analyzer | Paste headers → hop timeline, delays, auth results | B | custom parser | — | 2 | ✅ |
 | EM-08 | DMARC aggregate report viewer | Upload XML/zip/gz report → tables | B | `fflate` + XML parser | — | 4 | ⬜ |
-| EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ⬜ |
+| EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ✅ |
 
 ## 7. Routing, BGP & Registry
 

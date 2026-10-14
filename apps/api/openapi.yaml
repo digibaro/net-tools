@@ -1595,6 +1595,29 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/SnmpResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/email/relay:
+    get:
+      operationId: emailRelay
+      summary: Open relay test of a mail server (opt-in, no DATA sent)
+      tags: [email]
+      x-capability: email.relay
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, enum: [25, 587, 2525], default: 25 } }
+        - { name: domain, in: query, description: "the server's own mail domain (adds a spoofed-local-sender attempt)", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RelayResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3393,3 +3416,24 @@ components:
               oid: { type: string }
               type: { type: string }
               value: { type: string }
+    RelayResult:
+      type: object
+      required: [address, banner, startTls, cases, open, error]
+      properties:
+        address: { type: string }
+        banner: { type: string }
+        startTls: { type: boolean }
+        open: { type: boolean }
+        error: { type: string }
+        cases:
+          type: array
+          items:
+            type: object
+            required: [name, mailFrom, rcptTo, mailReply, rcptReply, accepted]
+            properties:
+              name: { type: string }
+              mailFrom: { type: string }
+              rcptTo: { type: string }
+              mailReply: { type: string }
+              rcptReply: { type: string }
+              accepted: { type: boolean }
