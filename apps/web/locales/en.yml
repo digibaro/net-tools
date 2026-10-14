@@ -2161,3 +2161,24 @@ tools:
       www: www
       ns: DNS
       mx: Mail
+  curl-builder:
+    title: curl command builder & parser
+    description: Paste a curl command to see what it does, or build one from a form — headers, body, auth and options, safely quoted.
+    parseTitle: Parse a command
+    paste: curl command
+    unknown: 'Options kept but not shown in the form: {list}'
+    buildTitle: Build
+    method: Method
+    headers: Headers (one per line)
+    body: Body
+    user: Basic auth (user:password)
+    follow: Follow redirects (-L)
+    compressed: Accept compression (--compressed)
+    insecure: Skip TLS verification (-k)
+    verbose: Verbose (-v)
+    maxTime: Max time (s)
+    commandTitle: Command
+    openHttpRequest: Send with the HTTP request tool
+    errors:
+      syntax: Unbalanced quotes in the command.
+      not-curl: The command must start with curl.
