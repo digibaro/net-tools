@@ -21,6 +21,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/ipv6ready"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/latmatrix"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
@@ -106,5 +107,6 @@ func Tools() []tools.Tool {
 		&dnsbl.Tool{},
 		&latmatrix.Tool{},
 		&pmtu.Tool{},
+		&ipv6ready.Tool{},
 	}
 }

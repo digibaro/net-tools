@@ -2140,3 +2140,24 @@ tools:
       vpn: Typical of a VPN or IPsec tunnel.
       ipv6-minimum: The IPv6 minimum MTU.
       jumbo: Jumbo frames all the way.
+  ipv6-readiness:
+    title: IPv6 readiness
+    description: Is a domain fully reachable over IPv6? Checks AAAA records for the website, name servers and mail servers, and connects to them over IPv6.
+    run: Check
+    score: 'IPv6 score: {score} / 100'
+    noServerV6: This server has no IPv6 connectivity, so addresses were checked in DNS only, not connected to.
+    tryWorldwide: Test reachability from probes worldwide
+    verdict:
+      ready: '{domain} is fully ready for IPv6: website, DNS and mail all have IPv6 addresses.'
+      partial: '{domain} is partly reachable over IPv6.'
+      not-ready: '{domain} is not reachable over IPv6.'
+    state:
+      ok: IPv6 OK
+      no-aaaa: No AAAA
+      unreachable: Not reachable
+      untested: AAAA (not connected)
+    roles:
+      web: Website
+      www: www
+      ns: DNS
+      mx: Mail

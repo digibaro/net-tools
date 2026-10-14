@@ -1332,6 +1332,27 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/ipv6/readiness:
+    get:
+      operationId: ipv6Readiness
+      summary: "IPv6 readiness of a domain: AAAA for web, name servers and MX, and reachability over IPv6"
+      tags: [connectivity]
+      x-capability: net.ipv6ready
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Ipv6Readiness" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2934,3 +2955,24 @@ components:
         reachable: { type: boolean }
         probes: { type: integer }
         note: { type: string }
+    Ipv6Readiness:
+      type: object
+      required: [domain, serverIpv6, hosts, score, verdict]
+      properties:
+        domain: { type: string }
+        serverIpv6: { type: boolean }
+        score: { type: integer }
+        verdict: { type: string, enum: [ready, partial, not-ready] }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [role, name, aaaa, hasA, reachable, port, error]
+            properties:
+              role: { type: string, enum: [web, www, ns, mx] }
+              name: { type: string }
+              aaaa: { type: array, items: { type: string } }
+              hasA: { type: boolean }
+              reachable: { type: [boolean, "null"] }
+              port: { type: integer }
+              error: { type: string }

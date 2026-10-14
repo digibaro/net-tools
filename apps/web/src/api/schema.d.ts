@@ -1110,6 +1110,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/ipv6/readiness": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** IPv6 readiness of a domain: AAAA for web, name servers and MX, and reachability over IPv6 */
+        get: operations["ipv6Readiness"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2368,6 +2385,23 @@ export interface components {
             reachable: boolean;
             probes: number;
             note: string;
+        };
+        Ipv6Readiness: {
+            domain: string;
+            serverIpv6: boolean;
+            score: number;
+            /** @enum {string} */
+            verdict: "ready" | "partial" | "not-ready";
+            hosts: {
+                /** @enum {string} */
+                role: "web" | "www" | "ns" | "mx";
+                name: string;
+                aaaa: string[];
+                hasA: boolean;
+                reachable: boolean | null;
+                port: number;
+                error: string;
+            }[];
         };
     };
     responses: {
@@ -4039,6 +4073,31 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    ipv6Readiness: {
+        parameters: {
+            query: {
+                domain: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Ipv6Readiness"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }
