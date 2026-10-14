@@ -1858,3 +1858,16 @@ tools:
       prefix: Range
       service: Service
       region: Region
+  zone-transfer-test:
+    title: Zone transfer (AXFR) test
+    description: Check whether any of a zone's name servers hands out the whole zone to anyone (open AXFR) — a common DNS misconfiguration.
+    zone: Zone
+    run: Test
+    open: At least one name server allows zone transfers to anyone. Restrict AXFR to your secondary servers.
+    closed: 'None of the {n} name servers allows a zone transfer.'
+    records: '{n} records transferred'
+    truncated: stopped at 10,000
+    state:
+      open: Transfer allowed
+      refused: Refused
+      error: Not tested

@@ -1037,6 +1037,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Observatory" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/axfr:
+    get:
+      operationId: dnsAxfr
+      summary: "Test every name server of a zone for open zone transfers (AXFR)"
+      tags: [dns]
+      x-capability: dns.axfr
+      parameters:
+        - { name: zone, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnsAxfr" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2223,3 +2244,24 @@ components:
         testsFailed: { type: integer }
         scannedAt: { type: string }
         detailsUrl: { type: string }
+    DnsAxfr:
+      type: object
+      required: [zone, nameservers, servers, anyAllowed]
+      properties:
+        zone: { type: string }
+        nameservers: { type: array, items: { type: string } }
+        anyAllowed: { type: boolean }
+        servers:
+          type: array
+          items:
+            type: object
+            required: [name, address, allowed, records, truncated, types, sample, error]
+            properties:
+              name: { type: string }
+              address: { type: string }
+              allowed: { type: boolean }
+              records: { type: integer }
+              truncated: { type: boolean }
+              types: { type: object, additionalProperties: { type: integer } }
+              sample: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+              error: { type: string }
