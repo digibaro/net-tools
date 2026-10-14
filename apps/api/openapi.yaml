@@ -1278,6 +1278,27 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/email/mtasts:
+    get:
+      operationId: emailMtaSts
+      summary: "MTA-STS policy, TLS-RPT and BIMI checks for a mail domain"
+      tags: [email]
+      x-capability: email.mtasts
+      parameters:
+        - { name: domain, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EmailMtaSts" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2826,3 +2847,37 @@ components:
         checked: { type: integer }
         listed: { type: array, items: { type: string } }
         errors: { type: integer }
+    EmailMtaSts:
+      type: object
+      required: [domain, mtaSts, tlsRpt, bimi]
+      properties:
+        domain: { type: string }
+        mtaSts:
+          type: object
+          required: [record, id, policyUrl, mode, maxAge, mx, unmatched, problems, warnings]
+          properties:
+            record: { type: string }
+            id: { type: string }
+            policyUrl: { type: string }
+            mode: { type: string }
+            maxAge: { type: integer }
+            mx: { type: array, items: { type: string } }
+            unmatched: { type: array, items: { type: string } }
+            problems: { type: array, items: { type: string } }
+            warnings: { type: array, items: { type: string } }
+        tlsRpt:
+          type: object
+          required: [record, rua, problems]
+          properties:
+            record: { type: string }
+            rua: { type: array, items: { type: string } }
+            problems: { type: array, items: { type: string } }
+        bimi:
+          type: object
+          required: [record, logo, certificate, problems, warnings]
+          properties:
+            record: { type: string }
+            logo: { type: string }
+            certificate: { type: string }
+            problems: { type: array, items: { type: string } }
+            warnings: { type: array, items: { type: string } }

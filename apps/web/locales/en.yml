@@ -297,6 +297,27 @@ email:
     weak-key: The RSA key is shorter than 1024 bits and is ignored by receivers.
     short-key: The RSA key is shorter than the recommended 2048 bits.
     testing: The key is in testing mode (t=y).
+    no-id: The MTA-STS record has no id= tag.
+    policy-unreachable: The policy file on the mta-sts subdomain cannot be fetched.
+    policy-not-found: The policy file returned an error (not 200).
+    policy-certificate: The policy host's certificate is not valid — senders ignore the policy.
+    policy-content-type: The policy file is not served as text/plain.
+    policy-version: The policy file does not declare version STSv1.
+    policy-mode: The policy mode is not enforce, testing or none.
+    policy-max-age: max_age is missing or longer than one year.
+    short-max-age: max_age is under one day; senders will re-fetch the policy very often.
+    policy-no-mx: The policy lists no MX patterns.
+    mode-testing: Mode is testing — failures are reported but mail is still delivered.
+    mode-none: Mode is none — the policy is switched off.
+    mx-not-covered: Some MX hosts are not matched by the policy.
+    bad-rua: 'A report address is neither mailto: nor https://.'
+    no-logo: No logo (l=) is published.
+    logo-not-https-svg: The logo must be an SVG served over HTTPS.
+    logo-unreachable: The logo cannot be fetched.
+    logo-not-tiny-ps: The logo is not SVG Tiny PS (baseProfile="tiny-ps"), which BIMI requires.
+    logo-too-large: The logo is larger than 32 KB.
+    no-vmc: No VMC/CMC certificate (a=); Gmail and Apple Mail show logos only with one.
+    dmarc-not-enforced: BIMI requires DMARC at p=quarantine or p=reject with pct=100.
 notFound:
   title: Page not found
   description: The page you are looking for does not exist.
@@ -2068,3 +2089,24 @@ tools:
       listed: Listed
       clean: Clean
       error: Error
+  mta-sts-checker:
+    title: MTA-STS, TLS-RPT & BIMI checker
+    description: Check a mail domain's MTA-STS policy (and that it covers every MX), TLS reporting record and BIMI brand logo.
+    run: Check
+    stsOk: The MTA-STS policy is valid and covers all MX hosts.
+    rptOk: 'TLS reports go to {list}.'
+    bimiOk: The BIMI record and logo are valid.
+    unmatched: 'MX hosts not matched by the policy: {list}. Senders enforcing MTA-STS will refuse to deliver to them.'
+    state:
+      absent: Not set up
+      ok: OK
+      warn: Review
+      fail: Problems
+    fields:
+      record: Record
+      mode: Mode
+      maxAge: Max age
+      mx: Allowed MX
+      policy: Policy file
+      logo: Logo (SVG)
+      vmc: Certificate (VMC)

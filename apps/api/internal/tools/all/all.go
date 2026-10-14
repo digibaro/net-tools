@@ -71,6 +71,7 @@ func Tools() []tools.Tool {
 		&email.SPFTool{},
 		&email.DMARCTool{},
 		&email.DKIMTool{},
+		&email.MTASTSTool{},
 		&asnlookup.Tool{},
 		&whois.Tool{},
 		&rdap.LookupTool{Svc: rdapSvc},
