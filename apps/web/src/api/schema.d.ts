@@ -704,6 +704,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/peeringdb/{asn}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** PeeringDB network record: policy, IXPs, facilities, contacts */
+        get: operations["peeringdb"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1487,6 +1504,51 @@ export interface components {
                 community: string;
                 nextHop: string;
                 updated: string;
+            }[];
+        };
+        PeeringDbNetwork: {
+            found: boolean;
+            asn: number;
+            name: string;
+            aka: string;
+            website: string;
+            irrAsSet: string;
+            type: string;
+            scope: string;
+            traffic: string;
+            ratio: string;
+            prefixes4: number;
+            prefixes6: number;
+            policy: string;
+            policyUrl: string;
+            policyLocations: string;
+            policyContracts: string;
+            lookingGlass: string;
+            routeServer: string;
+            updated: string;
+            ixCount: number;
+            facilityCount: number;
+            peeringdbUrl: string;
+            ixs: {
+                name: string;
+                ixId: number;
+                speedMbps: number;
+                ipv4: string;
+                ipv6: string;
+                rsPeer: boolean;
+                operational: boolean;
+            }[];
+            facilities: {
+                name: string;
+                city: string;
+                country: string;
+                facId: number;
+            }[];
+            contacts: {
+                role: string;
+                name: string;
+                email: string;
+                url: string;
             }[];
         };
     };
@@ -2575,6 +2637,31 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["LookingGlass"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    peeringdb: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["PeeringDbNetwork"];
                     };
                 };
             };

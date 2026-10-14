@@ -868,6 +868,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/LookingGlass" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/peeringdb/{asn}:
+    get:
+      operationId: peeringdb
+      summary: "PeeringDB network record: policy, IXPs, facilities, contacts"
+      tags: [bgp]
+      x-capability: bgp.peeringdb
+      parameters:
+        - { name: asn, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PeeringDbNetwork" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1849,3 +1870,62 @@ components:
               community: { type: string }
               nextHop: { type: string }
               updated: { type: string }
+    PeeringDbNetwork:
+      type: object
+      required: [found, asn, name, aka, website, irrAsSet, type, scope, traffic, ratio, prefixes4, prefixes6, policy, policyUrl, policyLocations, policyContracts, lookingGlass, routeServer, updated, ixs, ixCount, facilities, facilityCount, contacts, peeringdbUrl]
+      properties:
+        found: { type: boolean }
+        asn: { type: integer }
+        name: { type: string }
+        aka: { type: string }
+        website: { type: string }
+        irrAsSet: { type: string }
+        type: { type: string }
+        scope: { type: string }
+        traffic: { type: string }
+        ratio: { type: string }
+        prefixes4: { type: integer }
+        prefixes6: { type: integer }
+        policy: { type: string }
+        policyUrl: { type: string }
+        policyLocations: { type: string }
+        policyContracts: { type: string }
+        lookingGlass: { type: string }
+        routeServer: { type: string }
+        updated: { type: string }
+        ixCount: { type: integer }
+        facilityCount: { type: integer }
+        peeringdbUrl: { type: string }
+        ixs:
+          type: array
+          items:
+            type: object
+            required: [name, ixId, speedMbps, ipv4, ipv6, rsPeer, operational]
+            properties:
+              name: { type: string }
+              ixId: { type: integer }
+              speedMbps: { type: integer }
+              ipv4: { type: string }
+              ipv6: { type: string }
+              rsPeer: { type: boolean }
+              operational: { type: boolean }
+        facilities:
+          type: array
+          items:
+            type: object
+            required: [name, city, country, facId]
+            properties:
+              name: { type: string }
+              city: { type: string }
+              country: { type: string }
+              facId: { type: integer }
+        contacts:
+          type: array
+          items:
+            type: object
+            required: [role, name, email, url]
+            properties:
+              role: { type: string }
+              name: { type: string }
+              email: { type: string }
+              url: { type: string }

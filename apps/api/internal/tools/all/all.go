@@ -15,6 +15,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/peeringdb"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
@@ -66,5 +67,6 @@ func Tools() []tools.Tool {
 		&ripestat.PrefixTool{},
 		&ripestat.RPKITool{},
 		&ripestat.LookingGlassTool{},
+		&peeringdb.Tool{},
 	}
 }

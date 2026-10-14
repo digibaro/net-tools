@@ -1707,3 +1707,29 @@ tools:
     seen: '{routes} routes at {collectors} collectors; origin: {origins}.'
     routes: Routes per collector peer
     truncated: 'Showing {shown} of {total} routes.'
+  peeringdb-lookup:
+    title: PeeringDB lookup
+    description: A network's peering policy, internet exchanges, facilities and contacts from PeeringDB.
+    notFound: 'AS{asn} has no PeeringDB record.'
+    open: Open in PeeringDB
+    maxPrefixes: '{v4} IPv4 / {v6} IPv6 (suggested max-prefix)'
+    ixs: 'Internet exchanges ({n})'
+    facilities: 'Facilities ({n})'
+    contacts: Contacts
+    fields:
+      name: Name
+      type: Network type
+      policy: Peering policy
+      policyUrl: Policy URL
+      asSet: IRR AS-SET
+      prefixes: Prefixes
+      website: Website
+      lookingGlass: Looking glass
+      updated: Updated
+    columns:
+      ix: Exchange
+      speed: Port
+      rs: Route server
+      facility: Facility
+      city: City
+      country: Country

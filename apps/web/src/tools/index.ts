@@ -47,6 +47,7 @@ import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as mxLookup } from './mx-lookup'
 import { tool as ntpCheck } from './ntp-check'
 import { tool as opticalPower } from './optical-power'
+import { tool as peeringdbLookup } from './peeringdb-lookup'
 import { tool as ping } from './ping'
 import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
@@ -87,7 +88,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
-  { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass] },
+  { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup] },
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
