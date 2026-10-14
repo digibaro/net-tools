@@ -31,6 +31,11 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
     preset: simulated slow 4G + 4× CPU). The remaining mobile gap is startup cost of Naive UI's
     runtime CSS-in-JS plus Vue/router/i18n init; closing it needs pre-rendering the shell or a
     lighter shell — pending a decision.
+  - Status (2026-10-14, 150+ tools): mobile had dropped to 70 home / 69 tool page. Home cards now
+    render in batches of 6 per idle period and the first navigation skips the forced scroll:
+    79 home / 74 tool page (TBT 820 → 510 ms). Splitting the locale would add only ~2 points.
+    The remaining gap is startup blocking (~500 ms at 4× CPU) and FCP 2.3 s; ≥ 90 needs
+    pre-rendering or a lighter shell — pending a decision.
 
 ## Phase 2 — Core server tools (5–8 days)
 
