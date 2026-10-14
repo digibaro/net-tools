@@ -4,6 +4,7 @@
 package providers
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -45,6 +46,13 @@ type Request struct {
 	TTL time.Duration
 	// CacheKey defaults to URL; set it when the URL or headers carry a key.
 	CacheKey string
+	// Method defaults to GET; any other method is never cached.
+	Method string
+	// Body is sent as JSON when set.
+	Body any
+	// UpstreamMessage extracts a client-safe message from a 4xx error body (e.g. "no probes
+	// found in this location"); return "" to keep the generic message.
+	UpstreamMessage func(body []byte) string
 }
 
 // codeProviderError mirrors httpapi.CodeProviderError (this package cannot import httpapi).
@@ -79,6 +87,8 @@ func (e *Error) APIDetails() map[string]any { return map[string]any{"provider": 
 type StatusError struct {
 	Provider string
 	Status   int
+	// Detail is the provider's own explanation, when Request.UpstreamMessage supplied one.
+	Detail string
 }
 
 func (e *StatusError) Error() string { return fmt.Sprintf("%s returned HTTP %d", e.Provider, e.Status) }
@@ -88,6 +98,9 @@ func (e *StatusError) APICode() string { return codeProviderError }
 
 // APIMessage implements httpapi.Coder.
 func (e *StatusError) APIMessage() string {
+	if e.Detail != "" {
+		return e.Provider + ": " + e.Detail
+	}
 	switch e.Status {
 	case http.StatusTooManyRequests:
 		return e.Provider + " is rate limiting this server; try again later"
@@ -115,7 +128,7 @@ func (c *Client) Get(ctx context.Context, r Request) ([]byte, error) {
 		key = r.URL
 	}
 	fetch := func(ctx context.Context) ([]byte, error) { return c.fetch(ctx, r) }
-	if r.TTL < 0 {
+	if r.TTL < 0 || (r.Method != "" && r.Method != http.MethodGet) {
 		return fetch(ctx)
 	}
 	ttl := r.TTL
@@ -140,9 +153,24 @@ func (c *Client) GetJSON(ctx context.Context, r Request, out any) error {
 func (c *Client) fetch(ctx context.Context, r Request) ([]byte, error) {
 	ctx, cancel := context.WithTimeout(ctx, Timeout)
 	defer cancel()
-	req, err := http.NewRequestWithContext(ctx, http.MethodGet, r.URL, nil)
+	method := r.Method
+	if method == "" {
+		method = http.MethodGet
+	}
+	var body io.Reader
+	if r.Body != nil {
+		b, err := json.Marshal(r.Body)
+		if err != nil {
+			return nil, fmt.Errorf("%s: encode body: %w", r.Provider, err)
+		}
+		body = bytes.NewReader(b)
+	}
+	req, err := http.NewRequestWithContext(ctx, method, r.URL, body)
 	if err != nil {
 		return nil, fmt.Errorf("%s: build request: %w", r.Provider, err)
+	}
+	if body != nil {
+		req.Header.Set("Content-Type", "application/json")
 	}
 	for k, v := range r.Header {
 		req.Header[k] = v
@@ -156,8 +184,12 @@ func (c *Client) fetch(ctx context.Context, r Request) ([]byte, error) {
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
-		_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 64<<10))
-		return nil, &StatusError{Provider: r.Provider, Status: resp.StatusCode}
+		eb, _ := io.ReadAll(io.LimitReader(resp.Body, 64<<10))
+		se := &StatusError{Provider: r.Provider, Status: resp.StatusCode}
+		if r.UpstreamMessage != nil && resp.StatusCode >= 400 && resp.StatusCode < 500 {
+			se.Detail = truncate(r.UpstreamMessage(eb), 300)
+		}
+		return nil, se
 	}
 	b, err := io.ReadAll(resp.Body) // capped by PolicyClient (5 MiB)
 	if err != nil {
@@ -180,4 +212,11 @@ func transportError(provider string, err error) error {
 		return &Error{Provider: provider, Message: provider + " did not answer in time", Err: err}
 	}
 	return &Error{Provider: provider, Message: provider + " could not be reached", Err: err}
+}
+
+func truncate(s string, n int) string {
+	if len(s) <= n {
+		return s
+	}
+	return s[:n] + "…"
 }

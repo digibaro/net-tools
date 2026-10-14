@@ -4,11 +4,15 @@ import { NButton, NFormItem, NInputNumber, NRadioButton, NRadioGroup } from 'nai
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
+import RemoteResults from '@/components/RemoteResults.vue'
 import ResultActions from '@/components/ResultActions.vue'
 import ResultTable from '@/components/ResultTable.vue'
+import VantageSwitch from '@/components/VantageSwitch.vue'
 import { useQueryParam } from '@/composables/useQueryParam'
+import { useRemote } from '@/composables/useRemote'
 import { useSse } from '@/composables/useSse'
 import { useValidation } from '@/composables/useValidation'
+import { useVantage } from '@/composables/useVantage'
 import { useCapabilitiesStore } from '@/stores/capabilities.store'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
@@ -37,10 +41,20 @@ const { status, error, start, stop } = useSse(props.mtr ? '/v1/mtr/stream' : '/v
     finished.value = true
   },
 })
-const running = computed(() => status.value === 'running')
+const { vantage, locations, limit, available, worldwide } = useVantage()
+const remote = useRemote()
+const running = computed(() => status.value === 'running' || remote.status.value === 'running')
+function stopAll() {
+  stop()
+  remote.stop()
+}
 function run() {
   if (!target.value || !validation.value.isValid)
     return
+  if (worldwide.value) {
+    remote.start({ type: props.mtr ? 'mtr' : 'traceroute', target: target.value, protocol: proto.value.toUpperCase(), locations: locations.value, limit: limit.value })
+    return
+  }
   hops.value = []
   finished.value = false
   start({ target: target.value, proto: proto.value, port: proto.value === 'tcp' ? port.value : undefined, cycles: props.mtr ? Math.min(cycles.value, maxCycles.value) : undefined })
@@ -89,6 +103,7 @@ const columns = computed(() => props.mtr
   <CCard>
     <form class="contents" @submit.prevent="run">
       <CInputText v-model:value="target" :label="t('ping.target')" placeholder="example.com" :validation="validation" monospace test-id="target" />
+      <VantageSwitch v-model:vantage="vantage" v-model:locations="locations" v-model:limit="limit" :available="available" />
       <div class="flex flex-wrap items-end gap-x-6">
         <NFormItem :label="t('trace.protocol')" :show-feedback="false" class="mb-3">
           <NRadioGroup v-model:value="proto" name="proto">
@@ -97,10 +112,10 @@ const columns = computed(() => props.mtr
             <NRadioButton value="tcp" label="TCP" />
           </NRadioGroup>
         </NFormItem>
-        <NFormItem v-if="proto === 'tcp'" :label="t('tools.tcp-ping.port')" :show-feedback="false" class="mb-3 w-28">
+        <NFormItem v-if="proto === 'tcp' && !worldwide" :label="t('tools.tcp-ping.port')" :show-feedback="false" class="mb-3 w-28">
           <NInputNumber v-model:value="port" :min="1" :max="65535" :show-button="false" :input-props="{ 'aria-label': t('tools.tcp-ping.port') }" />
         </NFormItem>
-        <NFormItem v-if="mtr" :label="t('trace.cycles')" :show-feedback="false" class="mb-3 w-28">
+        <NFormItem v-if="mtr && !worldwide" :label="t('trace.cycles')" :show-feedback="false" class="mb-3 w-28">
           <NInputNumber v-model:value="cycles" :min="1" :max="maxCycles" :show-button="false" :input-props="{ 'aria-label': t('trace.cycles') }" />
         </NFormItem>
       </div>
@@ -108,14 +123,15 @@ const columns = computed(() => props.mtr
         <NButton type="primary" attr-type="submit" :loading="running" :disabled="!target || !validation.isValid || running" data-testid="run">
           {{ t('ping.run') }}
         </NButton>
-        <NButton v-if="running" data-testid="stop" @click="stop">
+        <NButton v-if="running" data-testid="stop" @click="stopAll">
           {{ t('common.stop') }}
         </NButton>
       </div>
     </form>
   </CCard>
-  <ApiError v-if="error" :error="error" />
-  <CCard v-if="rows.length" :title="t('trace.hops', { count: rows.length })" data-testid="result">
+  <RemoteResults v-if="worldwide" :meta="remote.meta.value" :probes="remote.probes.value" :summary="remote.summary.value" :status="remote.status.value" :error="remote.error.value" />
+  <ApiError v-else-if="error" :error="error" />
+  <CCard v-if="!worldwide && rows.length" :title="t('trace.hops', { count: rows.length })" data-testid="result">
     <ResultTable :columns="columns" :rows="rows" :actions="false" class="whitespace-pre-line" :label="t('trace.hops', { count: rows.length })" />
     <div v-if="finished" class="mt-3" data-testid="finished">
       <ResultActions :text="() => traceTextReport(hops, mtr)" :json="hops" :filename="mtr ? 'mtr.json' : 'traceroute.json'" />

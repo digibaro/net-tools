@@ -182,6 +182,34 @@ http:
     ttfb: Wait
     transfer: Transfer
   invalidUrl: Enter an http or https URL.
+remote:
+  vantage: Run from
+  server: This server
+  worldwide: Worldwide (Globalping)
+  locations: Locations
+  locationsPlaceholder: Germany, Europe, US+AWS (empty = anywhere)
+  limit: Probes
+  title: 'Worldwide results for {target}'
+  answered: '{up} of {done} probes got an answer ({total} requested).'
+  incomplete: Some probes did not finish in time.
+  progress: Measurement progress
+  resolver: resolver
+  raw: Raw output
+  attribution: Measured by Globalping (globalping.io) community probes.
+  verdict:
+    up: Reachable
+    down: No answer
+    error: Failed
+  columns:
+    ip: Address
+    host: Host
+    avg: Avg
+    loss: Loss
+    dns: DNS
+    tcp: TCP
+    tls: TLS
+    firstByte: First byte
+    total: Total
 registry:
   query: Domain, IP address or AS number
   invalidQuery: Enter a domain (example.com), an IP address or an AS number (AS13335).
@@ -1047,6 +1075,7 @@ tools:
     downgrade: Warning — the chain downgrades from HTTPS to HTTP.
     stopped: 'The chain was stopped: {code}.'
   http-timing:
+    worldwideNote: Probes request HTTPS HEAD / on the host and report status, TLS version and timings.
     title: HTTP timing breakdown
     description: How long DNS, TCP connect, TLS handshake, server wait (TTFB) and download take for a URL, like curl -w.
     run: Measure

@@ -763,6 +763,26 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Geo" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/remote/stream:
+    get:
+      operationId: remoteStream
+      summary: Measurement from Globalping probes worldwide (SSE)
+      description: "Events: meta (RemoteMeta), probe (RemoteProbeResult)*, done ({summary: RemoteSummary, durationMs}) or error. `result` is Globalping's type-specific result object without raw bodies/headers."
+      tags: [remote]
+      x-capability: remote.globalping
+      parameters:
+        - { name: type, in: query, schema: { type: string, enum: [ping, traceroute, mtr, dns, http], default: ping } }
+        - { name: target, in: query, required: true, description: "public host name or IP (dns: domain name)", schema: { type: string } }
+        - { name: locations, in: query, description: "comma-separated Globalping magic locations, e.g. Germany,US+AWS (≤ 5)", schema: { type: string } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 3 } }
+        - { name: dnsType, in: query, schema: { type: string, enum: [A, AAAA, CNAME, MX, NS, TXT, SOA, CAA, PTR, SRV, HTTPS], default: A } }
+        - { name: protocol, in: query, description: "traceroute/mtr", schema: { type: string, enum: [ICMP, TCP, UDP], default: ICMP } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -1579,3 +1599,70 @@ components:
         asnSource: { type: string, enum: ["", mmdb, cymru] }
         source: { type: string }
         database: { type: string }
+    RemoteMeta:
+      type: object
+      required: [tool, vantage, type, target, locations, limit, id, probes]
+      properties:
+        tool: { type: string }
+        vantage: { type: string }
+        type: { type: string, enum: [ping, traceroute, mtr, dns, http] }
+        target: { type: string }
+        locations: { type: array, items: { type: string } }
+        limit: { type: integer }
+        id: { type: string }
+        probes: { type: integer }
+    RemoteProbe:
+      type: object
+      required: [continent, country, city, asn, network, latitude, longitude, tags]
+      properties:
+        continent: { type: string }
+        country: { type: string }
+        city: { type: string }
+        asn: { type: integer }
+        network: { type: string }
+        latitude: { type: number }
+        longitude: { type: number }
+        tags: { type: array, items: { type: string } }
+    RemoteProbeResult:
+      type: object
+      required: [index, probe, status, result]
+      properties:
+        index: { type: integer }
+        probe: { $ref: "#/components/schemas/RemoteProbe" }
+        status: { type: string }
+        result:
+          type: object
+          additionalProperties: true
+          properties:
+            status: { type: string }
+            rawOutput: { type: [string, "null"] }
+            resolvedAddress: { type: [string, "null"] }
+            resolvedHostname: { type: [string, "null"] }
+            stats:
+              type: object
+              properties: { min: { type: [number, "null"] }, avg: { type: [number, "null"] }, max: { type: [number, "null"] }, loss: { type: number }, total: { type: integer }, rcv: { type: integer } }
+            timings: {}
+            hops:
+              type: array
+              items:
+                type: object
+                properties:
+                  resolvedAddress: { type: [string, "null"] }
+                  resolvedHostname: { type: [string, "null"] }
+                  asn: { type: array, items: { type: integer } }
+                  timings: { type: array, items: { type: object, properties: { rtt: { type: [number, "null"] } } } }
+                  stats: { type: object, properties: { avg: { type: [number, "null"] }, loss: { type: number } } }
+            answers:
+              type: array
+              items: { type: object, properties: { name: { type: string }, type: { type: string }, ttl: { type: integer }, value: { type: string } } }
+            statusCode: { type: [integer, "null"] }
+            statusCodeName: { type: [string, "null"] }
+            resolver: { type: [string, "null"] }
+            tls: { type: [object, "null"], properties: { protocol: { type: string }, authorized: { type: boolean } } }
+    RemoteSummary:
+      type: object
+      required: [id, probes, finished]
+      properties:
+        id: { type: string }
+        probes: { type: integer }
+        finished: { type: boolean }

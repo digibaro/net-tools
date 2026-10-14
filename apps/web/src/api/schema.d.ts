@@ -616,6 +616,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/remote/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Measurement from Globalping probes worldwide (SSE)
+         * @description Events: meta (RemoteMeta), probe (RemoteProbeResult)*, done ({summary: RemoteSummary, durationMs}) or error. `result` is Globalping's type-specific result object without raw bodies/headers.
+         */
+        get: operations["remoteStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1255,6 +1275,79 @@ export interface components {
             asnSource: "" | "mmdb" | "cymru";
             source: string;
             database: string;
+        };
+        RemoteMeta: {
+            tool: string;
+            vantage: string;
+            /** @enum {string} */
+            type: "ping" | "traceroute" | "mtr" | "dns" | "http";
+            target: string;
+            locations: string[];
+            limit: number;
+            id: string;
+            probes: number;
+        };
+        RemoteProbe: {
+            continent: string;
+            country: string;
+            city: string;
+            asn: number;
+            network: string;
+            latitude: number;
+            longitude: number;
+            tags: string[];
+        };
+        RemoteProbeResult: {
+            index: number;
+            probe: components["schemas"]["RemoteProbe"];
+            status: string;
+            result: {
+                status?: string;
+                rawOutput?: string | null;
+                resolvedAddress?: string | null;
+                resolvedHostname?: string | null;
+                stats?: {
+                    min?: number | null;
+                    avg?: number | null;
+                    max?: number | null;
+                    loss?: number;
+                    total?: number;
+                    rcv?: number;
+                };
+                timings?: unknown;
+                hops?: {
+                    resolvedAddress?: string | null;
+                    resolvedHostname?: string | null;
+                    asn?: number[];
+                    timings?: {
+                        rtt?: number | null;
+                    }[];
+                    stats?: {
+                        avg?: number | null;
+                        loss?: number;
+                    };
+                }[];
+                answers?: {
+                    name?: string;
+                    type?: string;
+                    ttl?: number;
+                    value?: string;
+                }[];
+                statusCode?: number | null;
+                statusCodeName?: string | null;
+                resolver?: string | null;
+                tls?: {
+                    protocol?: string;
+                    authorized?: boolean;
+                } | null;
+            } & {
+                [key: string]: unknown;
+            };
+        };
+        RemoteSummary: {
+            id: string;
+            probes: number;
+            finished: boolean;
         };
     };
     responses: {
@@ -2213,6 +2306,36 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    remoteStream: {
+        parameters: {
+            query: {
+                type?: "ping" | "traceroute" | "mtr" | "dns" | "http";
+                /** @description public host name or IP (dns: domain name) */
+                target: string;
+                /** @description comma-separated Globalping magic locations, e.g. Germany,US+AWS (≤ 5) */
+                locations?: string;
+                limit?: number;
+                dnsType?: "A" | "AAAA" | "CNAME" | "MX" | "NS" | "TXT" | "SOA" | "CAA" | "PTR" | "SRV" | "HTTPS";
+                /** @description traceroute/mtr */
+                protocol?: "ICMP" | "TCP" | "UDP";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }
