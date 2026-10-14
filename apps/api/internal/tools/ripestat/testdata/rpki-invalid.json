@@ -1,0 +1,1 @@
+{"messages":[],"data":{"validating_roas":[{"origin":"13335","prefix":"1.1.1.0/24","max_length":24,"validity":"invalid_asn"}],"status":"invalid_asn","validator":"routinator","resource":"64500","prefix":"1.1.1.0/24"},"status":"ok"}

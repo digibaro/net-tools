@@ -636,6 +636,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/asn/{asn}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** AS holder, announced prefixes and neighbours (RIPEstat) */
+        get: operations["asnInfo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/prefix/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Routing status of a prefix: visibility, origins, MOAS (RIPEstat) */
+        get: operations["prefixStatus"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/rpki": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** RPKI route origin validation (RIPEstat) */
+        get: operations["rpkiValidation"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lookingglass": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Routes seen by RIPE RIS collectors (RIPEstat) */
+        get: operations["lookingGlass"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1348,6 +1416,78 @@ export interface components {
             id: string;
             probes: number;
             finished: boolean;
+        };
+        AsnInfo: {
+            asn: number;
+            holder: string;
+            announced: boolean;
+            block: string;
+            prefixesV4: string[];
+            prefixesV6: string[];
+            prefixesTotal: number;
+            upstreams: number;
+            downstreams: number;
+            neighboursTotal: number;
+            neighbours: {
+                asn: number;
+                /** @enum {string} */
+                type: "left" | "right" | "uncertain";
+                power: number;
+            }[];
+        };
+        BgpSeen: {
+            prefix: string;
+            origin: number;
+            time: string;
+        };
+        BgpRelated: {
+            prefix: string;
+            origin: number;
+        };
+        PrefixStatus: {
+            prefix: string;
+            announced: boolean;
+            seenBy: number;
+            totalPeers: number;
+            firstSeen: null | components["schemas"]["BgpSeen"];
+            lastSeen: null | components["schemas"]["BgpSeen"];
+            moas: boolean;
+            origins: {
+                asn: number;
+                routeObjects: string[];
+            }[];
+            lessSpecifics: components["schemas"]["BgpRelated"][];
+            moreSpecifics: components["schemas"]["BgpRelated"][];
+        };
+        RpkiResult: {
+            prefix: string;
+            asn: number;
+            /** @description valid, invalid_asn, invalid_length or unknown */
+            status: string;
+            validator: string;
+            roas: {
+                origin: number;
+                prefix: string;
+                maxLength: number;
+                validity: string;
+            }[];
+        };
+        LookingGlass: {
+            prefix: string;
+            collectors: number;
+            total: number;
+            origins: number[];
+            routes: {
+                collector: string;
+                location: string;
+                peer: string;
+                prefix: string;
+                asPath: string;
+                origin: number;
+                community: string;
+                nextHop: string;
+                updated: string;
+            }[];
         };
     };
     responses: {
@@ -2336,6 +2476,109 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    asnInfo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AS13335 or 13335 */
+                asn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["AsnInfo"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    prefixStatus: {
+        parameters: {
+            query: {
+                /** @description prefix or IP address */
+                prefix: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["PrefixStatus"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    rpkiValidation: {
+        parameters: {
+            query: {
+                prefix: string;
+                asn: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RpkiResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    lookingGlass: {
+        parameters: {
+            query: {
+                prefix: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["LookingGlass"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

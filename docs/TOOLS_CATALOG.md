@@ -136,10 +136,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | ID | Tool | What it does | Run | Local implementation | Public API option | Phase | Status |
 |---|---|---|---|---|---|---|---|
 | BGP-01 | IP → ASN | Origin ASN, prefix, AS name, RIR | H | Team Cymru DNS (`origin.asn.cymru.com`) via `miekg/dns` | RIPEstat `prefix-overview` | 2 | ✅ |
-| BGP-02 | ASN info | Name, country, announced prefixes v4/v6, neighbours | P | — | RIPEstat `as-overview`, `announced-prefixes`, `asn-neighbours` | 3 | ⬜ |
-| BGP-03 | Prefix routing status | Visibility, first/last seen, origin(s), MOAS detection | P | — | RIPEstat `routing-status`, `bgp-state` | 3 | ⬜ |
-| BGP-04 | RPKI ROV validation | Valid/invalid/unknown for prefix+origin | P | — | RIPEstat `rpki-validation` | 3 | ⬜ |
-| BGP-05 | Looking glass | Routes seen by RIS collectors | P | — | RIPEstat `looking-glass` | 3 | ⬜ |
+| BGP-02 | ASN info | Name, country, announced prefixes v4/v6, neighbours | P | — | RIPEstat `as-overview`, `announced-prefixes`, `asn-neighbours` | 3 | ✅ |
+| BGP-03 | Prefix routing status | Visibility, first/last seen, origin(s), MOAS detection | P | — | RIPEstat `routing-status`, `bgp-state` | 3 | ✅ |
+| BGP-04 | RPKI ROV validation | Valid/invalid/unknown for prefix+origin | P | — | RIPEstat `rpki-validation` | 3 | ✅ |
+| BGP-05 | Looking glass | Routes seen by RIS collectors | P | — | RIPEstat `looking-glass` | 3 | ✅ |
 | BGP-06 | WHOIS | Domain / IP / ASN WHOIS (port 43, referral following) | S | own port-43 client (every referral via `target.Resolve`) | — | 2 | ✅ |
 | BGP-07 | RDAP lookup | Structured registration data (domain, IP, ASN) | P | `openrdap` client | rdap.org bootstrap / IANA bootstrap | 2 | ✅ |
 | BGP-08 | Domain expiry checker | Registration and expiry dates via RDAP | P | `openrdap` | RDAP | 2 | ✅ |

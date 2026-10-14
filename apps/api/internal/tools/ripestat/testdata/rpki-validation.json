@@ -1,0 +1,1 @@
+{"messages":[],"data_call_name":"rpki-validation","data":{"validating_roas":[{"origin":"13335","prefix":"1.1.1.0/24","max_length":24,"validity":"valid","source":"APNIC RPKI Root"}],"status":"valid","validator":"routinator","resource":"13335","prefix":"1.1.1.0/24"},"status":"ok","status_code":200}

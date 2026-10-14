@@ -13,21 +13,24 @@ export function buildQuery(params: Params): string {
   return s ? `?${s}` : ''
 }
 
-/** Calls an enveloped GET endpoint; a new run aborts the previous one. `path` excludes `/api`. */
+/**
+ * Calls an enveloped GET endpoint; a new run aborts the previous one. `path` excludes `/api`;
+ * `suffix` appends path segments (e.g. `/AS13335` for `/v1/asn/{asn}`).
+ */
 export function useApi<T>(path: string) {
   const data = shallowRef<T>()
   const error = shallowRef<ApiError>()
   const loading = ref(false)
   let controller: AbortController | undefined
 
-  async function run(params: Params = {}): Promise<T | undefined> {
+  async function run(params: Params = {}, suffix = ''): Promise<T | undefined> {
     controller?.abort()
     const current = new AbortController()
     controller = current
     loading.value = true
     error.value = undefined
     try {
-      data.value = await apiGet<T>(`${path}${buildQuery(params)}`, { signal: current.signal })
+      data.value = await apiGet<T>(`${path}${suffix}${buildQuery(params)}`, { signal: current.signal })
       return data.value
     }
     catch (err) {

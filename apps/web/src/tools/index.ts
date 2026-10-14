@@ -1,5 +1,6 @@
 import type { Tool, ToolCategory } from './tool'
 import { translate } from '@/plugins/i18n.plugin'
+import { tool as asnInfo } from './asn-info'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as bdpCalculator } from './bdp-calculator'
 import { tool as browserLatency } from './browser-latency'
@@ -38,6 +39,7 @@ import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
 import { tool as ipv6SubnetCalculator } from './ipv6-subnet-calculator'
 import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as isItDown } from './is-it-down'
+import { tool as lookingGlass } from './looking-glass'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
 import { tool as mtr } from './mtr'
@@ -48,6 +50,7 @@ import { tool as opticalPower } from './optical-power'
 import { tool as ping } from './ping'
 import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
+import { tool as prefixStatus } from './prefix-status'
 import { tool as protocolReference } from './protocol-reference'
 import { tool as punycodeConverter } from './punycode-converter'
 import { tool as randomIpGenerator } from './random-ip-generator'
@@ -56,6 +59,7 @@ import { tool as redirectTracer } from './redirect-tracer'
 import { tool as requestHeaders } from './request-headers'
 import { tool as reverseDns } from './reverse-dns'
 import { tool as reverseDnsName } from './reverse-dns-name'
+import { tool as rpkiValidator } from './rpki-validator'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
 import { tool as spfChecker } from './spf-checker'
@@ -83,7 +87,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
-  { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry] },
+  { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass] },
   { id: 'reputation', components: [ipGeolocation] },
   { id: 'lan', components: [] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },

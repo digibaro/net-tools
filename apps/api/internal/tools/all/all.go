@@ -19,6 +19,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/remote"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/ripestat"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tlsinspect"
@@ -61,5 +62,9 @@ func Tools() []tools.Tool {
 		&rdap.ExpiryTool{Svc: rdapSvc},
 		&geo.Tool{},
 		&remote.Tool{},
+		&ripestat.ASNTool{},
+		&ripestat.PrefixTool{},
+		&ripestat.RPKITool{},
+		&ripestat.LookingGlassTool{},
 	}
 }

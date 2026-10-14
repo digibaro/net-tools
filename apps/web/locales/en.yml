@@ -210,6 +210,46 @@ remote:
     tls: TLS
     firstByte: First byte
     total: Total
+bgp:
+  asn: AS number
+  prefix: Prefix or IP address
+  lookUp: Look up
+  invalidAsn: Enter an AS number such as AS13335.
+  invalidPrefix: Enter a prefix such as 1.1.1.0/24 or an IP address.
+  announced: Announced
+  notAnnounced: Not announced
+  visibility: '{seen} of {total} RIS peers ({pct} %)'
+  prefixCount: '{v4} IPv4 and {v6} IPv6 ({total} announced)'
+  neighbourCount: '{up} upstream, {down} downstream ({total} total)'
+  prefixesTitle: 'Announced prefixes ({n})'
+  neighboursTitle: Neighbours
+  powerNote: Power is the number of RIS peers that see the adjacency; higher means more important.
+  relation:
+    left: Upstream
+    right: Downstream
+    uncertain: Uncertain
+  fields:
+    holder: Holder
+    registry: Registry
+    prefixes: Prefixes
+    neighbours: Neighbours
+    visibility: Visibility
+    firstSeen: First seen
+    lastSeen: Last seen
+  columns:
+    prefix: Prefix
+    relation: Relation
+    power: Power
+    routeObjects: Route objects (IRR)
+    origin: Origin
+    maxLength: Max length
+    validity: Validity
+    asPath: AS path
+    peers: Peers
+    collector: Collector
+    peer: Peer
+    community: Communities
+    updated: Updated
 registry:
   query: Domain, IP address or AS number
   invalidQuery: Enter a domain (example.com), an IP address or an AS number (AS13335).
@@ -1636,3 +1676,34 @@ tools:
       up: '{target} answers from every location tested.'
       partial: '{target} answers from some locations only — a regional or partial outage.'
       down: '{target} does not answer from any location tested — it looks down for everyone.'
+  asn-info:
+    title: ASN info
+    description: Who holds an AS number, which prefixes it announces and who its upstreams and downstreams are, from RIPEstat.
+  prefix-status:
+    title: Prefix routing status
+    description: Is a prefix announced in BGP, how widely is it seen, which AS originates it, and is there more than one origin (MOAS)?
+    moas: '{n} different ASes originate this prefix (MOAS) — this can be intentional (anycast, DDoS protection) or a hijack.'
+    origins: Origin AS
+    related: Related prefixes
+    less: Less specific (covering)
+    more: More specific
+  rpki-validator:
+    title: RPKI validator
+    description: Check whether a prefix and origin AS are valid, invalid or unknown under RPKI route origin validation, and see the ROAs involved.
+    origin: Origin AS
+    run: Validate
+    verdict: '{prefix} originated by AS{asn}: {status}'
+    roas: Matching ROAs
+    source: 'Validated by {validator} via RIPEstat.'
+    status:
+      valid: Valid
+      invalid_asn: Invalid — a ROA exists for another origin AS
+      invalid_length: Invalid — the prefix is more specific than the ROA allows
+      unknown: Not found — no ROA covers this prefix
+  looking-glass:
+    title: BGP looking glass
+    description: See the routes that RIPE RIS route collectors hold for a prefix — AS paths, communities and peers.
+    summary: 'AS paths to {prefix}'
+    seen: '{routes} routes at {collectors} collectors; origin: {origins}.'
+    routes: Routes per collector peer
+    truncated: 'Showing {shown} of {total} routes.'

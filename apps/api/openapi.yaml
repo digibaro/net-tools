@@ -783,6 +783,91 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/asn/{asn}:
+    get:
+      operationId: asnInfo
+      summary: AS holder, announced prefixes and neighbours (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.asn
+      parameters:
+        - { name: asn, in: path, required: true, description: "AS13335 or 13335", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/AsnInfo" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/prefix/status:
+    get:
+      operationId: prefixStatus
+      summary: "Routing status of a prefix: visibility, origins, MOAS (RIPEstat)"
+      tags: [bgp]
+      x-capability: bgp.prefix
+      parameters:
+        - { name: prefix, in: query, required: true, description: "prefix or IP address", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PrefixStatus" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/rpki:
+    get:
+      operationId: rpkiValidation
+      summary: RPKI route origin validation (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.rpki
+      parameters:
+        - { name: prefix, in: query, required: true, schema: { type: string } }
+        - { name: asn, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RpkiResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/lookingglass:
+    get:
+      operationId: lookingGlass
+      summary: Routes seen by RIPE RIS collectors (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.lg
+      parameters:
+        - { name: prefix, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/LookingGlass" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -1666,3 +1751,101 @@ components:
         id: { type: string }
         probes: { type: integer }
         finished: { type: boolean }
+    AsnInfo:
+      type: object
+      required: [asn, holder, announced, block, prefixesV4, prefixesV6, prefixesTotal, upstreams, downstreams, neighbours, neighboursTotal]
+      properties:
+        asn: { type: integer }
+        holder: { type: string }
+        announced: { type: boolean }
+        block: { type: string }
+        prefixesV4: { type: array, items: { type: string } }
+        prefixesV6: { type: array, items: { type: string } }
+        prefixesTotal: { type: integer }
+        upstreams: { type: integer }
+        downstreams: { type: integer }
+        neighboursTotal: { type: integer }
+        neighbours:
+          type: array
+          items:
+            type: object
+            required: [asn, type, power]
+            properties:
+              asn: { type: integer }
+              type: { type: string, enum: [left, right, uncertain] }
+              power: { type: integer }
+    BgpSeen:
+      type: object
+      required: [prefix, origin, time]
+      properties:
+        prefix: { type: string }
+        origin: { type: integer }
+        time: { type: string }
+    BgpRelated:
+      type: object
+      required: [prefix, origin]
+      properties:
+        prefix: { type: string }
+        origin: { type: integer }
+    PrefixStatus:
+      type: object
+      required: [prefix, announced, seenBy, totalPeers, firstSeen, lastSeen, origins, moas, lessSpecifics, moreSpecifics]
+      properties:
+        prefix: { type: string }
+        announced: { type: boolean }
+        seenBy: { type: integer }
+        totalPeers: { type: integer }
+        firstSeen: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/BgpSeen" }] }
+        lastSeen: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/BgpSeen" }] }
+        moas: { type: boolean }
+        origins:
+          type: array
+          items:
+            type: object
+            required: [asn, routeObjects]
+            properties:
+              asn: { type: integer }
+              routeObjects: { type: array, items: { type: string } }
+        lessSpecifics: { type: array, items: { $ref: "#/components/schemas/BgpRelated" } }
+        moreSpecifics: { type: array, items: { $ref: "#/components/schemas/BgpRelated" } }
+    RpkiResult:
+      type: object
+      required: [prefix, asn, status, validator, roas]
+      properties:
+        prefix: { type: string }
+        asn: { type: integer }
+        status: { type: string, description: "valid, invalid_asn, invalid_length or unknown" }
+        validator: { type: string }
+        roas:
+          type: array
+          items:
+            type: object
+            required: [origin, prefix, maxLength, validity]
+            properties:
+              origin: { type: integer }
+              prefix: { type: string }
+              maxLength: { type: integer }
+              validity: { type: string }
+    LookingGlass:
+      type: object
+      required: [prefix, collectors, total, routes, origins]
+      properties:
+        prefix: { type: string }
+        collectors: { type: integer }
+        total: { type: integer }
+        origins: { type: array, items: { type: integer } }
+        routes:
+          type: array
+          items:
+            type: object
+            required: [collector, location, peer, prefix, asPath, origin, community, nextHop, updated]
+            properties:
+              collector: { type: string }
+              location: { type: string }
+              peer: { type: string }
+              prefix: { type: string }
+              asPath: { type: string }
+              origin: { type: integer }
+              community: { type: string }
+              nextHop: { type: string }
+              updated: { type: string }
