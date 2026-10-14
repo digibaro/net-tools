@@ -1016,6 +1016,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/ssh/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** SSH server banner, host key fingerprints and offered algorithms (no authentication) */
+        get: operations["sshAudit"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2191,6 +2208,31 @@ export interface components {
             warnings: string[];
             /** @enum {string} */
             rating: "good" | "fair" | "weak";
+        };
+        SshAudit: {
+            address: string;
+            banner: string;
+            software: string;
+            terrapin: boolean;
+            algorithms: {
+                kex: string[];
+                hostKey: string[];
+                ciphers: string[];
+                macs: string[];
+                compression: string[];
+            };
+            hostKeys: {
+                type: string;
+                bits: number;
+                fingerprint: string;
+            }[];
+            findings: {
+                algorithm: string;
+                kind: string;
+                /** @enum {string} */
+                severity: "fail" | "warn";
+                reason: string;
+            }[];
         };
     };
     responses: {
@@ -3738,6 +3780,32 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    sshAudit: {
+        parameters: {
+            query: {
+                host: string;
+                port?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SshAudit"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }

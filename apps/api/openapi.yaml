@@ -1241,6 +1241,28 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/ssh/audit:
+    get:
+      operationId: sshAudit
+      summary: "SSH server banner, host key fingerprints and offered algorithms (no authentication)"
+      tags: [tls]
+      x-capability: ssh.audit
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535, default: 22 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SshAudit" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2734,3 +2756,39 @@ components:
         problems: { type: array, items: { type: string } }
         warnings: { type: array, items: { type: string } }
         rating: { type: string, enum: [good, fair, weak] }
+    SshAudit:
+      type: object
+      required: [address, banner, software, algorithms, hostKeys, findings, terrapin]
+      properties:
+        address: { type: string }
+        banner: { type: string }
+        software: { type: string }
+        terrapin: { type: boolean }
+        algorithms:
+          type: object
+          required: [kex, hostKey, ciphers, macs, compression]
+          properties:
+            kex: { type: array, items: { type: string } }
+            hostKey: { type: array, items: { type: string } }
+            ciphers: { type: array, items: { type: string } }
+            macs: { type: array, items: { type: string } }
+            compression: { type: array, items: { type: string } }
+        hostKeys:
+          type: array
+          items:
+            type: object
+            required: [type, bits, fingerprint]
+            properties:
+              type: { type: string }
+              bits: { type: integer }
+              fingerprint: { type: string }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [algorithm, kind, severity, reason]
+            properties:
+              algorithm: { type: string }
+              kind: { type: string }
+              severity: { type: string, enum: [fail, warn] }
+              reason: { type: string }

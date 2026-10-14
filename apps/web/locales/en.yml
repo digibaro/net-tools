@@ -2038,3 +2038,18 @@ tools:
       no-forward-secrecy: Suites with RSA key exchange are enabled (no forward secrecy).
       cbc: CBC-mode suites are enabled; prefer AEAD (GCM, ChaCha20-Poly1305).
       no-post-quantum: The hybrid post-quantum group X25519MLKEM768 is not offered.
+  ssh-audit:
+    title: SSH server audit
+    description: Read an SSH server's banner, host key fingerprints and offered algorithms, and flag weak ones and Terrapin — without logging in.
+    run: Audit
+    note: No credentials are sent; connections end before authentication.
+    server: Server
+    banner: Banner
+    hostKeys: Host keys (SHA-256 fingerprints)
+    algorithms: Offered algorithms
+    lists:
+      kex: Key exchange
+      hostKey: Host key types
+      ciphers: Ciphers
+      macs: MACs
+      compression: Compression

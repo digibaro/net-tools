@@ -32,6 +32,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/revocation"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ripestat"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/serverinfo"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/sshaudit"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tcping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tlsinspect"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/tlsscan"
@@ -97,5 +98,6 @@ func Tools() []tools.Tool {
 		&web.ProtocolsTool{},
 		&revocation.Tool{},
 		&tlsscan.Tool{},
+		&sshaudit.Tool{},
 	}
 }
