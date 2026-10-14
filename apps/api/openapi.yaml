@@ -1263,6 +1263,21 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/SshAudit" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/email/dnsbl/stream:
+    get:
+      operationId: dnsblStream
+      summary: Check an IP or domain against DNS blocklists (SSE)
+      description: "Events: meta, list (DnsblCheck)*, done ({summary: DnsblSummary, durationMs}) or error."
+      tags: [email]
+      x-capability: email.dnsbl
+      parameters:
+        - { name: target, in: query, required: true, description: "public IP or domain", schema: { type: string } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2792,3 +2807,22 @@ components:
               kind: { type: string }
               severity: { type: string, enum: [fail, warn] }
               reason: { type: string }
+    DnsblCheck:
+      type: object
+      required: [zone, name, queried, status, codes, reason, delist, error]
+      properties:
+        zone: { type: string }
+        name: { type: string }
+        queried: { type: string }
+        status: { type: string, enum: [clean, listed, error] }
+        codes: { type: array, items: { type: string } }
+        reason: { type: string }
+        delist: { type: string }
+        error: { type: string }
+    DnsblSummary:
+      type: object
+      required: [checked, listed, errors]
+      properties:
+        checked: { type: integer }
+        listed: { type: array, items: { type: string } }
+        errors: { type: integer }

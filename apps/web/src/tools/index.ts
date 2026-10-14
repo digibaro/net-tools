@@ -3,6 +3,7 @@ import { translate } from '@/plugins/i18n.plugin'
 import { tool as asnInfo } from './asn-info'
 import { tool as bandwidthCalculator } from './bandwidth-calculator'
 import { tool as bdpCalculator } from './bdp-calculator'
+import { tool as blacklistCheck } from './blacklist-check'
 import { tool as browserLatency } from './browser-latency'
 import { tool as caaChecker } from './caa-checker'
 import { tool as certKeyMatcher } from './cert-key-matcher'
@@ -105,7 +106,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit] },
-  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer] },
+  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [] },

@@ -2053,3 +2053,18 @@ tools:
       ciphers: Ciphers
       macs: MACs
       compression: Compression
+  blacklist-check:
+    title: Email blacklist (DNSBL) check
+    description: Check a mail server IP or a domain against about 25 DNS blocklists — Spamhaus, SpamCop, Barracuda and more.
+    target: IP address or domain
+    run: Check
+    note: For a domain, its own domain blocklists and its IPv4 address are checked. Spamhaus refuses queries from public resolvers; such lists show as errors, not as clean.
+    listed: 'Listed on {n} of {total} lists: {lists}.'
+    clean: 'Not listed on any of the {total} lists checked.'
+    errors: '{n} lists could not be checked.'
+    lists: Blocklists
+    delist: Removal / lookup
+    status:
+      listed: Listed
+      clean: Clean
+      error: Error

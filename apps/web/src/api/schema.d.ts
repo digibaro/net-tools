@@ -1033,6 +1033,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/email/dnsbl/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Check an IP or domain against DNS blocklists (SSE)
+         * @description Events: meta, list (DnsblCheck)*, done ({summary: DnsblSummary, durationMs}) or error.
+         */
+        get: operations["dnsblStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2233,6 +2253,22 @@ export interface components {
                 severity: "fail" | "warn";
                 reason: string;
             }[];
+        };
+        DnsblCheck: {
+            zone: string;
+            name: string;
+            queried: string;
+            /** @enum {string} */
+            status: "clean" | "listed" | "error";
+            codes: string[];
+            reason: string;
+            delist: string;
+            error: string;
+        };
+        DnsblSummary: {
+            checked: number;
+            listed: string[];
+            errors: number;
         };
     };
     responses: {
@@ -3806,6 +3842,29 @@ export interface operations {
                 };
             };
             default: components["responses"]["Error"];
+        };
+    };
+    dnsblStream: {
+        parameters: {
+            query: {
+                /** @description public IP or domain */
+                target: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
         };
     };
 }

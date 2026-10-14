@@ -8,6 +8,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ctsearch"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsaxfr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsbench"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsbl"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnscaa"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsconsistency"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/dnsencrypted"
@@ -99,5 +100,6 @@ func Tools() []tools.Tool {
 		&revocation.Tool{},
 		&tlsscan.Tool{},
 		&sshaudit.Tool{},
+		&dnsbl.Tool{},
 	}
 }
