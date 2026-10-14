@@ -2528,3 +2528,36 @@ tools:
       length: Length
       origin: Origin
       notes: Notes
+  dmarc-report-viewer:
+    title: DMARC report viewer
+    description: Open DMARC aggregate (rua) reports — XML, .gz or .zip — and see who sends mail as your domain and whether it passes.
+    upload: Choose report files
+    drop: or drop .xml, .xml.gz or .zip reports here
+    paste: Or paste report XML
+    parse: Read pasted XML
+    pastedName: pasted XML
+    note: Reports are read in your browser and never uploaded. Up to 20 MB per file, 50 reports per zip.
+    summary: 'Summary ({n} reports)'
+    sources: 'Sending sources ({n})'
+    rows:
+      domains: Domain
+      policy: Published policy
+      period: Period
+      reporters: Reported by
+      messages: Messages
+      pass: DMARC pass
+      dispositions: Disposition
+    columns:
+      ip: Source IP
+      count: Messages
+      fail: Failing
+      rate: Pass rate
+      from: Header From
+      disposition: Disposition
+    errors:
+      tooLarge: '{file}: too large (over 20 MB uncompressed).'
+      tooMany: '{file}: more than 50 reports in one zip.'
+      unsupported: '{file}: not an XML, gzip or zip file.'
+      notDmarc: '{file}: not a DMARC aggregate report.'
+      doctype: '{file}: contains a DTD, which DMARC reports never have — refused.'
+      unreadable: '{file}: could not be read.'

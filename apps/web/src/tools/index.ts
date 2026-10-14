@@ -24,6 +24,7 @@ import { tool as dataUnitConverter } from './data-unit-converter'
 import { tool as dhcpProbe } from './dhcp-probe'
 import { tool as dkimChecker } from './dkim-checker'
 import { tool as dmarcChecker } from './dmarc-checker'
+import { tool as dmarcReportViewer } from './dmarc-report-viewer'
 import { tool as dnsBenchmark } from './dns-benchmark'
 import { tool as dnsConsistency } from './dns-consistency'
 import { tool as dnsLookup } from './dns-lookup'
@@ -127,7 +128,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown, latencyMatrix, pathMtu, ipv6Readiness, portScanner, iperf, snmp] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit] },
-  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest] },
+  { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest, dmarcReportViewer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
   { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo] },
