@@ -1,0 +1,7 @@
+# gitleaks configuration: default rules plus allow-lists for test fixtures with dummy key material.
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Key-converter tests use fake PEM headers (no real key material)"
+paths = ['''apps/web/src/tools/key-converter/key-converter\.service\.test\.ts''']
