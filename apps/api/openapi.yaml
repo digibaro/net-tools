@@ -1529,6 +1529,25 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DhcpResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/lan/gateway:
+    get:
+      operationId: lanGateway
+      summary: Default gateway, NAT-PMP / PCP and UPnP IGD external address (LAN mode)
+      tags: [lan]
+      x-capability: lan.gateway
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/GatewayResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3233,3 +3252,32 @@ components:
               dns: { type: array, items: { type: string } }
               domain: { type: string }
               leaseSeconds: { type: integer }
+    GatewayResult:
+      type: object
+      required: [interface, gateway, gatewayMac, addresses, natPmp, upnp, externalIp, doubleNat]
+      properties:
+        interface: { type: string }
+        gateway: { type: string }
+        gatewayMac: { type: string }
+        addresses: { type: array, items: { type: string } }
+        externalIp: { type: string }
+        doubleNat: { type: boolean }
+        natPmp:
+          type: object
+          required: [supported, externalIp, epoch, pcp, error]
+          properties:
+            supported: { type: boolean }
+            externalIp: { type: string }
+            epoch: { type: integer }
+            pcp: { type: boolean }
+            error: { type: string }
+        upnp:
+          type: object
+          required: [supported, externalIp, friendlyName, model, service, error]
+          properties:
+            supported: { type: boolean }
+            externalIp: { type: string }
+            friendlyName: { type: string }
+            model: { type: string }
+            service: { type: string }
+            error: { type: string }

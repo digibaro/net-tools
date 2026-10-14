@@ -2355,3 +2355,17 @@ tools:
       dns: DNS servers
       domain: Domain
       lease: Lease
+  gateway-info:
+    title: Gateway / NAT info
+    description: Show the default gateway of the NetTools server and the external address its router reports over NAT-PMP, PCP and UPnP — and spot double NAT or CGNAT.
+    run: Inspect gateway
+    note: Queries only the default gateway of the NetTools server (LAN mode). PCP is checked with ANNOUNCE, which creates no port mapping.
+    yes: Yes
+    no: Not supported
+    doubleNat: 'The router reports {ip} as its external address, which is private or carrier-grade NAT space — there is another NAT in front of it (double NAT / CGNAT).'
+    rows:
+      interface: Interface
+      addresses: Local addresses
+      gateway: Default gateway
+      gatewayMac: Gateway MAC
+      externalIp: External address (reported by the router)

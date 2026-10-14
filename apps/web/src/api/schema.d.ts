@@ -1295,6 +1295,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/gateway": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Default gateway, NAT-PMP / PCP and UPnP IGD external address (LAN mode) */
+        get: operations["lanGateway"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2629,6 +2646,29 @@ export interface components {
                 domain: string;
                 leaseSeconds: number;
             }[];
+        };
+        GatewayResult: {
+            interface: string;
+            gateway: string;
+            gatewayMac: string;
+            addresses: string[];
+            externalIp: string;
+            doubleNat: boolean;
+            natPmp: {
+                supported: boolean;
+                externalIp: string;
+                epoch: number;
+                pcp: boolean;
+                error: string;
+            };
+            upnp: {
+                supported: boolean;
+                externalIp: string;
+                friendlyName: string;
+                model: string;
+                service: string;
+                error: string;
+            };
         };
     };
     responses: {
@@ -4554,6 +4594,29 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["DhcpResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    lanGateway: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["GatewayResult"];
                     };
                 };
             };

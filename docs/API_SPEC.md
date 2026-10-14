@@ -167,7 +167,8 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/lan/arpscan/stream` | `cidr` (must be a directly connected subnet, ≤ /22) | lan.arpscan |
 | GET | `/api/v1/lan/mdns/stream` | `service?`, `seconds ≤ 10` | lan.mdns |
 | GET | `/api/v1/lan/ssdp/stream` | `seconds ≤ 10` | lan.ssdp |
-| GET | `/api/v1/lan/dhcp` | — | lan.dhcp |
+| GET | `/api/v1/lan/dhcp` | `interface?, seconds≤10` | lan.dhcp |
+| GET | `/api/v1/lan/gateway` | — | lan.gateway |
 
 ## 4. SSE event schema
 

@@ -118,5 +118,6 @@ func Tools() []tools.Tool {
 		&lan.MDNSTool{},
 		&lan.SSDPTool{},
 		&lan.DHCPTool{},
+		&lan.GatewayTool{},
 	}
 }
