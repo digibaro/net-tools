@@ -178,8 +178,8 @@ tools so the UI component is shared.
 | ICMP ping | — | `github.com/prometheus-community/pro-bing` |
 | Traceroute/MTR | — | `mtr --json`/`--raw` via execx (native Go fallback later) |
 | TLS | `@peculiar/x509` / `pkijs` for decoding pasted certs | `crypto/tls`, `crypto/x509`, `golang.org/x/crypto/ocsp` |
-| WHOIS / RDAP | — | `github.com/likexian/whois` + `github.com/openrdap/rdap` |
-| GeoIP | — | `github.com/oschwald/maxminddb-golang` (GeoLite2 mmdb mounted at `/data`) |
+| WHOIS / RDAP | — | own port-43 client (policy on every referral) + `github.com/openrdap/rdap` |
+| GeoIP | — | `github.com/oschwald/maxminddb-golang/v2` (GeoLite2 / DB-IP mmdb mounted at `/data`; ipinfo.io optional) |
 | OUI | `oui-data` (bundled) | — |
 | Charts (latency) | `echarts` via `vue-echarts` (lazy) | — |
 | WireGuard keys | `@noble/curves` (x25519) | — |

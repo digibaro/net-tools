@@ -44,14 +44,14 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 3 — Public APIs & depth (4–6 days)
 
-- [ ] Provider framework: cache, key handling, `provider_key_missing` capability reasons.
-- [ ] Globalping (`remote/stream`) + "Worldwide" vantage switch in ping/traceroute/mtr/dns/http.
-- [ ] RIPEstat (BGP-02..05), PeeringDB (BGP-09), crt.sh (TLS-08), Observatory (WEB-04 option),
+- [x] Provider framework: cache, key handling, `provider_key_missing` capability reasons.
+- [x] Globalping (`remote/stream`) + "Worldwide" vantage switch in ping/traceroute/mtr/dns/http.
+- [x] RIPEstat (BGP-02..05), PeeringDB (BGP-09), crt.sh (TLS-08), Observatory (WEB-04 option),
       HSTS preload (WEB-10), InternetDB/AbuseIPDB (REP-02/03), Tor (REP-04), cloud ranges (BGP-12).
 - [x] REP-01 `source=ipinfo`: ipinfo.io provider (token required, `provider_key_missing` without it),
       used as fallback when no local GeoIP database is mounted. ip-api.com is not used (free tier is
       non-commercial only).
-- [ ] Remaining Phase 3 rows (DNSSEC, resolver bench, AXFR, wildcard, TLS scan, OCSP, STARTTLS, SSH
+- [x] Remaining Phase 3 rows (DNSSEC, resolver bench, AXFR, wildcard, TLS scan, OCSP, STARTTLS, SSH
       audit, MTA-STS, DNSBL, PMTU, IPv6 readiness, latency matrix, WEB-05/07/08/09/11/15, CLI-02,
       speedtest profile CON-09).
 - **Exit**: all Phase 3 rows ✅; provider tests use fixtures only.
