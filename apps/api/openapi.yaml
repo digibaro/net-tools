@@ -1506,6 +1506,29 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/lan/dhcp:
+    get:
+      operationId: lanDhcp
+      summary: Detect DHCP servers with a DISCOVER (rogue DHCP check, LAN mode)
+      description: Broadcasts one DHCPDISCOVER and collects every OFFER; never sends REQUEST, so no lease is taken.
+      tags: [lan]
+      x-capability: lan.dhcp
+      parameters:
+        - { name: interface, in: query, description: "defaults to the interface of the default route", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DhcpResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3187,3 +3210,26 @@ components:
         deviceType: { type: string }
         presentationUrl: { type: string }
         error: { type: string }
+    DhcpResult:
+      type: object
+      required: [interface, mac, seconds, offers, servers]
+      properties:
+        interface: { type: string }
+        mac: { type: string }
+        seconds: { type: integer }
+        servers: { type: integer }
+        offers:
+          type: array
+          items:
+            type: object
+            required: [server, from, relay, offeredIp, subnetMask, routers, dns, domain, leaseSeconds]
+            properties:
+              server: { type: string }
+              from: { type: string }
+              relay: { type: string }
+              offeredIp: { type: string }
+              subnetMask: { type: string }
+              routers: { type: array, items: { type: string } }
+              dns: { type: array, items: { type: string } }
+              domain: { type: string }
+              leaseSeconds: { type: integer }

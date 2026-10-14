@@ -2335,3 +2335,23 @@ tools:
       types: Device and service types
       server: Server header
       note: Note
+  dhcp-probe:
+    title: DHCP probe (rogue DHCP check)
+    description: Find every DHCP server answering on the local network and see what each one offers.
+    interface: Interface (optional)
+    invalidInterface: Enter an interface name such as eth0, or leave empty for the default route.
+    seconds: Listen (s)
+    run: Probe
+    note: Sends one DHCPDISCOVER from the NetTools server (LAN mode) and never requests a lease, so no address is taken.
+    verdict:
+      none: 'No DHCP server answered on {iface} within {seconds} s.'
+      single: 'One DHCP server answered on {iface}.'
+      multiple: '{n} different DHCP servers answered on {iface} — unless this is intended (failover pair), one of them may be rogue.'
+    columns:
+      server: Server
+      relay: Relay
+      offered: Offered address
+      routers: Gateway
+      dns: DNS servers
+      domain: Domain
+      lease: Lease

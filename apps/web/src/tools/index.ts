@@ -20,6 +20,7 @@ import { tool as csrTool } from './csr-tool'
 import { tool as ctSearch } from './ct-search'
 import { tool as curlBuilder } from './curl-builder'
 import { tool as dataUnitConverter } from './data-unit-converter'
+import { tool as dhcpProbe } from './dhcp-probe'
 import { tool as dkimChecker } from './dkim-checker'
 import { tool as dmarcChecker } from './dmarc-checker'
 import { tool as dnsBenchmark } from './dns-benchmark'
@@ -122,7 +123,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
-  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery] },
+  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]

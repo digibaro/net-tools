@@ -166,7 +166,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | LAN-02 | ARP scan / host discovery | Live hosts in local subnet with MAC + vendor | S L | `mdlayher/arp` (needs NET_RAW) or `arp-scan` | — | 4 | ✅ |
 | LAN-03 | mDNS / Bonjour browser | Discover `_services._dns-sd._udp` | S L | `hashicorp/mdns` / `grandcat/zeroconf` | — | 4 | ✅ |
 | LAN-04 | SSDP / UPnP discovery | Discover UPnP devices, read descriptions | S L | UDP multicast M-SEARCH | — | 4 | ✅ |
-| LAN-05 | DHCP probe | Detect DHCP servers (rogue DHCP check) | S L | `insomniacslk/dhcp` (needs NET_RAW/ADMIN) | — | 4 | ⬜ |
+| LAN-05 | DHCP probe | Detect DHCP servers (rogue DHCP check) | S L | `insomniacslk/dhcp` (AF_PACKET, NET_RAW) | — | 4 | ✅ |
 | LAN-06 | Gateway / NAT info | Default gateway, NAT-PMP/PCP/UPnP external IP | S L | custom | — | 4 | ⬜ |
 
 ## 10. Calculators & Reference

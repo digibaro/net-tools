@@ -89,8 +89,8 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
 ## 5. Container hardening
 
 `api`:
-- `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). `NET_ADMIN` only in `lan` profile if
-  DHCP probe is enabled.
+- `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). The `lan` profile needs nothing more:
+  ARP scan and the DHCP probe use AF_PACKET sockets, which `NET_RAW` covers; `NET_ADMIN` is never added.
 - Runs as root **inside the container** with only `NET_RAW`, `read_only: true`, `tmpfs: /tmp`,
   `security_opt: [no-new-privileges:true]`. Alternative (stricter, more work): non-root user +
   `setcap cap_net_raw+ep` on `mtr-packet`/`traceroute`/api binary and drop `no-new-privileges`

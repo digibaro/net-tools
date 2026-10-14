@@ -8,7 +8,7 @@ services:
     network_mode: host
     expose: !reset []
     sysctls: !reset {}            # not allowed with host networking; set on the host if needed
-    cap_add: [NET_RAW]            # add NET_ADMIN only if LAN-05 DHCP probe is enabled
+    cap_add: [NET_RAW]            # ARP, DHCP probe (AF_PACKET) and ICMP need nothing more
     environment:
       NETTOOLS_LAN: "true"
       API_LISTEN: 127.0.0.1:8081  # host loopback; web reaches it via host-gateway
