@@ -2182,3 +2182,45 @@ tools:
     errors:
       syntax: Unbalanced quotes in the command.
       not-curl: The command must start with curl.
+  websocket-tester:
+    title: WebSocket tester
+    description: Connect to a WebSocket from your browser, send messages and watch replies, close codes and timing.
+    url: WebSocket URL
+    protocols: Subprotocols (optional)
+    invalid: Enter a ws:// or wss:// URL.
+    connect: Connect
+    disconnect: Disconnect
+    note: The connection is made from your browser. Pages served over HTTPS can only open wss:// connections.
+    messages: Messages
+    message: Message
+    send: Send
+    clear: Clear log
+    state:
+      closed: Closed
+      connecting: Connecting
+      open: Open
+    dir:
+      in: received
+      out: sent
+      sys: event
+    events:
+      connecting: 'Connecting to {url}…'
+      open: 'Connected in {ms} ms ({info})'
+      error: Connection error (details are hidden by the browser; check the URL, certificate and server logs)
+      close: 'Connection closed: {code} {meaning} — reason: {reason}'
+    close:
+      normal: (normal closure)
+      goingAway: (going away)
+      protocolError: (protocol error)
+      unsupported: (unsupported data)
+      noStatus: (no status received)
+      abnormal: (closed without a close frame — network error, TLS failure or refused)
+      invalidData: (invalid payload data)
+      policy: (policy violation)
+      tooBig: (message too big)
+      extension: (missing extension)
+      serverError: (internal server error)
+      restart: (service restart)
+      tryAgain: (try again later)
+      tls: (TLS handshake failure)
+      other: (application-defined)
