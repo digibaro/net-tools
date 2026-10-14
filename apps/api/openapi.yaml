@@ -1315,6 +1315,23 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/pmtu/stream:
+    get:
+      operationId: pmtuStream
+      summary: Path MTU discovery with Don't-Fragment ICMP probes (SSE)
+      description: "Events: meta, probe ({mtu, ok})*, done ({summary: PmtuResult, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.pmtu
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: max, in: query, description: "largest MTU to test (jumbo up to 9000)", schema: { type: integer, minimum: 1280, maximum: 9000, default: 1500 } }
+        - { name: family, in: query, schema: { type: string, enum: ["0", "4", "6"], default: "0" } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -2906,3 +2923,14 @@ components:
         stats: { $ref: "#/components/schemas/PingSummary" }
         rtts: { type: array, items: { type: [number, "null"] } }
         error: { type: string }
+    PmtuResult:
+      type: object
+      required: [target, address, pathMtu, mss, reachable, probes, note]
+      properties:
+        target: { type: string }
+        address: { type: string }
+        pathMtu: { type: integer }
+        mss: { type: integer }
+        reachable: { type: boolean }
+        probes: { type: integer }
+        note: { type: string }

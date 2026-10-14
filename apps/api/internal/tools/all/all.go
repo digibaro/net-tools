@@ -27,6 +27,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/observatory"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/peeringdb"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/pmtu"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/remote"
@@ -104,5 +105,6 @@ func Tools() []tools.Tool {
 		&sshaudit.Tool{},
 		&dnsbl.Tool{},
 		&latmatrix.Tool{},
+		&pmtu.Tool{},
 	}
 }

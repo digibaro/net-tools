@@ -2117,3 +2117,26 @@ tools:
     tooMany: At most 10 targets.
     invalid: 'Not a host name or IP: {list}'
     noReply: no reply
+  path-mtu:
+    title: Path MTU discovery
+    description: Find the largest packet that reaches a host without fragmentation, using ICMP probes with the Don't-Fragment bit set.
+    max: Largest size to test
+    jumbo: 9000 (jumbo)
+    run: Discover
+    found: 'Path MTU from this server: {mtu} bytes.'
+    probes: Probes
+    fields:
+      mtu: Path MTU
+      mss: TCP MSS
+      address: Address
+      probes: Probes sent
+    causes:
+      ethernet: Standard Ethernet — nothing on the path reduces it.
+      pppoe: Typical of a PPPoE (DSL) link.
+      ipip: Typical of an IP-in-IP tunnel.
+      gre: Typical of a GRE tunnel.
+      ipv6-tunnel: Typical of a 6in4 tunnel.
+      wireguard: Typical of a WireGuard tunnel.
+      vpn: Typical of a VPN or IPsec tunnel.
+      ipv6-minimum: The IPv6 minimum MTU.
+      jumbo: Jumbo frames all the way.

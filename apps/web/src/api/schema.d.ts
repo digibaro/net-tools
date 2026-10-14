@@ -1090,6 +1090,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/pmtu/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Path MTU discovery with Don't-Fragment ICMP probes (SSE)
+         * @description Events: meta, probe ({mtu, ok})*, done ({summary: PmtuResult, durationMs}) or error.
+         */
+        get: operations["pmtuStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2339,6 +2359,15 @@ export interface components {
             stats: components["schemas"]["PingSummary"];
             rtts: (number | null)[];
             error: string;
+        };
+        PmtuResult: {
+            target: string;
+            address: string;
+            pathMtu: number;
+            mss: number;
+            reachable: boolean;
+            probes: number;
+            note: string;
         };
     };
     responses: {
@@ -3969,6 +3998,31 @@ export interface operations {
                 targets: string;
                 /** @description 1..PING_MAX_COUNT */
                 count?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    pmtuStream: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description largest MTU to test (jumbo up to 9000) */
+                max?: number;
+                family?: "0" | "4" | "6";
             };
             header?: never;
             path?: never;
