@@ -1119,6 +1119,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/DnssecResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/compression:
+    get:
+      operationId: httpCompression
+      summary: "Which content encodings (gzip, br, zstd, deflate) a URL serves, and how much they save"
+      tags: [web]
+      x-capability: web.compression
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Compression" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2426,3 +2447,25 @@ components:
             denial: { type: string }
             status: { type: string }
             message: { type: string }
+    Compression:
+      type: object
+      required: [url, contentType, vary, original, results, best]
+      properties:
+        url: { type: string }
+        contentType: { type: string }
+        vary: { type: string }
+        original: { type: integer }
+        best: { type: string }
+        results:
+          type: array
+          items:
+            type: object
+            required: [requested, served, supported, bytes, truncated, ratio, error]
+            properties:
+              requested: { type: string }
+              served: { type: string }
+              supported: { type: boolean }
+              bytes: { type: integer }
+              truncated: { type: boolean }
+              ratio: { type: number }
+              error: { type: string }

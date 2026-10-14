@@ -1912,3 +1912,16 @@ tools:
       insecure: Insecure (unsigned)
       bogus: Bogus
       indeterminate: Indeterminate
+  compression-check:
+    title: HTTP compression check
+    description: Which compression a page supports — gzip, Brotli, Zstandard, deflate — and how many bytes each saves.
+    run: Check
+    best: 'Best supported encoding: {enc}.'
+    none: The server sends this page uncompressed whatever the client asks for.
+    varyMissing: The response is compressed but Vary does not include Accept-Encoding; shared caches may serve the wrong variant.
+    columns:
+      requested: Asked for
+      served: Served
+      supported: Supported
+      size: Transfer size
+      saving: Saving

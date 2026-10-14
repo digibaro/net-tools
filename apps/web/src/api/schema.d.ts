@@ -911,6 +911,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/http/compression": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Which content encodings (gzip, br, zstd, deflate) a URL serves, and how much they save */
+        get: operations["httpCompression"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1940,6 +1957,22 @@ export interface components {
                 status: string;
                 message: string;
             };
+        };
+        Compression: {
+            url: string;
+            contentType: string;
+            vary: string;
+            original: number;
+            best: string;
+            results: {
+                requested: string;
+                served: string;
+                supported: boolean;
+                bytes: number;
+                truncated: boolean;
+                ratio: number;
+                error: string;
+            }[];
         };
     };
     responses: {
@@ -3332,6 +3365,31 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["DnssecResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpCompression: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Compression"];
                     };
                 };
             };

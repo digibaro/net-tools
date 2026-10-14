@@ -89,5 +89,6 @@ func Tools() []tools.Tool {
 		&dnswildcard.Tool{},
 		&dnsbench.Tool{},
 		&dnssec.Tool{},
+		&web.CompressionTool{},
 	}
 }

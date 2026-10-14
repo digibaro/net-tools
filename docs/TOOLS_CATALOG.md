@@ -91,7 +91,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-04 | Security headers analyzer | CSP, HSTS, XFO, XCTO, Referrer-Policy, Permissions-Policy grading | S | custom rules | Mozilla HTTP Observatory API | 2 | ✅ |
 | WEB-05 | HTTP/2 & HTTP/3 support | ALPN negotiation, `Alt-Svc`, QUIC handshake | S | `crypto/tls` ALPN + `quic-go` | — | 3 | ⬜ |
 | WEB-06 | CORS tester | Send preflight with given Origin/method/headers, evaluate | S | `net/http` | — | 2 | ✅ |
-| WEB-07 | Compression check | gzip / br / zstd support and ratio | S | `net/http` | — | 3 | ⬜ |
+| WEB-07 | Compression check | gzip / br / zstd support and ratio | S | `net/http` | — | 3 | ✅ |
 | WEB-08 | Cookie inspector | Parse Set-Cookie flags (Secure, HttpOnly, SameSite) | S | `net/http` | — | 3 | ⬜ |
 | WEB-09 | robots.txt / sitemap / security.txt | Fetch & parse well-known files | S | `net/http` | — | 3 | ⬜ |
 | WEB-10 | HSTS preload status | Is domain on the Chromium preload list | P | — | hstspreload.org API | 3 | ✅ |
