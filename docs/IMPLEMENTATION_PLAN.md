@@ -58,8 +58,8 @@ tagged pre-release. Ask the user before starting the next phase if anything in t
 
 ## Phase 4 — Advanced & LAN (4–6 days)
 
-- [ ] `lan` compose override + LAN-* tools; capability reason `requires_lan_mode` when off.
-- [ ] Port scanner (CON-06), iperf3 (CON-08) + `iperf` profile, SNMP (CON-12), bgpq4 (BGP-10),
+- [x] `lan` compose override + LAN-* tools; capability reason `requires_lan_mode` when off.
+- [x] Port scanner (CON-06), iperf3 (CON-08) + `iperf` profile, SNMP (CON-12), bgpq4 (BGP-10),
       AS-path visualizer, DMARC report viewer, open relay test, reputation (REP-05), CAL-12, TLS-11.
 - **Exit**: all rows ✅ or ⏸ with a reason.
 

@@ -20,14 +20,15 @@
                  │  optional profiles:                                                    │
                  │   • iperf      → iperf3 server :5201 (test target for clients)          │
                  │   • speedtest  → LibreSpeed :8082 (browser ↔ server bandwidth)         │
-                 │   • lan        → api with network_mode: host (ARP, WoL, mDNS, SSDP)      │
+                 │   • lan        → api with network_mode: host (ARP, WoL, mDNS, SSDP, DHCP)│
                  └────────────────────────────────────────────────────────────────────────┘
 ```
 
 - **Single-container option**: `docker/allinone.Dockerfile` (Phase 5) runs nginx + api under `tini`
   with `s6`-less supervision (api as child of a tiny Go launcher) for users who want one image.
 - The **vantage point matters**: server tools measure from the Docker host's network. LAN-layer tools
-  (ARP scan, Wake-on-LAN, mDNS/SSDP discovery) only work in `lan` profile (host networking).
+  (ARP scan, Wake-on-LAN, mDNS/SSDP discovery, DHCP probe, gateway / NAT info) only work in the `lan`
+  override (host networking, `NETTOOLS_LAN=true`); otherwise they report `requires_lan_mode`.
 
 ## 2. Repository layout
 
