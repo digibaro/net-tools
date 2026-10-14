@@ -179,3 +179,19 @@ func TestSecretFileErrorWrapped(t *testing.T) {
 		t.Fatalf("err = %v, want wrapped fs.ErrNotExist", err)
 	}
 }
+
+func TestInlineCommentValuesAreUnset(t *testing.T) {
+	env := map[string]string{
+		"ALLOW_CIDRS":         "# if set, ONLY these targets are allowed",
+		"DENY_CIDRS":          "   # extra comma-separated CIDRs to block",
+		"SERVER_INFO_ENABLED": "# server interfaces/routes tool; default off in public, on otherwise",
+		"PORTSCAN_ENABLED":    "true",
+	}
+	cfg, err := LoadFrom(func(k string) (string, bool) { v, ok := env[k]; return v, ok }, func(string) ([]byte, error) { return nil, nil })
+	if err != nil {
+		t.Fatalf("comment-only values must be ignored: %v", err)
+	}
+	if !cfg.Features.Portscan {
+		t.Error("real values must still apply")
+	}
+}

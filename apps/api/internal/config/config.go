@@ -89,6 +89,19 @@ func Load() (Config, error) {
 	return LoadFrom(os.LookupEnv, os.ReadFile)
 }
 
+// ignoreComments treats a value that starts with "#" as unset. Docker Compose keeps an inline
+// comment as the value when nothing precedes it (`ALLOW_CIDRS=   # if set, ...` in an env_file),
+// and no setting legitimately starts with "#".
+func ignoreComments(lookup LookupFunc) LookupFunc {
+	return func(name string) (string, bool) {
+		v, ok := lookup(name)
+		if ok && strings.HasPrefix(strings.TrimSpace(v), "#") {
+			return "", false
+		}
+		return v, ok
+	}
+}
+
 // LookupFunc matches os.LookupEnv.
 type LookupFunc func(string) (string, bool)
 
@@ -97,7 +110,7 @@ type ReadFileFunc func(string) ([]byte, error)
 
 // LoadFrom reads configuration using the given lookup and file reader (injectable for tests).
 func LoadFrom(lookup LookupFunc, readFile ReadFileFunc) (Config, error) {
-	p := &parser{lookup: lookup}
+	p := &parser{lookup: ignoreComments(lookup)}
 
 	profile := Profile(strings.ToLower(p.str("NETTOOLS_PROFILE", string(ProfilePublic))))
 	switch profile {
