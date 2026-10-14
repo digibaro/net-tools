@@ -38,8 +38,10 @@ type Tool struct {
 	Port uint16
 }
 
-func (*Tool) ID() string                                { return "dns.axfr" }
-func (*Tool) Enabled(d tools.Deps) (bool, tools.Reason) { return tools.Always(d) }
+func (*Tool) ID() string { return "dns.axfr" }
+func (*Tool) Enabled(d tools.Deps) (bool, tools.Reason) {
+	return tools.RequireFlag(d.Config.Features.AXFR)
+}
 
 func (t *Tool) Mount(r chi.Router, d tools.Deps) {
 	t.deps = d
