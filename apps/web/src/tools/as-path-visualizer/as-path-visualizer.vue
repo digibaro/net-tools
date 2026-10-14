@@ -61,7 +61,8 @@ const shortest = computed(() => paths.value.length ? Math.min(...paths.value.map
   </CCard>
   <CCard v-if="paths.length" :title="t('tools.as-path-visualizer.graph', { n: paths.length })" data-testid="result">
     <div class="overflow-x-auto">
-      <svg :viewBox="`0 0 ${width} ${height}`" :width="width" :height="height" role="img" :aria-label="t('tools.as-path-visualizer.graphLabel')" class="block" data-testid="graph">
+      <!-- Scales down to the card width (origin column stays visible on phones), never up. -->
+      <svg :viewBox="`0 0 ${width} ${height}`" :style="{ maxWidth: `${width}px` }" class="block h-auto w-full" role="img" :aria-label="t('tools.as-path-visualizer.graphLabel')" data-testid="graph">
         <path v-for="e in graph.edges" :key="`${e.from}-${e.to}`" :d="edgePath(e.from, e.to)" fill="none" :stroke="theme.textColor3" :stroke-width="Math.min(1 + e.paths, 5)" />
         <g v-for="n in graph.nodes" :key="n.asn" :transform="`translate(${pos.get(n.asn)!.x},${pos.get(n.asn)!.y})`">
           <rect :width="NW" :height="NH" rx="6" :fill="theme.cardColor" :stroke="stroke(n.cls, n.isOrigin)" :stroke-width="n.isOrigin ? 2.5 : 1.5" />
