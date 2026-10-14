@@ -1140,6 +1140,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Compression" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/cookies:
+    get:
+      operationId: httpCookies
+      summary: "Parse and audit the cookies a URL sets (Secure, HttpOnly, SameSite, prefixes)"
+      tags: [web]
+      x-capability: web.cookies
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Cookies" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2469,3 +2490,29 @@ components:
               truncated: { type: boolean }
               ratio: { type: number }
               error: { type: string }
+    Cookies:
+      type: object
+      required: [url, cookies]
+      properties:
+        url: { type: string }
+        cookies:
+          type: array
+          items:
+            type: object
+            required: [setBy, name, value, valueLength, domain, path, expires, maxAge, session, secure, httpOnly, sameSite, partitioned, problems, warnings]
+            properties:
+              setBy: { type: string }
+              name: { type: string }
+              value: { type: string, description: "masked" }
+              valueLength: { type: integer }
+              domain: { type: string }
+              path: { type: string }
+              expires: { type: string }
+              maxAge: { type: [integer, "null"] }
+              session: { type: boolean }
+              secure: { type: boolean }
+              httpOnly: { type: boolean }
+              sameSite: { type: string }
+              partitioned: { type: boolean }
+              problems: { type: array, items: { type: string } }
+              warnings: { type: array, items: { type: string } }

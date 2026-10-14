@@ -90,5 +90,6 @@ func Tools() []tools.Tool {
 		&dnsbench.Tool{},
 		&dnssec.Tool{},
 		&web.CompressionTool{},
+		&web.CookiesTool{},
 	}
 }

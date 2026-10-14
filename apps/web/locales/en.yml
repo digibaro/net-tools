@@ -1925,3 +1925,30 @@ tools:
       supported: Supported
       size: Transfer size
       saving: Saving
+  cookie-inspector:
+    title: Cookie inspector
+    description: See every cookie a site sets, including during redirects, and check Secure, HttpOnly, SameSite, prefixes and lifetime.
+    run: Inspect
+    none: '{url} sets no cookies on a first visit.'
+    count: '{n} cookies set on a first visit (values are masked).'
+    value: 'Value {value} ({n} characters)'
+    session: Session cookie
+    expires: 'Expires {date}'
+    setBy: 'set by {url}'
+    severity:
+      success: OK
+      warning: Review
+      error: Broken
+    findings:
+      samesite-none-insecure: SameSite=None without Secure — browsers reject this cookie.
+      secure-prefix: __Secure- cookies must be set with Secure over HTTPS — browsers reject it.
+      host-prefix: __Host- cookies need Secure, Path=/ and no Domain over HTTPS — browsers reject it.
+      too-large: Name and value exceed 4096 bytes — browsers drop it.
+      invalid: The Set-Cookie header cannot be parsed.
+      not-secure: Set over HTTPS without Secure — it will also be sent over plain HTTP.
+      plain-http: Set over plain HTTP — readable and modifiable on the network.
+      session-not-httponly: Looks like a session or auth cookie but is readable by JavaScript (no HttpOnly).
+      no-samesite: No SameSite attribute — browsers default to Lax.
+      long-lived: Expires more than 400 days ahead — browsers cap the lifetime at 400 days.
+      domain-wide: Domain is set — the cookie is shared with all subdomains.
+      deleted: Max-Age zero or negative — this header deletes the cookie.
