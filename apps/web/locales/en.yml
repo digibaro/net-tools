@@ -2266,3 +2266,20 @@ tools:
       latency: Measuring latency
       download: Measuring download
       upload: Measuring upload
+  port-scanner:
+    title: Port scanner
+    description: Find open TCP ports on a host with a bounded, rate-limited connect scan.
+    ports: Ports
+    invalidPorts: Use a preset or ports like 22,80,8000-8100.
+    run: Scan
+    note: Scan only hosts you own or are allowed to test. For a passive view without scanning, use the passive exposure tool.
+    summary: '{address}: {open} open, {closed} closed, {filtered} filtered (no answer).'
+    presets:
+      top100: Top 100
+      web: Web
+      mail: Mail
+      db: Databases
+      remote: Remote access
+    columns:
+      port: Port
+      service: Service

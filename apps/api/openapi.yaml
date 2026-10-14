@@ -1408,6 +1408,22 @@ paths:
           content:
             text/plain:
               schema: { type: string }
+  /v1/portscan/stream:
+    get:
+      operationId: portscanStream
+      summary: Bounded TCP connect scan of one host (SSE)
+      description: "Events: meta, port ({port, service})* for open ports, progress ({done, total}), done ({summary: PortscanSummary, durationMs}) or error."
+      tags: [connectivity]
+      x-capability: net.portscan
+      parameters:
+        - { name: target, in: query, required: true, schema: { type: string } }
+        - { name: ports, in: query, description: "preset (top100, web, mail, db, remote) or list/ranges, at most PORTSCAN_MAX_PORTS", schema: { type: string, default: top100 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -3031,4 +3047,20 @@ components:
               reachable: { type: [boolean, "null"] }
               port: { type: integer }
               error: { type: string }
-
+    PortscanSummary:
+      type: object
+      required: [address, scanned, open, closed, filtered, complete]
+      properties:
+        address: { type: string }
+        scanned: { type: integer }
+        closed: { type: integer }
+        filtered: { type: integer }
+        complete: { type: boolean }
+        open:
+          type: array
+          items:
+            type: object
+            required: [port, service]
+            properties:
+              port: { type: integer }
+              service: { type: string }

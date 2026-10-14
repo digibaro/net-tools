@@ -1178,6 +1178,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/portscan/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Bounded TCP connect scan of one host (SSE)
+         * @description Events: meta, port ({port, service})* for open ports, progress ({done, total}), done ({summary: PortscanSummary, durationMs}) or error.
+         */
+        get: operations["portscanStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2452,6 +2472,17 @@ export interface components {
                 reachable: boolean | null;
                 port: number;
                 error: string;
+            }[];
+        };
+        PortscanSummary: {
+            address: string;
+            scanned: number;
+            closed: number;
+            filtered: number;
+            complete: boolean;
+            open: {
+                port: number;
+                service: string;
             }[];
         };
     };
@@ -4220,6 +4251,30 @@ export interface operations {
                 };
                 content: {
                     "text/plain": string;
+                };
+            };
+        };
+    };
+    portscanStream: {
+        parameters: {
+            query: {
+                target: string;
+                /** @description preset (top100, web, mail, db, remote) or list/ranges, at most PORTSCAN_MAX_PORTS */
+                ports?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
                 };
             };
         };

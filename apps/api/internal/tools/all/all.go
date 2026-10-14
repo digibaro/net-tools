@@ -30,6 +30,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/pmtu"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/portscan"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/remote"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/reputation"
@@ -110,5 +111,6 @@ func Tools() []tools.Tool {
 		&pmtu.Tool{},
 		&ipv6ready.Tool{},
 		&speedtest.Tool{},
+		&portscan.Tool{},
 	}
 }
