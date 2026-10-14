@@ -85,6 +85,7 @@ import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
 import { tool as speedTest } from './speed-test'
 import { tool as spfChecker } from './spf-checker'
+import { tool as ssdpDiscovery } from './ssdp-discovery'
 import { tool as sshAudit } from './ssh-audit'
 import { tool as starttlsCheck } from './starttls-check'
 import { tool as subnetCheatSheet } from './subnet-cheat-sheet'
@@ -121,7 +122,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck] },
-  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser] },
+  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]

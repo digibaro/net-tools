@@ -1255,6 +1255,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/ssdp/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * SSDP / UPnP device discovery on the local network (LAN mode, SSE)
+         * @description Events: meta, device (SsdpDevice)*, done ({summary: {devices}, durationMs}) or error.
+         */
+        get: operations["lanSsdpStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2559,6 +2579,19 @@ export interface components {
             addresses: string[];
             txt: string[];
             from: string;
+        };
+        SsdpDevice: {
+            address: string;
+            location: string;
+            server: string;
+            usn: string;
+            types: string[];
+            friendlyName: string;
+            manufacturer: string;
+            model: string;
+            deviceType: string;
+            presentationUrl: string;
+            error: string;
         };
     };
     responses: {
@@ -4422,6 +4455,28 @@ export interface operations {
             query?: {
                 /** @description optional service type, e.g. _http._tcp */
                 service?: string;
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanSsdpStream: {
+        parameters: {
+            query?: {
                 seconds?: number;
             };
             header?: never;

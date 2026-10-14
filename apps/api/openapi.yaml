@@ -1491,6 +1491,21 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/lan/ssdp/stream:
+    get:
+      operationId: lanSsdpStream
+      summary: SSDP / UPnP device discovery on the local network (LAN mode, SSE)
+      description: "Events: meta, device (SsdpDevice)*, done ({summary: {devices}, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.ssdp
+      parameters:
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
 components:
   parameters:
     Family:
@@ -3157,3 +3172,18 @@ components:
         addresses: { type: array, items: { type: string } }
         txt: { type: array, items: { type: string } }
         from: { type: string }
+    SsdpDevice:
+      type: object
+      required: [address, location, server, usn, types, friendlyName, manufacturer, model, deviceType, presentationUrl, error]
+      properties:
+        address: { type: string }
+        location: { type: string }
+        server: { type: string }
+        usn: { type: string }
+        types: { type: array, items: { type: string } }
+        friendlyName: { type: string }
+        manufacturer: { type: string }
+        model: { type: string }
+        deviceType: { type: string }
+        presentationUrl: { type: string }
+        error: { type: string }

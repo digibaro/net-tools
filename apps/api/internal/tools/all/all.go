@@ -116,5 +116,6 @@ func Tools() []tools.Tool {
 		&lan.WOLTool{},
 		&lan.ARPScanTool{},
 		&lan.MDNSTool{},
+		&lan.SSDPTool{},
 	}
 }

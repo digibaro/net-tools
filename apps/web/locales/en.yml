@@ -2320,3 +2320,18 @@ tools:
       type: Type
       host: Host:port
       addresses: Addresses
+  ssdp-discovery:
+    title: SSDP / UPnP discovery
+    description: Find UPnP devices on the local network — routers, media servers, smart TVs — with their names and models.
+    seconds: Listen (s)
+    run: Discover
+    note: The search is sent from the NetTools server (LAN mode). Device descriptions are only read from the device that answered.
+    found: 'Devices ({n})'
+    descError: Description not read
+    columns:
+      name: Name
+      address: Address
+      vendor: Manufacturer / model
+      types: Device and service types
+      server: Server header
+      note: Note
