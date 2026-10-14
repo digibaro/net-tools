@@ -1097,6 +1097,28 @@ paths:
           content:
             text/event-stream:
               schema: { type: string }
+  /v1/dns/dnssec:
+    get:
+      operationId: dnssecValidate
+      summary: "Validate the DNSSEC chain of trust from the root to a name"
+      tags: [dns]
+      x-capability: dns.dnssec
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [A, AAAA, MX, TXT, NS, SOA, CNAME, CAA, DNSKEY, DS, HTTPS, TLSA, SRV], default: A } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DnssecResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2344,3 +2366,63 @@ components:
         ranking: { type: array, items: { $ref: "#/components/schemas/DnsBenchResolver" } }
         names: { type: array, items: { type: string } }
         rounds: { type: integer }
+    DnssecSignature:
+      type: object
+      required: [covers, keyTag, algorithm, inception, expiration, valid, error]
+      properties:
+        covers: { type: string }
+        keyTag: { type: integer }
+        algorithm: { type: string }
+        inception: { type: string }
+        expiration: { type: string }
+        valid: { type: boolean }
+        error: { type: string }
+    DnssecStep:
+      type: object
+      required: [zone, status, message, ds, keys, signatures]
+      properties:
+        zone: { type: string }
+        status: { type: string, enum: [secure, insecure, bogus, indeterminate] }
+        message: { type: string }
+        ds:
+          type: array
+          items:
+            type: object
+            required: [tag, algorithm, digestType, matched]
+            properties:
+              tag: { type: integer }
+              algorithm: { type: string }
+              digestType: { type: string }
+              matched: { type: boolean }
+        keys:
+          type: array
+          items:
+            type: object
+            required: [tag, flags, role, algorithm, trusted]
+            properties:
+              tag: { type: integer }
+              flags: { type: integer }
+              role: { type: string, enum: [KSK, ZSK] }
+              algorithm: { type: string }
+              trusted: { type: boolean }
+        signatures: { type: array, items: { $ref: "#/components/schemas/DnssecSignature" } }
+    DnssecResult:
+      type: object
+      required: [name, type, status, message, resolverAd, steps, answer]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        status: { type: string, enum: [secure, insecure, bogus, indeterminate] }
+        message: { type: string }
+        resolverAd: { type: boolean }
+        steps: { type: array, items: { $ref: "#/components/schemas/DnssecStep" } }
+        answer:
+          type: object
+          required: [rcode, records, signatures, denial, status, message]
+          properties:
+            rcode: { type: string }
+            records: { type: array, items: { $ref: "#/components/schemas/DnsRecord" } }
+            signatures: { type: array, items: { $ref: "#/components/schemas/DnssecSignature" } }
+            denial: { type: string }
+            status: { type: string }
+            message: { type: string }

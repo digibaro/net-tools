@@ -1899,3 +1899,16 @@ tools:
       avg: Avg ms
       success: Answered
       errors: Errors
+  dnssec-validator:
+    title: DNSSEC validator
+    description: Validate the DNSSEC chain of trust from the root down to a name, and see exactly where it breaks — missing DS, mismatched keys, expired or invalid signatures.
+    run: Validate
+    chain: Chain of trust
+    answer: '{name} {type}'
+    ad: the resolver also validated it (AD flag)
+    note: Records are fetched from 1.1.1.1 with checking disabled and validated here against the IANA root trust anchors (KSK-2017 and KSK-2024).
+    status:
+      secure: Secure
+      insecure: Insecure (unsigned)
+      bogus: Bogus
+      indeterminate: Indeterminate

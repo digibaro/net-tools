@@ -894,6 +894,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/dnssec": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Validate the DNSSEC chain of trust from the root to a name */
+        get: operations["dnssecValidate"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1876,6 +1893,53 @@ export interface components {
             ranking: components["schemas"]["DnsBenchResolver"][];
             names: string[];
             rounds: number;
+        };
+        DnssecSignature: {
+            covers: string;
+            keyTag: number;
+            algorithm: string;
+            inception: string;
+            expiration: string;
+            valid: boolean;
+            error: string;
+        };
+        DnssecStep: {
+            zone: string;
+            /** @enum {string} */
+            status: "secure" | "insecure" | "bogus" | "indeterminate";
+            message: string;
+            ds: {
+                tag: number;
+                algorithm: string;
+                digestType: string;
+                matched: boolean;
+            }[];
+            keys: {
+                tag: number;
+                flags: number;
+                /** @enum {string} */
+                role: "KSK" | "ZSK";
+                algorithm: string;
+                trusted: boolean;
+            }[];
+            signatures: components["schemas"]["DnssecSignature"][];
+        };
+        DnssecResult: {
+            name: string;
+            type: string;
+            /** @enum {string} */
+            status: "secure" | "insecure" | "bogus" | "indeterminate";
+            message: string;
+            resolverAd: boolean;
+            steps: components["schemas"]["DnssecStep"][];
+            answer: {
+                rcode: string;
+                records: components["schemas"]["DnsRecord"][];
+                signatures: components["schemas"]["DnssecSignature"][];
+                denial: string;
+                status: string;
+                message: string;
+            };
         };
     };
     responses: {
@@ -3246,6 +3310,32 @@ export interface operations {
                     "text/event-stream": string;
                 };
             };
+        };
+    };
+    dnssecValidate: {
+        parameters: {
+            query: {
+                name: string;
+                type?: "A" | "AAAA" | "MX" | "TXT" | "NS" | "SOA" | "CNAME" | "CAA" | "DNSKEY" | "DS" | "HTTPS" | "TLSA" | "SRV";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DnssecResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
         };
     };
 }
