@@ -91,5 +91,6 @@ func Tools() []tools.Tool {
 		&dnssec.Tool{},
 		&web.CompressionTool{},
 		&web.CookiesTool{},
+		&web.WellKnownTool{},
 	}
 }

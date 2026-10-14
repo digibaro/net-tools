@@ -1952,3 +1952,29 @@ tools:
       long-lived: Expires more than 400 days ahead — browsers cap the lifetime at 400 days.
       domain-wide: Domain is set — the cookie is shared with all subdomains.
       deleted: Max-Age zero or negative — this header deletes the cookie.
+  well-known-files:
+    title: robots.txt, sitemap & security.txt
+    description: Fetch and check a site's robots.txt, sitemap and security.txt (RFC 9116) in one go.
+    site: Site
+    run: Check
+    blocksAll: robots.txt disallows everything for all crawlers (User-agent * / Disallow /).
+    group: '{disallow} disallow, {allow} allow rules'
+    noSecurityTxt: No security.txt — researchers have no published way to report vulnerabilities.
+    sitemap: Sitemap
+    sitemapUrls: '{n} URLs'
+    sitemapIndex: 'Sitemap index with {n} sitemaps'
+    newest: 'newest change {date}'
+    capped: only the first 512 kB was read
+    state:
+      found: Found
+      missing: Not found
+      error: 'Error ({status})'
+    findings:
+      no-contact: Contact is required (RFC 9116).
+      no-expires: Expires is required (RFC 9116).
+      multiple-expires: Expires must appear only once.
+      bad-expires: Expires is not an RFC 3339 date.
+      expired: The file has expired — researchers should not trust it.
+      expires-far: Expires is more than a year ahead; RFC 9116 recommends less.
+      legacy-location: Served at /security.txt; the standard location is /.well-known/security.txt.
+      unsigned: Not PGP-signed (optional, but lets researchers verify it).

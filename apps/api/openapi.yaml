@@ -1161,6 +1161,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Cookies" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/wellknown:
+    get:
+      operationId: httpWellKnown
+      summary: "robots.txt, sitemap and security.txt of a site"
+      tags: [web]
+      x-capability: web.wellknown
+      parameters:
+        - { name: url, in: query, required: true, description: "any URL of the site; its origin is used", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/WellKnown" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2516,3 +2537,54 @@ components:
               partitioned: { type: boolean }
               problems: { type: array, items: { type: string } }
               warnings: { type: array, items: { type: string } }
+    WellKnownFile:
+      type: object
+      required: [url, found, status, contentType, bytes, error]
+      properties:
+        url: { type: string }
+        found: { type: boolean }
+        status: { type: integer }
+        contentType: { type: string }
+        bytes: { type: integer }
+        error: { type: string }
+    WellKnown:
+      type: object
+      required: [origin, robots, security, sitemap]
+      properties:
+        origin: { type: string }
+        robots:
+          type: object
+          required: [file, groups, sitemaps, blocksAll]
+          properties:
+            file: { $ref: "#/components/schemas/WellKnownFile" }
+            blocksAll: { type: boolean }
+            sitemaps: { type: array, items: { type: string } }
+            groups:
+              type: array
+              items:
+                type: object
+                required: [agents, allow, disallow, disallowAll, crawlDelay]
+                properties:
+                  agents: { type: array, items: { type: string } }
+                  allow: { type: integer }
+                  disallow: { type: integer }
+                  disallowAll: { type: boolean }
+                  crawlDelay: { type: string }
+        security:
+          type: object
+          required: [file, fields, signed, problems, warnings]
+          properties:
+            file: { $ref: "#/components/schemas/WellKnownFile" }
+            fields: { type: object, additionalProperties: { type: array, items: { type: string } } }
+            signed: { type: boolean }
+            problems: { type: array, items: { type: string } }
+            warnings: { type: array, items: { type: string } }
+        sitemap:
+          type: object
+          required: [file, kind, entries, newest, capped]
+          properties:
+            file: { $ref: "#/components/schemas/WellKnownFile" }
+            kind: { type: string }
+            entries: { type: integer }
+            newest: { type: string }
+            capped: { type: boolean }

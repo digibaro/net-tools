@@ -945,6 +945,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/http/wellknown": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** robots.txt, sitemap and security.txt of a site */
+        get: operations["httpWellKnown"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2011,6 +2028,45 @@ export interface components {
                 problems: string[];
                 warnings: string[];
             }[];
+        };
+        WellKnownFile: {
+            url: string;
+            found: boolean;
+            status: number;
+            contentType: string;
+            bytes: number;
+            error: string;
+        };
+        WellKnown: {
+            origin: string;
+            robots: {
+                file: components["schemas"]["WellKnownFile"];
+                blocksAll: boolean;
+                sitemaps: string[];
+                groups: {
+                    agents: string[];
+                    allow: number;
+                    disallow: number;
+                    disallowAll: boolean;
+                    crawlDelay: string;
+                }[];
+            };
+            security: {
+                file: components["schemas"]["WellKnownFile"];
+                fields: {
+                    [key: string]: string[];
+                };
+                signed: boolean;
+                problems: string[];
+                warnings: string[];
+            };
+            sitemap: {
+                file: components["schemas"]["WellKnownFile"];
+                kind: string;
+                entries: number;
+                newest: string;
+                capped: boolean;
+            };
         };
     };
     responses: {
@@ -3453,6 +3509,32 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["Cookies"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpWellKnown: {
+        parameters: {
+            query: {
+                /** @description any URL of the site; its origin is used */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["WellKnown"];
                     };
                 };
             };

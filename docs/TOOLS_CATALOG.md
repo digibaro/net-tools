@@ -93,7 +93,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-06 | CORS tester | Send preflight with given Origin/method/headers, evaluate | S | `net/http` | — | 2 | ✅ |
 | WEB-07 | Compression check | gzip / br / zstd support and ratio | S | `net/http` | — | 3 | ✅ |
 | WEB-08 | Cookie inspector | Parse Set-Cookie flags (Secure, HttpOnly, SameSite) | S | `net/http` | — | 3 | ✅ |
-| WEB-09 | robots.txt / sitemap / security.txt | Fetch & parse well-known files | S | `net/http` | — | 3 | ⬜ |
+| WEB-09 | robots.txt / sitemap / security.txt | Fetch & parse well-known files | S | `net/http` | — | 3 | ✅ |
 | WEB-10 | HSTS preload status | Is domain on the Chromium preload list | P | — | hstspreload.org API | 3 | ✅ |
 | WEB-11 | WebSocket tester | Connect, send/receive messages, close codes | B | native `WebSocket` | — | 3 | ⬜ |
 | WEB-12 | URL parser / encoder | Components, query params, encode/decode | B | `URL` | — | 1 | ✅ |
