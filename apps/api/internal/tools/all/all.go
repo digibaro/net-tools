@@ -18,6 +18,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ntpcheck"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/observatory"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/peeringdb"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/portcheck"
@@ -79,5 +80,6 @@ func Tools() []tools.Tool {
 		&torcheck.Tool{},
 		&hstspreload.Tool{},
 		&cloudranges.Tool{},
+		&observatory.Tool{},
 	}
 }

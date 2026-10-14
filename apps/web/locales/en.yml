@@ -1128,6 +1128,10 @@ tools:
       ok: 'Acceptable: first byte after {ttfb} ms, {total} ms in total.'
       slow: 'Slow server response: first byte after {ttfb} ms, {total} ms in total.'
   security-headers:
+    observatory:
+      compare: Compare with Mozilla Observatory
+      grade: 'Observatory: {grade} ({score})'
+      details: Full Observatory report
     title: Security headers analyzer
     description: Grade a website's HTTP security headers (CSP, HSTS, framing, nosniff, referrer and permissions policies, cookies) with fixes.
     run: Analyze

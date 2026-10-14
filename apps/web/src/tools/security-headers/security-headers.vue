@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Check, SecurityHeaders } from './security-headers.service'
+import type { components } from '@/api/schema'
 import { NButton, NTag } from 'naive-ui'
 import { computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
@@ -8,6 +9,7 @@ import ResultActions from '@/components/ResultActions.vue'
 import { useApi } from '@/composables/useApi'
 import { useQueryParam } from '@/composables/useQueryParam'
 import { useValidation } from '@/composables/useValidation'
+import { useCapabilitiesStore } from '@/stores/capabilities.store'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
 import { isValidHttpUrl } from '@/utils/url'
@@ -23,6 +25,13 @@ onMounted(() => {
     void submit()
 })
 const checks = computed(() => sortChecks(data.value?.checks ?? []))
+
+// Optional second opinion from the Mozilla HTTP Observatory (runs only when asked).
+type Observatory = components['schemas']['Observatory']
+const caps = useCapabilitiesStore()
+const observatoryAvailable = computed(() => caps.capabilities?.tools['web.observatory']?.enabled ?? false)
+const observatory = useApi<Observatory>('/v1/http/observatory')
+const compare = () => data.value && observatory.run({ host: new URL(data.value.url).hostname })
 const tagType = { fail: 'error', warn: 'warning', pass: 'success', info: 'default' } as const
 function message(c: Check) {
   const k = messageKey(c)
@@ -73,6 +82,18 @@ const asText = () => [`${data.value?.grade} (${data.value?.score}/100) ${data.va
     </ul>
     <div class="mt-3">
       <ResultActions :text="asText" :json="data" filename="security-headers.json" />
+    </div>
+    <div v-if="observatoryAvailable" class="mt-4 flex flex-wrap items-center gap-3" data-testid="observatory">
+      <NButton size="small" secondary :loading="observatory.loading.value" @click="compare">
+        {{ t('tools.security-headers.observatory.compare') }}
+      </NButton>
+      <template v-if="observatory.data.value">
+        <NTag :type="GRADE_TYPE[observatory.data.value.grade] ?? GRADE_TYPE[observatory.data.value.grade.charAt(0)] ?? 'default'" :bordered="false" data-testid="observatory-grade">
+          {{ t('tools.security-headers.observatory.grade', { grade: observatory.data.value.grade, score: observatory.data.value.score }) }}
+        </NTag>
+        <a :href="observatory.data.value.detailsUrl" target="_blank" rel="noopener noreferrer" class="text-sm">{{ t('tools.security-headers.observatory.details') }}</a>
+      </template>
+      <span v-else-if="observatory.error.value" class="text-sm">{{ observatory.error.value.message }}</span>
     </div>
   </CCard>
 </template>

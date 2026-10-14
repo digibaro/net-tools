@@ -1016,6 +1016,27 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/CloudRanges" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/observatory:
+    get:
+      operationId: observatory
+      summary: "Mozilla HTTP Observatory grade for a host (WEB-04 option)"
+      tags: [web]
+      x-capability: web.observatory
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Observatory" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2191,3 +2212,14 @@ components:
               name: { type: string }
               ranges: { type: integer }
               error: { type: string }
+    Observatory:
+      type: object
+      required: [host, grade, score, testsPassed, testsFailed, scannedAt, detailsUrl]
+      properties:
+        host: { type: string }
+        grade: { type: string }
+        score: { type: integer }
+        testsPassed: { type: integer }
+        testsFailed: { type: integer }
+        scannedAt: { type: string }
+        detailsUrl: { type: string }
