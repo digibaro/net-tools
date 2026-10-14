@@ -1369,6 +1369,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/bgp/irr": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Expand an AS-SET / route-set / ASN from the IRR (bgpq4) */
+        get: operations["bgpIrr"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2801,6 +2818,21 @@ export interface components {
                 mailReply: string;
                 rcptReply: string;
                 accepted: boolean;
+            }[];
+        };
+        IrrResult: {
+            set: string;
+            /** @enum {string} */
+            mode: "prefixes" | "asns";
+            family?: number;
+            aggregate: boolean;
+            sources: string[];
+            asns: number[];
+            prefixes: {
+                prefix: string;
+                exact: boolean;
+                greaterEqual?: number;
+                lessEqual?: number;
             }[];
         };
     };
@@ -4838,6 +4870,37 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["RelayResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    bgpIrr: {
+        parameters: {
+            query: {
+                /** @description AS number, as-set or route-set (e.g. AS-EXAMPLE, AS65000:AS-CUSTOMERS) */
+                set: string;
+                mode?: "prefixes" | "asns";
+                family?: "4" | "6";
+                aggregate?: boolean;
+                /** @description comma-separated IRR sources (RPKI, RIPE, ARIN, APNIC, AFRINIC, LACNIC, RADB, NTTCOM, LEVEL3, ALTDB, IDNIC, JPIRR) */
+                sources?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["IrrResult"];
                     };
                 };
             };

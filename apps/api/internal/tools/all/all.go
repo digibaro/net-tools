@@ -23,6 +23,7 @@ import (
 	"github.com/digibaro/net-tools/apps/api/internal/tools/hstspreload"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/iperf"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/ipv6ready"
+	"github.com/digibaro/net-tools/apps/api/internal/tools/irr"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/lan"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/latmatrix"
 	"github.com/digibaro/net-tools/apps/api/internal/tools/mtr"
@@ -118,6 +119,7 @@ func Tools() []tools.Tool {
 		&portscan.Tool{},
 		&iperf.Tool{},
 		&snmp.Tool{},
+		&irr.Tool{},
 		&lan.WOLTool{},
 		&lan.ARPScanTool{},
 		&lan.MDNSTool{},

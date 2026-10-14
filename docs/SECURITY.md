@@ -80,6 +80,7 @@ Fixed limits for tools that follow data from third parties (not configurable):
 | SPF (EM-02) | Walk stops after 10 DNS-querying terms (RFC 7208 permerror), include depth 12 |
 | DMARC (EM-03) | 10 report URIs per tag checked for external authorization |
 | MX / SMTP (EM-01) | 10 MX hosts, 64 KiB and 100 lines per reply read before STARTTLS, 15 s per probe |
+| IRR expansion (BGP-10) | `bgpq4` via execx against the fixed default IRR host (rr.ntt.net); sources from an allow-list; 30 s, 1 MiB output |
 | Open relay test (EM-09) | Opt-in (`OPEN_RELAY_TEST_ENABLED`, off by default); ports 25/587/2525; 5 MAIL/RCPT attempts with RFC 2606 addresses, each followed by RSET — DATA is never sent; same read caps as EM-01; 30 s total |
 | WHOIS (BGP-06) | 3 referrals, ports 43 and 4321 only, 256 KiB per answer, 10 s per server |
 | RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body |

@@ -1618,6 +1618,31 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/RelayResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/irr:
+    get:
+      operationId: bgpIrr
+      summary: Expand an AS-SET / route-set / ASN from the IRR (bgpq4)
+      tags: [bgp]
+      x-capability: bgp.irr
+      parameters:
+        - { name: set, in: query, required: true, description: "AS number, as-set or route-set (e.g. AS-EXAMPLE, AS65000:AS-CUSTOMERS)", schema: { type: string } }
+        - { name: mode, in: query, schema: { type: string, enum: [prefixes, asns], default: prefixes } }
+        - { name: family, in: query, schema: { type: string, enum: ["4", "6"], default: "4" } }
+        - { name: aggregate, in: query, schema: { type: boolean, default: true } }
+        - { name: sources, in: query, description: "comma-separated IRR sources (RPKI, RIPE, ARIN, APNIC, AFRINIC, LACNIC, RADB, NTTCOM, LEVEL3, ALTDB, IDNIC, JPIRR)", schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/IrrResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3437,3 +3462,23 @@ components:
               mailReply: { type: string }
               rcptReply: { type: string }
               accepted: { type: boolean }
+    IrrResult:
+      type: object
+      required: [set, mode, aggregate, sources, prefixes, asns]
+      properties:
+        set: { type: string }
+        mode: { type: string, enum: [prefixes, asns] }
+        family: { type: integer }
+        aggregate: { type: boolean }
+        sources: { type: array, items: { type: string } }
+        asns: { type: array, items: { type: integer, format: int64 } }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, exact]
+            properties:
+              prefix: { type: string }
+              exact: { type: boolean }
+              greaterEqual: { type: integer }
+              lessEqual: { type: integer }

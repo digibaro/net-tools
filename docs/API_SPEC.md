@@ -150,6 +150,7 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/lookingglass` | `prefix` | bgp.lg |
 | GET | `/api/v1/peeringdb/{asn}` | — | bgp.peeringdb |
 | GET | `/api/v1/cloud-ranges` | `ip` | bgp.cloudranges |
+| GET | `/api/v1/bgp/irr` | `set`, `mode=prefixes\|asns`, `family=4\|6`, `aggregate=true`, `sources?` | bgp.irr |
 | GET | `/api/v1/geo` | `ip`, `source=local|ipinfo` (ip-api not used: non-commercial only) | rep.geo |
 | GET | `/api/v1/reputation/internetdb` | `ip` (passive exposure, keyless) | rep.internetdb |
 | GET | `/api/v1/reputation/abuseipdb` | `ip` (needs `ABUSEIPDB_KEY`) | rep.abuseipdb |

@@ -2481,3 +2481,24 @@ tools:
       junos: Juniper Junos
       bird: BIRD 2
       routeros: MikroTik RouterOS 7
+  irr-expansion:
+    title: AS-SET / IRR expansion
+    description: Expand an AS-SET, route-set or AS number from the IRR into prefixes or origin ASNs, and turn it into a BGP filter.
+    set: AS-SET, route-set or ASN
+    invalid: Enter an AS number or a set name such as AS-EXAMPLE or AS65000:AS-CUSTOMERS.
+    mode: Expand to
+    modes:
+      prefixes: Prefixes
+      asns: Origin ASNs
+    family: Family
+    aggregate: Aggregate
+    sources: IRR sources
+    allSources: All sources (default order)
+    run: Expand
+    note: Runs bgpq4 on the NetTools server against the NTT IRR mirror. Large sets can take up to 30 seconds.
+    found:
+      prefixes: '{set}: {n} prefixes'
+      asns: '{set}: {n} origin ASNs'
+    empty: '{set} expanded to nothing — the set may not exist in the selected sources.'
+    format: Output format
+    plain: Plain list
