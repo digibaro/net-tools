@@ -2649,3 +2649,75 @@ tools:
       rsaJwkNoPrimes: RSA-JWK's met private key hebben p, q, dp, dq en qi nodig.
       invalid: 'De sleutel kon niet worden gedecodeerd ({detail}).'
       noDerivation: Deze browser kan de publieke sleutel niet afleiden; plak een sleutel waar die in zit.
+  lldp-neighbors:
+    title: LLDP- / CDP-buren
+    description: Zoek uit op welke switch en poort de NET-TOOLS-server is aangesloten, via de LLDP- en CDP-aankondigingen van naburige apparaten.
+    interface: Interface (optioneel)
+    invalidInterface: Voer een interfacenaam in, zoals eth0, of laat leeg voor de standaardroute.
+    seconds: Luisteren (s)
+    run: Luisteren
+    listening: Luisteren naar aankondigingen
+    note: Switches kondigen zich elke 30 s (LLDP) of 60 s (CDP) aan, dus luister minstens zo lang. Alleen LLDP- en CDP-frames worden opgevangen; er wordt niets verstuurd.
+    found: 'Buren ({n})'
+    none: 'Binnen {seconds} s is geen LLDP- of CDP-aankondiging ontvangen. LLDP/CDP staat misschien uit op de switch, of de server hangt niet direct aan een switch (bijv. een virtuele machine).'
+    columns:
+      device: Apparaat
+      port: Poort
+      protocol: Protocol
+      capabilities: Mogelijkheden
+      management: Beheeradres
+      platform: Platform / software
+  ipv6-neighbors:
+    title: IPv6-buren & -routers (NDP)
+    description: Vind de IPv6-apparaten in het lokale netwerk en zie wat de routers aankondigen — prefixen, SLAAC of DHCPv6, DNS-servers en MTU.
+    interface: Interface (optioneel)
+    invalidInterface: Voer een interfacenaam in, zoals eth0, of laat leeg voor de standaardroute.
+    seconds: Luisteren (s)
+    run: Zoeken
+    note: Pingt de all-nodes-groep ff02::1 en vraagt routers om een aankondiging (ff02::2), vanaf de NET-TOOLS-server (LAN-modus). Apparaten die multicast-echo negeren (vaak Windows) verschijnen alleen als ze router zijn.
+    found: 'Buren ({n})'
+    from: 'Bevraagd vanaf {source}.'
+    router: Router
+    host: Host
+    notDefault: Geen standaardrouter (lifetime 0)
+    noRouter: Er is geen router advertisement ontvangen — IPv6 wordt in dit netwerk misschien niet gerouteerd.
+    routerTitle: 'Router advertisement van {ip}'
+    modes:
+      slaac: SLAAC (adressen uit de aangekondigde prefix)
+      dhcpv6: DHCPv6 (beheerde adressen)
+      slaac+dhcpv6-info: SLAAC, DNS en opties via DHCPv6
+      slaac+dhcpv6: SLAAC- en DHCPv6-adressen
+      none: Geen automatische adressen
+    ra:
+      router: Router
+      mode: Adresconfiguratie
+      prefixes: Prefixen
+      dns: DNS-servers (RDNSS)
+      search: Zoekdomeinen
+      mtu: MTU
+      lifetime: Router lifetime
+      preference: Voorkeur
+    columns:
+      ip: IPv6-adres
+      mac: MAC-adres
+      role: Rol
+  dhcpv6-probe:
+    title: DHCPv6-probe (rogue-DHCPv6-controle)
+    description: Vind elke DHCPv6-server die in het lokale netwerk antwoordt en zie welke adressen, gedelegeerde prefixen en DNS elk aanbiedt.
+    interface: Interface (optioneel)
+    invalidInterface: Voer een interfacenaam in, zoals eth0, of laat leeg voor de standaardroute.
+    seconds: Luisteren (s)
+    run: Probe starten
+    note: Verstuurt een SOLICIT (adres en prefix delegation) vanaf de NET-TOOLS-server (LAN-modus) en vraagt nooit een lease aan, dus er wordt niets in gebruik genomen.
+    verdict:
+      none: 'Geen DHCPv6-server antwoordde op {iface} binnen {seconds} s. Veel netwerken gebruiken alleen SLAAC — zie de tool voor IPv6-buren.'
+      single: 'Eén DHCPv6-server antwoordde op {iface}.'
+      multiple: '{n} verschillende DHCPv6-servers antwoordden op {iface} — tenzij dat de bedoeling is, kan een ervan rogue zijn.'
+    columns:
+      server: Server
+      addresses: Aangeboden adressen
+      prefixes: Gedelegeerde prefixen
+      dns: DNS-servers
+      search: Zoekdomeinen
+      preference: Voorkeur
+      status: Status

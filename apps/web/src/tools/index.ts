@@ -22,6 +22,7 @@ import { tool as ctSearch } from './ct-search'
 import { tool as curlBuilder } from './curl-builder'
 import { tool as dataUnitConverter } from './data-unit-converter'
 import { tool as dhcpProbe } from './dhcp-probe'
+import { tool as dhcpv6Probe } from './dhcpv6-probe'
 import { tool as dkimChecker } from './dkim-checker'
 import { tool as dmarcChecker } from './dmarc-checker'
 import { tool as dmarcReportViewer } from './dmarc-report-viewer'
@@ -53,6 +54,7 @@ import { tool as ipv4FormatConverter } from './ipv4-format-converter'
 import { tool as ipv4InIpv6 } from './ipv4-in-ipv6'
 import { tool as ipv4SubnetCalculator } from './ipv4-subnet-calculator'
 import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
+import { tool as ipv6Neighbors } from './ipv6-neighbors'
 import { tool as ipv6Readiness } from './ipv6-readiness'
 import { tool as ipv6SubnetCalculator } from './ipv6-subnet-calculator'
 import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
@@ -60,6 +62,7 @@ import { tool as irrExpansion } from './irr-expansion'
 import { tool as isItDown } from './is-it-down'
 import { tool as keyConverter } from './key-converter'
 import { tool as latencyMatrix } from './latency-matrix'
+import { tool as lldpNeighbors } from './lldp-neighbors'
 import { tool as lookingGlass } from './looking-glass'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
@@ -133,7 +136,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest, dmarcReportViewer] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck, urlReputation] },
-  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo] },
+  { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo, lldpNeighbors, ipv6Neighbors, dhcpv6Probe] },
   { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig, routerSnippets] },
   { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
 ]

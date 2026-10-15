@@ -1426,6 +1426,66 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/lan/lldp/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Listen for LLDP / CDP announcements of neighbouring switches and routers (LAN mode, SSE)
+         * @description Events: meta, neighbor (LldpNeighbor)*, done ({summary: {interface, seconds, neighbors}, durationMs}) or error. Only LLDP and CDP frames are captured (kernel BPF filter).
+         */
+        get: operations["lanLldpStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/ndp/stream": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * IPv6 neighbours (ff02::1 echo + neighbor solicitation) and router advertisements (LAN mode, SSE)
+         * @description Events: meta, host ({ip, mac, router})*, router (NdpRouter)*, done ({summary: NdpSummary, durationMs}) or error.
+         */
+        get: operations["lanNdpStream"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/lan/dhcpv6": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Detect DHCPv6 servers with a SOLICIT (rogue DHCPv6 check, LAN mode)
+         * @description Sends SOLICIT (IA_NA + IA_PD) to ff02::1:2 and collects every ADVERTISE; never sends REQUEST, so nothing is leased.
+         */
+        get: operations["lanDhcpv6"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2893,6 +2953,71 @@ export interface components {
         };
         /** @enum {string} */
         UrlVerdict: "clean" | "suspicious" | "malicious" | "unknown" | "skipped" | "error";
+        LldpNeighbor: {
+            /** @enum {string} */
+            protocol: "LLDP" | "CDP";
+            sourceMac: string;
+            chassisId: string;
+            portId: string;
+            portDescription: string;
+            systemName: string;
+            systemDescription: string;
+            platform: string;
+            capabilities: string[];
+            enabled: string[];
+            management: string[];
+            vlan: number;
+            maxFrame: number;
+            ttl: number;
+        };
+        NdpRouter: {
+            ip: string;
+            mac: string;
+            lifetimeSeconds: number;
+            managed: boolean;
+            other: boolean;
+            preference: string;
+            hopLimit: number;
+            mtu: number;
+            dns: string[];
+            search: string[];
+            prefixes: {
+                prefix: string;
+                onLink: boolean;
+                slaac: boolean;
+                validSeconds: number;
+                preferredSeconds: number;
+            }[];
+        };
+        NdpSummary: {
+            interface: string;
+            source: string;
+            routers: components["schemas"]["NdpRouter"][];
+            hosts: {
+                ip: string;
+                mac: string;
+                router: boolean;
+            }[];
+        };
+        Dhcpv6Result: {
+            interface: string;
+            seconds: number;
+            servers: number;
+            offers: {
+                server: string;
+                duid: string;
+                preference: number;
+                dns: string[];
+                search: string[];
+                status: string;
+                addresses: components["schemas"]["V6Lease"][];
+                prefixes: components["schemas"]["V6Lease"][];
+            }[];
+        };
+        V6Lease: {
+            value: string;
+            validSeconds: number;
+        };
     };
     responses: {
         /** @description Error envelope */
@@ -5021,6 +5146,82 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["UrlReputation"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    lanLldpStream: {
+        parameters: {
+            query?: {
+                /** @description defaults to the interface of the default route */
+                interface?: string;
+                /** @description LLDP repeats every 30 s, CDP every 60 s */
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanNdpStream: {
+        parameters: {
+            query?: {
+                /** @description defaults to the interface of the default route */
+                interface?: string;
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Event stream */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "text/event-stream": string;
+                };
+            };
+        };
+    };
+    lanDhcpv6: {
+        parameters: {
+            query?: {
+                /** @description defaults to the interface of the default route */
+                interface?: string;
+                seconds?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Dhcpv6Result"];
                     };
                 };
             };

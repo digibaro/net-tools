@@ -10,9 +10,13 @@ describe('isNew', () => {
     expect(isNew(new Date('2026-10-20'), new Date('2026-10-14'))).toBe(true)
     expect(isNew(undefined)).toBe(false)
   })
-  it('shows no badge on the tools of the current release', () => {
-    expect(toolsByCategory.flatMap(c => c.components).filter(t => t.isNew).map(t => t.path)).toEqual([])
-    expect(LATEST_RELEASE.version).toMatch(/^\d+\.\d+\.\d+$/)
+  it('badges exactly the tools created after the latest release', () => {
+    const tools = toolsByCategory.flatMap(c => c.components)
+    for (const t of tools)
+      expect(t.isNew, t.path).toBe(!!t.createdAt && t.createdAt.getTime() > LATEST_RELEASE.date.getTime())
+    expect(LATEST_RELEASE.version).toMatch(/^\d+\.\d+\.\d+/)
+    if (LATEST_RELEASE.version === '0.4.0') // the LAN tools added after v0.4.0
+      expect(tools.filter(t => t.isNew).map(t => t.path)).toEqual(expect.arrayContaining(['/lldp-neighbors', '/ipv6-neighbors', '/dhcpv6-probe']))
   })
 })
 

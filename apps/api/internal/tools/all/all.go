@@ -127,5 +127,8 @@ func Tools() []tools.Tool {
 		&lan.SSDPTool{},
 		&lan.DHCPTool{},
 		&lan.GatewayTool{},
+		&lan.LLDPTool{},
+		&lan.NDPTool{},
+		&lan.DHCPv6Tool{},
 	}
 }

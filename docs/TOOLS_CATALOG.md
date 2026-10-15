@@ -168,6 +168,9 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | LAN-04 | SSDP / UPnP discovery | Discover UPnP devices, read descriptions | S L | UDP multicast M-SEARCH | — | 4 | ✅ |
 | LAN-05 | DHCP probe | Detect DHCP servers (rogue DHCP check) | S L | `insomniacslk/dhcp` (AF_PACKET, NET_RAW) | — | 4 | ✅ |
 | LAN-06 | Gateway / NAT info | Default gateway, NAT-PMP/PCP/UPnP external IP | S L | custom | — | 4 | ✅ |
+| LAN-07 | LLDP / CDP neighbours | Which switch and port the server is connected to | S L | AF_PACKET + BPF (LLDP, CDP) | — | 5 | ✅ |
+| LAN-08 | IPv6 neighbours & routers | ff02::1 echo + NS/NA, router advertisements (prefixes, RDNSS, M/O flags) | S L | `mdlayher/ndp` | — | 5 | ✅ |
+| LAN-09 | DHCPv6 probe | Rogue DHCPv6 check: SOLICIT (IA_NA + IA_PD), collect ADVERTISEs | S L | `insomniacslk/dhcp/dhcpv6` + AF_PACKET | — | 5 | ✅ |
 
 ## 10. Calculators & Reference
 
