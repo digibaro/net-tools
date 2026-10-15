@@ -64,6 +64,7 @@ test('no flash: the theme class is set before the app script runs', async ({ pag
 
 for (const scheme of ['light', 'dark'] as const) {
   test(`home has no contrast violations in ${scheme} theme`, async ({ page }) => {
+    test.slow() // axe over the whole home page (every tool card)
     await page.emulateMedia({ colorScheme: scheme })
     await page.goto('/')
     await page.waitForLoadState('networkidle')

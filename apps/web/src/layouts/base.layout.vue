@@ -1,16 +1,18 @@
 <script setup lang="ts">
 import { InfoCircle, LayoutSidebarLeftCollapse, Menu2, Search, Settings } from '@vicons/tabler'
 import { onKeyStroke } from '@vueuse/core'
-import { NButton, NIcon, NLayout, NLayoutContent, NLayoutHeader, NLayoutSider, NTooltip } from 'naive-ui'
+import { NButton, NIcon, NLayout, NLayoutContent, NLayoutHeader, NLayoutSider, NTooltip, useThemeVars } from 'naive-ui'
 import { computed, defineAsyncComponent, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import CollapsibleToolMenu from '@/components/CollapsibleToolMenu.vue'
+import LocaleSwitcher from '@/components/LocaleSwitcher.vue'
 import SidebarFooter from '@/components/SidebarFooter.vue'
 import ThemeSwitcher from '@/components/ThemeSwitcher.vue'
 import { useStyleStore } from '@/stores/style.store'
 
 const style = useStyleStore()
+const theme = useThemeVars()
 const { t } = useI18n()
 const router = useRouter()
 // The palette (fuse.js, modal, input) is loaded on first use to keep the initial bundle small.
@@ -64,8 +66,13 @@ function closeOnMobile() {
       :inert="collapsed || undefined"
     >
       <RouterLink to="/" class="flex items-center gap-2 px-4 py-4 text-lg font-semibold no-underline" style="color: inherit" @click="closeOnMobile">
-        <img src="/favicon.svg" alt="" width="28" height="28">
-        {{ t('app.name') }}
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" :style="{ color: theme.primaryColor }">
+          <circle cx="12" cy="12" r="9" /><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18" />
+        </svg>
+        <span class="flex flex-col leading-tight">
+          {{ t('app.name') }}
+          <span class="text-xs nt-muted font-normal" data-testid="app-subtitle">{{ t('app.subtitle') }}</span>
+        </span>
       </RouterLink>
       <!-- On small screens the collapsed sidebar is off-canvas; mount the menu only when opened. -->
       <CollapsibleToolMenu v-if="!style.isSmallScreen || mobileOpen" @navigate="closeOnMobile" />
@@ -84,15 +91,22 @@ function closeOnMobile() {
           </template>
           {{ t('nav.toggleMenu') }}
         </NTooltip>
-        <NButton class="max-w-md flex-1 justify-start" secondary data-testid="search-open" @click="openPalette()">
+        <!-- Phones: icon-only search so every header button stays reachable at 360 px. -->
+        <NButton v-if="style.isSmallScreen" quaternary circle :aria-label="t('search.open')" data-testid="search-open" @click="openPalette()">
+          <template #icon>
+            <NIcon aria-hidden="true" :component="Search" />
+          </template>
+        </NButton>
+        <NButton v-else class="max-w-md flex-1 justify-start" secondary data-testid="search-open" @click="openPalette()">
           <template #icon>
             <NIcon aria-hidden="true" :component="Search" />
           </template>
           <span class="flex-1 text-left nt-muted">{{ t('search.placeholder') }}</span>
           <kbd class="ml-2 hidden text-xs nt-muted sm:inline">{{ shortcut }}</kbd>
         </NButton>
-        <div class="ml-auto flex items-center gap-1">
+        <div class="ml-auto flex shrink-0 items-center gap-1">
           <ThemeSwitcher />
+          <LocaleSwitcher />
           <NTooltip>
             <template #trigger>
               <NButton quaternary circle :aria-label="t('nav.settings')" @click="router.push('/settings')">

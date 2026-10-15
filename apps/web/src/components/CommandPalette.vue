@@ -19,7 +19,7 @@ interface Command {
 }
 
 const show = defineModel<boolean>('show', { default: false })
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const router = useRouter()
 const tools = useToolStore()
 const style = useStyleStore()
@@ -27,7 +27,11 @@ const themeVars = useThemeVars()
 const query = ref('')
 const active = ref(0)
 const input = ref<InstanceType<typeof NInput>>()
-const search = computed(() => createToolSearch(tools.tools))
+// Rebuilt when the language changes: Fuse indexes the (translated) names once.
+const search = computed(() => {
+  void locale.value
+  return createToolSearch(tools.tools)
+})
 
 const staticCommands = computed<Command[]>(() => [
   { id: 'page:home', label: t('nav.home'), icon: Home, run: () => router.push('/') },

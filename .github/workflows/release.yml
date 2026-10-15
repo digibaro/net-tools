@@ -36,6 +36,7 @@ jobs:
           img="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nettools-${{ matrix.image }}"
           {
             echo "version=$v"
+            echo "release=$v@$(git log -1 --format=%cs "$GITHUB_REF_NAME")"
             echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "tags<<EOF"
             echo "$img:$v"
@@ -55,6 +56,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           build-args: |
             VERSION=${{ steps.meta.outputs.version }}
+            LATEST_RELEASE=${{ steps.meta.outputs.release }}
             COMMIT=${{ github.sha }}
             BUILD_DATE=${{ steps.meta.outputs.date }}
           labels: |

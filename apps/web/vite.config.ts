@@ -1,3 +1,4 @@
+import { execFileSync } from 'node:child_process'
 import { readFileSync } from 'node:fs'
 import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
@@ -9,6 +10,25 @@ import { defineConfig } from 'vitest/config'
 import { cspScriptHashes } from './build/csp-hashes.ts'
 
 const apiProxy = process.env.VITE_API_PROXY ?? 'http://localhost:8081'
+
+/**
+ * Latest release ("0.4.0@2026-10-14"): VITE_LATEST_RELEASE (Docker/CI builds) or the newest v* tag in
+ * git; without either nothing is badged "new".
+ */
+function latestRelease(): { version: string, date: string } {
+  const env = process.env.VITE_LATEST_RELEASE
+  const m = env ? /^v?(\d+\.\d+\.\d[\w.-]*)@(\d{4}-\d{2}-\d{2})$/.exec(env) : null
+  if (m)
+    return { version: m[1]!, date: m[2]! }
+  try {
+    const tag = execFileSync('git', ['describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+    const date = execFileSync('git', ['log', '-1', '--format=%cs', tag], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+    return { version: tag.replace(/^v/, ''), date }
+  }
+  catch {
+    return { version: '0.0.0', date: '9999-12-31' }
+  }
+}
 
 function appVersion(): string {
   const v = process.env.VITE_APP_VERSION
@@ -61,6 +81,7 @@ export default defineConfig({
   define: {
     // Release builds pass the tag; local and dev builds show the package version with -dev.
     __APP_VERSION__: JSON.stringify(appVersion()),
+    __LATEST_RELEASE__: JSON.stringify(latestRelease()),
   },
   server: {
     proxy: {

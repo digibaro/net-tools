@@ -140,4 +140,4 @@ const categories: { id: string, components: Tool[] }[] = [
 
 export const toolsByCategory: ToolCategory[] = categories
   .filter(c => c.components.length > 0)
-  .map(c => ({ ...c, name: translate(`categories.${c.id}`) }))
+  .map(c => Object.defineProperty({ ...c }, 'name', { get: () => translate(`categories.${c.id}`), enumerable: true }) as ToolCategory)

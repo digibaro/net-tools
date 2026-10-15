@@ -1,12 +1,13 @@
 app:
   name: NET-TOOLS
+  subtitle: Tools for Networkers
   tagline: Network tools and troubleshooting utilities
 footer:
   version: 'v{version}'
-  copyright: '© {year} {holder}'
   license: 'License:'
 locales:
   en: English
+  nl: Nederlands
 nav:
   home: Home
   about: About
@@ -100,6 +101,8 @@ common:
   copyText: Copy as text
   copyJson: Copy as JSON
   downloadJson: Download JSON
+  downloadCsv: Download CSV
+  print: Print / save as PDF
   new: New
   allowed: Allowed
   denied: Denied
