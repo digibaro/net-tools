@@ -45,7 +45,7 @@ const usedText = computed(() => ok.value ? t('tools.ipam-sheet.used', { used: fo
   <CCard>
     <CInputText v-model:value="block" :label="t('tools.ipam-sheet.block')" placeholder="10.10.0.0/22 or 2001:db8:100::/56" :validation="blockValidation" monospace test-id="block" />
     <CInputText v-model:value="planText" :label="t('tools.ipam-sheet.plan')" :placeholder="t('tools.ipam-sheet.planPlaceholder')" multiline :rows="8" monospace test-id="plan" />
-    <p class="nt-muted m-0 text-xs">
+    <p class="m-0 text-xs nt-muted">
       {{ t('tools.ipam-sheet.help') }}
     </p>
   </CCard>

@@ -2791,3 +2791,47 @@ tools:
       usable: Usable
       status: Status
       note: Note
+  nat64-dns64-check:
+    title: NAT64 / DNS64 check
+    description: Does a resolver synthesize IPv6 addresses for IPv4-only names (DNS64), and which NAT64 prefix does it use? Prefix discovery per RFC 7050.
+    resolver: Resolver (optional)
+    resolverPlaceholder: empty = the server's resolver, or e.g. 2001:4860:4860::6464
+    invalidResolver: Enter an IP address (optionally with :port), or leave empty for the server's resolver.
+    run: Check
+    note: Asks for the AAAA record of ipv4only.arpa, a name that only has IPv4 addresses (192.0.0.170 and .171). Any IPv6 answer is synthesized, and the position of the IPv4 address in it reveals the NAT64 prefix and its length (RFC 6052).
+    verdict:
+      wellKnown: 'DNS64 is active with the well-known NAT64 prefix {prefix}.'
+      networkSpecific: 'DNS64 is active with the network-specific NAT64 prefix {prefix}.'
+      none: No DNS64 — this resolver returns no synthesized IPv6 addresses for IPv4-only names.
+    fields:
+      resolver: Resolver
+      prefixes: NAT64 prefix
+      synthesized: Synthesized AAAA
+      ipv4: A records of ipv4only.arpa
+      rcode: Response code
+  country-ip-blocks:
+    title: Country IP blocks
+    description: All IPv4 and IPv6 blocks registered to a country, merged into the shortest prefix list — as plain list, Cisco or Juniper prefix-list, nginx, ipset or MikroTik address-list.
+    country: Country code
+    invalid: Use a two-letter country code (ISO 3166), e.g. NL, BE, DE.
+    family: Address family
+    both: IPv4 + IPv6
+    run: Get blocks
+    format: Output format
+    output: Prefix list
+    v4Summary: '{prefixes} prefixes (from {entries} registrations), {addresses} addresses'
+    v6Summary: '{prefixes} prefixes (from {entries} registrations), {n48} × /48'
+    source: 'RIR delegation data via RIPEstat, {time}. Registration country, not where addresses are used — for geolocation see the IP geolocation tool.'
+    fields:
+      country: Country
+      ipv4: IPv4
+      ipv6: IPv6
+      asns: Autonomous systems
+      source: Source
+    formats:
+      plain: Plain list
+      cisco: Cisco prefix-list
+      juniper: Juniper prefix-list
+      nginx: nginx deny
+      ipset: Linux ipset (restore)
+      mikrotik: MikroTik address-list

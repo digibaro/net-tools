@@ -41,6 +41,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ✅ |
 | IP-18 | EUI-64 / link-local from MAC | Build IPv6 interface ID / fe80:: address from MAC | B | custom | — | 1 | ✅ |
 | IP-19 | Random IP generator | Random IPs within a prefix (test data) | B | custom | — | 2 | ✅ |
+| IP-20 | IPv6 address analyzer | Type, scope, interface-ID kind (EUI-64 → MAC, ISATAP, random), embedded IPv4, solicited-node | B | custom | — | 6 | ✅ |
+| IP-21 | IP address plan (IPAM sheet) | IPv4/IPv6 plan with names, VLANs, fixed networks, first-fit allocation, free blocks, CSV | B | custom | — | 6 | ✅ |
+| IP-22 | NAT64 / DNS64 check | DNS64 detection and NAT64 prefix discovery via ipv4only.arpa (RFC 7050 / 6052) | S | `miekg/dns` | — | 6 | ✅ |
+| IP-23 | Country IP blocks | IPv4/IPv6 blocks registered to a country, merged; prefix-list / ipset / address-list output | S | `netipx` | RIPEstat country-resource-list | 6 | ✅ |
 
 ## 2. DNS
 

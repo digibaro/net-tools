@@ -6,6 +6,7 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/asnlookup"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/cloudranges"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ctsearch"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dns64"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsaxfr"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsbench"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsbl"
@@ -56,6 +57,7 @@ func Tools() []tools.Tool {
 	rdapSvc := &rdap.Service{}
 	return []tools.Tool{
 		&dnslookup.Tool{},
+		&dns64.Tool{},
 		&dnsreverse.Tool{},
 		&dnspropagation.Tool{},
 		&dnstrace.Tool{},
@@ -92,6 +94,7 @@ func Tools() []tools.Tool {
 		&ripestat.PrefixTool{},
 		&ripestat.RPKITool{},
 		&ripestat.LookingGlassTool{},
+		&ripestat.CountryTool{},
 		&peeringdb.Tool{},
 		&ctsearch.Tool{},
 		&reputation.InternetDBTool{},

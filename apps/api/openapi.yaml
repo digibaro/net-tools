@@ -1751,6 +1751,49 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Dhcpv6Result" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/dns64:
+    get:
+      operationId: dnsDns64
+      summary: NAT64 / DNS64 detection (RFC 7050 prefix discovery via ipv4only.arpa)
+      tags: [dns]
+      x-capability: dns.dns64
+      parameters:
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Dns64Result" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/ip/country-blocks:
+    get:
+      operationId: ipCountryBlocks
+      summary: IPv4 / IPv6 blocks registered to a country (RIPEstat country-resource-list), merged
+      tags: [bgp]
+      x-capability: ip.country
+      parameters:
+        - { name: country, in: query, required: true, description: ISO 3166 alpha-2, schema: { type: string, pattern: "^[A-Za-z]{2}$" } }
+        - { name: family, in: query, schema: { type: string, enum: ["4", "6", all], default: all } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CountryBlocks" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3699,3 +3742,34 @@ components:
       properties:
         value: { type: string }
         validSeconds: { type: integer }
+    Dns64Result:
+      type: object
+      required: [resolver, dns64, rcode, synthesized, prefixes, ipv4]
+      properties:
+        resolver: { type: string }
+        dns64: { type: boolean }
+        rcode: { type: string }
+        synthesized: { type: array, items: { type: string } }
+        ipv4: { type: array, items: { type: string } }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, length, wellKnown]
+            properties:
+              prefix: { type: string }
+              length: { type: integer }
+              wellKnown: { type: boolean }
+    CountryBlocks:
+      type: object
+      required: [country, ipv4, ipv6, ipv4Entries, ipv6Entries, ipv4Addresses, ipv6Slash48s, asns, queryTime]
+      properties:
+        country: { type: string }
+        ipv4: { type: array, items: { type: string } }
+        ipv6: { type: array, items: { type: string } }
+        ipv4Entries: { type: integer }
+        ipv6Entries: { type: integer }
+        ipv4Addresses: { type: integer }
+        ipv6Slash48s: { type: integer }
+        asns: { type: integer }
+        queryTime: { type: string }

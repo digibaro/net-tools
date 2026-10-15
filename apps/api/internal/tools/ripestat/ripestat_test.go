@@ -101,3 +101,25 @@ func TestLookingGlass(t *testing.T) {
 		t.Errorf("out = %+v", out)
 	}
 }
+
+func TestCountryBlocks(t *testing.T) {
+	rs := Client{Base: fakeRIPEstat(t)}
+	var out CountryBlocks
+	env(t, &CountryTool{RS: rs}).Get("/api/v1/ip/country-blocks?country=nl").Must(t).Decode(t, &out)
+	if out.Country != "NL" || out.ASNs != 3 || out.IPv4Entries != 4 || out.IPv6Entries != 3 {
+		t.Fatalf("out = %+v", out)
+	}
+	want4 := []string{"192.0.2.0/24", "198.51.100.0/24", "203.0.113.10/31", "203.0.113.12/30", "203.0.113.16/30", "203.0.113.20/32"}
+	if strings.Join(out.IPv4, " ") != strings.Join(want4, " ") || out.IPv4Addresses != 256+256+11 {
+		t.Errorf("ipv4 = %v (%d addresses)", out.IPv4, out.IPv4Addresses)
+	}
+	if strings.Join(out.IPv6, " ") != "2001:db8::/32 2001:db9::/48" || out.IPv6Slash48s != 65536+1 {
+		t.Errorf("ipv6 = %v (%d /48s)", out.IPv6, out.IPv6Slash48s)
+	}
+	env(t, &CountryTool{RS: rs}).Get("/api/v1/ip/country-blocks?country=NL&family=6").Must(t).Decode(t, &out)
+	if len(out.IPv4) != 0 || len(out.IPv6) != 2 {
+		t.Errorf("family=6: %+v", out)
+	}
+	env(t, &CountryTool{RS: rs}).Get("/api/v1/ip/country-blocks?country=N1").ExpectError(t, "INVALID_INPUT")
+	env(t, &CountryTool{RS: rs}).Get("/api/v1/ip/country-blocks?country=NL&family=5").ExpectError(t, "INVALID_INPUT")
+}

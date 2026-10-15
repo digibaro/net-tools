@@ -1486,6 +1486,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/dns64": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** NAT64 / DNS64 detection (RFC 7050 prefix discovery via ipv4only.arpa) */
+        get: operations["dnsDns64"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/ip/country-blocks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** IPv4 / IPv6 blocks registered to a country (RIPEstat country-resource-list), merged */
+        get: operations["ipCountryBlocks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3017,6 +3051,29 @@ export interface components {
         V6Lease: {
             value: string;
             validSeconds: number;
+        };
+        Dns64Result: {
+            resolver: string;
+            dns64: boolean;
+            rcode: string;
+            synthesized: string[];
+            ipv4: string[];
+            prefixes: {
+                prefix: string;
+                length: number;
+                wellKnown: boolean;
+            }[];
+        };
+        CountryBlocks: {
+            country: string;
+            ipv4: string[];
+            ipv6: string[];
+            ipv4Entries: number;
+            ipv6Entries: number;
+            ipv4Addresses: number;
+            ipv6Slash48s: number;
+            asns: number;
+            queryTime: string;
         };
     };
     responses: {
@@ -5222,6 +5279,58 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["Dhcpv6Result"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsDns64: {
+        parameters: {
+            query?: {
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["Dns64Result"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    ipCountryBlocks: {
+        parameters: {
+            query: {
+                /** @description ISO 3166 alpha-2 */
+                country: string;
+                family?: "4" | "6" | "all";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["CountryBlocks"];
                     };
                 };
             };

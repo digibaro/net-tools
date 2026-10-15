@@ -99,6 +99,8 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/dns/dnssec` | `name` | dns.dnssec |
 | GET | `/api/v1/dns/consistency` | `zone` | dns.consistency |
 | GET | `/api/v1/dns/caa` | `name` | dns.caa |
+| GET | `/api/v1/dns/dns64` | `resolver?` | dns.dns64 |
+| GET | `/api/v1/ip/country-blocks` | `country, family=all\|4\|6` | ip.country |
 | GET | `/api/v1/dns/axfr` | `zone` | dns.axfr |
 | GET | `/api/v1/dns/benchmark/stream` | `resolvers`, `queries` | dns.benchmark |
 | GET | `/api/v1/dns/encrypted` | `endpoint`, `transport=dot`, `name=example.com`, `type?`, `count=3` | dns.encrypted |

@@ -17,6 +17,7 @@ import { tool as compressionCheck } from './compression-check'
 import { tool as connectionInfo } from './connection-info'
 import { tool as cookieInspector } from './cookie-inspector'
 import { tool as corsTester } from './cors-tester'
+import { tool as countryIpBlocks } from './country-ip-blocks'
 import { tool as csrTool } from './csr-tool'
 import { tool as ctSearch } from './ct-search'
 import { tool as curlBuilder } from './curl-builder'
@@ -49,10 +50,12 @@ import { tool as ipInSubnet } from './ip-in-subnet'
 import { tool as ipReputation } from './ip-reputation'
 import { tool as ipSpecialCheck } from './ip-special-check'
 import { tool as ipToAsn } from './ip-to-asn'
+import { tool as ipamSheet } from './ipam-sheet'
 import { tool as iperf } from './iperf'
 import { tool as ipv4FormatConverter } from './ipv4-format-converter'
 import { tool as ipv4InIpv6 } from './ipv4-in-ipv6'
 import { tool as ipv4SubnetCalculator } from './ipv4-subnet-calculator'
+import { tool as ipv6AddressAnalyzer } from './ipv6-address-analyzer'
 import { tool as ipv6ExpandCompress } from './ipv6-expand-compress'
 import { tool as ipv6Neighbors } from './ipv6-neighbors'
 import { tool as ipv6Readiness } from './ipv6-readiness'
@@ -71,6 +74,7 @@ import { tool as mtaStsChecker } from './mta-sts-checker'
 import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
 import { tool as mxLookup } from './mx-lookup'
+import { tool as nat64Dns64Check } from './nat64-dns64-check'
 import { tool as ntpCheck } from './ntp-check'
 import { tool as openRelayTest } from './open-relay-test'
 import { tool as opticalPower } from './optical-power'
@@ -125,12 +129,10 @@ import { tool as wildcardMaskCalculator } from './wildcard-mask-calculator'
 import { tool as wireguardConfig } from './wireguard-config'
 import { tool as zoneBuilder } from './zone-builder'
 import { tool as zoneTransferTest } from './zone-transfer-test'
-import { tool as ipv6AddressAnalyzer } from './ipv6-address-analyzer'
-import { tool as ipamSheet } from './ipam-sheet'
 
 // Category order matches docs/TOOLS_CATALOG.md. Empty categories are hidden.
 const categories: { id: string, components: Tool[] }[] = [
-  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6, randomIpGenerator, ipv6AddressAnalyzer, ipamSheet] },
+  { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6, randomIpGenerator, ipv6AddressAnalyzer, ipamSheet, nat64Dns64Check, countryIpBlocks] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder, zoneTransferTest, wildcardDetector, dnsBenchmark, dnssecValidator] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown, latencyMatrix, pathMtu, ipv6Readiness, portScanner, iperf, snmp] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester] },

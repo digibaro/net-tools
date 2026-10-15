@@ -2791,3 +2791,47 @@ tools:
       usable: Bruikbaar
       status: Status
       note: Notitie
+  nat64-dns64-check:
+    title: NAT64- / DNS64-controle
+    description: Maakt een resolver IPv6-adressen aan voor namen met alleen IPv4 (DNS64), en welke NAT64-prefix gebruikt hij? Prefixdetectie volgens RFC 7050.
+    resolver: Resolver (optioneel)
+    resolverPlaceholder: leeg = de resolver van de server, of bijv. 2001:4860:4860::6464
+    invalidResolver: Voer een IP-adres in (eventueel met :poort), of laat leeg voor de resolver van de server.
+    run: Controleren
+    note: Vraagt het AAAA-record op van ipv4only.arpa, een naam met alleen IPv4-adressen (192.0.0.170 en .171). Elk IPv6-antwoord is dus gesynthetiseerd, en de plaats van het IPv4-adres erin verraadt de NAT64-prefix en de lengte daarvan (RFC 6052).
+    verdict:
+      wellKnown: 'DNS64 is actief met de bekende NAT64-prefix {prefix}.'
+      networkSpecific: 'DNS64 is actief met de netwerkspecifieke NAT64-prefix {prefix}.'
+      none: Geen DNS64 — deze resolver geeft geen gesynthetiseerde IPv6-adressen voor namen met alleen IPv4.
+    fields:
+      resolver: Resolver
+      prefixes: NAT64-prefix
+      synthesized: Gesynthetiseerde AAAA
+      ipv4: A-records van ipv4only.arpa
+      rcode: Antwoordcode
+  country-ip-blocks:
+    title: IP-blokken per land
+    description: Alle IPv4- en IPv6-blokken die aan een land zijn uitgegeven, samengevoegd tot de kortste prefixlijst — als lijst, Cisco- of Juniper-prefix-list, nginx, ipset of MikroTik-address-list.
+    country: Landcode
+    invalid: Gebruik een landcode van twee letters (ISO 3166), bijv. NL, BE, DE.
+    family: Adresfamilie
+    both: IPv4 + IPv6
+    run: Blokken ophalen
+    format: Uitvoerformaat
+    output: Prefixlijst
+    v4Summary: '{prefixes} prefixen (uit {entries} registraties), {addresses} adressen'
+    v6Summary: '{prefixes} prefixen (uit {entries} registraties), {n48} × /48'
+    source: 'RIR-uitgiftegegevens via RIPEstat, {time}. Land van registratie, niet waar de adressen worden gebruikt — zie voor geolocatie de tool IP-geolocatie.'
+    fields:
+      country: Land
+      ipv4: IPv4
+      ipv6: IPv6
+      asns: Autonome systemen
+      source: Bron
+    formats:
+      plain: Gewone lijst
+      cisco: Cisco-prefix-list
+      juniper: Juniper-prefix-list
+      nginx: nginx deny
+      ipset: Linux ipset (restore)
+      mikrotik: MikroTik-address-list
