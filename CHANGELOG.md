@@ -6,6 +6,8 @@ instructions are on the [GitHub releases page](https://github.com/digibaro/net-t
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-15
+
 ### Added
 - 26 new tools (151 in total):
   - IP: IPv6 address analyzer, IP address plan (IPAM sheet), NAT64 / DNS64 check, country IP blocks.
@@ -86,6 +88,7 @@ Phases 0–3 (foundations, 32 browser tools, DNS / connectivity / HTTP / TLS / e
 tools, providers and Worldwide measurements) were developed before the first release; see the git
 history and `docs/IMPLEMENTATION_PLAN.md`.
 
-[Unreleased]: https://github.com/digibaro/net-tools-docker/compare/v0.5.0...HEAD
+[Unreleased]: https://github.com/digibaro/net-tools-docker/compare/v0.6.0...HEAD
+[0.6.0]: https://github.com/digibaro/net-tools-docker/compare/v0.5.0...v0.6.0
 [0.5.0]: https://github.com/digibaro/net-tools-docker/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/digibaro/net-tools-docker/releases/tag/v0.4.0
