@@ -8,6 +8,7 @@ import { useQueryParam } from '@/composables/useQueryParam'
 import { useValidation } from '@/composables/useValidation'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
+import { numberLocale } from '@/utils/format'
 import { closeKey, hexPreview, isWsUrl, parseProtocols, pushLog } from './websocket-tester.service'
 
 const { t } = useI18n()
@@ -78,7 +79,7 @@ onBeforeUnmount(() => ws.value?.close(1001))
 
 const stateType = { closed: 'default', connecting: 'warning', open: 'success' } as const
 const dirLabel = { in: '←', out: '→', sys: '•' } as const
-const time = (at: number) => new Date(at).toLocaleTimeString()
+const time = (at: number) => new Date(at).toLocaleTimeString(numberLocale())
 const asText = computed(() => log.value.map(e => `${time(e.at)} ${dirLabel[e.dir]} ${e.text}`).join('\n'))
 </script>
 

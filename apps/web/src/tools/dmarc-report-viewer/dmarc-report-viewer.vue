@@ -9,6 +9,7 @@ import ResultTable from '@/components/ResultTable.vue'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
+import { fixed } from '@/utils/format'
 import { parseReportXml, readReports, ReportError, summarize } from './dmarc-report-viewer.service'
 
 const { t } = useI18n()
@@ -61,7 +62,7 @@ function onPaste() {
 
 const summary = computed(() => reports.value.length ? summarize(reports.value) : undefined)
 const utcDay = (x: Date) => x.toISOString().slice(0, 10)
-const pct = (n: number) => `${(n * 100).toFixed(1)} %`
+const pct = (n: number) => `${fixed(n * 100, 1)} %`
 const summaryRows = computed(() => {
   const s = summary.value!
   const r0 = reports.value[0]!

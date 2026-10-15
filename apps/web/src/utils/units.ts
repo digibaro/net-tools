@@ -1,3 +1,4 @@
+import { numberLocale } from './format'
 /** Data size and data rate units, expressed in bits (sizes) or bits per second (rates). */
 export interface Unit {
   id: string
@@ -38,7 +39,7 @@ export function formatNumber(n: number, digits = 6): string {
   const abs = Math.abs(n)
   if (abs >= 1e21 || abs < 1e-6)
     return n.toExponential(digits - 1)
-  return Number(n.toPrecision(digits)).toLocaleString('en-US', { maximumFractionDigits: 20 })
+  return Number(n.toPrecision(digits)).toLocaleString(numberLocale(), { maximumFractionDigits: 20 })
 }
 
 /** "1 d 2 h 3 min 4.5 s"; sub-second values in ms / µs. */

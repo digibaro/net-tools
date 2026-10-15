@@ -6,6 +6,7 @@ import { apiPost } from '@/api/client'
 import ResultActions from '@/components/ResultActions.vue'
 import CCard from '@/ui/c-card.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
+import { fixed } from '@/utils/format'
 import { probe, stats } from '../browser-latency/browser-latency.service'
 import { DOWNLOAD_BYTES, drain, mbps, nextUploadSize, PHASE_MS, randomPayload, STREAMS, TOKEN_HEADER, UPLOAD_MAX_BYTES, UPLOAD_MIN_BYTES } from './speed-test.service'
 
@@ -103,8 +104,8 @@ onBeforeUnmount(() => controller?.abort())
 
 const running = computed(() => ['latency', 'download', 'upload'].includes(phase.value))
 const rows = computed(() => [
-  { label: t('tools.speed-test.download'), value: download.value ? `${download.value} Mbit/s` : '—' },
-  { label: t('tools.speed-test.upload'), value: upload.value ? `${upload.value} Mbit/s` : '—' },
+  { label: t('tools.speed-test.download'), value: download.value ? `${fixed(download.value, 1)} Mbit/s` : '—' },
+  { label: t('tools.speed-test.upload'), value: upload.value ? `${fixed(upload.value, 1)} Mbit/s` : '—' },
   { label: t('tools.speed-test.latency'), value: latency.value?.received ? `${latency.value.median} ms (${t('ping.jitter')} ${latency.value.jitter} ms)` : '—' },
 ])
 </script>

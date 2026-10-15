@@ -7,6 +7,7 @@ import { useQueryParam } from '@/composables/useQueryParam'
 import CCard from '@/ui/c-card.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
 import CSelect from '@/ui/c-select.vue'
+import { fixed } from '@/utils/format'
 import { formatDuration, humanize, RATE_UNITS, SIZE_UNITS, unitFactor } from '@/utils/units'
 import { efficiency, OVERHEAD_PRESETS, requiredRate, TIME_UNITS, transferTime } from './bandwidth-calculator.service'
 
@@ -39,7 +40,7 @@ const timeRows = computed(() => duration.value === undefined
   : [
       { label: k('time'), value: formatDuration(duration.value) },
       { label: k('goodput'), value: humanize(rateBps.value * eff.value, 'rate-bits') },
-      { label: k('efficiency'), value: `${(eff.value * 100).toFixed(2)} %`, noCopy: true },
+      { label: k('efficiency'), value: `${fixed(eff.value * 100, 2)} %`, noCopy: true },
     ])
 const rateRows = computed(() => needed.value === undefined
   ? []
