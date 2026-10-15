@@ -4102,9 +4102,10 @@ components:
         error: { type: string }
     SmtpBannerResult:
       type: object
-      required: [host, address, ptr, forward, fcrdns, bannerHost, ehloHost, probe, checks, passed, smtpBlocked]
+      required: [host, via, address, ptr, forward, fcrdns, bannerHost, ehloHost, probe, checks, passed, smtpBlocked]
       properties:
         host: { type: string }
+        via: { type: string, description: the mail domain when host came from its MX record }
         address: { type: string }
         ptr: { type: array, items: { type: string } }
         forward: { type: array, items: { type: string } }

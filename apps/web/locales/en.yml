@@ -2970,7 +2970,8 @@ tools:
   smtp-banner-check:
     title: SMTP banner & FCrDNS check
     description: Does a mail server's reverse DNS, SMTP banner and EHLO name line up? Receivers reject or junk mail from servers that fail these checks.
-    host: Mail server (hostname or IP)
+    host: Mail server or mail domain
+    via: 'Mail for {domain} is handled by {host} (preferred MX).'
     invalid: Enter a hostname or IP address.
     run: Check
     blocked: Port 25 could not be reached from the NET-TOOLS server (many providers block it); only the DNS checks ran.
@@ -3035,6 +3036,7 @@ tools:
       cacheStatus: CDN cache status
       repeat: Conditional repeat
     findings:
+      maxAgeZero: 'max-age=0: caches may store it but must revalidate before every use.'
       noStore: 'no-store: nothing may be cached, not even by the browser.'
       noCache: 'no-cache: may be stored, but must be revalidated with the server before every use.'
       noLifetime: No explicit lifetime (max-age or Expires) — caches decide for themselves.

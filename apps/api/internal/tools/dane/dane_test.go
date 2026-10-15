@@ -61,6 +61,9 @@ func TestDANEHTTPS(t *testing.T) {
 		t.Errorf("insecure = %+v", h)
 	}
 	env.Get("/api/v1/tls/dane?host=example.test&service=ftp").ExpectError(t, "INVALID_INPUT")
+	if v := Verdict(Host{Records: []TLSA{{Usage: 3}}, DNSSEC: true, Error: "TLS failed"}); v != "unreachable" {
+		t.Errorf("no TLS verdict = %s", v)
+	}
 }
 
 func TestMatches(t *testing.T) {

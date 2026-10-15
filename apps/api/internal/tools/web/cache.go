@@ -160,6 +160,8 @@ func AnalyzeCache(h httpcore.Hop) CacheResult {
 		add("noStore", "info", "")
 	case noCache:
 		add("noCache", "info", "")
+	case res.TTLSource == "max-age" && res.BrowserTTL == 0:
+		add("maxAgeZero", "info", "")
 	case res.TTLSource == "none":
 		add("noLifetime", "warn", "")
 	}

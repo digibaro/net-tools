@@ -45,7 +45,9 @@ type BannerCheck struct {
 
 // BannerResult is the EM-10 payload.
 type BannerResult struct {
-	Host        string        `json:"host"`
+	Host string `json:"host"`
+	// Via is the mail domain when Host was taken from its MX record.
+	Via         string        `json:"via"`
 	Address     string        `json:"address"`
 	PTR         []string      `json:"ptr"`
 	Forward     []string      `json:"forward"`
@@ -82,7 +84,27 @@ func (t *BannerTool) handle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ctx := r.Context()
-	tgt, err := t.deps.Target.Resolve(ctx, strings.TrimSpace(raw), target.Opts{Field: "host"})
+	srv, err := dnsx.ResolveServer(ctx, t.deps.Target, cmp.Or(t.Resolver, "system"), dnsx.UDP, 0)
+	if err != nil {
+		httpapi.Error(w, r, err)
+		return
+	}
+	// A mail domain is checked through its preferred MX host.
+	host, via := strings.TrimSuffix(strings.TrimSpace(raw), "."), ""
+	if _, err := netip.ParseAddr(host); err != nil {
+		if msg, _, err := dnsx.Query(ctx, srv, host, dns.TypeMX); err == nil {
+			best, pick := uint16(65535), ""
+			for _, rr := range msg.Answer {
+				if mx, ok := rr.(*dns.MX); ok && mx.Mx != "." && (pick == "" || mx.Preference < best) {
+					best, pick = mx.Preference, strings.TrimSuffix(strings.ToLower(mx.Mx), ".")
+				}
+			}
+			if pick != "" && !strings.EqualFold(pick, host) {
+				host, via = pick, host
+			}
+		}
+	}
+	tgt, err := t.deps.Target.Resolve(ctx, host, target.Opts{Field: "host"})
 	if err != nil {
 		httpapi.Error(w, r, err)
 		return
@@ -94,12 +116,7 @@ func (t *BannerTool) handle(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-	srv, err := dnsx.ResolveServer(ctx, t.deps.Target, cmp.Or(t.Resolver, "system"), dnsx.UDP, 0)
-	if err != nil {
-		httpapi.Error(w, r, err)
-		return
-	}
-	res := BannerResult{Host: tgt.Host, Address: addr.String(), PTR: []string{}, Forward: []string{}, Checks: []BannerCheck{}}
+	res := BannerResult{Via: via, Host: tgt.Host, Address: addr.String(), PTR: []string{}, Forward: []string{}, Checks: []BannerCheck{}}
 	t.reverse(ctx, srv, addr, &res)
 	port := t.Port
 	if port == 0 {

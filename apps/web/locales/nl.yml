@@ -2970,7 +2970,8 @@ tools:
   smtp-banner-check:
     title: SMTP-banner- & FCrDNS-controle
     description: Kloppen de reverse DNS, de SMTP-banner en de EHLO-naam van een mailserver met elkaar? Ontvangers weigeren of markeren mail van servers die hierop zakken.
-    host: Mailserver (hostnaam of IP)
+    host: Mailserver of maildomein
+    via: 'Mail voor {domain} wordt afgehandeld door {host} (MX met voorkeur).'
     invalid: Voer een hostnaam of IP-adres in.
     run: Controleren
     blocked: Poort 25 was vanaf de NET-TOOLS-server niet bereikbaar (veel providers blokkeren die); alleen de DNS-controles zijn uitgevoerd.
@@ -3035,6 +3036,7 @@ tools:
       cacheStatus: CDN-cachestatus
       repeat: Voorwaardelijke herhaling
     findings:
+      maxAgeZero: 'max-age=0: caches mogen het opslaan, maar moeten het vóór elk gebruik hervalideren.'
       noStore: 'no-store: niets mag worden gecachet, ook niet door de browser.'
       noCache: 'no-cache: mag worden opgeslagen, maar moet vóór elk gebruik bij de server worden gehervalideerd.'
       noLifetime: Geen expliciete levensduur (max-age of Expires) — caches beslissen zelf.

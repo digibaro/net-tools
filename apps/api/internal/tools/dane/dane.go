@@ -142,6 +142,8 @@ func Verdict(h Host) string {
 		return "no-tlsa"
 	case !h.DNSSEC:
 		return "insecure"
+	case h.TLS == nil: // signed TLSA, but no certificate to compare (e.g. port 25 blocked)
+		return "unreachable"
 	}
 	for _, r := range h.Records {
 		// PKIX usages also need a valid WebPKI chain.

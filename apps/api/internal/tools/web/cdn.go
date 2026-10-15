@@ -84,7 +84,7 @@ var signatures = []signature{
 	{name: "HUMAN (PerimeterX)", kind: "bot", cookies: []string{"_px", "_pxvid", "_pxhd"}},
 	{name: "Vercel", kind: "hosting", headers: []string{"x-vercel-id", "server=vercel", "x-vercel-cache"}, cnames: []string{".vercel-dns.com", ".vercel.app"}},
 	{name: "Netlify", kind: "hosting", headers: []string{"x-nf-request-id", "server=netlify"}, cnames: []string{".netlify.app", ".netlify.com"}},
-	{name: "GitHub Pages", kind: "hosting", headers: []string{"x-github-request-id", "server=github.com"}, cnames: []string{".github.io"}},
+	{name: "GitHub / GitHub Pages", kind: "hosting", headers: []string{"x-github-request-id", "server=github.com"}, cnames: []string{".github.io"}},
 	{name: "Shopify", kind: "hosting", headers: []string{"x-shopid", "x-shopify-stage"}, cnames: []string{"shops.myshopify.com"}},
 	{name: "WP Engine", kind: "hosting", headers: []string{"x-powered-by=wp engine", "wpe-backend"}, cnames: []string{".wpengine.com", ".wpenginepowered.com"}},
 	{name: "Heroku", kind: "hosting", headers: []string{"via=vegur"}, cnames: []string{".herokudns.com", ".herokuapp.com"}},

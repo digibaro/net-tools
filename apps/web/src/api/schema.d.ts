@@ -3326,6 +3326,8 @@ export interface components {
         };
         SmtpBannerResult: {
             host: string;
+            /** @description the mail domain when host came from its MX record */
+            via: string;
             address: string;
             ptr: string[];
             forward: string[];
