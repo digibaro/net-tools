@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 // fakeGlobalping replays testdata/<type>.json: the first poll reports every probe but the first

@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NA, NDataTable } from 'naive-ui'
+import { TableExport } from '@vicons/tabler'
+import { NA, NButton, NDataTable, NIcon } from 'naive-ui'
 import { computed, h } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { RouterLink } from 'vue-router'
+import { csvName, toCsv } from '@/utils/csv'
+import { downloadText } from '@/utils/download'
 import ResultActions from './ResultActions.vue'
 
 export interface ResultColumn {
@@ -65,6 +68,11 @@ const tableColumns = computed<DataTableColumns<Row>>(() => props.columns.map(c =
 // Below this width the region scrolls horizontally instead of squeezing columns.
 const minWidth = computed(() => props.columns.reduce((sum, c) => sum + (c.width ?? 130), 0))
 
+function downloadCsv() {
+  const rows = data.value.map(r => props.columns.map(c => r[c.key]))
+  downloadText(csvName(props.filename), toCsv(props.columns.map(c => c.title), rows), 'text/csv;charset=utf-8')
+}
+
 function asText(): string {
   const header = props.columns.map(c => c.title).join('\t')
   const lines = data.value.map(r => props.columns.map(c => String(r[c.key] ?? '')).join('\t'))
@@ -92,8 +100,14 @@ function asText(): string {
         :style="{ minWidth: `${minWidth}px` }"
       />
     </div>
-    <div v-if="actions && rows.length" class="mt-3">
-      <ResultActions :text="asText" :json="rows" :filename="filename" />
+    <div v-if="rows.length" class="nt-no-print mt-3 flex flex-wrap gap-2">
+      <ResultActions v-if="actions" :text="asText" :json="rows" :filename="filename" />
+      <NButton size="small" secondary data-testid="download-csv" @click="downloadCsv">
+        <template #icon>
+          <NIcon aria-hidden="true" :component="TableExport" />
+        </template>
+        {{ t('common.downloadCsv') }}
+      </NButton>
     </div>
   </div>
 </template>

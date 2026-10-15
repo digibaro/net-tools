@@ -8,11 +8,11 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx"
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/dnslookup"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnslookup"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
 )
 
 // resolver is the DNS view all email checks use (the server's system resolver).

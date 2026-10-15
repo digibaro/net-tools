@@ -1,4 +1,5 @@
 import type { Component } from 'vue'
+import { translate } from '@/plugins/i18n.plugin'
 
 export type RunMode = 'browser' | 'server' | 'public-api' | 'hybrid'
 
@@ -34,15 +35,26 @@ export interface ToolCategory {
   components: Tool[]
 }
 
-const NEW_TOOL_DAYS = 14
+/**
+ * The latest release, set at build time from the release tag (vite.config.ts). Tools whose
+ * `createdAt` is later carry the "new" badge until the next release.
+ */
+export const LATEST_RELEASE = { version: __LATEST_RELEASE__.version, date: new Date(__LATEST_RELEASE__.date) }
 
-export function isNew(createdAt: Date | undefined, now = new Date()): boolean {
-  if (!createdAt)
-    return false
-  const ageMs = now.getTime() - createdAt.getTime()
-  return ageMs >= 0 && ageMs < NEW_TOOL_DAYS * 24 * 60 * 60 * 1000
+export function isNew(createdAt: Date | undefined, release = LATEST_RELEASE.date): boolean {
+  return !!createdAt && createdAt.getTime() > release.getTime()
 }
 
+/**
+ * Name and description are looked up on every access (keys `tools.<path>.title|description`), so
+ * they follow the active language; the strings passed in only serve as the build-time default.
+ */
 export function defineTool(tool: ToolDefinition): Tool {
-  return { ...tool, isNew: isNew(tool.createdAt) }
+  const slug = tool.path.slice(1)
+  const out = { ...tool, isNew: isNew(tool.createdAt) }
+  Object.defineProperties(out, {
+    name: { get: () => translate(`tools.${slug}.title`), enumerable: true },
+    description: { get: () => translate(`tools.${slug}.description`), enumerable: true },
+  })
+  return out
 }

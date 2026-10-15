@@ -1,12 +1,13 @@
 app:
   name: NET-TOOLS
+  subtitle: Tools for Networkers
   tagline: Network tools and troubleshooting utilities
 footer:
   version: 'v{version}'
-  copyright: '© {year} {holder}'
   license: 'License:'
 locales:
   en: English
+  nl: Nederlands
 nav:
   home: Home
   about: About
@@ -100,6 +101,8 @@ common:
   copyText: Copy as text
   copyJson: Copy as JSON
   downloadJson: Download JSON
+  downloadCsv: Download CSV
+  print: Print / save as PDF
   new: New
   allowed: Allowed
   denied: Denied
@@ -205,6 +208,7 @@ remote:
   answered: '{up} of {done} probes got an answer ({total} requested).'
   incomplete: Some probes did not finish in time.
   progress: Measurement progress
+  map: 'Map of the {n} probe locations; select a dot to jump to its result'
   resolver: resolver
   raw: Raw output
   attribution: Measured by Globalping (globalping.io) community probes.
@@ -2646,3 +2650,75 @@ tools:
       rsaJwkNoPrimes: RSA private JWKs need p, q, dp, dq and qi.
       invalid: 'The key could not be decoded ({detail}).'
       noDerivation: This browser cannot derive the public key; paste a key that includes it.
+  lldp-neighbors:
+    title: LLDP / CDP neighbours
+    description: Find out which switch and port the NET-TOOLS server is plugged into, from the LLDP and CDP announcements of neighbouring devices.
+    interface: Interface (optional)
+    invalidInterface: Enter an interface name such as eth0, or leave empty for the default route.
+    seconds: Listen (s)
+    run: Listen
+    listening: Listening for announcements
+    note: Switches announce themselves every 30 s (LLDP) or 60 s (CDP), so listen at least that long. Only LLDP and CDP frames are captured; nothing is sent.
+    found: 'Neighbours ({n})'
+    none: 'No LLDP or CDP announcement was heard within {seconds} s. The switch may have LLDP/CDP disabled, or the server is not directly connected to a switch (e.g. a virtual machine).'
+    columns:
+      device: Device
+      port: Port
+      protocol: Protocol
+      capabilities: Capabilities
+      management: Management address
+      platform: Platform / software
+  ipv6-neighbors:
+    title: IPv6 neighbours & routers (NDP)
+    description: Find the IPv6 devices on the local network and see what the routers advertise — prefixes, SLAAC or DHCPv6, DNS servers and MTU.
+    interface: Interface (optional)
+    invalidInterface: Enter an interface name such as eth0, or leave empty for the default route.
+    seconds: Listen (s)
+    run: Discover
+    note: Pings the all-nodes group ff02::1 and asks routers to advertise (ff02::2), from the NET-TOOLS server (LAN mode). Devices that ignore multicast echo (often Windows) only show up if they are routers.
+    found: 'Neighbours ({n})'
+    from: 'Probed from {source}.'
+    router: Router
+    host: Host
+    notDefault: Not a default router (lifetime 0)
+    noRouter: No router advertisement was received — IPv6 may not be routed on this network.
+    routerTitle: 'Router advertisement from {ip}'
+    modes:
+      slaac: SLAAC (addresses from the advertised prefix)
+      dhcpv6: DHCPv6 (managed addresses)
+      slaac+dhcpv6-info: SLAAC, DNS and options from DHCPv6
+      slaac+dhcpv6: SLAAC and DHCPv6 addresses
+      none: No automatic addresses
+    ra:
+      router: Router
+      mode: Address configuration
+      prefixes: Prefixes
+      dns: DNS servers (RDNSS)
+      search: Search domains
+      mtu: MTU
+      lifetime: Router lifetime
+      preference: Preference
+    columns:
+      ip: IPv6 address
+      mac: MAC address
+      role: Role
+  dhcpv6-probe:
+    title: DHCPv6 probe (rogue DHCPv6 check)
+    description: Find every DHCPv6 server answering on the local network and see the addresses, delegated prefixes and DNS each one offers.
+    interface: Interface (optional)
+    invalidInterface: Enter an interface name such as eth0, or leave empty for the default route.
+    seconds: Listen (s)
+    run: Probe
+    note: Sends a SOLICIT (address and prefix delegation) from the NET-TOOLS server (LAN mode) and never requests a lease, so nothing is taken.
+    verdict:
+      none: 'No DHCPv6 server answered on {iface} within {seconds} s. Many networks use SLAAC only — see the IPv6 neighbours tool.'
+      single: 'One DHCPv6 server answered on {iface}.'
+      multiple: '{n} different DHCPv6 servers answered on {iface} — unless intended, one of them may be rogue.'
+    columns:
+      server: Server
+      addresses: Offered addresses
+      prefixes: Delegated prefixes
+      dns: DNS servers
+      search: Search domains
+      preference: Preference
+      status: Status

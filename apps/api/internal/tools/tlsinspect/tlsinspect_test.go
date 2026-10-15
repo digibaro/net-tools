@@ -12,8 +12,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tlsx"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tlsx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func tlsServer(t *testing.T) int {

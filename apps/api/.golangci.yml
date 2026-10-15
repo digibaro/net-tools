@@ -14,7 +14,7 @@ linters:
   settings:
     wrapcheck:
       ignore-package-globs:
-        - github.com/digibaro/net-tools/*
+        - github.com/digibaro/net-tools-docker/*
   exclusions:
     presets: [comments, std-error-handling]
     rules:
@@ -24,4 +24,4 @@ formatters:
   enable: [gofmt, goimports]
   settings:
     goimports:
-      local-prefixes: [github.com/digibaro/net-tools]
+      local-prefixes: [github.com/digibaro/net-tools-docker]

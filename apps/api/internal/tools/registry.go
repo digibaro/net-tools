@@ -9,11 +9,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/config"
-	"github.com/digibaro/net-tools/apps/api/internal/execx"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/providers"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/config"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/execx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/providers"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 // Reason explains why a tool is disabled (docs/API_SPEC.md §2).

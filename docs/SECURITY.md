@@ -86,7 +86,7 @@ Fixed limits for tools that follow data from third parties (not configurable):
 | IRR expansion (BGP-10) | `bgpq4` via execx against the fixed default IRR host (rr.ntt.net); sources from an allow-list; 30 s, 1 MiB output |
 | Open relay test (EM-09) | Opt-in (`OPEN_RELAY_TEST_ENABLED`, off by default); ports 25/587/2525; 5 MAIL/RCPT attempts with RFC 2606 addresses, each followed by RSET — DATA is never sent; same read caps as EM-01; 30 s total |
 | WHOIS (BGP-06) | 3 referrals, ports 43 and 4321 only, 256 KiB per answer, 10 s per server |
-| RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body |
+| RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body (a request may raise it to at most 32 MiB via `netx.WithBodyLimit`; only the Azure Service Tags list does, to 16 MiB) |
 
 Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immediate peer is in
 `TRUSTED_PROXIES` (default: the `web` container network).
@@ -95,7 +95,10 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
 
 `api`:
 - `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). The `lan` profile needs nothing more:
-  ARP scan and the DHCP probe use AF_PACKET sockets, which `NET_RAW` covers; `NET_ADMIN` is never added.
+  ARP scan, the DHCP / DHCPv6 probes and LLDP / CDP listening use AF_PACKET sockets and the NDP scan
+  a raw ICMPv6 socket, which `NET_RAW` covers; `NET_ADMIN` is never added. Capture sockets carry a
+  kernel BPF filter (only LLDP/CDP frames, or only UDP from port 547) and join just the needed
+  multicast groups — no promiscuous mode. DHCP / DHCPv6 probes never request a lease.
 - Runs as root **inside the container** with only `NET_RAW`, `read_only: true`, `tmpfs: /tmp`,
   `security_opt: [no-new-privileges:true]`. Alternative (stricter, more work): non-root user +
   `setcap cap_net_raw+ep` on `mtr-packet`/`traceroute`/api binary and drop `no-new-privileges`
@@ -130,6 +133,10 @@ reverse proxy (Authelia, oauth2-proxy, Cloudflare Access, Tailscale). Optional b
 
 ## 8. Logging & audit
 
+- Audit log (`AUDIT_LOG=true`, off by default): one `audit` line per server-tool request with tool id,
+  target, status, duration, request id and client IP (hashed with `LOG_HASH_IPS`). Request bodies are
+  never read (SNMP communities, HTTP bodies stay out); URL targets lose query, fragment and
+  credentials; targets are cut to 200 characters.
 - JSON logs: request id, client ip (or hashed if `LOG_HASH_IPS=true`), tool, target input,
   resolved ip, outcome, duration. Never request bodies of SNMP/HTTP tools (may contain creds).
 - Denied-target attempts logged at `warn` for abuse detection.

@@ -8,8 +8,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/netip"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -17,13 +19,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/cache"
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/providers"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/reputation"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/cache"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/providers"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/reputation"
 )
 
 // TTL is how long a parsed list is kept.
@@ -42,6 +44,66 @@ type Source struct {
 	Name  string
 	URL   string
 	Parse func([]byte) ([]Range, error)
+	// Discover finds the list URL in the page at URL (for lists published under changing names).
+	Discover func(page []byte) (string, error)
+	// MaxBytes raises the 5 MiB response cap for large lists.
+	MaxBytes int64
+}
+
+// azureListRe matches the weekly Service Tags file linked from Microsoft's download page.
+var azureListRe = regexp.MustCompile(`https://download\.microsoft\.com/download/[\w/.-]+/ServiceTags_Public_\d{8}\.json`)
+
+// discoverAzure returns the current Service Tags URL; only download.microsoft.com links are used.
+func discoverAzure(page []byte) (string, error) {
+	u := azureListRe.Find(page)
+	if u == nil {
+		return "", errors.New("no Service Tags link on the download page")
+	}
+	return string(u), nil
+}
+
+func parseAzure(b []byte) ([]Range, error) {
+	var d struct {
+		Values []struct {
+			Name       string `json:"name"`
+			Properties struct {
+				Region          string   `json:"region"`
+				SystemService   string   `json:"systemService"`
+				AddressPrefixes []string `json:"addressPrefixes"`
+			} `json:"properties"`
+		} `json:"values"`
+	}
+	if err := json.Unmarshal(b, &d); err != nil {
+		return nil, err //nolint:wrapcheck // classified by caller
+	}
+	if len(d.Values) == 0 {
+		return nil, errors.New("no service tags")
+	}
+	type key struct {
+		p               netip.Prefix
+		service, region string
+	}
+	seen := map[key]bool{}
+	var out []Range
+	for _, v := range d.Values {
+		service := v.Properties.SystemService
+		if service == "" {
+			service = strings.SplitN(v.Name, ".", 2)[0] // e.g. AzureCloud.westeurope
+		}
+		for _, s := range v.Properties.AddressPrefixes {
+			pr, ok := p(s)
+			if !ok {
+				continue
+			}
+			k := key{pr, service, v.Properties.Region}
+			if seen[k] {
+				continue
+			}
+			seen[k] = true
+			out = append(out, Range{pr, "Microsoft Azure", service, v.Properties.Region})
+		}
+	}
+	return out, nil
 }
 
 func p(s string) (netip.Prefix, bool) {
@@ -195,13 +257,15 @@ func parseDigitalOcean(b []byte) ([]Range, error) {
 
 // DefaultSources are the official published lists.
 var DefaultSources = []Source{
-	{"Amazon Web Services", "https://ip-ranges.amazonaws.com/ip-ranges.json", parseAWS},
-	{"Google Cloud", "https://www.gstatic.com/ipranges/cloud.json", parseGCP},
-	{"Cloudflare", "https://api.cloudflare.com/client/v4/ips", parseCloudflare},
-	{"Fastly", "https://api.fastly.com/public-ip-list", parseFastly},
-	{"GitHub", "https://api.github.com/meta", parseGitHub},
-	{"Oracle Cloud", "https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json", parseOracle},
-	{"DigitalOcean", "https://digitalocean.com/geo/google.csv", parseDigitalOcean},
+	{"Amazon Web Services", "https://ip-ranges.amazonaws.com/ip-ranges.json", parseAWS, nil, 0},
+	{"Google Cloud", "https://www.gstatic.com/ipranges/cloud.json", parseGCP, nil, 0},
+	{"Cloudflare", "https://api.cloudflare.com/client/v4/ips", parseCloudflare, nil, 0},
+	{"Fastly", "https://api.fastly.com/public-ip-list", parseFastly, nil, 0},
+	{"GitHub", "https://api.github.com/meta", parseGitHub, nil, 0},
+	{"Oracle Cloud", "https://docs.oracle.com/en-us/iaas/tools/public_ip_ranges.json", parseOracle, nil, 0},
+	{"DigitalOcean", "https://digitalocean.com/geo/google.csv", parseDigitalOcean, nil, 0},
+	// The Service Tags file name changes weekly; the download page links the current one (~4.5 MB).
+	{"Microsoft Azure", "https://www.microsoft.com/en-us/download/details.aspx?id=56519", parseAzure, discoverAzure, 16 << 20},
 }
 
 // Tool is bgp.cloudranges.
@@ -225,7 +289,17 @@ func (t *Tool) Mount(r chi.Router, d tools.Deps) {
 
 func (t *Tool) list(ctx context.Context, s Source) ([]Range, error) {
 	return t.lists.Do(ctx, s.Name, TTL, func(ctx context.Context) ([]Range, error) {
-		b, err := t.deps.Providers.Get(ctx, providers.Request{Provider: s.Name, URL: s.URL, TTL: -1, Timeout: 25 * time.Second, Header: http.Header{"Accept": {"*/*"}}})
+		url := s.URL
+		if s.Discover != nil {
+			page, err := t.deps.Providers.Get(ctx, providers.Request{Provider: s.Name, URL: s.URL, TTL: -1, Timeout: 25 * time.Second, Header: http.Header{"Accept": {"text/html"}}})
+			if err != nil {
+				return nil, err //nolint:wrapcheck // client-safe
+			}
+			if url, err = s.Discover(page); err != nil {
+				return nil, &providers.Error{Provider: s.Name, Message: s.Name + " changed its download page; the range list was not found", Err: err}
+			}
+		}
+		b, err := t.deps.Providers.Get(ctx, providers.Request{Provider: s.Name, URL: url, TTL: -1, Timeout: 25 * time.Second, MaxBytes: s.MaxBytes, Header: http.Header{"Accept": {"*/*"}}})
 		if err != nil {
 			return nil, err //nolint:wrapcheck // client-safe
 		}

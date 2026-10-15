@@ -5,8 +5,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/httpcore"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/httpcore"
 )
 
 const requestTimeout = 15 * time.Second

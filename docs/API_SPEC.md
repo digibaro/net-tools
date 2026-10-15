@@ -187,6 +187,9 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/lan/ssdp/stream` | `seconds ≤ 10` | lan.ssdp |
 | GET | `/api/v1/lan/dhcp` | `interface?, seconds≤10` | lan.dhcp |
 | GET | `/api/v1/lan/gateway` | — | lan.gateway |
+| GET | `/api/v1/lan/lldp/stream` | `interface?, seconds=35 (5–65)` | lan.lldp |
+| GET | `/api/v1/lan/ndp/stream` | `interface?, seconds=4 (2–10)` | lan.ndp |
+| GET | `/api/v1/lan/dhcpv6` | `interface?, seconds≤10` | lan.dhcpv6 |
 
 ## 4. SSE event schema
 

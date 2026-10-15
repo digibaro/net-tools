@@ -12,13 +12,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/config"
-	"github.com/digibaro/net-tools/apps/api/internal/execx"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/middleware"
-	"github.com/digibaro/net-tools/apps/api/internal/providers"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/config"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/execx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/middleware"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/providers"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
 )
 
 // maxRequestBody caps request bodies for every route; tools may lower it.
@@ -132,10 +132,20 @@ func NewRouter(o Options) http.Handler {
 			r.Get("/capabilities", handleCapabilities(deps, o.Tools))
 			r.Get("/echo", handleEcho(o.Config.Features.TrustedProxies))
 
+			auditIP := ipFormatter(o.Config.Features.LogHashIPs)
 			for _, t := range o.Tools {
-				if ok, _ := t.Enabled(deps); ok {
-					t.Mount(r, deps)
+				if ok, _ := t.Enabled(deps); !ok {
+					continue
 				}
+				if !o.Config.Features.AuditLog {
+					t.Mount(r, deps)
+					continue
+				}
+				// AUDIT_LOG: every route of the tool gets the audit middleware.
+				r.Group(func(g chi.Router) {
+					g.Use(middleware.Audit(t.ID(), auditIP))
+					t.Mount(g, deps)
+				})
 			}
 		})
 	})

@@ -14,8 +14,8 @@ import (
 
 	"github.com/gosnmp/gosnmp"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 // mib is the fake agent's tree, in lexicographic OID order.

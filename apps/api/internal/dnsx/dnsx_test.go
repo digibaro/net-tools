@@ -10,8 +10,8 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx/dnstest"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx/dnstest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 func answer(w dns.ResponseWriter, r *dns.Msg) {

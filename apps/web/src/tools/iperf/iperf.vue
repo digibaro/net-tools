@@ -13,6 +13,7 @@ import { useCapabilitiesStore } from '@/stores/capabilities.store'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
+import { fixed } from '@/utils/format'
 import { isValidHost } from '@/utils/host'
 import { formatBytes, formatRate } from './iperf.service'
 
@@ -48,7 +49,7 @@ onMounted(() => {
 })
 const rows = computed(() => intervals.value.map(i => ({
   id: i.start,
-  time: `${i.start.toFixed(1)}–${i.end.toFixed(1)} s`,
+  time: `${fixed(i.start, 1)}–${fixed(i.end, 1)} s`,
   rate: formatRate(i.mbps),
   bytes: formatBytes(i.bytes),
   extra: i.retransmits !== undefined ? String(i.retransmits) : i.packets !== undefined ? String(i.packets) : '—',
@@ -65,9 +66,9 @@ const summaryRows = computed(() => {
   if (s.retransmits !== undefined)
     out.push({ label: t('tools.iperf.retransmits'), value: String(s.retransmits), mono: true })
   if (s.jitterMs !== undefined)
-    out.push({ label: t('tools.iperf.jitter'), value: `${s.jitterMs.toFixed(3)} ms`, mono: true })
+    out.push({ label: t('tools.iperf.jitter'), value: `${fixed(s.jitterMs, 3)} ms`, mono: true })
   if (s.lostPercent !== undefined)
-    out.push({ label: t('tools.iperf.loss'), value: `${s.lostPercent.toFixed(2)} % (${s.lostPackets ?? 0})`, mono: true })
+    out.push({ label: t('tools.iperf.loss'), value: `${fixed(s.lostPercent, 2)} % (${s.lostPackets ?? 0})`, mono: true })
   out.push({ label: t('tools.iperf.server'), value: `${s.server} · ${s.version}`, mono: true })
   return out
 })

@@ -10,8 +10,8 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 // fakeProviders answers like Safe Browsing, VirusTotal and urlscan.io, keyed on the domain:

@@ -1696,6 +1696,61 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/UrlReputation" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/lan/lldp/stream:
+    get:
+      operationId: lanLldpStream
+      summary: Listen for LLDP / CDP announcements of neighbouring switches and routers (LAN mode, SSE)
+      description: "Events: meta, neighbor (LldpNeighbor)*, done ({summary: {interface, seconds, neighbors}, durationMs}) or error. Only LLDP and CDP frames are captured (kernel BPF filter)."
+      tags: [lan]
+      x-capability: lan.lldp
+      parameters:
+        - { name: interface, in: query, description: "defaults to the interface of the default route", schema: { type: string } }
+        - { name: seconds, in: query, description: "LLDP repeats every 30 s, CDP every 60 s", schema: { type: integer, minimum: 5, maximum: 65, default: 35 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/ndp/stream:
+    get:
+      operationId: lanNdpStream
+      summary: IPv6 neighbours (ff02::1 echo + neighbor solicitation) and router advertisements (LAN mode, SSE)
+      description: "Events: meta, host ({ip, mac, router})*, router (NdpRouter)*, done ({summary: NdpSummary, durationMs}) or error."
+      tags: [lan]
+      x-capability: lan.ndp
+      parameters:
+        - { name: interface, in: query, description: "defaults to the interface of the default route", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 2, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: Event stream
+          content:
+            text/event-stream:
+              schema: { type: string }
+  /v1/lan/dhcpv6:
+    get:
+      operationId: lanDhcpv6
+      summary: Detect DHCPv6 servers with a SOLICIT (rogue DHCPv6 check, LAN mode)
+      description: Sends SOLICIT (IA_NA + IA_PD) to ff02::1:2 and collects every ADVERTISE; never sends REQUEST, so nothing is leased.
+      tags: [lan]
+      x-capability: lan.dhcpv6
+      parameters:
+        - { name: interface, in: query, description: "defaults to the interface of the default route", schema: { type: string } }
+        - { name: seconds, in: query, schema: { type: integer, minimum: 1, maximum: 10, default: 4 } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Dhcpv6Result" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3558,3 +3613,89 @@ components:
     UrlVerdict:
       type: string
       enum: [clean, suspicious, malicious, unknown, skipped, error]
+    LldpNeighbor:
+      type: object
+      required: [protocol, sourceMac, chassisId, portId, portDescription, systemName, systemDescription, platform, capabilities, enabled, management, vlan, maxFrame, ttl]
+      properties:
+        protocol: { type: string, enum: [LLDP, CDP] }
+        sourceMac: { type: string }
+        chassisId: { type: string }
+        portId: { type: string }
+        portDescription: { type: string }
+        systemName: { type: string }
+        systemDescription: { type: string }
+        platform: { type: string }
+        capabilities: { type: array, items: { type: string } }
+        enabled: { type: array, items: { type: string } }
+        management: { type: array, items: { type: string } }
+        vlan: { type: integer }
+        maxFrame: { type: integer }
+        ttl: { type: integer }
+    NdpRouter:
+      type: object
+      required: [ip, mac, lifetimeSeconds, managed, other, preference, hopLimit, mtu, prefixes, dns, search]
+      properties:
+        ip: { type: string }
+        mac: { type: string }
+        lifetimeSeconds: { type: integer }
+        managed: { type: boolean }
+        other: { type: boolean }
+        preference: { type: string }
+        hopLimit: { type: integer }
+        mtu: { type: integer }
+        dns: { type: array, items: { type: string } }
+        search: { type: array, items: { type: string } }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, onLink, slaac, validSeconds, preferredSeconds]
+            properties:
+              prefix: { type: string }
+              onLink: { type: boolean }
+              slaac: { type: boolean }
+              validSeconds: { type: integer }
+              preferredSeconds: { type: integer }
+    NdpSummary:
+      type: object
+      required: [interface, source, hosts, routers]
+      properties:
+        interface: { type: string }
+        source: { type: string }
+        routers: { type: array, items: { $ref: "#/components/schemas/NdpRouter" } }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [ip, mac, router]
+            properties:
+              ip: { type: string }
+              mac: { type: string }
+              router: { type: boolean }
+    Dhcpv6Result:
+      type: object
+      required: [interface, seconds, offers, servers]
+      properties:
+        interface: { type: string }
+        seconds: { type: integer }
+        servers: { type: integer }
+        offers:
+          type: array
+          items:
+            type: object
+            required: [server, duid, preference, addresses, prefixes, dns, search, status]
+            properties:
+              server: { type: string }
+              duid: { type: string }
+              preference: { type: integer }
+              dns: { type: array, items: { type: string } }
+              search: { type: array, items: { type: string } }
+              status: { type: string }
+              addresses: { type: array, items: { $ref: "#/components/schemas/V6Lease" } }
+              prefixes: { type: array, items: { $ref: "#/components/schemas/V6Lease" } }
+    V6Lease:
+      type: object
+      required: [value, validSeconds]
+      properties:
+        value: { type: string }
+        validSeconds: { type: integer }

@@ -10,7 +10,8 @@ RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile --filter @nettools/web
 COPY apps/web/ apps/web/
 ARG VERSION=dev
-ENV VITE_APP_VERSION=$VERSION
+ARG LATEST_RELEASE=
+ENV VITE_APP_VERSION=$VERSION VITE_LATEST_RELEASE=$LATEST_RELEASE
 RUN pnpm --filter @nettools/web build
 # Allow exactly our inline scripts (anti-FOUC theme script) in the CSP.
 COPY docker/nginx/security-headers.conf /src/security-headers.conf

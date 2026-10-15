@@ -11,7 +11,7 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx"
 )
 
 // Origin is one announcement covering the IP.

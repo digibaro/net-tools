@@ -22,6 +22,9 @@ export const i18n = createI18n({
   messages,
 })
 
+if (typeof document !== 'undefined')
+  document.documentElement.lang = i18n.global.locale.value
+
 export function setLocale(locale: string) {
   if (!availableLocales.includes(locale))
     return

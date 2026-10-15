@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
 )
 
 // Code is a stable, machine-readable error code (docs/API_SPEC.md §1.2).

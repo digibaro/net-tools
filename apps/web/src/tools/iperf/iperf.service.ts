@@ -1,4 +1,5 @@
 import type { components } from '@/api/schema'
+import { fixed } from '@/utils/format'
 
 export type IperfInterval = components['schemas']['IperfInterval']
 export type IperfSummary = components['schemas']['IperfSummary']
@@ -6,9 +7,9 @@ export type IperfSummary = components['schemas']['IperfSummary']
 /** 940.2 → "940 Mbit/s", 12409.5 → "12.4 Gbit/s", 0.35 → "350 kbit/s" */
 export function formatRate(mbps: number): string {
   if (mbps >= 1000)
-    return `${(mbps / 1000).toFixed(mbps >= 10000 ? 1 : 2)} Gbit/s`
+    return `${fixed(mbps / 1000, mbps >= 10000 ? 1 : 2)} Gbit/s`
   if (mbps >= 1)
-    return `${mbps >= 100 ? Math.round(mbps) : mbps.toFixed(1)} Mbit/s`
+    return `${mbps >= 100 ? fixed(mbps, 0) : fixed(mbps, 1)} Mbit/s`
   return `${Math.round(mbps * 1000)} kbit/s`
 }
 
@@ -21,5 +22,5 @@ export function formatBytes(n: number): string {
     v /= 1024
     i++
   }
-  return `${i === 0 ? v : v.toFixed(1)} ${units[i]}`
+  return `${i === 0 ? v : fixed(v, 1)} ${units[i]}`
 }

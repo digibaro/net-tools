@@ -3,7 +3,7 @@ package tools
 import (
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/config"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/config"
 )
 
 func TestRequireHelpers(t *testing.T) {

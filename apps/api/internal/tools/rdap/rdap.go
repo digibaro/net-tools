@@ -17,13 +17,13 @@ import (
 	ordap "github.com/openrdap/rdap"
 	"github.com/openrdap/rdap/bootstrap"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/netx"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/whois"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/netx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/whois"
 )
 
 // Service wraps a policy-checked RDAP client with a shared bootstrap cache.
