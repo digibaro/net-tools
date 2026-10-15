@@ -2722,3 +2722,72 @@ tools:
       search: Zoekdomeinen
       preference: Voorkeur
       status: Status
+  ipv6-address-analyzer:
+    title: IPv6-adresanalyse
+    description: Alles over één IPv6-adres — type en scope, hoe de interface-ID is gevormd (EUI-64 met MAC, privacy, ISATAP), ingebed IPv4, solicited-node-groep en reverse naam.
+    input: IPv6-adres
+    invalid: Voer een IPv6-adres in, bijv. 2001:db8::1 (een zone of /prefix wordt genegeerd).
+    permanent: Geen (permanente, bekende groep)
+    macLocal: lokaal beheerd
+    eui64Warning: Deze interface-ID is afgeleid van het MAC-adres (EUI-64), zodat het apparaat over netwerken heen te volgen is. Hosts geven meestal de voorkeur aan privacy- of stable-opaque-adressen (RFC 4941 / 7217).
+    fields:
+      compressed: Verkort
+      expanded: Uitgeschreven
+      type: Type
+      scope: Scope
+      reachable: Wereldwijd bereikbaar
+      flags: Multicastvlaggen
+      prefix64: /64-prefix
+      iid: Interface-ID
+      mac: MAC-adres (uit EUI-64)
+      isatap: ISATAP-IPv4
+      solicited: Solicited-node-multicast
+      arpa: Reverse-DNS-naam
+      binary: Binair
+    scopes:
+      interface: Interface-lokaal
+      link: Link-lokaal
+      realm: Realm-lokaal
+      admin: Admin-lokaal
+      site: Site-lokaal
+      organization: Organisatie-lokaal
+      global: Wereldwijd
+      host: Host (loopback)
+      none: Geen (ongespecificeerd)
+    iid:
+      eui64: EUI-64, afgeleid van een MAC-adres
+      isatap: ISATAP (bevat een IPv4-adres)
+      low: Laag / handmatig toegekend
+      random: Willekeurig (privacy of stable-opaque, RFC 4941 / 7217)
+      zero: Allemaal nullen (subnet-router-anycast)
+  ipam-sheet:
+    title: IP-adresplan (IPAM-sheet)
+    description: Plan de subnetten van een IPv4- of IPv6-blok met namen, VLAN's en notities — vaste netwerken blijven staan, de rest wordt first-fit toegewezen; download het plan als CSV.
+    block: Adresblok
+    invalidBlock: Voer een netwerk in CIDR-notatie in, bijv. 10.10.0.0/22 of 2001:db8:100::/56.
+    plan: Subnetten (één per regel)
+    planPlaceholder: 'Naam, VLAN, grootte, vast netwerk, notitie'
+    help: 'Eén subnet per regel: naam, VLAN, grootte, optioneel vast netwerk, optioneel notitie (gescheiden door komma, tab, ; of |). Grootte is een prefix (/24) of een aantal hosts (200 hosts). Vaste netwerken worden eerst geplaatst; de andere worden first-fit in de opgegeven volgorde toegewezen. Regels die met # beginnen worden genegeerd.'
+    tooMany: 'Maximaal {max} subnetten per plan.'
+    result: 'Plan voor {block}'
+    someErrors: '{n} regel(s) konden niet worden geplaatst — zie de statuskolom.'
+    used: '{used} van {total} adressen toegewezen ({pct} %)'
+    free: 'Vrije blokken ({n})'
+    fixed: Vast
+    auto: Toegewezen
+    errors:
+      size: Onbekende grootte
+      fixed: Ongeldig vast netwerk
+      version: Verkeerde IP-versie
+      outside: Buiten het blok
+      overlap: Overlapt een ander subnet
+      no-space: Past niet
+    columns:
+      name: Naam
+      cidr: Subnet
+      gateway: Gateway (eerste adres)
+      range: Bruikbaar bereik
+      mask: Netmasker
+      usable: Bruikbaar
+      status: Status
+      note: Notitie

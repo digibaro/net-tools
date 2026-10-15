@@ -2722,3 +2722,72 @@ tools:
       search: Search domains
       preference: Preference
       status: Status
+  ipv6-address-analyzer:
+    title: IPv6 address analyzer
+    description: Everything about one IPv6 address — type and scope, how the interface ID was formed (EUI-64 with MAC, privacy, ISATAP), embedded IPv4, solicited-node group and reverse name.
+    input: IPv6 address
+    invalid: Enter an IPv6 address, e.g. 2001:db8::1 (a zone or /prefix is ignored).
+    permanent: None (permanent, well-known group)
+    macLocal: locally administered
+    eui64Warning: This interface ID is derived from the MAC address (EUI-64), so the device can be tracked across networks. Hosts usually prefer privacy or stable-opaque addresses (RFC 4941 / 7217).
+    fields:
+      compressed: Compressed
+      expanded: Expanded
+      type: Type
+      scope: Scope
+      reachable: Globally reachable
+      flags: Multicast flags
+      prefix64: /64 prefix
+      iid: Interface ID
+      mac: MAC address (from EUI-64)
+      isatap: ISATAP IPv4
+      solicited: Solicited-node multicast
+      arpa: Reverse DNS name
+      binary: Binary
+    scopes:
+      interface: Interface-local
+      link: Link-local
+      realm: Realm-local
+      admin: Admin-local
+      site: Site-local
+      organization: Organization-local
+      global: Global
+      host: Host (loopback)
+      none: None (unspecified)
+    iid:
+      eui64: EUI-64, derived from a MAC address
+      isatap: ISATAP (embeds an IPv4 address)
+      low: Low / manually assigned
+      random: Random (privacy or stable-opaque, RFC 4941 / 7217)
+      zero: All zeros (subnet-router anycast)
+  ipam-sheet:
+    title: IP address plan (IPAM sheet)
+    description: Plan the subnets of an IPv4 or IPv6 block with names, VLANs and notes — fixed networks stay put, the rest is allocated first-fit; download the plan as CSV.
+    block: Address block
+    invalidBlock: Enter a network in CIDR notation, e.g. 10.10.0.0/22 or 2001:db8:100::/56.
+    plan: Subnets (one per line)
+    planPlaceholder: 'Name, VLAN, size, fixed network, note'
+    help: 'One subnet per line: name, VLAN, size, optional fixed network, optional note (separated by comma, tab, ; or |). Size is a prefix (/24) or a number of hosts (200 hosts). Fixed networks are placed first; the others are allocated first-fit in the listed order. Lines starting with # are ignored.'
+    tooMany: 'At most {max} subnets per plan.'
+    result: 'Plan for {block}'
+    someErrors: '{n} line(s) could not be placed — see the status column.'
+    used: '{used} of {total} addresses allocated ({pct} %)'
+    free: 'Free blocks ({n})'
+    fixed: Fixed
+    auto: Allocated
+    errors:
+      size: Unknown size
+      fixed: Invalid fixed network
+      version: Wrong IP version
+      outside: Outside the block
+      overlap: Overlaps another subnet
+      no-space: Does not fit
+    columns:
+      name: Name
+      cidr: Subnet
+      gateway: Gateway (first address)
+      range: Usable range
+      mask: Netmask
+      usable: Usable
+      status: Status
+      note: Note
