@@ -42,3 +42,17 @@ onMounted(() => {
     </NMessageProvider>
   </NConfigProvider>
 </template>
+
+<style>
+/* Print / "save as PDF": only the tool and its results, on a light page. */
+@media print {
+  .nt-no-print,
+  [data-testid='sidebar'],
+  .n-layout-header,
+  .n-button:not(.n-tag) { display: none !important; }
+  html, body, .n-layout, .n-layout-scroll-container { background: #fff !important; color: #000 !important; height: auto !important; overflow: visible !important; }
+  .n-layout, .n-layout-content { position: static !important; }
+  [role='region'] { max-height: none !important; overflow: visible !important; }
+  a[href^='http']::after { content: ' (' attr(href) ')'; font-size: 0.8em; }
+}
+</style>
