@@ -10,4 +10,5 @@ export const tool = defineTool({
   component: () => import('./ipv6-address-analyzer.vue'),
   icon: Microscope,
   createdAt: new Date('2026-10-16'),
+  runMode: 'browser',
 })

@@ -10,4 +10,5 @@ export const tool = defineTool({
   component: () => import('./ipam-sheet.vue'),
   icon: Table,
   createdAt: new Date('2026-10-16'),
+  runMode: 'browser',
 })
