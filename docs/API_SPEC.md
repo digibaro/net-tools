@@ -235,3 +235,5 @@ renders `line` events, tool components render typed events. Local and Globalping
 | Cloud IP ranges, Tor exit list | refreshed every 24 h / 1 h in background |
 | GeoIP mmdb | file reload on change |
 | DNS / ping / traceroute | never cached |
+
+| POST | `/api/v1/geo/batch` | `{ips}` (≤64) | rep.geo |

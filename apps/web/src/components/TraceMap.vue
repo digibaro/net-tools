@@ -50,7 +50,7 @@ const line = computed(() => located.value.map(p => `${p.x},${p.y}`).join(' '))
 <template>
   <div class="mt-3" data-testid="trace-path">
     <div v-if="path.length" class="mb-2 flex flex-wrap items-center gap-1 text-sm">
-      <span class="nt-muted mr-1">{{ t('trace.asPath') }}</span>
+      <span class="mr-1 nt-muted">{{ t('trace.asPath') }}</span>
       <template v-for="(a, i) in path" :key="`${a}-${i}`">
         <span v-if="i" aria-hidden="true" class="nt-muted">→</span>
         <RouterLink :to="asnPath(a)" class="font-mono">
@@ -66,7 +66,7 @@ const line = computed(() => located.value.map(p => `${p.x},${p.y}`).join(' '))
         <circle :cx="p.x" :cy="p.y" r="7" :fill="i === located.length - 1 ? theme.successColor : theme.primaryColor" :stroke="theme.cardColor" stroke-width="2" />
       </g>
     </svg>
-    <p v-else-if="geo && !loading && !failed && located.length <= 1" class="nt-muted m-0 text-xs">
+    <p v-else-if="geo && !loading && !failed && located.length <= 1" class="m-0 text-xs nt-muted">
       {{ t('trace.mapLocal') }}
     </p>
     <NButton v-if="failed" size="tiny" quaternary @click="failed = false; locate()">

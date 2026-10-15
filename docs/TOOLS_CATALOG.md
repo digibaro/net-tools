@@ -75,7 +75,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 |---|---|---|---|---|---|---|---|
 | CON-01 | Ping (ICMP) | Live RTT, loss, jitter, min/avg/max, chart | H | `pro-bing` (unprivileged via `ping_group_range` or NET_RAW) | Globalping `ping` | 2 | ✅ |
 | CON-02 | TCP ping | Connect-time to host:port (ICMP-blocked targets) | S | `net.Dialer` loop | — | 2 | ✅ |
-| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
+| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop; AS path and route map | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
 | CON-04 | MTR | Continuous traceroute+ping, per-hop loss/latency table | H | `mtr --raw` streamed | Globalping `mtr` | 2 | ✅ |
 | CON-05 | Port check | Is TCP (or UDP best-effort) port open from the server | S | `net.Dialer` | check-host.net API | 2 | ✅ |
 | CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ✅ |
@@ -209,6 +209,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ✅ |
 | CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ✅ |
 | CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ✅ |
+| CAL-13 | SLA & uptime calculator | Availability ↔ downtime per period, nines, series / redundant composition | B | custom | — | 6 | ✅ |
+| CAL-14 | VoIP bandwidth & Erlang calculator | Per-call bandwidth incl. RTP/UDP/IP/SRTP/VLAN/L2 overhead, Erlang B trunk sizing | B | custom | — | 6 | ✅ |
+| CAL-15 | Packet decoder | Hex dump → Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP, DNS | B | custom | — | 6 | ✅ |
+| CAL-16 | Pcap viewer | pcap / pcapng in the browser: packets, filter, protocols, conversations, DNS queries | B | custom | — | 6 | ✅ |
 
 ## 11. Client Diagnostics (runs in the user's browser)
 
@@ -218,6 +222,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CLI-02 | WebRTC IP leak test | Local/public IPs exposed via ICE candidates | B | `RTCPeerConnection` | STUN (stun.l.google.com, stun.cloudflare.com) | 3 | ✅ |
 | CLI-03 | Browser connection info | Network Information API, IPv4/IPv6 reachability, DoH in use? | B | `navigator.connection` + fetch to v4/v6-only endpoints | ipify v4/v6 endpoints | 2 | ✅ |
 | CLI-04 | Request headers echo | Headers the server receives from your browser (proxy detection) | S | `/api/v1/echo` | — | 1 | ✅ |
+| CLI-05 | DNS hijack & proxy check | Server resolver vs public DoH (filtering, NXDOMAIN hijacking); marker header for HTTP proxies | H | `/api/v1/echo`, `/api/v1/dns/lookup` | Cloudflare DoH *(browser-direct)* | 6 | ✅ |
 
 ---
 

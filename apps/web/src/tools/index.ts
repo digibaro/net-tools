@@ -39,6 +39,7 @@ import { tool as dnsBenchmark } from './dns-benchmark'
 import { tool as dnsConsistency } from './dns-consistency'
 import { tool as dnsLookup } from './dns-lookup'
 import { tool as dnsPropagation } from './dns-propagation'
+import { tool as dnsProxyCheck } from './dns-proxy-check'
 import { tool as dnsRecordTypes } from './dns-record-types'
 import { tool as dnsTrace } from './dns-trace'
 import { tool as dnssecValidator } from './dnssec-validator'
@@ -90,8 +91,10 @@ import { tool as ntpCheck } from './ntp-check'
 import { tool as openRelayTest } from './open-relay-test'
 import { tool as openResolverTest } from './open-resolver-test'
 import { tool as opticalPower } from './optical-power'
+import { tool as packetDecoder } from './packet-decoder'
 import { tool as passiveExposure } from './passive-exposure'
 import { tool as pathMtu } from './path-mtu'
+import { tool as pcapViewer } from './pcap-viewer'
 import { tool as peeringdbLookup } from './peeringdb-lookup'
 import { tool as ping } from './ping'
 import { tool as pkcs12Inspector } from './pkcs12-inspector'
@@ -114,6 +117,7 @@ import { tool as routerSnippets } from './router-snippets'
 import { tool as rpkiValidator } from './rpki-validator'
 import { tool as securityHeaders } from './security-headers'
 import { tool as serverNetworkInfo } from './server-network-info'
+import { tool as slaCalculator } from './sla-calculator'
 import { tool as smtpBannerCheck } from './smtp-banner-check'
 import { tool as snmp } from './snmp'
 import { tool as speedTest } from './speed-test'
@@ -134,6 +138,7 @@ import { tool as urlParser } from './url-parser'
 import { tool as urlReputation } from './url-reputation'
 import { tool as userAgentParser } from './user-agent-parser'
 import { tool as vlsmPlanner } from './vlsm-planner'
+import { tool as voipBandwidthCalculator } from './voip-bandwidth-calculator'
 import { tool as wakeOnLan } from './wake-on-lan'
 import { tool as webrtcLeakTest } from './webrtc-leak-test'
 import { tool as websocketTester } from './websocket-tester'
@@ -158,8 +163,8 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer, bgpRouteHistory, asnNeighbourGraph, commonIxps, roaCoverage] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck, urlReputation] },
   { id: 'lan', components: [wakeOnLan, arpScan, mdnsBrowser, ssdpDiscovery, dhcpProbe, gatewayInfo, lldpNeighbors, ipv6Neighbors, dhcpv6Probe] },
-  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig, routerSnippets] },
-  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest] },
+  { id: 'calculators', components: [bandwidthCalculator, dataUnitConverter, bdpCalculator, mtuCalculator, portReference, protocolReference, dnsRecordTypes, subnetCheatSheet, wifiQrGenerator, opticalPower, wireguardConfig, routerSnippets, slaCalculator, voipBandwidthCalculator, packetDecoder, pcapViewer] },
+  { id: 'client', components: [requestHeaders, browserLatency, connectionInfo, webrtcLeakTest, speedTest, dnsProxyCheck] },
 ]
 
 export const toolsByCategory: ToolCategory[] = categories

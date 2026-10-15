@@ -3310,3 +3310,137 @@ tools:
       roa: Passende ROA
       ta: Trust anchor
       note: Opmerking
+  sla-calculator:
+    title: SLA- & uptimecalculator
+    description: Hoeveel downtime staat 99,9 % toe per dag, maand of jaar? Reken beide kanten op en combineer de beschikbaarheid van componenten in serie of redundant parallel.
+    sla: Beschikbaarheid (%, of bijv. "4 nines")
+    invalid: Voer een percentage tussen 0 en 100 in, of een aantal negens.
+    downtimeTitle: Toegestane downtime
+    period: Periode
+    allowed: Toegestane downtime
+    achievedTitle: Beschikbaarheid uit downtime
+    downMinutes: Downtime (minuten)
+    compositeTitle: Gecombineerde beschikbaarheid
+    components: Beschikbaarheid per component (%)
+    series: In serie (allemaal nodig)
+    parallel: Redundant (één is genoeg)
+    combined: Gecombineerd
+    ninesUnit: negens
+    compositeHelp: 'In serie is een keten minder beschikbaar dan de zwakste schakel (vermenigvuldigen). Redundante componenten vallen alleen uit als ze tegelijk falen — uitgaande van onafhankelijke storingen, wat gedeelde stroom, software of mensen vaak tenietdoen.'
+    periods:
+      day: dag
+      week: week
+      month: maand
+      quarter: kwartaal
+      year: jaar
+  voip-bandwidth-calculator:
+    title: VoIP-bandbreedte- & Erlangcalculator
+    description: Bandbreedte per gesprek voor G.711, G.729, Opus en meer inclusief alle header-overhead, en hoeveel kanalen een SIP-trunk nodig heeft voor je drukste uur (Erlang B).
+    bandwidth: Bandbreedte per gesprek
+    codec: Codec
+    link: Linklaag
+    ptime: Pakketgrootte (ms)
+    calls: Gelijktijdige gesprekken
+    overhead: overhead
+    note: Per richting. Meegeteld zijn RTP (12 B), UDP (8 B), IPv4 (20 B) of IPv6 (40 B), de SRTP-authenticatietag (10 B), 802.1Q (4 B) en de linklaag. Spraakdetectie en RTCP zijn niet meegenomen.
+    erlang: Trunkdimensionering (Erlang B)
+    bhca: Gesprekken in het drukste uur
+    avg: Gemiddeld gesprek (minuten)
+    gos: Toegestane blokkering (%)
+    links:
+      ethernet: Ethernet (incl. preamble en gap, 38 B)
+      ethernet-no-phy: Alleen Ethernet-frame (18 B)
+      ppp: PPP (7 B)
+      none: Alleen laag 3
+    fields:
+      payload: Spraakdata per pakket
+      packet: Pakketgrootte op de lijn
+      pps: Pakketten per seconde
+      perCall: Bandbreedte per gesprek
+      total: Alle gesprekken
+      erlangs: Verkeer in het drukste uur
+      channels: Benodigde kanalen
+      blocking: Blokkering met zoveel kanalen
+      trunkBw: Trunkbandbreedte (per richting)
+  packet-decoder:
+    title: Pakketdecoder
+    description: Plak een hexdump (Wireshark-hexstream, tcpdump -XX, hexdump of xxd) en zie elke laag ontleed — Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP en DNS.
+    hex: Pakketbytes (hex)
+    bytes: '{n} bytes'
+    invalid: Nog geen hexbytes herkend.
+    start: Eerste laag
+    truncated: 'Het pakket houdt te vroeg op: {detail}.'
+    offset: 'Offset {offset}, {length} bytes'
+    starts:
+      auto: Detecteren (Ethernet, IPv4 of IPv6)
+      ethernet: Ethernet
+      ipv4: IPv4
+      ipv6: IPv6
+      sll: Linux cooked capture (tcpdump -i any)
+      sll2: Linux cooked capture v2
+  pcap-viewer:
+    title: Pcap-viewer
+    description: Open een kleine pcap- of pcapng-capture in je browser — pakketlijst met filter, protocollen, gesprekken, DNS-vragen en elke laag van een pakket ontleed.
+    upload: Kies een .pcap- / .pcapng-bestand
+    note: 'Het bestand wordt in je browser gelezen en nooit geüpload. Tot 100 MB en 200.000 pakketten; Ethernet, raw IP en Linux cooked captures (tcpdump -i any).'
+    summary: Capture
+    limited: 'alleen de eerste {max} worden gelezen'
+    filter: Filter (adres, protocol of tekst)
+    firstRows: 'De eerste {n} van {total} passende pakketten worden getoond.'
+    details: Pakketdetails
+    packetNo: Pakketnummer
+    noDns: Geen DNS-vragen in deze capture.
+    errors:
+      format: Dit is geen pcap- of pcapng-bestand.
+      too-big: Het bestand is groter dan 100 MB.
+      linktype: 'De capture gebruikt een linktype dat deze viewer niet kan ontleden (ondersteund: Ethernet, raw IP, Linux cooked, loopback).'
+    tabs:
+      packets: Pakketten
+      protocols: Protocollen
+      conversations: Gesprekken
+      dns: DNS-vragen
+    columns:
+      file: Bestand
+      packets: Pakketten
+      bytes: Bytes
+      duration: Duur
+      time: Tijd (s)
+      src: Bron
+      dst: Bestemming
+      protocol: Protocol
+      len: Lengte
+      info: Info
+      query: Vraag
+  dns-proxy-check:
+    title: DNS-kaping- & proxycontrole
+    description: Wijkt de DNS in dit netwerk af van publieke DNS (filtering, NXDOMAIN-kaping), en zit er een HTTP-proxy tussen je browser en deze server die headers toevoegt of wijzigt?
+    run: Controles uitvoeren
+    note: 'De NET-TOOLS-server zoekt een paar namen op (en één willekeurige naam die niet kan bestaan) met zijn eigen resolver, en je browser vraagt Cloudflare DNS over HTTPS om dezelfde namen. Je browser stuurt ook een willekeurige markeerheader naar de server, die meldt wat er aankwam. Het DNS-deel toont het netwerk van de server — in een homelab meestal dezelfde resolver als die van jou.'
+    dns: DNS
+    proxy: HTTP-proxy tussen browser en server
+    dohBlocked: Je browser kon Cloudflare DNS over HTTPS niet bereiken (geblokkeerd of offline), dus alleen de antwoorden van de server worden getoond.
+    proxyError: Het echo-endpoint van de server was niet bereikbaar.
+    dnsVerdict:
+      nx-hijack: 'NXDOMAIN-kaping: de resolver geeft een adres voor een naam die niet bestaat (typisch voor zoek-omleidingen van providers of sommige DNS-filters).'
+      blocked: Sommige namen worden door de resolver geblokkeerd (geen antwoord of een sinkhole-adres zoals 0.0.0.0) — een DNS-filter zoals Pi-hole, of een gecensureerd netwerk.
+      differ: De resolver geeft andere adressen dan publieke DNS — normaal bij CDN's en geo-DNS, alleen verdacht bij namen met vaste adressen.
+      clean: De resolver antwoordt zoals publieke DNS, en niet-bestaande namen blijven niet-bestaand.
+    verdicts:
+      match: Zelfde antwoord
+      differ: Andere adressen
+      blocked: Geblokkeerd
+      nx-hijack: Gekaapt (hoort niet te bestaan)
+      ok-nx: Bestaat niet (juist)
+      error: Opzoeken mislukt
+    findings:
+      clean: Geen proxy gezien — het request kwam ongewijzigd aan (afgezien van de eigen reverse proxy van deze server).
+      marker-missing: De markeerheader is onderweg verwijderd — een proxy filtert request-headers.
+      marker-changed: 'De markeerheader is onderweg gewijzigd (nu {detail}).'
+      ua-changed: 'De User-Agent is onderweg gewijzigd (server zag: {detail}).'
+      proxy-header: 'Een proxy voegde een header toe: {detail}.'
+      extra-hops: 'Het request kwam langs nog een proxy vóór deze server ({detail}) — verwacht als NET-TOOLS achter een reverse proxy zoals Traefik of Caddy draait.'
+    columns:
+      name: Naam
+      server: Serverresolver
+      pub: Publieke DNS (DoH, vanuit je browser)
+      verdict: Resultaat

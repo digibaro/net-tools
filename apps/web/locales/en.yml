@@ -3310,3 +3310,137 @@ tools:
       roa: Matching ROA
       ta: Trust anchor
       note: Note
+  sla-calculator:
+    title: SLA & uptime calculator
+    description: How much downtime does 99.9 % allow per day, month or year? Convert both ways and combine the availability of components in series or redundant in parallel.
+    sla: Availability (%, or e.g. "4 nines")
+    invalid: Enter a percentage between 0 and 100, or a number of nines.
+    downtimeTitle: Allowed downtime
+    period: Period
+    allowed: Allowed downtime
+    achievedTitle: Availability from downtime
+    downMinutes: Downtime (minutes)
+    compositeTitle: Combined availability
+    components: Availability of each component (%)
+    series: In series (all needed)
+    parallel: Redundant (one is enough)
+    combined: Combined
+    ninesUnit: nines
+    compositeHelp: 'In series, a chain is less available than its weakest link (multiply). Redundant components fail only when all fail at once — assuming independent failures, which shared power, software or people often break.'
+    periods:
+      day: day
+      week: week
+      month: month
+      quarter: quarter
+      year: year
+  voip-bandwidth-calculator:
+    title: VoIP bandwidth & Erlang calculator
+    description: Bandwidth per call for G.711, G.729, Opus and more with all header overhead, and how many channels a SIP trunk needs for your busy hour (Erlang B).
+    bandwidth: Bandwidth per call
+    codec: Codec
+    link: Link layer
+    ptime: Packetization (ms)
+    calls: Simultaneous calls
+    overhead: overhead
+    note: Per direction. Headers counted are RTP (12 B), UDP (8 B), IPv4 (20 B) or IPv6 (40 B), the SRTP authentication tag (10 B), 802.1Q (4 B) and the link layer. Voice activity detection and RTCP are not included.
+    erlang: Trunk sizing (Erlang B)
+    bhca: Calls in the busy hour
+    avg: Average call (minutes)
+    gos: Allowed blocking (%)
+    links:
+      ethernet: Ethernet (incl. preamble and gap, 38 B)
+      ethernet-no-phy: Ethernet frame only (18 B)
+      ppp: PPP (7 B)
+      none: Layer 3 only
+    fields:
+      payload: Voice payload per packet
+      packet: Packet size on the wire
+      pps: Packets per second
+      perCall: Bandwidth per call
+      total: All calls
+      erlangs: Busy-hour traffic
+      channels: Channels needed
+      blocking: Blocking with that many channels
+      trunkBw: Trunk bandwidth (per direction)
+  packet-decoder:
+    title: Packet decoder
+    description: Paste a hex dump (Wireshark hex stream, tcpdump -XX, hexdump or xxd) and see every layer decoded — Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP and DNS.
+    hex: Packet bytes (hex)
+    bytes: '{n} bytes'
+    invalid: No hex bytes recognised yet.
+    start: First layer
+    truncated: 'The packet ends early: {detail}.'
+    offset: 'Offset {offset}, {length} bytes'
+    starts:
+      auto: Detect (Ethernet, IPv4 or IPv6)
+      ethernet: Ethernet
+      ipv4: IPv4
+      ipv6: IPv6
+      sll: Linux cooked capture (tcpdump -i any)
+      sll2: Linux cooked capture v2
+  pcap-viewer:
+    title: Pcap viewer
+    description: Open a small pcap or pcapng capture in your browser — packet list with filter, protocols, conversations, DNS queries and every layer of a packet decoded.
+    upload: Choose .pcap / .pcapng file
+    note: 'The file is read in your browser and never uploaded. Up to 100 MB and 200,000 packets; Ethernet, raw IP and Linux cooked captures (tcpdump -i any).'
+    summary: Capture
+    limited: 'only the first {max} are read'
+    filter: Filter (address, protocol or text)
+    firstRows: 'Showing the first {n} of {total} matching packets.'
+    details: Packet details
+    packetNo: Packet number
+    noDns: No DNS queries in this capture.
+    errors:
+      format: This is not a pcap or pcapng file.
+      too-big: The file is larger than 100 MB.
+      linktype: 'The capture uses a link type this viewer cannot decode (supported: Ethernet, raw IP, Linux cooked, loopback).'
+    tabs:
+      packets: Packets
+      protocols: Protocols
+      conversations: Conversations
+      dns: DNS queries
+    columns:
+      file: File
+      packets: Packets
+      bytes: Bytes
+      duration: Duration
+      time: Time (s)
+      src: Source
+      dst: Destination
+      protocol: Protocol
+      len: Length
+      info: Info
+      query: Query
+  dns-proxy-check:
+    title: DNS hijack & proxy check
+    description: Does the DNS on this network differ from public DNS (filtering, NXDOMAIN hijacking), and is there an HTTP proxy between your browser and this server that adds or changes headers?
+    run: Run checks
+    note: 'The NET-TOOLS server resolves a few names (and one random name that cannot exist) with its own resolver, and your browser asks Cloudflare DNS over HTTPS for the same names. Your browser also sends a random marker header to the server, which reports back what arrived. The DNS part shows the server''s network — in a homelab usually the same resolver as yours.'
+    dns: DNS
+    proxy: HTTP proxy between browser and server
+    dohBlocked: Your browser could not reach Cloudflare DNS over HTTPS (blocked or offline), so only the server's answers are shown.
+    proxyError: The server's echo endpoint could not be reached.
+    dnsVerdict:
+      nx-hijack: 'NXDOMAIN hijacking: the resolver returns an address for a name that does not exist (typical for ISP "search" redirects or some DNS filters).'
+      blocked: Some names are blocked by the resolver (no answer or a sinkhole address such as 0.0.0.0) — a DNS filter such as Pi-hole, or a censored network.
+      differ: The resolver gives different addresses than public DNS — normal for CDNs and geo-DNS, suspicious only for names with fixed addresses.
+      clean: The resolver answers like public DNS, and non-existent names stay non-existent.
+    verdicts:
+      match: Same answer
+      differ: Different addresses
+      blocked: Blocked
+      nx-hijack: Hijacked (should not exist)
+      ok-nx: Does not exist (correct)
+      error: Lookup failed
+    findings:
+      clean: No proxy seen — the request arrived unchanged (apart from this server's own reverse proxy).
+      marker-missing: The marker header was removed on the way — a proxy filters request headers.
+      marker-changed: 'The marker header was changed on the way (now {detail}).'
+      ua-changed: 'The User-Agent was changed on the way (server saw: {detail}).'
+      proxy-header: 'A proxy added a header: {detail}.'
+      extra-hops: 'The request passed another proxy in front of this server ({detail}) — expected when NET-TOOLS runs behind a reverse proxy such as Traefik or Caddy.'
+    columns:
+      name: Name
+      server: Server resolver
+      pub: Public DNS (DoH, from your browser)
+      verdict: Result
