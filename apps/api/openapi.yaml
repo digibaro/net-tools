@@ -2019,6 +2019,91 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/ChainResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/route-history:
+    get:
+      operationId: bgpRouteHistory
+      summary: Origin ASNs of a prefix over time and its current RIS visibility (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.history
+      parameters:
+        - { name: resource, in: query, required: true, description: prefix or IP address, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RouteHistory" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/neighbours/{asn}:
+    get:
+      operationId: bgpNeighbours
+      summary: Upstream and downstream neighbours of an ASN with names (RIPEstat), for a graph
+      tags: [bgp]
+      x-capability: bgp.graph
+      parameters:
+        - { name: asn, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/NeighbourGraph" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/roa-coverage/{asn}:
+    get:
+      operationId: bgpRoaCoverage
+      summary: RPKI status of every prefix an ASN originates, its ROAs (unused, too loose) (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.roacoverage
+      parameters:
+        - { name: asn, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RoaCoverage" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/peeringdb/common:
+    get:
+      operationId: peeringdbCommon
+      summary: Exchanges and facilities two networks have in common (PeeringDB)
+      tags: [bgp]
+      x-capability: bgp.common
+      parameters:
+        - { name: a, in: query, required: true, schema: { type: string } }
+        - { name: b, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CommonPeering" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -4314,3 +4399,145 @@ components:
                   signatureOk: { type: [boolean, "null"] }
                   expired: { type: boolean }
                   aia: { type: string }
+    RouteHistory:
+      type: object
+      required: [resource, family, origins, collectors, seeing, fullTablePeers, queryStart, queryEnd, related]
+      properties:
+        resource: { type: string }
+        family: { type: integer }
+        seeing: { type: integer }
+        fullTablePeers: { type: integer }
+        queryStart: { type: string }
+        queryEnd: { type: string }
+        related: { type: integer }
+        origins:
+          type: array
+          items:
+            type: object
+            required: [asn, name, current, prefixes]
+            properties:
+              asn: { type: integer }
+              name: { type: string }
+              current: { type: boolean }
+              prefixes:
+                type: array
+                items:
+                  type: object
+                  required: [prefix, firstSeen, lastSeen, current, maxPeers, periods]
+                  properties:
+                    prefix: { type: string }
+                    firstSeen: { type: string }
+                    lastSeen: { type: string }
+                    current: { type: boolean }
+                    maxPeers: { type: number }
+                    periods: { type: integer }
+        collectors:
+          type: array
+          items:
+            type: object
+            required: [name, city, country, peers, notSeeing, fullTables]
+            properties:
+              name: { type: string }
+              city: { type: string }
+              country: { type: string }
+              peers: { type: integer }
+              notSeeing: { type: integer }
+              fullTables: { type: integer }
+    GraphNode:
+      type: object
+      required: [asn, name, power]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        power: { type: integer }
+    NeighbourGraph:
+      type: object
+      required: [asn, name, upstreams, downstreams, uncertain, upstreamTotal, downstreamTotal, uncertainTotal]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        upstreams: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        downstreams: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        uncertain: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        upstreamTotal: { type: integer }
+        downstreamTotal: { type: integer }
+        uncertainTotal: { type: integer }
+    RoaCoverage:
+      type: object
+      required: [asn, name, prefixes, roas, valid, invalid, notFound, unchecked, validator, generated]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        valid: { type: integer }
+        invalid: { type: integer }
+        notFound: { type: integer }
+        unchecked: { type: integer }
+        validator: { type: string }
+        generated: { type: string }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, status, reason, roa]
+            properties:
+              prefix: { type: string }
+              status: { type: string, enum: [valid, invalid, not-found, unchecked] }
+              reason: { type: string }
+              roa: { type: string }
+        roas:
+          type: array
+          items:
+            type: object
+            required: [prefix, maxLength, ta, used, loose]
+            properties:
+              prefix: { type: string }
+              maxLength: { type: integer }
+              ta: { type: string }
+              used: { type: boolean }
+              loose: { type: boolean }
+    PeeringPort:
+      type: object
+      required: [speedMbps, ipv4, ipv6, rsPeer]
+      properties:
+        speedMbps: { type: integer }
+        ipv4: { type: string }
+        ipv6: { type: string }
+        rsPeer: { type: boolean }
+    PeeringSide:
+      type: object
+      required: [asn, name, found, policy, ixCount, facilityCount, peeringdbUrl]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        found: { type: boolean }
+        policy: { type: string }
+        ixCount: { type: integer }
+        facilityCount: { type: integer }
+        peeringdbUrl: { type: string }
+    CommonPeering:
+      type: object
+      required: [a, b, ixs, facilities]
+      properties:
+        a: { $ref: "#/components/schemas/PeeringSide" }
+        b: { $ref: "#/components/schemas/PeeringSide" }
+        ixs:
+          type: array
+          items:
+            type: object
+            required: [ixId, name, a, b, bothRs]
+            properties:
+              ixId: { type: integer }
+              name: { type: string }
+              a: { type: array, items: { $ref: "#/components/schemas/PeeringPort" } }
+              b: { type: array, items: { $ref: "#/components/schemas/PeeringPort" } }
+              bothRs: { type: boolean }
+        facilities:
+          type: array
+          items:
+            type: object
+            required: [name, city, country, facId]
+            properties:
+              name: { type: string }
+              city: { type: string }
+              country: { type: string }
+              facId: { type: integer }

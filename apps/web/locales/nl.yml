@@ -3221,3 +3221,88 @@ tools:
       serverCert: Servercertificaat
       serverKey: Privésleutel van de server
       fullchain: Volledige keten (server + CA)
+  bgp-route-history:
+    title: BGP-routegeschiedenis & -zichtbaarheid
+    description: Welke ASN's een prefix in de loop der jaren aankondigden, en hoeveel RIS-peers met een volledige tabel hem nu zien — spoor hijacks, MOAS en gedeeltelijke zichtbaarheid op.
+    resource: Prefix of IP-adres
+    invalid: Voer een prefix in zoals 193.0.0.0/21 of een IP-adres.
+    run: Opzoeken
+    now: nu
+    visibility: 'Zichtbaar voor {seeing} van {total} RIS-peers met volledige tabel (IPv{family}): {pct} %'
+    visibilityLabel: Zichtbaarheid
+    origins: 'Origins sinds {from}'
+    collectors: RIS-routecollectors
+    verdict:
+      none: Op dit moment niet aangekondigd — er wordt nu geen origin-AS gezien.
+      single: Aangekondigd door één origin-AS.
+      moas: 'Tegelijk aangekondigd door {n} origin-AS''en (MOAS) — normaal bij anycast, anders mogelijk een hijack of lek.'
+    columns:
+      name: Naam
+      prefix: Prefix
+      period: Gezien
+      peers: Max. peers
+      collector: Collector
+      where: Locatie
+      seeing: Peers met volledige tabel die hem zien
+  asn-neighbour-graph:
+    title: ASN-burengrafiek
+    description: Upstreams (transit) en downstreams (klanten) van een autonoom systeem als grafiek, met namen — klik op een buur om door het internet te bewegen.
+    run: Tekenen
+    graph: Burengrafiek
+    upstreams: Upstreams (transit)
+    downstreams: Downstreams (klanten)
+    upstream: Upstream
+    downstream: Downstream
+    uncertain: Onzeker
+    all: Alle buren
+    summary: '{up} upstreams, {down} downstreams, {unsure} onzeker (RIPEstat, naar BGP-padsterkte). De grafiek toont de {shown} sterkste aan elke kant.'
+    columns:
+      name: Naam
+      rel: Relatie
+      power: Sterkte
+  common-ixps:
+    title: Gemeenschappelijke IXP's & faciliteiten
+    description: Waar kunnen twee netwerken peeren? Internet exchanges en colocatiefaciliteiten waar beide aanwezig zijn, met poortsnelheden en routeserver-gebruik (PeeringDB).
+    a: Eerste netwerk (ASN)
+    b: Tweede netwerk (ASN)
+    run: Vergelijken
+    title2: '{a} en {b}'
+    summary: '{ixs} gemeenschappelijke exchange(s) en {facs} gemeenschappelijke faciliteit(en). Exchanges: {aIx} en {bIx}. Peeringbeleid: {aPolicy} / {bPolicy}.'
+    ixs: Gemeenschappelijke exchanges
+    facilities: Gemeenschappelijke faciliteiten (private interconnect mogelijk)
+    noIx: Geen gemeenschappelijke exchange.
+    noFac: Geen gemeenschappelijke faciliteit.
+    notFound: 'AS{asn} staat niet in PeeringDB.'
+    columns:
+      ix: Exchange
+      rs: Beide op routeservers
+      facility: Faciliteit
+      where: Locatie
+  roa-coverage:
+    title: ROA-dekking per ASN
+    description: RPKI route origin validation voor elke prefix die een AS aankondigt, zijn ROA's (ongebruikt of met te lange maxLength) en minimale ROA's om aan te maken voor prefixen zonder dekking.
+    run: Controleren
+    coverage: RPKI-dekking
+    summary: '{pct} % RPKI-valid: {valid} valid, {invalid} invalid, {notFound} zonder ROA (van {total} aangekondigde prefixen).'
+    invalidWarning: '{n} prefix(en) zijn RPKI-invalid: netwerken die invalids weggooien (de meeste grote) bereiken ze niet. Pas de ROA of de aankondiging aan.'
+    uncheckedNote: '{n} prefix(en) zijn niet gecontroleerd om binnen het RIPEstat-budget te blijven.'
+    source: 'ROA''s van de RIPEstat-validator ({validator}), gegenereerd {time}.'
+    suggest: Voorgestelde ROA's
+    suggestHelp: 'Maak deze ROA''s aan (bij je RIR) voor de prefixen zonder ROA. Ze gebruiken maxLength = aangekondigde lengte, zoals RFC 9319 aanbeveelt.'
+    roas: 'ROA''s van dit AS ({n})'
+    unused: Niet aangekondigd (verouderd?)
+    loose: maxLength langer dan aangekondigd (RFC 9319 adviseert minimale ROA's)
+    status:
+      valid: Valid
+      invalid: Invalid
+      not-found: Geen ROA
+      unchecked: Niet gecontroleerd
+    reason:
+      length: langer dan maxLength
+      asn: ROA voor een ander AS
+    columns:
+      prefix: Prefix
+      status: RPKI-status
+      roa: Passende ROA
+      ta: Trust anchor
+      note: Opmerking

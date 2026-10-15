@@ -1690,6 +1690,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/bgp/route-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Origin ASNs of a prefix over time and its current RIS visibility (RIPEstat) */
+        get: operations["bgpRouteHistory"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/bgp/neighbours/{asn}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Upstream and downstream neighbours of an ASN with names (RIPEstat), for a graph */
+        get: operations["bgpNeighbours"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/bgp/roa-coverage/{asn}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** RPKI status of every prefix an ASN originates, its ROAs (unused, too loose) (RIPEstat) */
+        get: operations["bgpRoaCoverage"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/peeringdb/common": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Exchanges and facilities two networks have in common (PeeringDB) */
+        get: operations["peeringdbCommon"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3479,6 +3547,107 @@ export interface components {
                 expired: boolean;
                 aia: string;
             })[];
+        };
+        RouteHistory: {
+            resource: string;
+            family: number;
+            seeing: number;
+            fullTablePeers: number;
+            queryStart: string;
+            queryEnd: string;
+            related: number;
+            origins: {
+                asn: number;
+                name: string;
+                current: boolean;
+                prefixes: {
+                    prefix: string;
+                    firstSeen: string;
+                    lastSeen: string;
+                    current: boolean;
+                    maxPeers: number;
+                    periods: number;
+                }[];
+            }[];
+            collectors: {
+                name: string;
+                city: string;
+                country: string;
+                peers: number;
+                notSeeing: number;
+                fullTables: number;
+            }[];
+        };
+        GraphNode: {
+            asn: number;
+            name: string;
+            power: number;
+        };
+        NeighbourGraph: {
+            asn: number;
+            name: string;
+            upstreams: components["schemas"]["GraphNode"][];
+            downstreams: components["schemas"]["GraphNode"][];
+            uncertain: components["schemas"]["GraphNode"][];
+            upstreamTotal: number;
+            downstreamTotal: number;
+            uncertainTotal: number;
+        };
+        RoaCoverage: {
+            asn: number;
+            name: string;
+            valid: number;
+            invalid: number;
+            notFound: number;
+            unchecked: number;
+            validator: string;
+            generated: string;
+            prefixes: {
+                prefix: string;
+                /** @enum {string} */
+                status: "valid" | "invalid" | "not-found" | "unchecked";
+                reason: string;
+                roa: string;
+            }[];
+            roas: {
+                prefix: string;
+                maxLength: number;
+                ta: string;
+                used: boolean;
+                loose: boolean;
+            }[];
+        };
+        PeeringPort: {
+            speedMbps: number;
+            ipv4: string;
+            ipv6: string;
+            rsPeer: boolean;
+        };
+        PeeringSide: {
+            asn: number;
+            name: string;
+            found: boolean;
+            policy: string;
+            ixCount: number;
+            facilityCount: number;
+            peeringdbUrl: string;
+        };
+        CommonPeering: {
+            a: components["schemas"]["PeeringSide"];
+            b: components["schemas"]["PeeringSide"];
+            ixs: {
+                ixId: number;
+                name: string;
+                a: components["schemas"]["PeeringPort"][];
+                b: components["schemas"]["PeeringPort"][];
+                bothRs: boolean;
+            }[];
+            facilities: {
+                name: string;
+                city: string;
+                country: string;
+                facId: number;
+            }[];
         };
     };
     responses: {
@@ -6001,6 +6170,108 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["ChainResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    bgpRouteHistory: {
+        parameters: {
+            query: {
+                /** @description prefix or IP address */
+                resource: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RouteHistory"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    bgpNeighbours: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["NeighbourGraph"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    bgpRoaCoverage: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                asn: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["RoaCoverage"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    peeringdbCommon: {
+        parameters: {
+            query: {
+                a: string;
+                b: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["CommonPeering"];
                     };
                 };
             };

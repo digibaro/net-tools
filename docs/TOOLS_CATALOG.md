@@ -164,6 +164,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ✅ |
 | BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ✅ |
 | BGP-12 | Cloud / CDN IP range lookup | Which provider/region owns this IP (AWS, GCP, Azure, Cloudflare, Fastly…) | S | cached published JSON lists refreshed daily | — | 3 | ✅ |
+| BGP-13 | BGP route history & visibility | Origin ASNs over time (MOAS / hijack hints), RIS full-table visibility per collector | P | — | RIPEstat routing-history, visibility | 6 | ✅ |
+| BGP-14 | ASN neighbour graph | Upstreams / downstreams with names as an SVG graph, click to re-centre | P | — | RIPEstat asn-neighbours, as-names | 6 | ✅ |
+| BGP-15 | ROA coverage per ASN | RFC 6811 status of every originated prefix, unused / loose ROAs, minimal ROA suggestions | P | — | RIPEstat ris-prefixes, rpki-roas, rpki-validation | 6 | ✅ |
+| BGP-16 | Common IXPs & facilities | Exchanges and facilities two networks share, port speeds, route-server use | P | — | PeeringDB | 6 | ✅ |
 
 ## 8. Reputation & Geolocation
 

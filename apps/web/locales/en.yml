@@ -3221,3 +3221,88 @@ tools:
       serverCert: Server certificate
       serverKey: Server private key
       fullchain: Full chain (server + CA)
+  bgp-route-history:
+    title: BGP route history & visibility
+    description: Which ASNs announced a prefix over the years, and how many RIS full-table peers see it right now — spot hijacks, MOAS and partial visibility.
+    resource: Prefix or IP address
+    invalid: Enter a prefix such as 193.0.0.0/21 or an IP address.
+    run: Look up
+    now: now
+    visibility: 'Visible to {seeing} of {total} RIS full-table peers (IPv{family}): {pct} %'
+    visibilityLabel: Visibility
+    origins: 'Origins since {from}'
+    collectors: RIS route collectors
+    verdict:
+      none: Not announced right now — no origin AS is seen at the moment.
+      single: Announced by one origin AS.
+      moas: 'Announced by {n} origin ASes at the same time (MOAS) — normal for anycast set-ups, otherwise a possible hijack or leak.'
+    columns:
+      name: Name
+      prefix: Prefix
+      period: Seen
+      peers: Max peers
+      collector: Collector
+      where: Location
+      seeing: Full-table peers seeing it
+  asn-neighbour-graph:
+    title: ASN neighbour graph
+    description: Upstreams (transit) and downstreams (customers) of an autonomous system as a graph, with names — click a neighbour to move through the internet.
+    run: Draw
+    graph: Neighbour graph
+    upstreams: Upstreams (transit)
+    downstreams: Downstreams (customers)
+    upstream: Upstream
+    downstream: Downstream
+    uncertain: Uncertain
+    all: All neighbours
+    summary: '{up} upstreams, {down} downstreams, {unsure} uncertain (RIPEstat, by BGP path power). The graph shows the {shown} strongest of each side.'
+    columns:
+      name: Name
+      rel: Relation
+      power: Power
+  common-ixps:
+    title: Common IXPs & facilities
+    description: Where can two networks peer? Internet exchanges and colocation facilities both are present at, with port speeds and route-server use (PeeringDB).
+    a: First network (ASN)
+    b: Second network (ASN)
+    run: Compare
+    title2: '{a} and {b}'
+    summary: '{ixs} common exchange(s) and {facs} common facility/facilities. Exchanges: {aIx} and {bIx}. Peering policy: {aPolicy} / {bPolicy}.'
+    ixs: Common exchanges
+    facilities: Common facilities (private interconnect possible)
+    noIx: No exchange in common.
+    noFac: No facility in common.
+    notFound: 'AS{asn} has no PeeringDB record.'
+    columns:
+      ix: Exchange
+      rs: Both on route servers
+      facility: Facility
+      where: Location
+  roa-coverage:
+    title: ROA coverage per ASN
+    description: RPKI route origin validation for every prefix an AS announces, its ROAs (unused or with too long a maxLength) and minimal ROAs to create for uncovered prefixes.
+    run: Check
+    coverage: RPKI coverage
+    summary: '{pct} % RPKI-valid: {valid} valid, {invalid} invalid, {notFound} without ROA (of {total} announced prefixes).'
+    invalidWarning: '{n} prefix(es) are RPKI-invalid: networks that drop invalids (most large ones) will not reach them. Fix the ROA or the announcement.'
+    uncheckedNote: '{n} prefix(es) were not checked to stay within the RIPEstat request budget.'
+    source: 'ROAs from the RIPEstat validator ({validator}), generated {time}.'
+    suggest: Suggested ROAs
+    suggestHelp: 'Create these ROAs (at your RIR) for the prefixes without one. They use maxLength = announced length, as RFC 9319 recommends.'
+    roas: 'ROAs of this AS ({n})'
+    unused: Not announced (stale?)
+    loose: maxLength longer than announced (RFC 9319 advises minimal ROAs)
+    status:
+      valid: Valid
+      invalid: Invalid
+      not-found: No ROA
+      unchecked: Not checked
+    reason:
+      length: longer than maxLength
+      asn: ROA for another AS
+    columns:
+      prefix: Prefix
+      status: RPKI status
+      roa: Matching ROA
+      ta: Trust anchor
+      note: Note

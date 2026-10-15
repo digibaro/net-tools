@@ -36,3 +36,36 @@ func TestPeeringDB(t *testing.T) {
 	}
 	env.Get("/api/v1/peeringdb/nope").ExpectError(t, "INVALID_INPUT")
 }
+
+func TestCommon(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		file := "testdata/net-empty.json"
+		switch r.URL.Query().Get("asn") {
+		case "13335":
+			file = "testdata/net-13335.json"
+		case "64500":
+			file = "testdata/net-64500.json"
+		}
+		b, _ := os.ReadFile(file)
+		_, _ = w.Write(b)
+	}))
+	defer srv.Close()
+	env := tooltest.New(t, &CommonTool{Base: srv.URL}, tooltest.Options{AllowPrivate: true})
+	var out Common
+	env.Get("/api/v1/peeringdb/common?a=AS13335&b=64500").Must(t).Decode(t, &out)
+	if !out.A.Found || !out.B.Found || out.B.Policy != "Selective" || len(out.IXs) != 2 || len(out.Facilities) != 1 || out.Facilities[0].FacID != 4 {
+		t.Fatalf("out = %+v", out)
+	}
+	byID := map[int]CommonIX{}
+	for _, x := range out.IXs {
+		byID[x.IXID] = x
+	}
+	if !byID[31].BothRS || byID[255].BothRS || len(byID[255].A) != 2 || byID[31].B[0].IPv4 != "80.81.192.5" {
+		t.Errorf("ixs = %+v", out.IXs)
+	}
+	env.Get("/api/v1/peeringdb/common?a=AS13335&b=64512").Must(t).Decode(t, &out)
+	if out.B.Found || len(out.IXs) != 0 {
+		t.Errorf("missing network = %+v", out)
+	}
+	env.Get("/api/v1/peeringdb/common?a=x&b=1").ExpectError(t, "INVALID_INPUT")
+}

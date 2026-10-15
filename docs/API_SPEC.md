@@ -111,6 +111,10 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/http/cache` | `url` | web.cache |
 | GET | `/api/v1/http/mixed-content` | `url` | web.mixed |
 | GET | `/api/v1/ip/country-blocks` | `country, family=all\|4\|6` | ip.country |
+| GET | `/api/v1/bgp/route-history` | `resource` (prefix or IP) | bgp.history |
+| GET | `/api/v1/bgp/neighbours/{asn}` | — | bgp.graph |
+| GET | `/api/v1/bgp/roa-coverage/{asn}` | — | bgp.roacoverage |
+| GET | `/api/v1/peeringdb/common` | `a, b` (ASNs) | bgp.common |
 | GET | `/api/v1/dns/axfr` | `zone` | dns.axfr |
 | GET | `/api/v1/dns/benchmark/stream` | `resolvers`, `queries` | dns.benchmark |
 | GET | `/api/v1/dns/encrypted` | `endpoint`, `transport=dot`, `name=example.com`, `type?`, `count=3` | dns.encrypted |
