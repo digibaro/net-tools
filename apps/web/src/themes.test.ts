@@ -29,3 +29,14 @@ describe('accent presets', () => {
     expect(themeOverrides('nope' as never, true).common?.primaryColor).toBe(ACCENT_COLORS.green.dark.primary)
   })
 })
+
+describe('boot script accent table', () => {
+  it('mirrors ACCENT_COLORS (index.html applies the accent before the app loads)', async () => {
+    const { readFileSync } = await import('node:fs')
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8')
+    const table = JSON.parse(/var A = (\{.*?\});/.exec(html)![1]!) as Record<string, [string, string]>
+    expect(Object.keys(table).sort()).toEqual([...ACCENTS].sort())
+    for (const a of ACCENTS)
+      expect(table[a], a).toEqual([ACCENT_COLORS[a].light.primary, ACCENT_COLORS[a].dark.primary])
+  })
+})

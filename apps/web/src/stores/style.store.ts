@@ -2,7 +2,7 @@ import type { Accent } from '@/themes'
 import { useMediaQuery, useStorage } from '@vueuse/core'
 import { defineStore } from 'pinia'
 import { computed, watchEffect } from 'vue'
-import { ACCENTS, DEFAULT_ACCENT, THEME_COLOR } from '@/themes'
+import { ACCENT_COLORS, ACCENTS, DEFAULT_ACCENT, faviconDataUrl, THEME_COLOR } from '@/themes'
 
 export type ColorMode = 'light' | 'dark' | 'auto'
 export const COLOR_MODES: ColorMode[] = ['light', 'dark', 'auto']
@@ -46,6 +46,13 @@ export const useStyleStore = defineStore('style', () => {
       read: v => (ACCENTS.includes(v as Accent) ? v as Accent : DEFAULT_ACCENT),
       write: v => v,
     },
+  })
+
+  // Favicon and boot-logo colour follow the accent (index.html applies them before the app loads).
+  watchEffect(() => {
+    const color = ACCENT_COLORS[accent.value][isDarkTheme.value ? 'dark' : 'light'].primary
+    document.documentElement.style.setProperty('--nt-accent', color)
+    document.querySelector('link[rel="icon"]')?.setAttribute('href', faviconDataUrl(color))
   })
 
   const isMenuCollapsed = useStorage('nettools:menu-collapsed', false)

@@ -66,4 +66,10 @@ export function contrast(a: string, b: string): number {
   return (hi! + 0.05) / (lo! + 0.05)
 }
 
+/** The globe logo as an SVG data URL in the given colour (favicon follows the accent). */
+export function faviconDataUrl(color: string): string {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3.6 9h16.8M3.6 15h16.8M11.5 3a17 17 0 0 0 0 18M12.5 3a17 17 0 0 1 0 18"/></svg>`
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`
+}
+
 export const THEME_COLOR = { light: '#ffffff', dark: '#18181c' } as const
