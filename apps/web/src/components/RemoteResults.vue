@@ -3,7 +3,7 @@ import type { ApiError as ApiErrorType } from '@/api/client'
 import type { RemoteMeta, RemoteProbeResult, RemoteSummary } from '@/composables/useRemote'
 import type { SseStatus } from '@/composables/useSse'
 import { NProgress, NTag } from 'naive-ui'
-import { computed } from 'vue'
+import { computed, defineAsyncComponent } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
 import LatencyChart from '@/components/LatencyChart.vue'
@@ -24,6 +24,10 @@ const where = (p: RemoteProbeResult) => [p.probe.city, countryName(p.probe.count
 const rtts = (p: RemoteProbeResult) => ((p.result.timings ?? []) as { rtt?: number | null }[]).map(x => (typeof x.rtt === 'number' ? x.rtt : null))
 const httpTimings = (p: RemoteProbeResult) => (p.result.timings ?? {}) as Record<string, number | null>
 const c = (key: string) => t(`remote.columns.${key}`)
+// The map and its land data (d3-geo, Natural Earth) load only when results are shown.
+const ProbeMap = defineAsyncComponent(() => import('./ProbeMap.vue'))
+const points = computed(() => props.probes.map(p => ({ id: String(p.index), latitude: p.probe.latitude, longitude: p.probe.longitude, label: `${where(p)} · AS${p.probe.asn} ${p.probe.network} · ${t(`remote.verdict.${verdict(type.value, p.result)}`)}${type.value === 'ping' ? ` · ${pingSummary(p.result)}` : ''}`, verdict: verdict(type.value, p.result) })))
+const scrollTo = (id: string) => document.getElementById(`probe-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 const asText = () => props.probes.map(p => `${where(p)} (AS${p.probe.asn} ${p.probe.network}): ${verdict(type.value, p.result)} ${type.value === 'ping' ? pingSummary(p.result) : ''}`).join('\n')
 </script>
 
@@ -35,7 +39,8 @@ const asText = () => props.probes.map(p => `${where(p)} (AS${p.probe.asn} ${p.pr
       <span v-if="summary && !summary.finished"> · {{ t('remote.incomplete') }}</span>
     </p>
     <NProgress v-if="status === 'running'" type="line" :percentage="expected ? Math.round(probes.length / expected * 100) : 0" :show-indicator="false" :aria-label="t('remote.progress')" class="mb-3" />
-    <div v-for="p in probes" :key="p.index" class="mb-3 border nt-border rounded border-solid p-3" data-testid="remote-probe">
+    <ProbeMap v-if="points.length" :points="points" @select="scrollTo" />
+    <div v-for="p in probes" :id="`probe-${p.index}`" :key="p.index" class="mb-3 scroll-mt-16 border nt-border rounded border-solid p-3" data-testid="remote-probe">
       <div class="flex flex-wrap items-center gap-2">
         <span aria-hidden="true">{{ flag(p.probe.country) }}</span>
         <span class="font-semibold">{{ where(p) }}</span>

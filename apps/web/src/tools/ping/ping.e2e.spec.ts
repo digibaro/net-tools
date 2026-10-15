@@ -14,6 +14,8 @@ test('ping: worldwide vantage runs through Globalping', async ({ page }) => {
   await page.goto('/ping?target=example.com&vantage=worldwide&probes=1')
   await expect(page.getByTestId('vantage-worldwide')).toBeVisible()
   await expect(page.getByTestId('remote-probe').or(page.getByTestId('api-error')).first()).toBeVisible({ timeout: 45_000 })
+  if (await page.getByTestId('remote-probe').count()) // probe locations on the bundled world map
+    await expect(page.getByTestId('probe-map').locator('circle')).toHaveCount(1)
 })
 
 test('ping: worldwide refuses private targets', async ({ page }) => {

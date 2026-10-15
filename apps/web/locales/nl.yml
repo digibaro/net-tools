@@ -208,6 +208,7 @@ remote:
   answered: '{up} van {done} probes kregen antwoord ({total} aangevraagd).'
   incomplete: Sommige probes waren niet op tijd klaar.
   progress: Voortgang van de meting
+  map: 'Kaart met de {n} probelocaties; kies een stip om naar het resultaat te gaan'
   resolver: resolver
   raw: Ruwe uitvoer
   attribution: Gemeten door community-probes van Globalping (globalping.io).

@@ -208,6 +208,7 @@ remote:
   answered: '{up} of {done} probes got an answer ({total} requested).'
   incomplete: Some probes did not finish in time.
   progress: Measurement progress
+  map: 'Map of the {n} probe locations; select a dot to jump to its result'
   resolver: resolver
   raw: Raw output
   attribution: Measured by Globalping (globalping.io) community probes.
