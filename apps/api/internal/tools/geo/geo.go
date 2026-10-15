@@ -82,6 +82,7 @@ func (t *Tool) batch(w http.ResponseWriter, r *http.Request) {
 		httpapi.Error(w, r, httpapi.InvalidInput("ips", `expected JSON {"ips": [...]} with 1 to 64 addresses`))
 		return
 	}
+	ctx := r.Context()
 	out := make([]Result, len(in.IPs))
 	sem := make(chan struct{}, 4)
 	var wg sync.WaitGroup
@@ -96,10 +97,10 @@ func (t *Tool) batch(w http.ResponseWriter, r *http.Request) {
 			sem <- struct{}{}
 			defer func() { <-sem }()
 			if t.city != nil {
-				out[i] = Lookup(r.Context(), t.city, t.asn, t.TXT, ip)
+				out[i] = Lookup(ctx, t.city, t.asn, t.TXT, ip)
 				return
 			}
-			res, err := t.ipinfo(r.Context(), ip)
+			res, err := t.ipinfo(ctx, ip)
 			if err != nil {
 				res = Result{IP: ip.String(), Public: asn.IsPublic(ip)}
 			}
