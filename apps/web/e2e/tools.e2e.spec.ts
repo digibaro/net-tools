@@ -23,6 +23,22 @@ for (const tool of tools) {
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
       await page.waitForLoadState('networkidle')
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+      // Nothing is cut off at the right edge either (overflow: hidden ancestors would hide it from
+      // the scrollWidth check); content inside a scrollable box such as a table is fine.
+      const clipped = await page.evaluate(() => {
+        const width = window.innerWidth
+        const inScrollBox = (el: Element) => {
+          for (let a = el.parentElement; a && !a.classList.contains('max-w-4xl'); a = a.parentElement) {
+            if (/auto|scroll/.test(getComputedStyle(a).overflowX) && a.getBoundingClientRect().right <= width + 1)
+              return true
+          }
+          return false
+        }
+        return [...document.querySelectorAll('.max-w-4xl *')]
+          .filter(el => !el.children.length && el.getBoundingClientRect().width > 0 && el.getBoundingClientRect().right > width + 1 && !inScrollBox(el))
+          .map(el => `${el.tagName.toLowerCase()} "${(el.textContent ?? '').trim().slice(0, 30)}"`)
+      })
+      expect(clipped).toEqual([])
       expect(errors).toEqual([])
     })
 

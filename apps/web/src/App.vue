@@ -44,6 +44,33 @@ onMounted(() => {
 </template>
 
 <style>
+/* Radio button groups (segmented choices) wrap instead of running off narrow screens. */
+.n-radio-group.n-radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  row-gap: 4px;
+  height: auto;
+  max-width: 100%;
+}
+
+/* When they can wrap, every choice is its own outlined button (the shared dividers would end up
+   at the end of a row and leave the next row without a left border). */
+@media (max-width: 640px) {
+  .n-radio-group.n-radio-group {
+    gap: 6px;
+  }
+  .n-radio-group .n-radio-group__splitor {
+    display: none;
+  }
+  .n-radio-group .n-radio-button.n-radio-button {
+    border: 1px solid var(--n-button-border-color);
+    border-radius: var(--n-button-border-radius);
+  }
+  .n-radio-group .n-radio-button.n-radio-button--checked {
+    border-color: var(--n-button-border-color-active);
+  }
+}
+
 /* Print / "save as PDF": only the tool and its results, on a light page. */
 @media print {
   .nt-no-print,
