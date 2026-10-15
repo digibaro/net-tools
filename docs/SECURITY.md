@@ -156,6 +156,9 @@ reverse proxy (Authelia, oauth2-proxy, Cloudflare Access, Tailscale). Optional b
 
 - Pin base images by digest in release builds; Renovate/Dependabot enabled.
 - CI: `go vet`, `golangci-lint`, `govulncheck`, `pnpm audit --prod`, Trivy image scan, SBOM (syft).
+- Audit exceptions live in `pnpm-workspace.yaml` (`auditConfig.ignoreGhsas`), each with its reason;
+  currently GHSA-86w9-cpqp-85rv (node-forge RSA signature verification, unused: the PKCS#12
+  inspector only decrypts in the browser; no patched release yet).
 
 ## 10. `/security-review` checklist (run before merging any server tool)
 
