@@ -132,10 +132,20 @@ func NewRouter(o Options) http.Handler {
 			r.Get("/capabilities", handleCapabilities(deps, o.Tools))
 			r.Get("/echo", handleEcho(o.Config.Features.TrustedProxies))
 
+			auditIP := ipFormatter(o.Config.Features.LogHashIPs)
 			for _, t := range o.Tools {
-				if ok, _ := t.Enabled(deps); ok {
-					t.Mount(r, deps)
+				if ok, _ := t.Enabled(deps); !ok {
+					continue
 				}
+				if !o.Config.Features.AuditLog {
+					t.Mount(r, deps)
+					continue
+				}
+				// AUDIT_LOG: every route of the tool gets the audit middleware.
+				r.Group(func(g chi.Router) {
+					g.Use(middleware.Audit(t.ID(), auditIP))
+					t.Mount(g, deps)
+				})
 			}
 		})
 	})

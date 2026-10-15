@@ -57,6 +57,7 @@ type Features struct {
 	LAN             bool
 	MetricsEnabled  bool
 	LogHashIPs      bool
+	AuditLog        bool
 	AllowPrivate    bool
 	TrustedProxies  []netip.Prefix
 	DenyCIDRs       []netip.Prefix
@@ -154,6 +155,7 @@ func LoadFrom(lookup LookupFunc, readFile ReadFileFunc) (Config, error) {
 			LAN:            p.boolean("NETTOOLS_LAN", false),
 			MetricsEnabled: p.boolean("METRICS_ENABLED", false),
 			LogHashIPs:     p.boolean("LOG_HASH_IPS", false),
+			AuditLog:       p.boolean("AUDIT_LOG", false),
 			AllowPrivate:   p.boolean("ALLOW_PRIVATE_TARGETS", relaxed),
 			TrustedProxies: p.prefixes("TRUSTED_PROXIES", "172.16.0.0/12"),
 			DenyCIDRs:      p.prefixes("DENY_CIDRS", ""),
