@@ -1622,6 +1622,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/http/cdn": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Which CDN, WAF / bot protection and hosting platform serve a URL (headers, cookies, CNAME chain, certificate) */
+        get: operations["httpCdn"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/cache": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Cache-Control analysis (RFC 9111) with a conditional repeat request */
+        get: operations["httpCache"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/http/mixed-content": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** http:// subresources and forms on an https page */
+        get: operations["httpMixedContent"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2726,6 +2777,8 @@ export interface components {
             tlsVersion: string;
             http2: boolean;
             httpVersion: string;
+            /** @description time to first byte over TCP (HTTP/2 or 1.1) */
+            ttfbMs: number;
             altSvc: {
                 protocol: string;
                 host: string;
@@ -2740,6 +2793,17 @@ export interface components {
                 quicVersion: string;
                 tlsVersion: string;
                 error: string;
+                /** @description a real HTTP/3 GET and a resumed repeat (0-RTT when the server accepts it); null without a QUIC handshake */
+                request: null | {
+                    ok: boolean;
+                    status: number;
+                    server: string;
+                    ttfbMs: number;
+                    resumed: boolean;
+                    zeroRtt: boolean;
+                    repeatTtfbMs: number;
+                    error: string;
+                };
             };
         };
         Revocation: {
@@ -3307,6 +3371,74 @@ export interface components {
                     verified: boolean;
                     verifyError: string;
                 };
+            }[];
+        };
+        CdnResult: {
+            url: string;
+            status: number;
+            remoteAddr: string;
+            cnames: string[];
+            server: string;
+            cacheStatus: string;
+            issuer: string;
+            detections: {
+                name: string;
+                /** @enum {string} */
+                kind: "cdn" | "waf" | "bot" | "hosting" | "cache" | "tls";
+                evidence: string[];
+            }[];
+        };
+        CacheResult: {
+            url: string;
+            status: number;
+            cacheControl: string;
+            /** @description seconds */
+            browserTtl: number;
+            sharedTtl: number;
+            ttlSource: string;
+            browserCacheable: boolean;
+            sharedCacheable: boolean;
+            age: string;
+            etag: string;
+            lastModified: string;
+            expires: string;
+            vary: string;
+            cacheStatus: string;
+            directives: {
+                name: string;
+                value: string;
+            }[];
+            repeat: null | {
+                sent: string;
+                status: number;
+                cacheStatus: string;
+                age: string;
+            };
+            findings: {
+                id: string;
+                /** @enum {string} */
+                severity: "info" | "warn" | "bad";
+                detail: string;
+            }[];
+        };
+        MixedResult: {
+            url: string;
+            status: number;
+            contentType: string;
+            bodyBytes: number;
+            truncated: boolean;
+            upgradeInsecureRequests: boolean;
+            active: number;
+            passive: number;
+            forms: number;
+            links: number;
+            resources: number;
+            items: {
+                tag: string;
+                attr: string;
+                url: string;
+                /** @enum {string} */
+                kind: "active" | "passive" | "form" | "link";
             }[];
         };
     };
@@ -5723,6 +5855,81 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["SmtpBannerResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpCdn: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["CdnResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpCache: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["CacheResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    httpMixedContent: {
+        parameters: {
+            query: {
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["MixedResult"];
                     };
                 };
             };

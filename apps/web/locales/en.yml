@@ -2017,10 +2017,13 @@ tools:
       unsigned: Not PGP-signed (optional, but lets researchers verify it).
   http-protocols:
     title: HTTP/2 & HTTP/3 check
-    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN, the Alt-Svc header and performs a real QUIC handshake.
+    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN and Alt-Svc, performs a real QUIC handshake and HTTP/3 request, and tests 0-RTT resumption.
     run: Check
     httpsOnly: HTTP/2 and HTTP/3 need an https:// URL.
     h3ok: 'QUIC handshake on UDP port {port} in {ms} ms ({version})'
+    h3req: 'HTTP {status} over HTTP/3, first byte after {ms} ms'
+    h3reqFail: 'QUIC works, but the HTTP/3 request failed: {error}'
+    resumed: 'Resumed: {resumed} · 0-RTT accepted: {zeroRtt} (repeat request: first byte after {ms} ms)'
     notAdvertised: HTTP/3 works but is not advertised in Alt-Svc, so browsers will not use it.
     advertisedBroken: Alt-Svc advertises HTTP/3 but the QUIC handshake failed from this server (UDP may be blocked on either side).
     fields:
@@ -2028,6 +2031,9 @@ tools:
       used: Version used for a request
       altSvc: Alt-Svc
       http3: HTTP/3 (QUIC)
+      h3request: HTTP/3 request
+      resumption: Session resumption
+      ttfbTcp: First byte over TCP
       address: Address
   starttls-check:
     title: STARTTLS check
@@ -2984,3 +2990,131 @@ tools:
     columns:
       check: Check
       detail: Value
+  cdn-waf-detector:
+    title: CDN & WAF detector
+    description: Which CDN, web application firewall, bot protection and hosting platform serve a site — recognised from response headers, cookies, the CNAME chain and the certificate.
+    run: Detect
+    none: No known CDN, WAF or hosting platform recognised — the site may be served directly, or by a service without telltale headers.
+    note: Detection is based on public fingerprints; a WAF that hides itself is not seen. For the network owner of the address, use IP to ASN or the cloud IP lookup.
+    kinds:
+      cdn: CDN
+      waf: WAF
+      bot: Bot protection
+      hosting: Hosting platform
+      cache: Cache
+      tls: Certificate
+    fields:
+      url: Final URL
+      address: Address
+      cnames: CNAME chain
+      server: Server header
+      cacheStatus: Cache status
+      issuer: Certificate issuer
+  cache-header-analyzer:
+    title: Cache header analyzer
+    description: How long may browsers and CDNs cache a URL? Explains Cache-Control, Expires, validators and Vary (RFC 9111) and repeats the request to test 304 revalidation and cache hits.
+    run: Analyze
+    notCached: Not stored
+    unknown: No lifetime (revalidated every time)
+    noValidator: no validator
+    repeatValue: 'sent {sent} → HTTP {status}, cache {cache}'
+    sources:
+      max-age: max-age
+      max-age_s-maxage: max-age, s-maxage for shared caches
+      expires: Expires header
+      expires_s-maxage: Expires, s-maxage for shared caches
+      heuristic: Heuristic (10 % of the time since Last-Modified)
+      heuristic_s-maxage: Heuristic, s-maxage for shared caches
+      s-maxage: s-maxage (shared caches only)
+      none: None
+    fields:
+      url: URL
+      browser: Browser cache lifetime
+      shared: CDN / proxy cache lifetime
+      source: Lifetime from
+      cacheStatus: CDN cache status
+      repeat: Conditional repeat
+    findings:
+      noStore: 'no-store: nothing may be cached, not even by the browser.'
+      noCache: 'no-cache: may be stored, but must be revalidated with the server before every use.'
+      noLifetime: No explicit lifetime (max-age or Expires) — caches decide for themselves.
+      heuristic: Only Last-Modified is set, so caches guess a lifetime (typically 10 % of its age). Set max-age explicitly.
+      private: 'private: only the browser may cache this, not CDNs or proxies.'
+      publicPrivate: Both public and private are set — contradictory.
+      immutable: 'immutable: browsers will not revalidate during the lifetime, even on reload.'
+      noValidators: No ETag or Last-Modified — expired copies cannot be revalidated cheaply (304) and are downloaded again.
+      varyStar: 'Vary: * makes the response effectively uncacheable for shared caches.'
+      varyFragment: 'Vary: {detail} splits the cache per cookie or browser and lowers the hit rate.'
+      setCookieShared: The response sets a cookie but may be stored by shared caches — the cookie could be served to other users. Add private or no-store.
+      pragmaOnly: 'Only the legacy Pragma: no-cache is set; HTTP/1.1 caches use Cache-Control.'
+      expiresInvalid: 'Invalid Expires value ({detail}): treated as already expired.'
+      no304: 'The repeat request with {detail} did not return 304 Not Modified, so revalidation downloads the full response.'
+  mixed-content-checker:
+    title: Mixed content checker
+    description: Find http:// scripts, stylesheets, frames, images and forms on an https page — the reason for a broken padlock or blocked page parts.
+    run: Check
+    note: Checks the HTML as served (no JavaScript is run), including srcset, inline styles and style blocks. Content loaded later by scripts is not seen.
+    summary: '{url} — {resources} references'
+    truncated: 'Only the first {bytes} bytes of the page were checked.'
+    showLinks: 'Also show {n} plain http:// links (navigation only, not mixed content)'
+    verdict:
+      clean: No mixed content found.
+      upgraded: 'Insecure references found, but the page sets upgrade-insecure-requests, so browsers load them over https (if the hosts support it).'
+      passive: '{passive} insecure image/media reference(s): browsers upgrade them to https or show them with a warning.'
+      active: '{active} insecure script/style/frame reference(s) and {forms} insecure form(s): browsers block these, so parts of the page break.'
+    kinds:
+      active: Active (blocked)
+      passive: Passive (image/media)
+      form: Form (sent unencrypted)
+      link: Link
+    columns:
+      kind: Type
+      element: Element
+  csp-builder:
+    title: CSP builder & evaluator
+    description: Build a Content-Security-Policy from presets (strict nonce-based, allowlist, lockdown), evaluate it for XSS bypasses and missing directives, and copy it as header, nginx, Apache or meta tag.
+    policy: Policy
+    help: "Directives are separated by ;. With a nonce or hash, 'unsafe-inline' is ignored by modern browsers (it is a fallback for old ones); with 'strict-dynamic', host and scheme sources are ignored too. Replace the RANDOM placeholder with a fresh nonce for every response."
+    nonce: Insert a random nonce
+    evaluation: Evaluation
+    directive: Directive
+    values: Sources
+    output: Output
+    format: Format
+    reportOnly: Report-only (monitor, do not block)
+    metaNote: In a meta tag frame-ancestors, report-to, report-uri and sandbox do not work, and report-only is not possible.
+    presets:
+      strict: Strict (nonce + strict-dynamic)
+      allowlist: Allowlist starter
+      lockdown: Lock down
+    outputs:
+      header: HTTP header
+      nginx: nginx add_header
+      apache: Apache Header
+      meta: HTML meta tag
+    score:
+      good: No weaknesses found.
+      warn: The policy works, but has weaknesses.
+      bad: The policy does not stop XSS reliably.
+    findings:
+      empty: The policy is empty.
+      duplicate: Duplicate directive — browsers use only the first one.
+      deprecated: Deprecated directive; browsers ignore it.
+      unknown: Unknown directive (typo?) — browsers ignore it.
+      noScriptSrc: Neither script-src nor default-src is set, so any script may run.
+      unsafeInline: "'unsafe-inline' allows inline scripts, so injected markup can run — use nonces or hashes."
+      unsafeInlineFallback: "'unsafe-inline' is ignored because a nonce or hash is present (fallback for old browsers)."
+      unsafeEval: "'unsafe-eval' allows eval() and similar; avoid it if you can."
+      unsafeHashes: "'unsafe-hashes' allows inline event handlers that match a hash."
+      strictDynamicNoNonce: "'strict-dynamic' without a nonce or hash blocks all scripts."
+      strictDynamicHosts: "Host and scheme sources are ignored because of 'strict-dynamic' (fallback for old browsers)."
+      scriptWildcard: 'Allows scripts from anywhere ({detail}).'
+      bypassHost: 'These hosts serve JSONP or AngularJS that can bypass an allowlist: {detail}.'
+      selfOnly: "Only 'self' — safe as long as no user-controlled files are served from your origin."
+      insecureSource: 'Loads over plain http: {detail}.'
+      objectSrc: "object-src is not 'none': plugins (Flash, Java) could load content. Set object-src 'none'."
+      baseUri: "No base-uri: an injected base tag can redirect relative script URLs. Set base-uri 'none' or 'self'."
+      frameAncestors: No frame-ancestors — the page can be framed (clickjacking) unless X-Frame-Options is set.
+      formAction: No form-action — injected forms can post anywhere.
+      noReporting: No report-to or report-uri, so violations are not reported to you.
+      weakNonce: 'Nonce {detail} is short — use at least 128 random bits, new for every response.'

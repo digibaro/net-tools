@@ -1927,6 +1927,69 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/SmtpBannerResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/http/cdn:
+    get:
+      operationId: httpCdn
+      summary: Which CDN, WAF / bot protection and hosting platform serve a URL (headers, cookies, CNAME chain, certificate)
+      tags: [web]
+      x-capability: web.cdn
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CdnResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/cache:
+    get:
+      operationId: httpCache
+      summary: Cache-Control analysis (RFC 9111) with a conditional repeat request
+      tags: [web]
+      x-capability: web.cache
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CacheResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/mixed-content:
+    get:
+      operationId: httpMixedContent
+      summary: http:// subresources and forms on an https page
+      tags: [web]
+      x-capability: web.mixed
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/MixedResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3322,7 +3385,7 @@ components:
             capped: { type: boolean }
     HttpProtocols:
       type: object
-      required: [url, address, alpn, tlsVersion, http2, httpVersion, altSvc, http3]
+      required: [url, address, alpn, tlsVersion, http2, httpVersion, ttfbMs, altSvc, http3]
       properties:
         url: { type: string }
         address: { type: string }
@@ -3330,6 +3393,7 @@ components:
         tlsVersion: { type: string }
         http2: { type: boolean }
         httpVersion: { type: string }
+        ttfbMs: { type: number, description: time to first byte over TCP (HTTP/2 or 1.1) }
         altSvc:
           type: array
           items:
@@ -3342,7 +3406,7 @@ components:
               maxAge: { type: integer }
         http3:
           type: object
-          required: [advertised, port, ok, handshakeMs, quicVersion, tlsVersion, error]
+          required: [advertised, port, ok, handshakeMs, quicVersion, tlsVersion, error, request]
           properties:
             advertised: { type: boolean }
             port: { type: integer }
@@ -3351,6 +3415,21 @@ components:
             quicVersion: { type: string }
             tlsVersion: { type: string }
             error: { type: string }
+            request:
+              description: a real HTTP/3 GET and a resumed repeat (0-RTT when the server accepts it); null without a QUIC handshake
+              oneOf:
+                - { type: "null" }
+                - type: object
+                  required: [ok, status, server, ttfbMs, resumed, zeroRtt, repeatTtfbMs, error]
+                  properties:
+                    ok: { type: boolean }
+                    status: { type: integer }
+                    server: { type: string }
+                    ttfbMs: { type: number }
+                    resumed: { type: boolean }
+                    zeroRtt: { type: boolean }
+                    repeatTtfbMs: { type: number }
+                    error: { type: string }
     Revocation:
       type: object
       required: [host, subject, serial, issuer, status, ocsp, crl]
@@ -4089,3 +4168,93 @@ components:
                       chain: { type: array, items: { $ref: "#/components/schemas/TlsCert" } }
                       verified: { type: boolean }
                       verifyError: { type: string }
+    CdnResult:
+      type: object
+      required: [url, status, remoteAddr, cnames, server, cacheStatus, issuer, detections]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        remoteAddr: { type: string }
+        cnames: { type: array, items: { type: string } }
+        server: { type: string }
+        cacheStatus: { type: string }
+        issuer: { type: string }
+        detections:
+          type: array
+          items:
+            type: object
+            required: [name, kind, evidence]
+            properties:
+              name: { type: string }
+              kind: { type: string, enum: [cdn, waf, bot, hosting, cache, tls] }
+              evidence: { type: array, items: { type: string } }
+    CacheResult:
+      type: object
+      required: [url, status, cacheControl, directives, browserTtl, sharedTtl, ttlSource, browserCacheable, sharedCacheable, age, etag, lastModified, expires, vary, cacheStatus, repeat, findings]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        cacheControl: { type: string }
+        browserTtl: { type: integer, description: seconds, -1 = not cacheable / unknown }
+        sharedTtl: { type: integer }
+        ttlSource: { type: string }
+        browserCacheable: { type: boolean }
+        sharedCacheable: { type: boolean }
+        age: { type: string }
+        etag: { type: string }
+        lastModified: { type: string }
+        expires: { type: string }
+        vary: { type: string }
+        cacheStatus: { type: string }
+        directives:
+          type: array
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name: { type: string }
+              value: { type: string }
+        repeat:
+          oneOf:
+            - { type: "null" }
+            - type: object
+              required: [sent, status, cacheStatus, age]
+              properties:
+                sent: { type: string }
+                status: { type: integer }
+                cacheStatus: { type: string }
+                age: { type: string }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [id, severity, detail]
+            properties:
+              id: { type: string }
+              severity: { type: string, enum: [info, warn, bad] }
+              detail: { type: string }
+    MixedResult:
+      type: object
+      required: [url, status, contentType, bodyBytes, truncated, upgradeInsecureRequests, items, active, passive, forms, links, resources]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        contentType: { type: string }
+        bodyBytes: { type: integer }
+        truncated: { type: boolean }
+        upgradeInsecureRequests: { type: boolean }
+        active: { type: integer }
+        passive: { type: integer }
+        forms: { type: integer }
+        links: { type: integer }
+        resources: { type: integer }
+        items:
+          type: array
+          items:
+            type: object
+            required: [tag, attr, url, kind]
+            properties:
+              tag: { type: string }
+              attr: { type: string }
+              url: { type: string }
+              kind: { type: string, enum: [active, passive, form, link] }

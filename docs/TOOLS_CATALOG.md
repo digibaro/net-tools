@@ -97,7 +97,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-02 | Redirect chain tracer | Every hop with status, Location, timing | S | `net/http` no-follow loop | — | 2 | ✅ |
 | WEB-03 | Timing breakdown | DNS / connect / TLS / TTFB / transfer (curl `-w` style) | S | `httptrace` | — | 2 | ✅ |
 | WEB-04 | Security headers analyzer | CSP, HSTS, XFO, XCTO, Referrer-Policy, Permissions-Policy grading | S | custom rules | Mozilla HTTP Observatory API | 2 | ✅ |
-| WEB-05 | HTTP/2 & HTTP/3 support | ALPN negotiation, `Alt-Svc`, QUIC handshake | S | `crypto/tls` ALPN + `quic-go` | — | 3 | ✅ |
+| WEB-05 | HTTP/2 & HTTP/3 support | ALPN negotiation, `Alt-Svc`, QUIC handshake, real HTTP/3 request with TTFB vs TCP, resumption / 0-RTT | S | `crypto/tls` ALPN + `quic-go` | — | 3 | ✅ |
 | WEB-06 | CORS tester | Send preflight with given Origin/method/headers, evaluate | S | `net/http` | — | 2 | ✅ |
 | WEB-07 | Compression check | gzip / br / zstd support and ratio | S | `net/http` | — | 3 | ✅ |
 | WEB-08 | Cookie inspector | Parse Set-Cookie flags (Secure, HttpOnly, SameSite) | S | `net/http` | — | 3 | ✅ |
@@ -108,6 +108,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-13 | User-agent parser | Browser/OS/device from UA string | B | `ua-parser-js` | — | 1 | ✅ |
 | WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ✅ |
 | WEB-15 | curl command builder / parser | Build curl from form; parse curl into fields | B | custom | — | 3 | ✅ |
+| WEB-16 | CDN & WAF detector | CDN, WAF, bot protection, hosting from headers, cookies, CNAME chain, certificate | S | `net/http` + signatures | — | 6 | ✅ |
+| WEB-17 | Cache header analyzer | Cache-Control / Expires / validators / Vary (RFC 9111), browser vs shared TTL, conditional repeat | S | `net/http` | — | 6 | ✅ |
+| WEB-18 | Mixed content checker | http:// scripts, styles, frames, media and forms on an https page | S | `x/net/html` | — | 6 | ✅ |
+| WEB-19 | CSP builder & evaluator | Presets, nonce, evaluation (unsafe-inline, bypass hosts, object-src, base-uri…), header/nginx/Apache/meta | B | custom | — | 6 | ✅ |
 
 ## 5. TLS & Certificates
 

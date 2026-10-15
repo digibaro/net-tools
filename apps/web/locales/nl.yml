@@ -2017,10 +2017,13 @@ tools:
       unsigned: Niet met PGP ondertekend (optioneel, maar zo kunnen onderzoekers het controleren).
   http-protocols:
     title: HTTP/2- & HTTP/3-controle
-    description: Spreekt een site HTTP/2 en HTTP/3? Controleert ALPN en de Alt-Svc-header en doet een echte QUIC-handshake.
+    description: Spreekt een site HTTP/2 en HTTP/3? Controleert ALPN en Alt-Svc, doet een echte QUIC-handshake en HTTP/3-request, en test 0-RTT-hervatting.
     run: Controleren
     httpsOnly: HTTP/2 en HTTP/3 hebben een https://-URL nodig.
     h3ok: 'QUIC-handshake op UDP-poort {port} in {ms} ms ({version})'
+    h3req: 'HTTP {status} via HTTP/3, eerste byte na {ms} ms'
+    h3reqFail: 'QUIC werkt, maar het HTTP/3-request mislukte: {error}'
+    resumed: 'Hervat: {resumed} · 0-RTT geaccepteerd: {zeroRtt} (herhaald request: eerste byte na {ms} ms)'
     notAdvertised: HTTP/3 werkt, maar wordt niet in Alt-Svc aangekondigd, dus browsers gebruiken het niet.
     advertisedBroken: Alt-Svc kondigt HTTP/3 aan, maar de QUIC-handshake vanaf deze server is mislukt (UDP kan aan een van beide kanten geblokkeerd zijn).
     fields:
@@ -2028,6 +2031,9 @@ tools:
       used: Gebruikte versie voor een verzoek
       altSvc: Alt-Svc
       http3: HTTP/3 (QUIC)
+      h3request: HTTP/3-request
+      resumption: Sessiehervatting
+      ttfbTcp: Eerste byte via TCP
       address: Adres
   starttls-check:
     title: STARTTLS-controle
@@ -2984,3 +2990,131 @@ tools:
     columns:
       check: Controle
       detail: Waarde
+  cdn-waf-detector:
+    title: CDN- & WAF-detectie
+    description: Welk CDN, welke web application firewall, botbescherming en welk hostingplatform een site bedienen — herkend aan responseheaders, cookies, de CNAME-keten en het certificaat.
+    run: Detecteren
+    none: Geen bekend CDN, WAF of hostingplatform herkend — de site wordt misschien direct geserveerd, of door een dienst zonder herkenbare headers.
+    note: De detectie gebruikt publieke kenmerken; een WAF die zich verbergt wordt niet gezien. Gebruik voor de eigenaar van het adres IP naar ASN of de cloud-IP-lookup.
+    kinds:
+      cdn: CDN
+      waf: WAF
+      bot: Botbescherming
+      hosting: Hostingplatform
+      cache: Cache
+      tls: Certificaat
+    fields:
+      url: Uiteindelijke URL
+      address: Adres
+      cnames: CNAME-keten
+      server: Server-header
+      cacheStatus: Cachestatus
+      issuer: Uitgever certificaat
+  cache-header-analyzer:
+    title: Cacheheader-analyse
+    description: Hoe lang mogen browsers en CDN's een URL cachen? Verklaart Cache-Control, Expires, validators en Vary (RFC 9111) en herhaalt het request om 304-hervalidatie en cachehits te testen.
+    run: Analyseren
+    notCached: Niet opgeslagen
+    unknown: Geen levensduur (elke keer hervalideren)
+    noValidator: geen validator
+    repeatValue: '{sent} verstuurd → HTTP {status}, cache {cache}'
+    sources:
+      max-age: max-age
+      max-age_s-maxage: max-age, s-maxage voor gedeelde caches
+      expires: Expires-header
+      expires_s-maxage: Expires, s-maxage voor gedeelde caches
+      heuristic: Heuristiek (10 % van de tijd sinds Last-Modified)
+      heuristic_s-maxage: Heuristiek, s-maxage voor gedeelde caches
+      s-maxage: s-maxage (alleen gedeelde caches)
+      none: Geen
+    fields:
+      url: URL
+      browser: Levensduur in de browsercache
+      shared: Levensduur in CDN-/proxycache
+      source: Levensduur uit
+      cacheStatus: CDN-cachestatus
+      repeat: Voorwaardelijke herhaling
+    findings:
+      noStore: 'no-store: niets mag worden gecachet, ook niet door de browser.'
+      noCache: 'no-cache: mag worden opgeslagen, maar moet vóór elk gebruik bij de server worden gehervalideerd.'
+      noLifetime: Geen expliciete levensduur (max-age of Expires) — caches beslissen zelf.
+      heuristic: Alleen Last-Modified is gezet, dus caches schatten een levensduur (meestal 10 % van de leeftijd). Zet max-age expliciet.
+      private: 'private: alleen de browser mag dit cachen, geen CDN''s of proxy''s.'
+      publicPrivate: Zowel public als private zijn gezet — tegenstrijdig.
+      immutable: 'immutable: browsers hervalideren niet tijdens de levensduur, ook niet bij herladen.'
+      noValidators: Geen ETag of Last-Modified — verlopen kopieën kunnen niet goedkoop worden gehervalideerd (304) en worden opnieuw gedownload.
+      varyStar: 'Vary: * maakt het antwoord in feite oncachebaar voor gedeelde caches.'
+      varyFragment: 'Vary: {detail} splitst de cache per cookie of browser en verlaagt de hitrate.'
+      setCookieShared: Het antwoord zet een cookie maar mag door gedeelde caches worden opgeslagen — de cookie kan bij andere gebruikers terechtkomen. Voeg private of no-store toe.
+      pragmaOnly: 'Alleen het verouderde Pragma: no-cache is gezet; HTTP/1.1-caches gebruiken Cache-Control.'
+      expiresInvalid: 'Ongeldige Expires-waarde ({detail}): geldt als al verlopen.'
+      no304: 'Het herhaalde request met {detail} gaf geen 304 Not Modified, dus hervalidatie downloadt het volledige antwoord.'
+  mixed-content-checker:
+    title: Mixed-content-controle
+    description: Vind http://-scripts, -stylesheets, -frames, -afbeeldingen en -formulieren op een https-pagina — de oorzaak van een gebroken slotje of geblokkeerde paginadelen.
+    run: Controleren
+    note: Controleert de HTML zoals die geserveerd wordt (zonder JavaScript uit te voeren), inclusief srcset, inline styles en style-blokken. Inhoud die later door scripts wordt geladen, wordt niet gezien.
+    summary: '{url} — {resources} verwijzingen'
+    truncated: 'Alleen de eerste {bytes} bytes van de pagina zijn gecontroleerd.'
+    showLinks: 'Ook {n} gewone http://-links tonen (alleen navigatie, geen mixed content)'
+    verdict:
+      clean: Geen mixed content gevonden.
+      upgraded: 'Onveilige verwijzingen gevonden, maar de pagina zet upgrade-insecure-requests, dus browsers laden ze via https (als de hosts dat ondersteunen).'
+      passive: '{passive} onveilige verwijzing(en) naar afbeeldingen/media: browsers zetten ze om naar https of tonen ze met een waarschuwing.'
+      active: '{active} onveilige verwijzing(en) naar scripts/styles/frames en {forms} onveilig(e) formulier(en): browsers blokkeren deze, dus delen van de pagina werken niet.'
+    kinds:
+      active: Actief (geblokkeerd)
+      passive: Passief (afbeelding/media)
+      form: Formulier (onversleuteld verzonden)
+      link: Link
+    columns:
+      kind: Soort
+      element: Element
+  csp-builder:
+    title: CSP-bouwer & -evaluatie
+    description: Bouw een Content-Security-Policy met presets (strikt met nonce, allowlist, alles dicht), evalueer hem op XSS-omwegen en ontbrekende directives, en kopieer hem als header, nginx, Apache of meta-tag.
+    policy: Policy
+    help: "Directives worden gescheiden door ;. Met een nonce of hash negeren moderne browsers 'unsafe-inline' (het is een fallback voor oude); met 'strict-dynamic' worden host- en schemabronnen ook genegeerd. Vervang de plaatshouder RANDOM door een nieuwe nonce voor elke response."
+    nonce: Willekeurige nonce invoegen
+    evaluation: Evaluatie
+    directive: Directive
+    values: Bronnen
+    output: Uitvoer
+    format: Formaat
+    reportOnly: Report-only (monitoren, niet blokkeren)
+    metaNote: In een meta-tag werken frame-ancestors, report-to, report-uri en sandbox niet, en report-only kan niet.
+    presets:
+      strict: Strikt (nonce + strict-dynamic)
+      allowlist: Allowlist-start
+      lockdown: Alles dicht
+    outputs:
+      header: HTTP-header
+      nginx: nginx add_header
+      apache: Apache Header
+      meta: HTML-meta-tag
+    score:
+      good: Geen zwakke punten gevonden.
+      warn: De policy werkt, maar heeft zwakke punten.
+      bad: De policy houdt XSS niet betrouwbaar tegen.
+    findings:
+      empty: De policy is leeg.
+      duplicate: Dubbele directive — browsers gebruiken alleen de eerste.
+      deprecated: Verouderde directive; browsers negeren hem.
+      unknown: Onbekende directive (typfout?) — browsers negeren hem.
+      noScriptSrc: Er is geen script-src of default-src gezet, dus elk script mag draaien.
+      unsafeInline: "'unsafe-inline' staat inline scripts toe, dus geïnjecteerde markup kan draaien — gebruik nonces of hashes."
+      unsafeInlineFallback: "'unsafe-inline' wordt genegeerd omdat er een nonce of hash is (fallback voor oude browsers)."
+      unsafeEval: "'unsafe-eval' staat eval() en dergelijke toe; vermijd het als het kan."
+      unsafeHashes: "'unsafe-hashes' staat inline event-handlers toe die met een hash overeenkomen."
+      strictDynamicNoNonce: "'strict-dynamic' zonder nonce of hash blokkeert alle scripts."
+      strictDynamicHosts: "Host- en schemabronnen worden genegeerd vanwege 'strict-dynamic' (fallback voor oude browsers)."
+      scriptWildcard: 'Staat scripts van overal toe ({detail}).'
+      bypassHost: 'Deze hosts serveren JSONP of AngularJS waarmee een allowlist te omzeilen is: {detail}.'
+      selfOnly: "Alleen 'self' — veilig zolang er geen door gebruikers aangeleverde bestanden van je eigen origin komen."
+      insecureSource: 'Laadt via gewone http: {detail}.'
+      objectSrc: "object-src is niet 'none': plugins (Flash, Java) kunnen inhoud laden. Zet object-src 'none'."
+      baseUri: "Geen base-uri: een geïnjecteerde base-tag kan relatieve script-URL's omleiden. Zet base-uri 'none' of 'self'."
+      frameAncestors: Geen frame-ancestors — de pagina kan in een frame worden geladen (clickjacking), tenzij X-Frame-Options is gezet.
+      formAction: Geen form-action — geïnjecteerde formulieren kunnen overal naartoe posten.
+      noReporting: Geen report-to of report-uri, dus overtredingen worden niet aan je gemeld.
+      weakNonce: 'Nonce {detail} is kort — gebruik minstens 128 willekeurige bits, nieuw voor elke response.'

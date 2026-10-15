@@ -8,6 +8,8 @@ import { tool as bdpCalculator } from './bdp-calculator'
 import { tool as blacklistCheck } from './blacklist-check'
 import { tool as browserLatency } from './browser-latency'
 import { tool as caaChecker } from './caa-checker'
+import { tool as cacheHeaderAnalyzer } from './cache-header-analyzer'
+import { tool as cdnWafDetector } from './cdn-waf-detector'
 import { tool as certKeyMatcher } from './cert-key-matcher'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
@@ -18,6 +20,7 @@ import { tool as connectionInfo } from './connection-info'
 import { tool as cookieInspector } from './cookie-inspector'
 import { tool as corsTester } from './cors-tester'
 import { tool as countryIpBlocks } from './country-ip-blocks'
+import { tool as cspBuilder } from './csp-builder'
 import { tool as csrTool } from './csr-tool'
 import { tool as ctSearch } from './ct-search'
 import { tool as curlBuilder } from './curl-builder'
@@ -72,6 +75,7 @@ import { tool as lookingGlass } from './looking-glass'
 import { tool as macAddressLookup } from './mac-address-lookup'
 import { tool as macFormatter } from './mac-formatter'
 import { tool as mdnsBrowser } from './mdns-browser'
+import { tool as mixedContentChecker } from './mixed-content-checker'
 import { tool as mtaStsChecker } from './mta-sts-checker'
 import { tool as mtr } from './mtr'
 import { tool as mtuCalculator } from './mtu-calculator'
@@ -141,7 +145,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'ip', components: [ipv4SubnetCalculator, ipv6SubnetCalculator, cidrRangeConverter, cidrAggregator, subnetSplitter, ipInSubnet, ipv4FormatConverter, ipv6ExpandCompress, ipv6UlaGenerator, ipSpecialCheck, wildcardMaskCalculator, reverseDnsName, macAddressLookup, macFormatter, eui64Calculator, whatIsMyIp, vlsmPlanner, ipv4InIpv6, randomIpGenerator, ipv6AddressAnalyzer, ipamSheet, nat64Dns64Check, countryIpBlocks] },
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder, zoneTransferTest, wildcardDetector, dnsBenchmark, dnssecValidator, openResolverTest, ptrCoverage, svcbHttpsViewer, ednsCompliance] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown, latencyMatrix, pathMtu, ipv6Readiness, portScanner, iperf, snmp] },
-  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester] },
+  { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester, cdnWafDetector, cacheHeaderAnalyzer, mixedContentChecker, cspBuilder] },
   { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit, keyConverter, daneChecker] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest, dmarcReportViewer, smtpBannerCheck] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer] },
