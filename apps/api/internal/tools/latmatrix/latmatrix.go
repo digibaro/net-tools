@@ -11,14 +11,14 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/rttstats"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/stream"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ping"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/rttstats"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/stream"
 )
 
 // MaxTargets bounds the fan-out.

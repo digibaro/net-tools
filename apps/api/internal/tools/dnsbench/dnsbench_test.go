@@ -8,9 +8,9 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx"
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx/dnstest"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx/dnstest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func TestBenchmark(t *testing.T) {

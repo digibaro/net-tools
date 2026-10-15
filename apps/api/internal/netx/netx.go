@@ -15,7 +15,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 // MaxRedirects bounds redirect chains (docs/SECURITY.md §2.4).

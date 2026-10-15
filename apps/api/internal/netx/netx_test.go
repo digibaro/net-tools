@@ -11,7 +11,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 func TestHTTPClientDialsPinnedIPOnly(t *testing.T) {

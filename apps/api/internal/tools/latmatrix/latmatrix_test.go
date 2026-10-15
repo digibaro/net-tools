@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/ping"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ping"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 // fakeEngine answers with RTT = last octet ms; .99 never answers.

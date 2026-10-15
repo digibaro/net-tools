@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func fake(lost map[int]bool) (Engine, *Options, *netip.Addr) {

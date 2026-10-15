@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 const ntpEpochOffset = 2208988800

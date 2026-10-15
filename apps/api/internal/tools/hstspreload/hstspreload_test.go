@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func TestHSTSPreload(t *testing.T) {

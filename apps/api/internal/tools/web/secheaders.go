@@ -9,11 +9,11 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/httpcore"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/httpcore"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
 )
 
 // SecHeadersTool is WEB-04: grade a site's security headers.

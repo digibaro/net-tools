@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
 )
 
 // Session limits: one test (ping, download and upload phases) fits easily in both.

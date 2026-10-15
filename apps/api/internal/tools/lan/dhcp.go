@@ -17,10 +17,10 @@ import (
 	"github.com/insomniacslk/dhcp/dhcpv4"
 	"github.com/insomniacslk/dhcp/dhcpv4/nclient4"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
 )
 
 // MaxOffers bounds what one probe collects; resendEvery paces DISCOVER retransmits.

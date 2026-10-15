@@ -14,9 +14,9 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/cache"
-	"github.com/digibaro/net-tools/apps/api/internal/netx"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/cache"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/netx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 // Timeout bounds every provider call unless a request asks for more (at most MaxTimeout).

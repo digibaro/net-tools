@@ -12,7 +12,7 @@ import (
 
 	"github.com/quic-go/quic-go"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func TestParseAltSvc(t *testing.T) {

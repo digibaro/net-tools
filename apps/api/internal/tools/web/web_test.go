@@ -11,9 +11,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/httpcore"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/httpcore"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func hop(h map[string]string, extra ...httpcore.Header) httpcore.Hop {

@@ -20,11 +20,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/config"
-	"github.com/digibaro/net-tools/apps/api/internal/geoip"
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/all"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/config"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/geoip"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/all"
 )
 
 // Set via -ldflags "-X main.version=… -X main.commit=… -X main.buildDate=…".

@@ -13,11 +13,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/mdlayher/arp"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/stream"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/stream"
 )
 
 // ARP scan limits: subnets of at most /22 (1022 hosts), requests 1 ms apart, 2 s to collect.

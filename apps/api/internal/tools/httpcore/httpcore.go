@@ -16,9 +16,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/netx"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/rttstats"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/netx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/rttstats"
 )
 
 // Methods allowed for inspection requests.

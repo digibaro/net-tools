@@ -19,7 +19,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/rttstats"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/rttstats"
 )
 
 // StartTLS protocols supported before the handshake.

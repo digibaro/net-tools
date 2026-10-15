@@ -11,9 +11,9 @@ import (
 	"github.com/go-chi/chi/v5"
 	"golang.org/x/net/publicsuffix"
 
-	"github.com/digibaro/net-tools/apps/api/internal/httpapi"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/httpapi"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
 )
 
 // DMARCTool is EM-03.

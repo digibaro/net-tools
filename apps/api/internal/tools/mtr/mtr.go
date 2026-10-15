@@ -11,13 +11,13 @@ import (
 
 	"github.com/go-chi/chi/v5"
 
-	"github.com/digibaro/net-tools/apps/api/internal/asn"
-	"github.com/digibaro/net-tools/apps/api/internal/execx"
-	"github.com/digibaro/net-tools/apps/api/internal/limits"
-	"github.com/digibaro/net-tools/apps/api/internal/target"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/params"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/stream"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/asn"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/execx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/limits"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/params"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/stream"
 )
 
 // Mode selects traceroute (3 probes per hop) or mtr (many cycles with running statistics).

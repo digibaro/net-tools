@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 // prober simulating a path MTU of mtu (IPv4); 0 = no ICMP replies at all.

@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/digibaro/net-tools/apps/api/internal/target"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/target"
 )
 
 func TestPolicyClientSSRF(t *testing.T) {

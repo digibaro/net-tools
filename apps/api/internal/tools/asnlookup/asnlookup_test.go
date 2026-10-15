@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func TestASNLookup(t *testing.T) {

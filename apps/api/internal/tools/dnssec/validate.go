@@ -10,7 +10,7 @@ import (
 
 	"github.com/miekg/dns"
 
-	"github.com/digibaro/net-tools/apps/api/internal/dnsx"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx"
 )
 
 // RootAnchors are the IANA root zone KSK trust anchors (KSK-2017 and KSK-2024), checked against

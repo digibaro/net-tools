@@ -10,9 +10,9 @@ import (
 
 	"github.com/maxmind/mmdbwriter/mmdbtype"
 
-	"github.com/digibaro/net-tools/apps/api/internal/geoip/geoiptest"
-	"github.com/digibaro/net-tools/apps/api/internal/tools"
-	"github.com/digibaro/net-tools/apps/api/internal/tools/tooltest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/geoip/geoiptest"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
 
 func noTXT(context.Context, string) ([]string, error) { return nil, nil }
