@@ -2835,3 +2835,92 @@ tools:
       nginx: nginx deny
       ipset: Linux ipset (restore)
       mikrotik: MikroTik-address-list
+  open-resolver-test:
+    title: Open-resolvertest
+    description: Beantwoordt een DNS-server recursieve vragen van iedereen? Open resolvers worden misbruikt voor DDoS-amplificatie — de amplificatiefactor wordt ook getoond.
+    server: DNS-server (IP of hostnaam)
+    invalid: Voer een IP-adres of hostnaam in, eventueel met :poort.
+    run: Testen
+    note: Stuurt vanaf de NET-TOOLS-server één recursieve vraag voor example.com. Wordt die beantwoord, dan meet een DNSSEC-vraag naar de rootsleutels hoeveel groter het antwoord is dan de vraag. Publieke resolvers zoals 9.9.9.9 zijn bewust open (met rate limiting); je eigen servers horen dat niet te zijn.
+    verdict:
+      open: Open resolver — deze server zoekt namen op voor iedereen op internet. Beperk recursie tot je eigen netwerken, tenzij het een publieke DNS-dienst is.
+      closed: Geen open resolver — de server antwoordt, maar zoekt geen namen voor ons op.
+      silent: Geen antwoord — de server reageert op dit adres niet op DNS (gefilterd of geen DNS-server).
+    amplificationValue: '{factor}× ({req} → {resp} bytes voor {query})'
+    fields:
+      server: Server
+      rcode: Antwoordcode
+      ra: Recursie beschikbaar
+      answers: Antwoordrecords
+      rtt: Responstijd
+      amplification: Amplificatie
+  ptr-coverage:
+    title: Reverse-DNS-dekking
+    description: PTR-records voor elk adres in een /24 (of IPv6 /120), met forward-bevestiging (FCrDNS) — vind ontbrekende of verouderde reverse DNS voordat mailservers dat doen.
+    prefix: Prefix (maximaal 256 adressen)
+    invalid: Voer een IPv4-prefix van /24 of kleiner in, een IPv6-prefix van /120 of kleiner, of één adres (de /24 daarvan wordt gescand).
+    run: Scannen
+    onlyNamed: Alleen adressen met een PTR-record
+    summary: '{prefix}: {ptr} van {total} met PTR, {confirmed} forward-bevestigd'
+    status:
+      confirmed: Forward-bevestigd
+      mismatch: Naam verwijst niet terug
+      none: Geen PTR
+      error: Opzoeken mislukt
+    columns:
+      ip: Adres
+      names: PTR-naam
+      status: FCrDNS
+      rcode: Antwoord
+  svcb-https-viewer:
+    title: HTTPS- / SVCB-record & ECH-viewer
+    description: Ontleed HTTPS- en SVCB-records (RFC 9460) — ALPN (HTTP/3), adreshints, poort en Encrypted Client Hello-configuraties — met volgen van aliasrecords.
+    name: Naam
+    type: Recordtype
+    run: Opzoeken
+    ddr: DoH/DoT van de resolver ontdekken (DDR)
+    none: 'Geen {type}-record voor {name} ({rcode}).'
+    sameName: Dezelfde naam (.)
+    ech: Encrypted Client Hello-configuraties
+    modes:
+      alias: Aliasmodus (verwijst naar een andere naam)
+      service: Servicemodus
+    fields:
+      mode: Modus
+      target: Doel
+    columns:
+      configId: Config-ID
+      publicName: Publieke naam
+      suites: Cipher suites (KDF / AEAD)
+      maxName: Max. naamlengte
+  edns-compliance:
+    title: EDNS-compliancetest
+    description: Test de autoritatieve nameservers van een zone zoals ISC's ednscomp dat doet — onbekende EDNS-versies, -opties en -vlaggen, DNSSEC OK, TCP — om servers te vinden die DNSSEC of grote antwoorden breken.
+    zone: Zone
+    server: Nameserver (optioneel)
+    serverPlaceholder: leeg = elke NS van de zone (maximaal 6)
+    run: Testen
+    note: 'Stuurt per nameserver negen SOA-vragen (IPv4) vanaf de NET-TOOLS-server, zonder recursie. Sinds DNS Flag Day 2019 werken resolvers niet meer om servers heen die EDNS verkeerd afhandelen.'
+    pass: Goed
+    fail: Fout
+    passed: '{n} van {total} tests geslaagd'
+    cookie: Ondersteunt DNS-cookies
+    grade:
+      ok: Conform
+      minor: Kleine problemen
+      broken: EDNS defect
+      unreachable: Onbereikbaar
+    checks:
+      dns: Gewone DNS (zonder EDNS)
+      edns: EDNS-versie 0
+      edns1: EDNS-versie 1 → BADVERS
+      ednsopt: Onbekende EDNS-optie genegeerd
+      edns1opt: Versie 1 + onbekende optie → BADVERS
+      do: DNSSEC OK-bit teruggegeven
+      ednsflags: Onbekende EDNS-vlag gewist
+      optlist: NSID, EXPIRE, COOKIE, ECS samen
+      tcp: EDNS via TCP
+    columns:
+      test: Test
+      result: Resultaat
+      detail: Detail

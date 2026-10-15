@@ -1520,6 +1520,74 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/dns/open-resolver": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Does a DNS server answer recursive queries for anyone (open resolver), and its amplification factor */
+        get: operations["dnsOpenResolver"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/ptr-scan": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** PTR records with forward confirmation for every address of a /24 or /120 */
+        get: operations["dnsPtrScan"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/svcb": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** HTTPS / SVCB records (RFC 9460) with AliasMode chasing and decoded ECH configs */
+        get: operations["dnsSvcb"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/dns/edns-compliance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** EDNS compliance tests (ISC ednscomp style) against a zone's nameservers */
+        get: operations["dnsEdnsCompliance"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3074,6 +3142,86 @@ export interface components {
             ipv6Slash48s: number;
             asns: number;
             queryTime: string;
+        };
+        OpenResolverResult: {
+            server: string;
+            responds: boolean;
+            rcode: string;
+            recursionAvailable: boolean;
+            answers: number;
+            open: boolean;
+            rttMs: number;
+            amplification: {
+                query: string;
+                requestBytes: number;
+                responseBytes: number;
+                factor: number;
+                truncated: boolean;
+            } | null;
+        };
+        PtrScanResult: {
+            prefix: string;
+            resolver: string;
+            total: number;
+            withPtr: number;
+            confirmed: number;
+            rows: {
+                ip: string;
+                rcode: string;
+                names: string[];
+                confirmed: boolean;
+                error: string;
+            }[];
+        };
+        SvcbResult: {
+            name: string;
+            type: string;
+            resolver: string;
+            rcode: string;
+            aliases: string[];
+            records: components["schemas"]["SvcbRecord"][];
+        };
+        SvcbRecord: {
+            owner: string;
+            priority: number;
+            /** @enum {string} */
+            mode: "alias" | "service";
+            target: string;
+            ttl: number;
+            echError: string;
+            params: {
+                key: string;
+                value: string;
+            }[];
+            ech: {
+                version: string;
+                configId: number;
+                kem: string;
+                publicKey: string;
+                maxNameLength: number;
+                publicName: string;
+                extensions: number;
+                suites: {
+                    kdf: string;
+                    aead: string;
+                }[];
+            }[];
+        };
+        EdnsCompResult: {
+            zone: string;
+            servers: {
+                name: string;
+                addr: string;
+                error: string;
+                passed: number;
+                nsid: string;
+                cookie: boolean;
+                checks: {
+                    id: string;
+                    pass: boolean;
+                    detail: string;
+                }[];
+            }[];
         };
     };
     responses: {
@@ -5331,6 +5479,111 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["CountryBlocks"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsOpenResolver: {
+        parameters: {
+            query: {
+                server: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["OpenResolverResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsPtrScan: {
+        parameters: {
+            query: {
+                prefix: string;
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["PtrScanResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsSvcb: {
+        parameters: {
+            query: {
+                name: string;
+                type?: "HTTPS" | "SVCB";
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SvcbResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    dnsEdnsCompliance: {
+        parameters: {
+            query: {
+                zone: string;
+                /** @description test only this server instead of the zone's NS set */
+                server?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["EdnsCompResult"];
                     };
                 };
             };

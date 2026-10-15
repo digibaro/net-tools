@@ -2835,3 +2835,92 @@ tools:
       nginx: nginx deny
       ipset: Linux ipset (restore)
       mikrotik: MikroTik address-list
+  open-resolver-test:
+    title: Open resolver test
+    description: Does a DNS server answer recursive queries for anyone? Open resolvers are abused for DDoS amplification — this shows the amplification factor too.
+    server: DNS server (IP or hostname)
+    invalid: Enter an IP address or hostname, optionally with :port.
+    run: Test
+    note: Sends one recursive query for example.com from the NET-TOOLS server. If it is answered, a DNSSEC query for the root keys measures how much larger the answer is than the question. Public resolvers such as 9.9.9.9 are open on purpose (and rate-limited); your own servers should not be.
+    verdict:
+      open: Open resolver — this server resolves names for anyone on the internet. Unless it is a public DNS service, restrict recursion to your own networks.
+      closed: Not an open resolver — the server answers, but does not resolve names for us.
+      silent: No answer — the server does not respond to DNS on this address (filtered or not a DNS server).
+    amplificationValue: '{factor}× ({req} → {resp} bytes for {query})'
+    fields:
+      server: Server
+      rcode: Response code
+      ra: Recursion available
+      answers: Answer records
+      rtt: Response time
+      amplification: Amplification
+  ptr-coverage:
+    title: Reverse DNS coverage
+    description: PTR records for every address in a /24 (or IPv6 /120), with forward confirmation (FCrDNS) — find missing or stale reverse DNS before mail servers do.
+    prefix: Prefix (at most 256 addresses)
+    invalid: Enter a /24 or smaller IPv4 prefix, a /120 or smaller IPv6 prefix, or one address (its /24 is scanned).
+    run: Scan
+    onlyNamed: Only addresses with a PTR record
+    summary: '{prefix}: {ptr} of {total} with PTR, {confirmed} forward-confirmed'
+    status:
+      confirmed: Forward-confirmed
+      mismatch: Name does not point back
+      none: No PTR
+      error: Lookup failed
+    columns:
+      ip: Address
+      names: PTR name
+      status: FCrDNS
+      rcode: Response
+  svcb-https-viewer:
+    title: HTTPS / SVCB record & ECH viewer
+    description: Decode HTTPS and SVCB records (RFC 9460) — ALPN (HTTP/3), address hints, port and Encrypted Client Hello configs — following alias records.
+    name: Name
+    type: Record type
+    run: Look up
+    ddr: Discover the resolver's DoH/DoT (DDR)
+    none: 'No {type} record for {name} ({rcode}).'
+    sameName: Same name (.)
+    ech: Encrypted Client Hello configs
+    modes:
+      alias: Alias mode (points to another name)
+      service: Service mode
+    fields:
+      mode: Mode
+      target: Target
+    columns:
+      configId: Config ID
+      publicName: Public name
+      suites: Cipher suites (KDF / AEAD)
+      maxName: Max name length
+  edns-compliance:
+    title: EDNS compliance test
+    description: Test a zone's authoritative nameservers the way ISC's ednscomp does — unknown EDNS versions, options and flags, DNSSEC OK, TCP — to catch servers that break DNSSEC or large answers.
+    zone: Zone
+    server: Nameserver (optional)
+    serverPlaceholder: empty = every NS of the zone (up to 6)
+    run: Test
+    note: 'Sends nine SOA queries per nameserver (IPv4) from the NET-TOOLS server, without recursion. Since DNS Flag Day 2019 resolvers no longer work around servers that mishandle EDNS.'
+    pass: Pass
+    fail: Fail
+    passed: '{n} of {total} tests passed'
+    cookie: Supports DNS cookies
+    grade:
+      ok: Compliant
+      minor: Minor issues
+      broken: Broken EDNS
+      unreachable: Unreachable
+    checks:
+      dns: Plain DNS (no EDNS)
+      edns: EDNS version 0
+      edns1: EDNS version 1 → BADVERS
+      ednsopt: Unknown EDNS option ignored
+      edns1opt: Version 1 + unknown option → BADVERS
+      do: DNSSEC OK bit echoed
+      ednsflags: Unknown EDNS flag cleared
+      optlist: NSID, EXPIRE, COOKIE, ECS together
+      tcp: EDNS over TCP
+    columns:
+      test: Test
+      result: Result
+      detail: Detail

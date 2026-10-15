@@ -64,6 +64,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | DNS-12 | Zone file / record builder | Generate BIND-style records (SRV, TXT splitting, SPF) | B | custom | — | 2 | ✅ |
 | DNS-13 | Punycode / IDN converter | Unicode domain ↔ `xn--` | B | `punycode` / `URL` | — | 1 | ✅ |
 | DNS-14 | Domain parser | Split subdomain / registrable domain / public suffix | B | `tldts` | — | 1 | ✅ |
+| DNS-15 | Open resolver test | Recursion for anyone? plus DNSSEC amplification factor | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-16 | Reverse DNS coverage | PTR + forward confirmation (FCrDNS) for a /24 or /120 | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-17 | HTTPS / SVCB & ECH viewer | RFC 9460 records, alias chasing, ECHConfigList decoding, DDR | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-18 | EDNS compliance test | ISC ednscomp-style tests per authoritative server | S | `miekg/dns` | — | 6 | ✅ |
 
 ## 3. Connectivity & Diagnostics
 

@@ -1794,6 +1794,94 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/CountryBlocks" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/open-resolver:
+    get:
+      operationId: dnsOpenResolver
+      summary: Does a DNS server answer recursive queries for anyone (open resolver), and its amplification factor
+      tags: [dns]
+      x-capability: dns.openresolver
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/OpenResolverResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/ptr-scan:
+    get:
+      operationId: dnsPtrScan
+      summary: PTR records with forward confirmation for every address of a /24 or /120
+      tags: [dns]
+      x-capability: dns.ptrscan
+      parameters:
+        - { name: prefix, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PtrScanResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/svcb:
+    get:
+      operationId: dnsSvcb
+      summary: HTTPS / SVCB records (RFC 9460) with AliasMode chasing and decoded ECH configs
+      tags: [dns]
+      x-capability: dns.svcb
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [HTTPS, SVCB], default: HTTPS } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SvcbResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/edns-compliance:
+    get:
+      operationId: dnsEdnsCompliance
+      summary: EDNS compliance tests (ISC ednscomp style) against a zone's nameservers
+      tags: [dns]
+      x-capability: dns.ednscomp
+      parameters:
+        - { name: zone, in: query, required: true, schema: { type: string } }
+        - { name: server, in: query, description: test only this server instead of the zone's NS set, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EdnsCompResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -3773,3 +3861,118 @@ components:
         ipv6Slash48s: { type: integer }
         asns: { type: integer }
         queryTime: { type: string }
+    OpenResolverResult:
+      type: object
+      required: [server, responds, rcode, recursionAvailable, answers, open, rttMs, amplification]
+      properties:
+        server: { type: string }
+        responds: { type: boolean }
+        rcode: { type: string }
+        recursionAvailable: { type: boolean }
+        answers: { type: integer }
+        open: { type: boolean }
+        rttMs: { type: number }
+        amplification:
+          type: [object, "null"]
+          required: [query, requestBytes, responseBytes, factor, truncated]
+          properties:
+            query: { type: string }
+            requestBytes: { type: integer }
+            responseBytes: { type: integer }
+            factor: { type: number }
+            truncated: { type: boolean }
+    PtrScanResult:
+      type: object
+      required: [prefix, resolver, total, withPtr, confirmed, rows]
+      properties:
+        prefix: { type: string }
+        resolver: { type: string }
+        total: { type: integer }
+        withPtr: { type: integer }
+        confirmed: { type: integer }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [ip, rcode, names, confirmed, error]
+            properties:
+              ip: { type: string }
+              rcode: { type: string }
+              names: { type: array, items: { type: string } }
+              confirmed: { type: boolean }
+              error: { type: string }
+    SvcbResult:
+      type: object
+      required: [name, type, resolver, rcode, records, aliases]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        resolver: { type: string }
+        rcode: { type: string }
+        aliases: { type: array, items: { type: string } }
+        records: { type: array, items: { $ref: "#/components/schemas/SvcbRecord" } }
+    SvcbRecord:
+      type: object
+      required: [owner, priority, mode, target, ttl, params, ech, echError]
+      properties:
+        owner: { type: string }
+        priority: { type: integer }
+        mode: { type: string, enum: [alias, service] }
+        target: { type: string }
+        ttl: { type: integer }
+        echError: { type: string }
+        params:
+          type: array
+          items:
+            type: object
+            required: [key, value]
+            properties:
+              key: { type: string }
+              value: { type: string }
+        ech:
+          type: array
+          items:
+            type: object
+            required: [version, configId, kem, publicKey, suites, maxNameLength, publicName, extensions]
+            properties:
+              version: { type: string }
+              configId: { type: integer }
+              kem: { type: string }
+              publicKey: { type: string }
+              maxNameLength: { type: integer }
+              publicName: { type: string }
+              extensions: { type: integer }
+              suites:
+                type: array
+                items:
+                  type: object
+                  required: [kdf, aead]
+                  properties:
+                    kdf: { type: string }
+                    aead: { type: string }
+    EdnsCompResult:
+      type: object
+      required: [zone, servers]
+      properties:
+        zone: { type: string }
+        servers:
+          type: array
+          items:
+            type: object
+            required: [name, addr, error, checks, passed, nsid, cookie]
+            properties:
+              name: { type: string }
+              addr: { type: string }
+              error: { type: string }
+              passed: { type: integer }
+              nsid: { type: string }
+              cookie: { type: boolean }
+              checks:
+                type: array
+                items:
+                  type: object
+                  required: [id, pass, detail]
+                  properties:
+                    id: { type: string }
+                    pass: { type: boolean }
+                    detail: { type: string }
