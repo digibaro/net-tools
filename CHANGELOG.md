@@ -6,6 +6,8 @@ instructions are on the [GitHub releases page](https://github.com/digibaro/net-t
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-15
+
 ### Added
 - LAN tools: **LLDP / CDP neighbours** (which switch and port the server is plugged into),
   **IPv6 neighbours & routers** (NDP scan plus router advertisements: prefixes, SLAAC / DHCPv6,
@@ -67,5 +69,6 @@ Phases 0–3 (foundations, 32 browser tools, DNS / connectivity / HTTP / TLS / e
 tools, providers and Worldwide measurements) were developed before the first release; see the git
 history and `docs/IMPLEMENTATION_PLAN.md`.
 
-[Unreleased]: https://github.com/digibaro/net-tools-docker/compare/v0.4.0...HEAD
+[Unreleased]: https://github.com/digibaro/net-tools-docker/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/digibaro/net-tools-docker/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/digibaro/net-tools-docker/releases/tag/v0.4.0
