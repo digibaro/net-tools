@@ -2924,3 +2924,63 @@ tools:
       test: Test
       result: Resultaat
       detail: Detail
+  dane-checker:
+    title: DANE- / TLSA-controle
+    description: Controleer de TLSA-records van de MX-hosts van een maildomein (poort 25, STARTTLS) of een HTTPS-site tegen het certificaat dat de server echt toont, inclusief DNSSEC.
+    domain: Maildomein
+    host: Hostnaam
+    service: Dienst
+    smtp: Mail (MX, poort 25)
+    resolverPlaceholder: leeg = de resolver van de server (moet DNSSEC valideren)
+    run: Controleren
+    note: 'TLSA-records tellen alleen als ze met DNSSEC zijn ondertekend (RFC 7672), dus dit vraagt een validerende resolver: zijn AD-vlag beslist. Veel hostingnetwerken blokkeren uitgaand poort 25; het TLSA-deel werkt dan nog wel.'
+    dnssecYes: Ja (resolver valideerde, AD-vlag)
+    dnssecNo: Nee — niet ondertekend, of de resolver valideert niet
+    leaf: servercertificaat
+    matchCert: 'Komt overeen met {n}'
+    noMatch: Geen overeenkomst
+    verdict:
+      valid: 'DANE is geldig voor {input}: elke server toont een certificaat dat overeenkomt met de ondertekende TLSA-records.'
+      mismatch: 'DANE is defect voor {input}: een TLSA-record komt niet overeen met het certificaat — afzenders die DANE gebruiken weigeren af te leveren.'
+      insecure: 'Er zijn TLSA-records voor {input}, maar zonder DNSSEC-handtekening worden ze genegeerd.'
+      no-tlsa: 'Geen TLSA-records voor {input}: DANE wordt niet gebruikt.'
+      unreachable: Een server kon niet worden gecontroleerd.
+    hostVerdict:
+      valid: Geldig
+      mismatch: Komt niet overeen
+      insecure: Niet DNSSEC-ondertekend
+      no-tlsa: Geen TLSA
+      unreachable: Onbereikbaar
+    fields:
+      tlsaName: TLSA-naam
+      dnssec: DNSSEC
+      address: Gecontroleerd adres
+      tls: TLS
+      webpki: Geldig WebPKI-certificaat
+    columns:
+      params: Usage Selector Matching
+      data: Associatiedata
+      match: Resultaat
+  smtp-banner-check:
+    title: SMTP-banner- & FCrDNS-controle
+    description: Kloppen de reverse DNS, de SMTP-banner en de EHLO-naam van een mailserver met elkaar? Ontvangers weigeren of markeren mail van servers die hierop zakken.
+    host: Mailserver (hostnaam of IP)
+    invalid: Voer een hostnaam of IP-adres in.
+    run: Controleren
+    blocked: Poort 25 was vanaf de NET-TOOLS-server niet bereikbaar (veel providers blokkeren die); alleen de DNS-controles zijn uitgevoerd.
+    grade:
+      good: 'Alle {total} controles geslaagd.'
+      issues: '{n} van {total} controles geslaagd — kleine problemen.'
+      bad: '{n} van {total} controles geslaagd — problemen met reverse DNS schaden de bezorging.'
+    checks:
+      ptr: Reverse DNS (PTR) bestaat
+      fcrdns: PTR-naam verwijst terug naar dit adres (FCrDNS)
+      banner: SMTP-banner ontvangen
+      bannerFqdn: Banner begint met een volledige hostnaam
+      bannerPtr: Hostnaam in de banner komt overeen met de PTR
+      ehloPtr: EHLO-naam komt overeen met de PTR
+      starttls: STARTTLS aangeboden
+      certificate: Certificaat geldig voor de hostnaam
+    columns:
+      check: Controle
+      detail: Waarde

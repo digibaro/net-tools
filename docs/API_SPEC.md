@@ -104,6 +104,8 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/dns/ptr-scan` | `prefix (≤256 addresses), resolver?` | dns.ptrscan |
 | GET | `/api/v1/dns/svcb` | `name, type=HTTPS\|SVCB, resolver?` | dns.svcb |
 | GET | `/api/v1/dns/edns-compliance` | `zone, server?` | dns.ednscomp |
+| GET | `/api/v1/tls/dane` | `host, service=smtp\|https, port?, resolver?` | tls.dane |
+| GET | `/api/v1/email/smtp-banner` | `host` | email.banner |
 | GET | `/api/v1/ip/country-blocks` | `country, family=all\|4\|6` | ip.country |
 | GET | `/api/v1/dns/axfr` | `zone` | dns.axfr |
 | GET | `/api/v1/dns/benchmark/stream` | `resolvers`, `queries` | dns.benchmark |

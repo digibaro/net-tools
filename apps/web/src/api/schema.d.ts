@@ -1588,6 +1588,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tls/dane": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** DANE / TLSA check (RFC 6698 / 7672) for the MX hosts of a mail domain or an HTTPS host */
+        get: operations["tlsDane"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/email/smtp-banner": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** SMTP banner, EHLO name, PTR and forward-confirmed reverse DNS of a mail server */
+        get: operations["emailSmtpBanner"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -2060,16 +2094,7 @@ export interface components {
                 host: string;
                 addresses: string[];
                 error: string;
-                probes: {
-                    address: string;
-                    connected: boolean;
-                    connectMs: number;
-                    banner: string;
-                    extensions: string[];
-                    starttls: boolean;
-                    tls: null | components["schemas"]["TlsSession"];
-                    error: string;
-                }[];
+                probes: components["schemas"]["SmtpProbe"][];
             }[];
         };
         SpfTerm: {
@@ -3221,6 +3246,67 @@ export interface components {
                     pass: boolean;
                     detail: string;
                 }[];
+            }[];
+        };
+        SmtpProbe: {
+            address: string;
+            connected: boolean;
+            connectMs: number;
+            banner: string;
+            /** @description first line of the EHLO reply */
+            greeting: string;
+            extensions: string[];
+            starttls: boolean;
+            tls: null | components["schemas"]["TlsSession"];
+            error: string;
+        };
+        SmtpBannerResult: {
+            host: string;
+            address: string;
+            ptr: string[];
+            forward: string[];
+            fcrdns: boolean;
+            bannerHost: string;
+            ehloHost: string;
+            probe: components["schemas"]["SmtpProbe"];
+            passed: number;
+            smtpBlocked: boolean;
+            checks: {
+                id: string;
+                pass: boolean;
+                detail: string;
+            }[];
+        };
+        DaneResult: {
+            input: string;
+            service: string;
+            port: number;
+            resolver: string;
+            mx: boolean;
+            hosts: {
+                name: string;
+                tlsaName: string;
+                rcode: string;
+                dnssec: boolean;
+                address: string;
+                error: string;
+                /** @enum {string} */
+                verdict: "valid" | "mismatch" | "insecure" | "no-tlsa" | "unreachable";
+                records: {
+                    usage: number;
+                    selector: number;
+                    matchingType: number;
+                    data: string;
+                    match: boolean;
+                    matchedCert: number;
+                }[];
+                tls: null | {
+                    version: string;
+                    cipher: string;
+                    chain: components["schemas"]["TlsCert"][];
+                    verified: boolean;
+                    verifyError: string;
+                };
             }[];
         };
     };
@@ -5584,6 +5670,59 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["EdnsCompResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    tlsDane: {
+        parameters: {
+            query: {
+                host: string;
+                service?: "smtp" | "https";
+                port?: number;
+                resolver?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["DaneResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    emailSmtpBanner: {
+        parameters: {
+            query: {
+                host: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["SmtpBannerResult"];
                     };
                 };
             };

@@ -124,6 +124,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-09 | STARTTLS check | SMTP/IMAP/POP3/FTP/XMPP STARTTLS + cert | S | `net/smtp` & raw dialogs | — | 3 | ✅ |
 | TLS-10 | SSH server audit | Banner, host key fingerprints, KEX/cipher algorithms | S | `x/crypto/ssh` handshake (no auth) | — | 3 | ✅ |
 | TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ✅ |
+| TLS-12 | DANE / TLSA checker | TLSA of MX hosts (STARTTLS) or HTTPS vs presented chain, DNSSEC AD flag | S | `miekg/dns`, `crypto/tls` | — | 6 | ✅ |
 
 ## 6. Email
 
@@ -138,6 +139,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | EM-07 | Email header analyzer | Paste headers → hop timeline, delays, auth results | B | custom parser | — | 2 | ✅ |
 | EM-08 | DMARC aggregate report viewer | Upload XML/zip/gz report → tables | B | `fflate` + XML parser | — | 4 | ✅ |
 | EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ✅ |
+| EM-10 | SMTP banner & FCrDNS | PTR, forward confirmation, banner and EHLO name vs PTR, STARTTLS | S | `miekg/dns`, `net/smtp`-style probe | — | 6 | ✅ |
 
 ## 7. Routing, BGP & Registry
 

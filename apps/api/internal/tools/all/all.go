@@ -6,6 +6,7 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/asnlookup"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/cloudranges"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ctsearch"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dane"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dns64"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsaxfr"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsbench"
@@ -87,6 +88,7 @@ func Tools() []tools.Tool {
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
 		&email.MXTool{},
+		&email.BannerTool{},
 		&email.RelayTool{},
 		&email.SPFTool{},
 		&email.DMARCTool{},
@@ -122,6 +124,7 @@ func Tools() []tools.Tool {
 		&web.ProtocolsTool{},
 		&revocation.Tool{},
 		&tlsscan.Tool{},
+		&dane.Tool{},
 		&sshaudit.Tool{},
 		&dnsbl.Tool{},
 		&latmatrix.Tool{},

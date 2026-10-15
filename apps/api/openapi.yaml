@@ -1882,6 +1882,51 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/EdnsCompResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tls/dane:
+    get:
+      operationId: tlsDane
+      summary: DANE / TLSA check (RFC 6698 / 7672) for the MX hosts of a mail domain or an HTTPS host
+      tags: [tls]
+      x-capability: tls.dane
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: service, in: query, schema: { type: string, enum: [smtp, https], default: smtp } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535 } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DaneResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/smtp-banner:
+    get:
+      operationId: emailSmtpBanner
+      summary: SMTP banner, EHLO name, PTR and forward-confirmed reverse DNS of a mail server
+      tags: [email]
+      x-capability: email.banner
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SmtpBannerResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2497,20 +2542,7 @@ components:
               host: { type: string }
               addresses: { type: array, items: { type: string } }
               error: { type: string }
-              probes:
-                type: array
-                items:
-                  type: object
-                  required: [address, connected, connectMs, banner, extensions, starttls, tls, error]
-                  properties:
-                    address: { type: string }
-                    connected: { type: boolean }
-                    connectMs: { type: number }
-                    banner: { type: string }
-                    extensions: { type: array, items: { type: string } }
-                    starttls: { type: boolean }
-                    tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
-                    error: { type: string }
+              probes: { type: array, items: { $ref: "#/components/schemas/SmtpProbe" } }
     SpfTerm:
       type: object
       required: [raw, qualifier, kind, value, lookup]
@@ -3976,3 +4008,84 @@ components:
                     id: { type: string }
                     pass: { type: boolean }
                     detail: { type: string }
+    SmtpProbe:
+      type: object
+      required: [address, connected, connectMs, banner, greeting, extensions, starttls, tls, error]
+      properties:
+        address: { type: string }
+        connected: { type: boolean }
+        connectMs: { type: number }
+        banner: { type: string }
+        greeting: { type: string, description: first line of the EHLO reply }
+        extensions: { type: array, items: { type: string } }
+        starttls: { type: boolean }
+        tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
+        error: { type: string }
+    SmtpBannerResult:
+      type: object
+      required: [host, address, ptr, forward, fcrdns, bannerHost, ehloHost, probe, checks, passed, smtpBlocked]
+      properties:
+        host: { type: string }
+        address: { type: string }
+        ptr: { type: array, items: { type: string } }
+        forward: { type: array, items: { type: string } }
+        fcrdns: { type: boolean }
+        bannerHost: { type: string }
+        ehloHost: { type: string }
+        probe: { $ref: "#/components/schemas/SmtpProbe" }
+        passed: { type: integer }
+        smtpBlocked: { type: boolean }
+        checks:
+          type: array
+          items:
+            type: object
+            required: [id, pass, detail]
+            properties:
+              id: { type: string }
+              pass: { type: boolean }
+              detail: { type: string }
+    DaneResult:
+      type: object
+      required: [input, service, port, resolver, mx, hosts]
+      properties:
+        input: { type: string }
+        service: { type: string }
+        port: { type: integer }
+        resolver: { type: string }
+        mx: { type: boolean }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [name, tlsaName, rcode, dnssec, records, address, tls, error, verdict]
+            properties:
+              name: { type: string }
+              tlsaName: { type: string }
+              rcode: { type: string }
+              dnssec: { type: boolean }
+              address: { type: string }
+              error: { type: string }
+              verdict: { type: string, enum: [valid, mismatch, insecure, no-tlsa, unreachable] }
+              records:
+                type: array
+                items:
+                  type: object
+                  required: [usage, selector, matchingType, data, match, matchedCert]
+                  properties:
+                    usage: { type: integer }
+                    selector: { type: integer }
+                    matchingType: { type: integer }
+                    data: { type: string }
+                    match: { type: boolean }
+                    matchedCert: { type: integer }
+              tls:
+                oneOf:
+                  - { type: "null" }
+                  - type: object
+                    required: [version, cipher, chain, verified, verifyError]
+                    properties:
+                      version: { type: string }
+                      cipher: { type: string }
+                      chain: { type: array, items: { $ref: "#/components/schemas/TlsCert" } }
+                      verified: { type: boolean }
+                      verifyError: { type: string }

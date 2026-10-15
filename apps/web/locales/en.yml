@@ -2924,3 +2924,63 @@ tools:
       test: Test
       result: Result
       detail: Detail
+  dane-checker:
+    title: DANE / TLSA checker
+    description: Check the TLSA records of a mail domain's MX hosts (port 25, STARTTLS) or an HTTPS site against the certificate the server actually presents, including DNSSEC.
+    domain: Mail domain
+    host: Host name
+    service: Service
+    smtp: Mail (MX, port 25)
+    resolverPlaceholder: empty = the server's resolver (should validate DNSSEC)
+    run: Check
+    note: 'TLSA records only count when they are DNSSEC-signed (RFC 7672), so this needs a validating resolver: its AD flag decides. Many hosting networks block outgoing port 25; the TLSA part still works.'
+    dnssecYes: Yes (resolver validated, AD flag)
+    dnssecNo: No — not signed, or the resolver does not validate
+    leaf: server certificate
+    matchCert: 'Matches {n}'
+    noMatch: No match
+    verdict:
+      valid: 'DANE is valid for {input}: every server presents a certificate that matches its signed TLSA records.'
+      mismatch: 'DANE is broken for {input}: a TLSA record does not match the certificate — DANE-aware senders will refuse to deliver.'
+      insecure: 'TLSA records exist for {input}, but without a DNSSEC signature they are ignored.'
+      no-tlsa: 'No TLSA records for {input}: DANE is not used.'
+      unreachable: A server could not be checked.
+    hostVerdict:
+      valid: Valid
+      mismatch: Mismatch
+      insecure: Not DNSSEC-signed
+      no-tlsa: No TLSA
+      unreachable: Unreachable
+    fields:
+      tlsaName: TLSA name
+      dnssec: DNSSEC
+      address: Checked address
+      tls: TLS
+      webpki: Valid WebPKI certificate
+    columns:
+      params: Usage Selector Matching
+      data: Association data
+      match: Result
+  smtp-banner-check:
+    title: SMTP banner & FCrDNS check
+    description: Does a mail server's reverse DNS, SMTP banner and EHLO name line up? Receivers reject or junk mail from servers that fail these checks.
+    host: Mail server (hostname or IP)
+    invalid: Enter a hostname or IP address.
+    run: Check
+    blocked: Port 25 could not be reached from the NET-TOOLS server (many providers block it); only the DNS checks ran.
+    grade:
+      good: 'All {total} checks passed.'
+      issues: '{n} of {total} checks passed — minor issues.'
+      bad: '{n} of {total} checks passed — reverse DNS problems hurt deliverability.'
+    checks:
+      ptr: Reverse DNS (PTR) exists
+      fcrdns: PTR name resolves back to this address (FCrDNS)
+      banner: SMTP banner received
+      bannerFqdn: Banner starts with a fully qualified host name
+      bannerPtr: Banner host name matches the PTR
+      ehloPtr: EHLO greeting name matches the PTR
+      starttls: STARTTLS offered
+      certificate: Certificate valid for the host name
+    columns:
+      check: Check
+      detail: Value
