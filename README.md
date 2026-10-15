@@ -25,6 +25,8 @@ Every tool shows where it runs:
 - **Server** — the NET-TOOLS server does the work from *its* network (ping, traceroute, scans…).
 - **Public API** — a third-party service is queried through the server (keys stay on the server).
 
+<img width="1312" height="824" alt="Image" src="https://github.com/user-attachments/assets/420bafa8-e29b-4914-9452-ca6995514483" />
+
 ## Quick start
 
 Requirements: Docker with Compose v2. LAN mode needs a Linux host.
