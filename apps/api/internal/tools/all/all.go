@@ -6,6 +6,8 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/asnlookup"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/cloudranges"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ctsearch"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dane"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dns64"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsaxfr"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsbench"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnsbl"
@@ -18,6 +20,7 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnssec"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnstrace"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/dnswildcard"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ednscomp"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/email"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/geo"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/hstspreload"
@@ -29,11 +32,13 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/mtr"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ntpcheck"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/observatory"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/openresolver"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/peeringdb"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ping"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/pmtu"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/portcheck"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/portscan"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/ptrscan"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/rdap"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/remote"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/reputation"
@@ -43,6 +48,7 @@ import (
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/snmp"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/speedtest"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/sshaudit"
+	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/svcb"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tcping"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tlsinspect"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tlsscan"
@@ -56,6 +62,11 @@ func Tools() []tools.Tool {
 	rdapSvc := &rdap.Service{}
 	return []tools.Tool{
 		&dnslookup.Tool{},
+		&dns64.Tool{},
+		&openresolver.Tool{},
+		&ptrscan.Tool{},
+		&svcb.Tool{},
+		&ednscomp.Tool{},
 		&dnsreverse.Tool{},
 		&dnspropagation.Tool{},
 		&dnstrace.Tool{},
@@ -76,7 +87,9 @@ func Tools() []tools.Tool {
 		&web.CORSTool{},
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
+		&tlsinspect.ChainTool{},
 		&email.MXTool{},
+		&email.BannerTool{},
 		&email.RelayTool{},
 		&email.SPFTool{},
 		&email.DMARCTool{},
@@ -92,7 +105,12 @@ func Tools() []tools.Tool {
 		&ripestat.PrefixTool{},
 		&ripestat.RPKITool{},
 		&ripestat.LookingGlassTool{},
+		&ripestat.CountryTool{},
+		&ripestat.HistoryTool{},
+		&ripestat.GraphTool{},
+		&ripestat.ROATool{},
 		&peeringdb.Tool{},
+		&peeringdb.CommonTool{},
 		&ctsearch.Tool{},
 		&reputation.InternetDBTool{},
 		&reputation.AbuseIPDBTool{},
@@ -109,8 +127,12 @@ func Tools() []tools.Tool {
 		&web.CookiesTool{},
 		&web.WellKnownTool{},
 		&web.ProtocolsTool{},
+		&web.CDNTool{},
+		&web.CacheTool{},
+		&web.MixedTool{},
 		&revocation.Tool{},
 		&tlsscan.Tool{},
+		&dane.Tool{},
 		&sshaudit.Tool{},
 		&dnsbl.Tool{},
 		&latmatrix.Tool{},

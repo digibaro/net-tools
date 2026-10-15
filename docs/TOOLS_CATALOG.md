@@ -41,6 +41,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | IP-17 | MAC formatter / generator | Normalize formats (`:`, `-`, `.`), random locally-administered MAC | B | custom | — | 1 | ✅ |
 | IP-18 | EUI-64 / link-local from MAC | Build IPv6 interface ID / fe80:: address from MAC | B | custom | — | 1 | ✅ |
 | IP-19 | Random IP generator | Random IPs within a prefix (test data) | B | custom | — | 2 | ✅ |
+| IP-20 | IPv6 address analyzer | Type, scope, interface-ID kind (EUI-64 → MAC, ISATAP, random), embedded IPv4, solicited-node | B | custom | — | 6 | ✅ |
+| IP-21 | IP address plan (IPAM sheet) | IPv4/IPv6 plan with names, VLANs, fixed networks, first-fit allocation, free blocks, CSV | B | custom | — | 6 | ✅ |
+| IP-22 | NAT64 / DNS64 check | DNS64 detection and NAT64 prefix discovery via ipv4only.arpa (RFC 7050 / 6052) | S | `miekg/dns` | — | 6 | ✅ |
+| IP-23 | Country IP blocks | IPv4/IPv6 blocks registered to a country, merged; prefix-list / ipset / address-list output | S | `netipx` | RIPEstat country-resource-list | 6 | ✅ |
 
 ## 2. DNS
 
@@ -60,6 +64,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | DNS-12 | Zone file / record builder | Generate BIND-style records (SRV, TXT splitting, SPF) | B | custom | — | 2 | ✅ |
 | DNS-13 | Punycode / IDN converter | Unicode domain ↔ `xn--` | B | `punycode` / `URL` | — | 1 | ✅ |
 | DNS-14 | Domain parser | Split subdomain / registrable domain / public suffix | B | `tldts` | — | 1 | ✅ |
+| DNS-15 | Open resolver test | Recursion for anyone? plus DNSSEC amplification factor | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-16 | Reverse DNS coverage | PTR + forward confirmation (FCrDNS) for a /24 or /120 | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-17 | HTTPS / SVCB & ECH viewer | RFC 9460 records, alias chasing, ECHConfigList decoding, DDR | S | `miekg/dns` | — | 6 | ✅ |
+| DNS-18 | EDNS compliance test | ISC ednscomp-style tests per authoritative server | S | `miekg/dns` | — | 6 | ✅ |
 
 ## 3. Connectivity & Diagnostics
 
@@ -67,7 +75,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 |---|---|---|---|---|---|---|---|
 | CON-01 | Ping (ICMP) | Live RTT, loss, jitter, min/avg/max, chart | H | `pro-bing` (unprivileged via `ping_group_range` or NET_RAW) | Globalping `ping` | 2 | ✅ |
 | CON-02 | TCP ping | Connect-time to host:port (ICMP-blocked targets) | S | `net.Dialer` loop | — | 2 | ✅ |
-| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
+| CON-03 | Traceroute | ICMP / UDP / TCP hop list with RTTs, ASN & geo per hop; AS path and route map | H | `mtr --report --json` or `traceroute` via execx | Globalping `traceroute` | 2 | ✅ |
 | CON-04 | MTR | Continuous traceroute+ping, per-hop loss/latency table | H | `mtr --raw` streamed | Globalping `mtr` | 2 | ✅ |
 | CON-05 | Port check | Is TCP (or UDP best-effort) port open from the server | S | `net.Dialer` | check-host.net API | 2 | ✅ |
 | CON-06 | Port scanner | Bounded TCP connect scan (≤ `MAX_PORTS`), common-ports presets | S | Go worker pool; optional `nmap -sT` | Shodan InternetDB (passive) | 4 | ✅ |
@@ -89,7 +97,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-02 | Redirect chain tracer | Every hop with status, Location, timing | S | `net/http` no-follow loop | — | 2 | ✅ |
 | WEB-03 | Timing breakdown | DNS / connect / TLS / TTFB / transfer (curl `-w` style) | S | `httptrace` | — | 2 | ✅ |
 | WEB-04 | Security headers analyzer | CSP, HSTS, XFO, XCTO, Referrer-Policy, Permissions-Policy grading | S | custom rules | Mozilla HTTP Observatory API | 2 | ✅ |
-| WEB-05 | HTTP/2 & HTTP/3 support | ALPN negotiation, `Alt-Svc`, QUIC handshake | S | `crypto/tls` ALPN + `quic-go` | — | 3 | ✅ |
+| WEB-05 | HTTP/2 & HTTP/3 support | ALPN negotiation, `Alt-Svc`, QUIC handshake, real HTTP/3 request with TTFB vs TCP, resumption / 0-RTT | S | `crypto/tls` ALPN + `quic-go` | — | 3 | ✅ |
 | WEB-06 | CORS tester | Send preflight with given Origin/method/headers, evaluate | S | `net/http` | — | 2 | ✅ |
 | WEB-07 | Compression check | gzip / br / zstd support and ratio | S | `net/http` | — | 3 | ✅ |
 | WEB-08 | Cookie inspector | Parse Set-Cookie flags (Secure, HttpOnly, SameSite) | S | `net/http` | — | 3 | ✅ |
@@ -100,6 +108,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | WEB-13 | User-agent parser | Browser/OS/device from UA string | B | `ua-parser-js` | — | 1 | ✅ |
 | WEB-14 | HTTP status code reference | Searchable list with RFC links | B | bundled JSON | — | 1 | ✅ |
 | WEB-15 | curl command builder / parser | Build curl from form; parse curl into fields | B | custom | — | 3 | ✅ |
+| WEB-16 | CDN & WAF detector | CDN, WAF, bot protection, hosting from headers, cookies, CNAME chain, certificate | S | `net/http` + signatures | — | 6 | ✅ |
+| WEB-17 | Cache header analyzer | Cache-Control / Expires / validators / Vary (RFC 9111), browser vs shared TTL, conditional repeat | S | `net/http` | — | 6 | ✅ |
+| WEB-18 | Mixed content checker | http:// scripts, styles, frames, media and forms on an https page | S | `x/net/html` | — | 6 | ✅ |
+| WEB-19 | CSP builder & evaluator | Presets, nonce, evaluation (unsafe-inline, bypass hosts, object-src, base-uri…), header/nginx/Apache/meta | B | custom | — | 6 | ✅ |
 
 ## 5. TLS & Certificates
 
@@ -116,6 +128,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-09 | STARTTLS check | SMTP/IMAP/POP3/FTP/XMPP STARTTLS + cert | S | `net/smtp` & raw dialogs | — | 3 | ✅ |
 | TLS-10 | SSH server audit | Banner, host key fingerprints, KEX/cipher algorithms | S | `x/crypto/ssh` handshake (no auth) | — | 3 | ✅ |
 | TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ✅ |
+| TLS-12 | DANE / TLSA checker | TLSA of MX hosts (STARTTLS) or HTTPS vs presented chain, DNSSEC AD flag | S | `miekg/dns`, `crypto/tls` | — | 6 | ✅ |
+| TLS-13 | Certificate chain validator | Pasted chain: order, signatures, missing intermediates via AIA, trust, host name | B+S | `crypto/x509` | — | 6 | ✅ |
+| TLS-14 | PKCS#12 / PFX inspector | Certificates, key match, friendly names, encryption / MAC algorithms (legacy flagged), in the browser | B | `node-forge`, `@peculiar/x509` | — | 6 | ✅ |
+| TLS-15 | Lab CA & certificate generator | Root CA (or reuse one) + server certificate with SANs, WebCrypto in the browser | B | `@peculiar/x509` | — | 6 | ✅ |
 
 ## 6. Email
 
@@ -130,6 +146,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | EM-07 | Email header analyzer | Paste headers → hop timeline, delays, auth results | B | custom parser | — | 2 | ✅ |
 | EM-08 | DMARC aggregate report viewer | Upload XML/zip/gz report → tables | B | `fflate` + XML parser | — | 4 | ✅ |
 | EM-09 | Open relay test | Opt-in, bounded relay test of own server | S | `net/smtp` (no DATA sent) | — | 4 | ✅ |
+| EM-10 | SMTP banner & FCrDNS | PTR, forward confirmation, banner and EHLO name vs PTR, STARTTLS | S | `miekg/dns`, `net/smtp`-style probe | — | 6 | ✅ |
 
 ## 7. Routing, BGP & Registry
 
@@ -147,6 +164,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | BGP-10 | AS-SET / IRR expansion | Expand AS-SET to ASNs/prefixes (filter building) | S | `bgpq4` via execx | — | 4 | ✅ |
 | BGP-11 | AS path / prepend visualizer | Paste AS path(s) → graph | B | custom (echarts graph) | — | 4 | ✅ |
 | BGP-12 | Cloud / CDN IP range lookup | Which provider/region owns this IP (AWS, GCP, Azure, Cloudflare, Fastly…) | S | cached published JSON lists refreshed daily | — | 3 | ✅ |
+| BGP-13 | BGP route history & visibility | Origin ASNs over time (MOAS / hijack hints), RIS full-table visibility per collector | P | — | RIPEstat routing-history, visibility | 6 | ✅ |
+| BGP-14 | ASN neighbour graph | Upstreams / downstreams with names as an SVG graph, click to re-centre | P | — | RIPEstat asn-neighbours, as-names | 6 | ✅ |
+| BGP-15 | ROA coverage per ASN | RFC 6811 status of every originated prefix, unused / loose ROAs, minimal ROA suggestions | P | — | RIPEstat ris-prefixes, rpki-roas, rpki-validation | 6 | ✅ |
+| BGP-16 | Common IXPs & facilities | Exchanges and facilities two networks share, port speeds, route-server use | P | — | PeeringDB | 6 | ✅ |
 
 ## 8. Reputation & Geolocation
 
@@ -188,6 +209,10 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CAL-10 | WireGuard config generator | Keypairs (x25519), server/peer configs, QR | B | `@noble/curves` + `qrcode` | — | 2 | ✅ |
 | CAL-11 | Wi-Fi QR generator | WIFI: URI → QR | B | `qrcode` | — | 1 | ✅ |
 | CAL-12 | Cisco / Juniper snippet helpers | Prefix-list / ACL from CIDR list | B | templates | — | 4 | ✅ |
+| CAL-13 | SLA & uptime calculator | Availability ↔ downtime per period, nines, series / redundant composition | B | custom | — | 6 | ✅ |
+| CAL-14 | VoIP bandwidth & Erlang calculator | Per-call bandwidth incl. RTP/UDP/IP/SRTP/VLAN/L2 overhead, Erlang B trunk sizing | B | custom | — | 6 | ✅ |
+| CAL-15 | Packet decoder | Hex dump → Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP, DNS | B | custom | — | 6 | ✅ |
+| CAL-16 | Pcap viewer | pcap / pcapng in the browser: packets, filter, protocols, conversations, DNS queries | B | custom | — | 6 | ✅ |
 
 ## 11. Client Diagnostics (runs in the user's browser)
 
@@ -197,6 +222,7 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | CLI-02 | WebRTC IP leak test | Local/public IPs exposed via ICE candidates | B | `RTCPeerConnection` | STUN (stun.l.google.com, stun.cloudflare.com) | 3 | ✅ |
 | CLI-03 | Browser connection info | Network Information API, IPv4/IPv6 reachability, DoH in use? | B | `navigator.connection` + fetch to v4/v6-only endpoints | ipify v4/v6 endpoints | 2 | ✅ |
 | CLI-04 | Request headers echo | Headers the server receives from your browser (proxy detection) | S | `/api/v1/echo` | — | 1 | ✅ |
+| CLI-05 | DNS hijack & proxy check | Server resolver vs public DoH (filtering, NXDOMAIN hijacking); marker header for HTTP proxies | H | `/api/v1/echo`, `/api/v1/dns/lookup` | Cloudflare DoH *(browser-direct)* | 6 | ✅ |
 
 ---
 

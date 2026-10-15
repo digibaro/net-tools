@@ -54,18 +54,22 @@ type HTTP3 struct {
 	QUICVersion string  `json:"quicVersion"`
 	TLSVersion  string  `json:"tlsVersion"`
 	Error       string  `json:"error"`
+	// Request is a real HTTP/3 GET (set when the handshake succeeded).
+	Request *H3Request `json:"request"`
 }
 
 // ProtocolsResult is the WEB-05 payload.
 type ProtocolsResult struct {
-	URL         string   `json:"url"`
-	Address     string   `json:"address"`
-	ALPN        string   `json:"alpn"`
-	TLSVersion  string   `json:"tlsVersion"`
-	HTTP2       bool     `json:"http2"`
-	HTTPVersion string   `json:"httpVersion"`
-	AltSvc      []AltSvc `json:"altSvc"`
-	HTTP3       HTTP3    `json:"http3"`
+	URL         string `json:"url"`
+	Address     string `json:"address"`
+	ALPN        string `json:"alpn"`
+	TLSVersion  string `json:"tlsVersion"`
+	HTTP2       bool   `json:"http2"`
+	HTTPVersion string `json:"httpVersion"`
+	// TTFBMs is the time to first byte of the HTTPS request over TCP (HTTP/2 or 1.1).
+	TTFBMs float64  `json:"ttfbMs"`
+	AltSvc []AltSvc `json:"altSvc"`
+	HTTP3  HTTP3    `json:"http3"`
 }
 
 // ParseAltSvc parses an Alt-Svc header value ("clear" yields nothing).
@@ -135,6 +139,7 @@ func (t *ProtocolsTool) handle(w http.ResponseWriter, r *http.Request) {
 	if hops, err := fetch(ctx, t.deps, httpcore.Request{URL: u.String(), Method: "GET"}); err == nil {
 		last := hops[len(hops)-1]
 		out.HTTPVersion = last.Proto
+		out.TTFBMs = last.Timing.TTFBMs
 		if v, ok := header(last, "Alt-Svc"); ok {
 			out.AltSvc = ParseAltSvc(v)
 		}
@@ -152,6 +157,10 @@ func (t *ProtocolsTool) handle(w http.ResponseWriter, r *http.Request) {
 		h3.Port = t.H3Port
 	}
 	quicHandshake(ctx, tgt.IP, u.Hostname(), &h3)
+	if h3.OK {
+		req := h3Get(ctx, netip.AddrPortFrom(tgt.IP, uint16(h3.Port)), u, t.deps.UserAgent) //nolint:gosec // port 1-65535
+		h3.Request = &req
+	}
 	out.HTTP3 = h3
 	httpapi.JSON(w, r, out, &httpapi.Meta{Tool: t.ID(), Vantage: "server", Target: &httpapi.TargetMeta{Input: raw, Used: out.Address}})
 }

@@ -1,7 +1,6 @@
 package web
 
 import (
-	"context"
 	"crypto/tls"
 	"net"
 	"net/http"
@@ -11,6 +10,7 @@ import (
 	"testing"
 
 	"github.com/quic-go/quic-go"
+	"github.com/quic-go/quic-go/http3"
 
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
@@ -31,30 +31,28 @@ func TestProtocols(t *testing.T) {
 	srv.StartTLS()
 	defer srv.Close()
 
-	// A QUIC listener with the same certificate, offering ALPN h3.
-	ln, err := quic.ListenAddr("127.0.0.1:0", &tls.Config{Certificates: srv.TLS.Certificates, NextProtos: []string{"h3"}, MinVersion: tls.VersionTLS13}, nil)
+	// An HTTP/3 server with the same certificate that accepts 0-RTT.
+	pc, err := net.ListenUDP("udp", &net.UDPAddr{IP: net.IPv4(127, 0, 0, 1)})
 	if err != nil {
 		t.Fatal(err)
 	}
-	defer ln.Close()
-	quicPort = ln.Addr().(*net.UDPAddr).Port
-	go func() {
-		for {
-			c, err := ln.Accept(context.Background())
-			if err != nil {
-				return
-			}
-			go func() {
-				<-c.Context().Done()
-			}()
-		}
-	}()
+	quicPort = pc.LocalAddr().(*net.UDPAddr).Port
+	h3srv := &http3.Server{
+		Handler:    http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) { w.Header().Set("Server", "test-h3") }),
+		TLSConfig:  http3.ConfigureTLSConfig(&tls.Config{Certificates: srv.TLS.Certificates, MinVersion: tls.VersionTLS13}),
+		QUICConfig: &quic.Config{Allow0RTT: true},
+	}
+	go func() { _ = h3srv.Serve(pc) }()
+	defer h3srv.Close()
 
 	env := tooltest.New(t, &ProtocolsTool{}, tooltest.Options{AllowPrivate: true})
 	var out ProtocolsResult
 	env.Get("/api/v1/http/protocols?url="+url.QueryEscape(srv.URL+"/")).Must(t).Decode(t, &out)
-	if !out.HTTP2 || out.ALPN != "h2" || out.TLSVersion == "" || len(out.AltSvc) != 1 || !out.HTTP3.Advertised || out.HTTP3.Port != quicPort || !out.HTTP3.OK || out.HTTP3.QUICVersion == "" {
+	if !out.HTTP2 || out.ALPN != "h2" || out.TLSVersion == "" || len(out.AltSvc) != 1 || !out.HTTP3.Advertised || out.HTTP3.Port != quicPort || !out.HTTP3.OK || out.HTTP3.QUICVersion == "" || out.TTFBMs <= 0 {
 		t.Errorf("out = %+v", out)
+	}
+	if r := out.HTTP3.Request; r == nil || !r.OK || r.Status != 200 || r.Server != "test-h3" || !r.Resumed || !r.ZeroRTT {
+		t.Errorf("h3 request = %+v", r)
 	}
 
 	// Without a QUIC listener on the forced port, HTTP/3 is reported as unavailable.

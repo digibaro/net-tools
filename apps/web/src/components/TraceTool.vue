@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { TraceHop } from '@/utils/trace'
 import { NButton, NFormItem, NInputNumber, NRadioButton, NRadioGroup } from 'naive-ui'
-import { computed, onMounted, ref } from 'vue'
+import { computed, defineAsyncComponent, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import ApiError from '@/components/ApiError.vue'
 import RemoteResults from '@/components/RemoteResults.vue'
@@ -31,6 +31,9 @@ const maxCycles = computed(() => caps.capabilities?.limits.mtrMaxCycles ?? 20)
 const validation = useValidation({ source: target, rules: [{ validator: isValidHost, message: t('tools.ping.invalid') }] })
 
 const hops = ref<TraceHop[]>([])
+// Map and its land data load only for finished traces.
+const TraceMap = defineAsyncComponent(() => import('./TraceMap.vue'))
+const geoAvailable = computed(() => caps.capabilities?.tools['rep.geo']?.enabled === true)
 const finished = ref(false)
 const { status, error, start, stop } = useSse(props.mtr ? '/v1/mtr/stream' : '/v1/traceroute/stream', {
   hop: (d) => {
@@ -133,6 +136,7 @@ const columns = computed(() => props.mtr
   <ApiError v-else-if="error" :error="error" />
   <CCard v-if="!worldwide && rows.length" :title="t('trace.hops', { count: rows.length })" data-testid="result">
     <ResultTable :columns="columns" :rows="rows" :actions="false" class="whitespace-pre-line" :label="t('trace.hops', { count: rows.length })" />
+    <TraceMap v-if="finished" :hops="hops" :geo="geoAvailable" />
     <div v-if="finished" class="mt-3" data-testid="finished">
       <ResultActions :text="() => traceTextReport(hops, mtr)" :json="hops" :filename="mtr ? 'mtr.json' : 'traceroute.json'" />
     </div>

@@ -1751,6 +1751,391 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/Dhcpv6Result" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/dns/dns64:
+    get:
+      operationId: dnsDns64
+      summary: NAT64 / DNS64 detection (RFC 7050 prefix discovery via ipv4only.arpa)
+      tags: [dns]
+      x-capability: dns.dns64
+      parameters:
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/Dns64Result" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/ip/country-blocks:
+    get:
+      operationId: ipCountryBlocks
+      summary: IPv4 / IPv6 blocks registered to a country (RIPEstat country-resource-list), merged
+      tags: [bgp]
+      x-capability: ip.country
+      parameters:
+        - { name: country, in: query, required: true, description: ISO 3166 alpha-2, schema: { type: string, pattern: "^[A-Za-z]{2}$" } }
+        - { name: family, in: query, schema: { type: string, enum: ["4", "6", all], default: all } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CountryBlocks" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/open-resolver:
+    get:
+      operationId: dnsOpenResolver
+      summary: Does a DNS server answer recursive queries for anyone (open resolver), and its amplification factor
+      tags: [dns]
+      x-capability: dns.openresolver
+      parameters:
+        - { name: server, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/OpenResolverResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/ptr-scan:
+    get:
+      operationId: dnsPtrScan
+      summary: PTR records with forward confirmation for every address of a /24 or /120
+      tags: [dns]
+      x-capability: dns.ptrscan
+      parameters:
+        - { name: prefix, in: query, required: true, schema: { type: string } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/PtrScanResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/svcb:
+    get:
+      operationId: dnsSvcb
+      summary: HTTPS / SVCB records (RFC 9460) with AliasMode chasing and decoded ECH configs
+      tags: [dns]
+      x-capability: dns.svcb
+      parameters:
+        - { name: name, in: query, required: true, schema: { type: string } }
+        - { name: type, in: query, schema: { type: string, enum: [HTTPS, SVCB], default: HTTPS } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SvcbResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/dns/edns-compliance:
+    get:
+      operationId: dnsEdnsCompliance
+      summary: EDNS compliance tests (ISC ednscomp style) against a zone's nameservers
+      tags: [dns]
+      x-capability: dns.ednscomp
+      parameters:
+        - { name: zone, in: query, required: true, schema: { type: string } }
+        - { name: server, in: query, description: test only this server instead of the zone's NS set, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/EdnsCompResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/tls/dane:
+    get:
+      operationId: tlsDane
+      summary: DANE / TLSA check (RFC 6698 / 7672) for the MX hosts of a mail domain or an HTTPS host
+      tags: [tls]
+      x-capability: tls.dane
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+        - { name: service, in: query, schema: { type: string, enum: [smtp, https], default: smtp } }
+        - { name: port, in: query, schema: { type: integer, minimum: 1, maximum: 65535 } }
+        - { name: resolver, in: query, schema: { type: string, default: system } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/DaneResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/email/smtp-banner:
+    get:
+      operationId: emailSmtpBanner
+      summary: SMTP banner, EHLO name, PTR and forward-confirmed reverse DNS of a mail server
+      tags: [email]
+      x-capability: email.banner
+      parameters:
+        - { name: host, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/SmtpBannerResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/cdn:
+    get:
+      operationId: httpCdn
+      summary: Which CDN, WAF / bot protection and hosting platform serve a URL (headers, cookies, CNAME chain, certificate)
+      tags: [web]
+      x-capability: web.cdn
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CdnResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/cache:
+    get:
+      operationId: httpCache
+      summary: Cache-Control analysis (RFC 9111) with a conditional repeat request
+      tags: [web]
+      x-capability: web.cache
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CacheResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/http/mixed-content:
+    get:
+      operationId: httpMixedContent
+      summary: http:// subresources and forms on an https page
+      tags: [web]
+      x-capability: web.mixed
+      parameters:
+        - { name: url, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/MixedResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/tls/chain-validate:
+    post:
+      operationId: tlsChainValidate
+      summary: Validate a pasted certificate chain (order, signatures, missing intermediates via AIA, trust)
+      tags: [tls]
+      x-capability: tls.chain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pem]
+              properties:
+                pem: { type: string, maxLength: 131072, description: 1 to 12 PEM certificates }
+                host: { type: string, description: optional host name to check against the leaf }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/ChainResult" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/route-history:
+    get:
+      operationId: bgpRouteHistory
+      summary: Origin ASNs of a prefix over time and its current RIS visibility (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.history
+      parameters:
+        - { name: resource, in: query, required: true, description: prefix or IP address, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RouteHistory" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/neighbours/{asn}:
+    get:
+      operationId: bgpNeighbours
+      summary: Upstream and downstream neighbours of an ASN with names (RIPEstat), for a graph
+      tags: [bgp]
+      x-capability: bgp.graph
+      parameters:
+        - { name: asn, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/NeighbourGraph" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/bgp/roa-coverage/{asn}:
+    get:
+      operationId: bgpRoaCoverage
+      summary: RPKI status of every prefix an ASN originates, its ROAs (unused, too loose) (RIPEstat)
+      tags: [bgp]
+      x-capability: bgp.roacoverage
+      parameters:
+        - { name: asn, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/RoaCoverage" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/peeringdb/common:
+    get:
+      operationId: peeringdbCommon
+      summary: Exchanges and facilities two networks have in common (PeeringDB)
+      tags: [bgp]
+      x-capability: bgp.common
+      parameters:
+        - { name: a, in: query, required: true, schema: { type: string } }
+        - { name: b, in: query, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/CommonPeering" }
+        default: { $ref: "#/components/responses/Error" }
+  /v1/geo/batch:
+    post:
+      operationId: geoBatch
+      summary: Geolocate up to 64 addresses (traceroute map); private addresses are not looked up
+      tags: [reputation]
+      x-capability: rep.geo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ips]
+              properties:
+                ips: { type: array, items: { type: string }, minItems: 1, maxItems: 64 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [results]
+                        properties:
+                          results: { type: array, items: { $ref: "#/components/schemas/Geo" } }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -2366,20 +2751,7 @@ components:
               host: { type: string }
               addresses: { type: array, items: { type: string } }
               error: { type: string }
-              probes:
-                type: array
-                items:
-                  type: object
-                  required: [address, connected, connectMs, banner, extensions, starttls, tls, error]
-                  properties:
-                    address: { type: string }
-                    connected: { type: boolean }
-                    connectMs: { type: number }
-                    banner: { type: string }
-                    extensions: { type: array, items: { type: string } }
-                    starttls: { type: boolean }
-                    tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
-                    error: { type: string }
+              probes: { type: array, items: { $ref: "#/components/schemas/SmtpProbe" } }
     SpfTerm:
       type: object
       required: [raw, qualifier, kind, value, lookup]
@@ -3159,7 +3531,7 @@ components:
             capped: { type: boolean }
     HttpProtocols:
       type: object
-      required: [url, address, alpn, tlsVersion, http2, httpVersion, altSvc, http3]
+      required: [url, address, alpn, tlsVersion, http2, httpVersion, ttfbMs, altSvc, http3]
       properties:
         url: { type: string }
         address: { type: string }
@@ -3167,6 +3539,7 @@ components:
         tlsVersion: { type: string }
         http2: { type: boolean }
         httpVersion: { type: string }
+        ttfbMs: { type: number, description: time to first byte over TCP (HTTP/2 or 1.1) }
         altSvc:
           type: array
           items:
@@ -3179,7 +3552,7 @@ components:
               maxAge: { type: integer }
         http3:
           type: object
-          required: [advertised, port, ok, handshakeMs, quicVersion, tlsVersion, error]
+          required: [advertised, port, ok, handshakeMs, quicVersion, tlsVersion, error, request]
           properties:
             advertised: { type: boolean }
             port: { type: integer }
@@ -3188,6 +3561,21 @@ components:
             quicVersion: { type: string }
             tlsVersion: { type: string }
             error: { type: string }
+            request:
+              description: a real HTTP/3 GET and a resumed repeat (0-RTT when the server accepts it); null without a QUIC handshake
+              oneOf:
+                - { type: "null" }
+                - type: object
+                  required: [ok, status, server, ttfbMs, resumed, zeroRtt, repeatTtfbMs, error]
+                  properties:
+                    ok: { type: boolean }
+                    status: { type: integer }
+                    server: { type: string }
+                    ttfbMs: { type: number }
+                    resumed: { type: boolean }
+                    zeroRtt: { type: boolean }
+                    repeatTtfbMs: { type: number }
+                    error: { type: string }
     Revocation:
       type: object
       required: [host, subject, serial, issuer, status, ocsp, crl]
@@ -3699,3 +4087,490 @@ components:
       properties:
         value: { type: string }
         validSeconds: { type: integer }
+    Dns64Result:
+      type: object
+      required: [resolver, dns64, rcode, synthesized, prefixes, ipv4]
+      properties:
+        resolver: { type: string }
+        dns64: { type: boolean }
+        rcode: { type: string }
+        synthesized: { type: array, items: { type: string } }
+        ipv4: { type: array, items: { type: string } }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, length, wellKnown]
+            properties:
+              prefix: { type: string }
+              length: { type: integer }
+              wellKnown: { type: boolean }
+    CountryBlocks:
+      type: object
+      required: [country, ipv4, ipv6, ipv4Entries, ipv6Entries, ipv4Addresses, ipv6Slash48s, asns, queryTime]
+      properties:
+        country: { type: string }
+        ipv4: { type: array, items: { type: string } }
+        ipv6: { type: array, items: { type: string } }
+        ipv4Entries: { type: integer }
+        ipv6Entries: { type: integer }
+        ipv4Addresses: { type: integer }
+        ipv6Slash48s: { type: integer }
+        asns: { type: integer }
+        queryTime: { type: string }
+    OpenResolverResult:
+      type: object
+      required: [server, responds, rcode, recursionAvailable, answers, open, rttMs, amplification]
+      properties:
+        server: { type: string }
+        responds: { type: boolean }
+        rcode: { type: string }
+        recursionAvailable: { type: boolean }
+        answers: { type: integer }
+        open: { type: boolean }
+        rttMs: { type: number }
+        amplification:
+          type: [object, "null"]
+          required: [query, requestBytes, responseBytes, factor, truncated]
+          properties:
+            query: { type: string }
+            requestBytes: { type: integer }
+            responseBytes: { type: integer }
+            factor: { type: number }
+            truncated: { type: boolean }
+    PtrScanResult:
+      type: object
+      required: [prefix, resolver, total, withPtr, confirmed, rows]
+      properties:
+        prefix: { type: string }
+        resolver: { type: string }
+        total: { type: integer }
+        withPtr: { type: integer }
+        confirmed: { type: integer }
+        rows:
+          type: array
+          items:
+            type: object
+            required: [ip, rcode, names, confirmed, error]
+            properties:
+              ip: { type: string }
+              rcode: { type: string }
+              names: { type: array, items: { type: string } }
+              confirmed: { type: boolean }
+              error: { type: string }
+    SvcbResult:
+      type: object
+      required: [name, type, resolver, rcode, records, aliases]
+      properties:
+        name: { type: string }
+        type: { type: string }
+        resolver: { type: string }
+        rcode: { type: string }
+        aliases: { type: array, items: { type: string } }
+        records: { type: array, items: { $ref: "#/components/schemas/SvcbRecord" } }
+    SvcbRecord:
+      type: object
+      required: [owner, priority, mode, target, ttl, params, ech, echError]
+      properties:
+        owner: { type: string }
+        priority: { type: integer }
+        mode: { type: string, enum: [alias, service] }
+        target: { type: string }
+        ttl: { type: integer }
+        echError: { type: string }
+        params:
+          type: array
+          items:
+            type: object
+            required: [key, value]
+            properties:
+              key: { type: string }
+              value: { type: string }
+        ech:
+          type: array
+          items:
+            type: object
+            required: [version, configId, kem, publicKey, suites, maxNameLength, publicName, extensions]
+            properties:
+              version: { type: string }
+              configId: { type: integer }
+              kem: { type: string }
+              publicKey: { type: string }
+              maxNameLength: { type: integer }
+              publicName: { type: string }
+              extensions: { type: integer }
+              suites:
+                type: array
+                items:
+                  type: object
+                  required: [kdf, aead]
+                  properties:
+                    kdf: { type: string }
+                    aead: { type: string }
+    EdnsCompResult:
+      type: object
+      required: [zone, servers]
+      properties:
+        zone: { type: string }
+        servers:
+          type: array
+          items:
+            type: object
+            required: [name, addr, error, checks, passed, nsid, cookie]
+            properties:
+              name: { type: string }
+              addr: { type: string }
+              error: { type: string }
+              passed: { type: integer }
+              nsid: { type: string }
+              cookie: { type: boolean }
+              checks:
+                type: array
+                items:
+                  type: object
+                  required: [id, pass, detail]
+                  properties:
+                    id: { type: string }
+                    pass: { type: boolean }
+                    detail: { type: string }
+    SmtpProbe:
+      type: object
+      required: [address, connected, connectMs, banner, greeting, extensions, starttls, tls, error]
+      properties:
+        address: { type: string }
+        connected: { type: boolean }
+        connectMs: { type: number }
+        banner: { type: string }
+        greeting: { type: string, description: first line of the EHLO reply }
+        extensions: { type: array, items: { type: string } }
+        starttls: { type: boolean }
+        tls: { oneOf: [{ type: "null" }, { $ref: "#/components/schemas/TlsSession" }] }
+        error: { type: string }
+    SmtpBannerResult:
+      type: object
+      required: [host, via, address, ptr, forward, fcrdns, bannerHost, ehloHost, probe, checks, passed, smtpBlocked]
+      properties:
+        host: { type: string }
+        via: { type: string, description: the mail domain when host came from its MX record }
+        address: { type: string }
+        ptr: { type: array, items: { type: string } }
+        forward: { type: array, items: { type: string } }
+        fcrdns: { type: boolean }
+        bannerHost: { type: string }
+        ehloHost: { type: string }
+        probe: { $ref: "#/components/schemas/SmtpProbe" }
+        passed: { type: integer }
+        smtpBlocked: { type: boolean }
+        checks:
+          type: array
+          items:
+            type: object
+            required: [id, pass, detail]
+            properties:
+              id: { type: string }
+              pass: { type: boolean }
+              detail: { type: string }
+    DaneResult:
+      type: object
+      required: [input, service, port, resolver, mx, hosts]
+      properties:
+        input: { type: string }
+        service: { type: string }
+        port: { type: integer }
+        resolver: { type: string }
+        mx: { type: boolean }
+        hosts:
+          type: array
+          items:
+            type: object
+            required: [name, tlsaName, rcode, dnssec, records, address, tls, error, verdict]
+            properties:
+              name: { type: string }
+              tlsaName: { type: string }
+              rcode: { type: string }
+              dnssec: { type: boolean }
+              address: { type: string }
+              error: { type: string }
+              verdict: { type: string, enum: [valid, mismatch, insecure, no-tlsa, unreachable] }
+              records:
+                type: array
+                items:
+                  type: object
+                  required: [usage, selector, matchingType, data, match, matchedCert]
+                  properties:
+                    usage: { type: integer }
+                    selector: { type: integer }
+                    matchingType: { type: integer }
+                    data: { type: string }
+                    match: { type: boolean }
+                    matchedCert: { type: integer }
+              tls:
+                oneOf:
+                  - { type: "null" }
+                  - type: object
+                    required: [version, cipher, chain, verified, verifyError]
+                    properties:
+                      version: { type: string }
+                      cipher: { type: string }
+                      chain: { type: array, items: { $ref: "#/components/schemas/TlsCert" } }
+                      verified: { type: boolean }
+                      verifyError: { type: string }
+    CdnResult:
+      type: object
+      required: [url, status, remoteAddr, cnames, server, cacheStatus, issuer, detections]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        remoteAddr: { type: string }
+        cnames: { type: array, items: { type: string } }
+        server: { type: string }
+        cacheStatus: { type: string }
+        issuer: { type: string }
+        detections:
+          type: array
+          items:
+            type: object
+            required: [name, kind, evidence]
+            properties:
+              name: { type: string }
+              kind: { type: string, enum: [cdn, waf, bot, hosting, cache, tls] }
+              evidence: { type: array, items: { type: string } }
+    CacheResult:
+      type: object
+      required: [url, status, cacheControl, directives, browserTtl, sharedTtl, ttlSource, browserCacheable, sharedCacheable, age, etag, lastModified, expires, vary, cacheStatus, repeat, findings]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        cacheControl: { type: string }
+        browserTtl: { type: integer, description: seconds, -1 = not cacheable / unknown }
+        sharedTtl: { type: integer }
+        ttlSource: { type: string }
+        browserCacheable: { type: boolean }
+        sharedCacheable: { type: boolean }
+        age: { type: string }
+        etag: { type: string }
+        lastModified: { type: string }
+        expires: { type: string }
+        vary: { type: string }
+        cacheStatus: { type: string }
+        directives:
+          type: array
+          items:
+            type: object
+            required: [name, value]
+            properties:
+              name: { type: string }
+              value: { type: string }
+        repeat:
+          oneOf:
+            - { type: "null" }
+            - type: object
+              required: [sent, status, cacheStatus, age]
+              properties:
+                sent: { type: string }
+                status: { type: integer }
+                cacheStatus: { type: string }
+                age: { type: string }
+        findings:
+          type: array
+          items:
+            type: object
+            required: [id, severity, detail]
+            properties:
+              id: { type: string }
+              severity: { type: string, enum: [info, warn, bad] }
+              detail: { type: string }
+    MixedResult:
+      type: object
+      required: [url, status, contentType, bodyBytes, truncated, upgradeInsecureRequests, items, active, passive, forms, links, resources]
+      properties:
+        url: { type: string }
+        status: { type: integer }
+        contentType: { type: string }
+        bodyBytes: { type: integer }
+        truncated: { type: boolean }
+        upgradeInsecureRequests: { type: boolean }
+        active: { type: integer }
+        passive: { type: integer }
+        forms: { type: integer }
+        links: { type: integer }
+        resources: { type: integer }
+        items:
+          type: array
+          items:
+            type: object
+            required: [tag, attr, url, kind]
+            properties:
+              tag: { type: string }
+              attr: { type: string }
+              url: { type: string }
+              kind: { type: string, enum: [active, passive, form, link] }
+    ChainResult:
+      type: object
+      required: [certs, path, ordered, complete, trusted, verifyError, host, hostOk, notes]
+      properties:
+        path: { type: array, items: { type: integer } }
+        ordered: { type: boolean }
+        complete: { type: boolean }
+        trusted: { type: boolean }
+        verifyError: { type: string }
+        host: { type: string }
+        hostOk: { type: [boolean, "null"] }
+        notes: { type: array, items: { type: string } }
+        certs:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/TlsCert"
+              - type: object
+                required: [role, source, inputIndex, signatureOk, expired, aia]
+                properties:
+                  role: { type: string, enum: [leaf, intermediate, root, extra] }
+                  source: { type: string, enum: [input, aia] }
+                  inputIndex: { type: integer }
+                  signatureOk: { type: [boolean, "null"] }
+                  expired: { type: boolean }
+                  aia: { type: string }
+    RouteHistory:
+      type: object
+      required: [resource, family, origins, collectors, seeing, fullTablePeers, queryStart, queryEnd, related]
+      properties:
+        resource: { type: string }
+        family: { type: integer }
+        seeing: { type: integer }
+        fullTablePeers: { type: integer }
+        queryStart: { type: string }
+        queryEnd: { type: string }
+        related: { type: integer }
+        origins:
+          type: array
+          items:
+            type: object
+            required: [asn, name, current, prefixes]
+            properties:
+              asn: { type: integer }
+              name: { type: string }
+              current: { type: boolean }
+              prefixes:
+                type: array
+                items:
+                  type: object
+                  required: [prefix, firstSeen, lastSeen, current, maxPeers, periods]
+                  properties:
+                    prefix: { type: string }
+                    firstSeen: { type: string }
+                    lastSeen: { type: string }
+                    current: { type: boolean }
+                    maxPeers: { type: number }
+                    periods: { type: integer }
+        collectors:
+          type: array
+          items:
+            type: object
+            required: [name, city, country, peers, notSeeing, fullTables]
+            properties:
+              name: { type: string }
+              city: { type: string }
+              country: { type: string }
+              peers: { type: integer }
+              notSeeing: { type: integer }
+              fullTables: { type: integer }
+    GraphNode:
+      type: object
+      required: [asn, name, power]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        power: { type: integer }
+    NeighbourGraph:
+      type: object
+      required: [asn, name, upstreams, downstreams, uncertain, upstreamTotal, downstreamTotal, uncertainTotal]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        upstreams: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        downstreams: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        uncertain: { type: array, items: { $ref: "#/components/schemas/GraphNode" } }
+        upstreamTotal: { type: integer }
+        downstreamTotal: { type: integer }
+        uncertainTotal: { type: integer }
+    RoaCoverage:
+      type: object
+      required: [asn, name, prefixes, roas, valid, invalid, notFound, unchecked, validator, generated]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        valid: { type: integer }
+        invalid: { type: integer }
+        notFound: { type: integer }
+        unchecked: { type: integer }
+        validator: { type: string }
+        generated: { type: string }
+        prefixes:
+          type: array
+          items:
+            type: object
+            required: [prefix, status, reason, roa]
+            properties:
+              prefix: { type: string }
+              status: { type: string, enum: [valid, invalid, not-found, unchecked] }
+              reason: { type: string }
+              roa: { type: string }
+        roas:
+          type: array
+          items:
+            type: object
+            required: [prefix, maxLength, ta, used, loose]
+            properties:
+              prefix: { type: string }
+              maxLength: { type: integer }
+              ta: { type: string }
+              used: { type: boolean }
+              loose: { type: boolean }
+    PeeringPort:
+      type: object
+      required: [speedMbps, ipv4, ipv6, rsPeer]
+      properties:
+        speedMbps: { type: integer }
+        ipv4: { type: string }
+        ipv6: { type: string }
+        rsPeer: { type: boolean }
+    PeeringSide:
+      type: object
+      required: [asn, name, found, policy, ixCount, facilityCount, peeringdbUrl]
+      properties:
+        asn: { type: integer }
+        name: { type: string }
+        found: { type: boolean }
+        policy: { type: string }
+        ixCount: { type: integer }
+        facilityCount: { type: integer }
+        peeringdbUrl: { type: string }
+    CommonPeering:
+      type: object
+      required: [a, b, ixs, facilities]
+      properties:
+        a: { $ref: "#/components/schemas/PeeringSide" }
+        b: { $ref: "#/components/schemas/PeeringSide" }
+        ixs:
+          type: array
+          items:
+            type: object
+            required: [ixId, name, a, b, bothRs]
+            properties:
+              ixId: { type: integer }
+              name: { type: string }
+              a: { type: array, items: { $ref: "#/components/schemas/PeeringPort" } }
+              b: { type: array, items: { $ref: "#/components/schemas/PeeringPort" } }
+              bothRs: { type: boolean }
+        facilities:
+          type: array
+          items:
+            type: object
+            required: [name, city, country, facId]
+            properties:
+              name: { type: string }
+              city: { type: string }
+              country: { type: string }
+              facId: { type: integer }
+

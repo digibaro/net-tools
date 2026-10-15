@@ -17,6 +17,7 @@ import (
 
 	"github.com/miekg/dns"
 
+	"github.com/digibaro/net-tools-docker/apps/api/internal/dnsx/dnstest"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tlsx"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
 )
@@ -259,4 +260,37 @@ func (c *countingDNS) TXT(ctx context.Context, name string) ([]string, string, e
 func (c *countingDNS) Exists(ctx context.Context, name string, qt uint16) (int, string, error) {
 	c.queries++
 	return c.fakeDNS.Exists(ctx, name, qt)
+}
+
+func TestSMTPBanner(t *testing.T) {
+	port, pool := fakeSMTP(t)
+	tlsx.RootsForTests = pool
+	defer func() { tlsx.RootsForTests = nil }()
+	zone := dnstest.Start(t, func(w dns.ResponseWriter, r *dns.Msg) {
+		m := new(dns.Msg)
+		m.SetReply(r)
+		q := r.Question[0]
+		add := func(s string) {
+			rr, _ := dns.NewRR(s)
+			m.Answer = append(m.Answer, rr)
+		}
+		switch {
+		case q.Name == "1.0.0.127.in-addr.arpa.":
+			add("1.0.0.127.in-addr.arpa. 300 IN PTR mx.example.com.")
+		case q.Name == "mx.example.com." && q.Qtype == dns.TypeA:
+			add("mx.example.com. 300 IN A 127.0.0.1")
+		}
+		_ = w.WriteMsg(m)
+	})
+	env := tooltest.New(t, &BannerTool{Port: port, Resolver: zone.String()}, tooltest.Options{AllowPrivate: true})
+	var res BannerResult
+	env.Get("/api/v1/email/smtp-banner?host=127.0.0.1").Must(t).Decode(t, &res)
+	pass := map[string]bool{}
+	for _, c := range res.Checks {
+		pass[c.ID] = c.Pass
+	}
+	if !res.FCrDNS || res.BannerHost != "mx.example.com" || res.EHLOHost != "mx.example.com" || !pass["ptr"] || !pass["fcrdns"] || !pass["bannerPtr"] || !pass["ehloPtr"] || !pass["starttls"] || !pass["bannerFqdn"] {
+		t.Errorf("res = %+v", res)
+	}
+	tooltest.New(t, &BannerTool{}, tooltest.Options{}).Get("/api/v1/email/smtp-banner?host=10.0.0.25").ExpectError(t, "TARGET_PRIVATE_DENIED")
 }

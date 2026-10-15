@@ -1,23 +1,23 @@
 # NET-TOOLS
 
-Self-hosted network tools and troubleshooting utilities in one web app — 125 tools for IP
+Self-hosted network tools and troubleshooting utilities in one web app — 151 tools for IP
 addressing, DNS, connectivity, HTTP, TLS, email, BGP, reputation and your LAN. The UX follows
 [it-tools](https://github.com/CorentinTh/it-tools): a searchable grid of tools, each on its own
 page, light / dark / auto theme, shareable links. Ships as two Docker containers.
 
 | Category | Tools | Examples |
 |---|---:|---|
-| IP & Addressing | 19 | IPv4/IPv6 subnet calculators, CIDR aggregation, MAC/OUI lookup, IPv6 ULA |
-| DNS | 14 | Lookup, reverse, propagation, DNSSEC, trace, zone transfer test, DNS benchmark |
+| IP & Addressing | 23 | IPv4/IPv6 subnet calculators, IPv6 address analyzer, IPAM sheet, NAT64/DNS64, country IP blocks |
+| DNS | 18 | Lookup, propagation, DNSSEC, trace, HTTPS/SVCB & ECH, EDNS compliance, open resolver, PTR coverage |
 | Connectivity & Diagnostics | 14 | Ping, TCP ping, traceroute, MTR, port check/scan, path MTU, iperf3, SNMP |
-| HTTP & Web | 15 | HTTP headers, redirects, security headers, CORS, robots/sitemap |
-| TLS & Certificates | 11 | TLS inspector, cipher scan, expiry, CSR/certificate decoder, JWK/PEM/SSH converter |
-| Email | 9 | MX/SMTP, SPF, DMARC, DKIM, MTA-STS, header analyzer, DMARC reports, open relay test |
-| Routing, BGP & Registry | 12 | IP→ASN, WHOIS, RDAP, PeeringDB, IRR / AS-SET expansion, AS-path visualizer |
+| HTTP & Web | 19 | HTTP headers, HTTP/3 & 0-RTT, CDN/WAF detection, cache headers, mixed content, CSP builder |
+| TLS & Certificates | 15 | TLS inspector, cipher scan, DANE/TLSA, chain validator, PKCS#12 inspector, lab CA generator |
+| Email | 10 | MX/SMTP, SPF, DMARC, DKIM, MTA-STS, SMTP banner & FCrDNS, DMARC reports, open relay test |
+| Routing, BGP & Registry | 16 | IP→ASN, WHOIS, RDAP, route history, neighbour graph, ROA coverage, common IXPs |
 | Reputation & Geolocation | 5 | IP geolocation, AbuseIPDB, passive exposure, Tor exit check, URL reputation |
 | LAN | 9 | Wake-on-LAN, ARP scan, mDNS / SSDP discovery, DHCP and DHCPv6 probe, LLDP / CDP, IPv6 neighbours |
-| Calculators & Reference | 12 | Bandwidth, data units, port reference, router config snippets |
-| Client Diagnostics | 5 | Request headers, browser latency, WebRTC leak test, browser ↔ server speed test |
+| Calculators & Reference | 16 | Bandwidth, SLA/uptime, VoIP & Erlang, packet decoder, pcap viewer, config snippets |
+| Client Diagnostics | 6 | Request headers, browser latency, WebRTC leak test, DNS hijack & proxy check, speed test |
 
 Every tool shows where it runs:
 

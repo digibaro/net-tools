@@ -3,6 +3,7 @@
 package peeringdb
 
 import (
+	"context"
 	"net/http"
 	"sort"
 	"strconv"
@@ -144,29 +145,40 @@ func str(p *string) string {
 	return *p
 }
 
+// fetchNet loads one network with its exchange and facility presence (depth=2).
+func fetchNet(ctx context.Context, d tools.Deps, base string, asn uint32) (apiNet, bool, error) {
+	req := providers.Request{Provider: "PeeringDB", URL: base + "/net?depth=2&asn=" + strconv.FormatUint(uint64(asn), 10), Header: http.Header{}}
+	if key := d.Config.Features.ProviderSecrets["PEERINGDB_KEY"]; key != "" {
+		req.Header.Set("Authorization", "Api-Key "+key) // higher rate limits; cache key stays the URL
+	}
+	var resp struct {
+		Data []apiNet `json:"data"`
+	}
+	if err := d.Providers.GetJSON(ctx, req, &resp); err != nil {
+		return apiNet{}, false, err //nolint:wrapcheck // client-safe provider error
+	}
+	if len(resp.Data) == 0 {
+		return apiNet{}, false, nil
+	}
+	return resp.Data[0], true, nil
+}
+
 func (t *Tool) handle(w http.ResponseWriter, r *http.Request) {
 	asn, err := ripestat.ParseASN(chi.URLParam(r, "asn"), "asn")
 	if err != nil {
 		httpapi.Error(w, r, err)
 		return
 	}
-	req := providers.Request{Provider: "PeeringDB", URL: t.Base + "/net?depth=2&asn=" + strconv.FormatUint(uint64(asn), 10), Header: http.Header{}}
-	if key := t.deps.Config.Features.ProviderSecrets["PEERINGDB_KEY"]; key != "" {
-		req.Header.Set("Authorization", "Api-Key "+key) // higher rate limits; cache key stays the URL
-	}
-	var resp struct {
-		Data []apiNet `json:"data"`
-	}
-	if err := t.deps.Providers.GetJSON(r.Context(), req, &resp); err != nil {
+	n, found, err := fetchNet(r.Context(), t.deps, t.Base, asn)
+	if err != nil {
 		httpapi.Error(w, r, err)
 		return
 	}
 	out := Network{ASN: asn, IXs: []IX{}, Facilities: []Facility{}, Contacts: []Contact{}}
-	if len(resp.Data) == 0 {
+	if !found {
 		httpapi.JSON(w, r, out, &httpapi.Meta{Tool: t.ID(), Vantage: "peeringdb"})
 		return
 	}
-	n := resp.Data[0]
 	out = Network{
 		Found: true, ASN: n.ASN, Name: n.Name, AKA: n.AKA, Website: n.Website, IRRASSet: n.IRRASSet, Type: n.InfoType, Scope: n.InfoScope,
 		Traffic: n.InfoTraffic, Ratio: n.InfoRatio, Prefixes4: n.InfoPrefixes4, Prefixes6: n.InfoPrefixes6, Policy: n.PolicyGeneral,

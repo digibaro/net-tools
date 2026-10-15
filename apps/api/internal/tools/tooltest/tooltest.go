@@ -2,6 +2,7 @@
 package tooltest
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"io"
@@ -102,6 +103,16 @@ type Response struct {
 func (e *Env) Get(path string) Response {
 	e.t.Helper()
 	return e.Do(httptest.NewRequestWithContext(context.Background(), http.MethodGet, path, nil))
+}
+
+// Post sends body as JSON.
+func (e *Env) Post(path string, body any) Response {
+	e.t.Helper()
+	b, err := json.Marshal(body)
+	if err != nil {
+		e.t.Fatal(err)
+	}
+	return e.Do(httptest.NewRequestWithContext(context.Background(), http.MethodPost, path, bytes.NewReader(b)))
 }
 
 // Do performs a request and decodes the envelope (SSE responses are returned undecoded).

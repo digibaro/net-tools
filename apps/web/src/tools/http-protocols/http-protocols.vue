@@ -11,6 +11,7 @@ import { useValidation } from '@/composables/useValidation'
 import CCard from '@/ui/c-card.vue'
 import CInputText from '@/ui/c-input-text.vue'
 import CKeyValueList from '@/ui/c-key-value-list.vue'
+import { fixed } from '@/utils/format'
 import { best, isHttpsUrl } from './http-protocols.service'
 
 const { t } = useI18n()
@@ -33,6 +34,13 @@ const rows = computed(() => {
     { label: k('used'), value: d.httpVersion || '—', noCopy: true },
     { label: k('altSvc'), value: d.altSvc.map(a => `${a.protocol}="${a.host}:${a.port}" ma=${a.maxAge}`).join(', ') || '—', mono: true },
     { label: k('http3'), value: d.http3.ok ? t('tools.http-protocols.h3ok', { port: d.http3.port, ms: d.http3.handshakeMs, version: d.http3.quicVersion }) : d.http3.error, noCopy: true },
+    ...(d.http3.request
+      ? [
+          { label: k('h3request'), value: d.http3.request.ok ? t('tools.http-protocols.h3req', { status: d.http3.request.status, ms: fixed(d.http3.request.ttfbMs, 1) }) : t('tools.http-protocols.h3reqFail', { error: d.http3.request.error }), noCopy: true },
+          ...(d.http3.request.ok ? [{ label: k('resumption'), value: t('tools.http-protocols.resumed', { resumed: yes(d.http3.request.resumed), zeroRtt: yes(d.http3.request.zeroRtt), ms: fixed(d.http3.request.repeatTtfbMs, 1) }), noCopy: true }] : []),
+        ]
+      : []),
+    ...(d.ttfbMs ? [{ label: k('ttfbTcp'), value: `${fixed(d.ttfbMs, 1)} ms (${d.httpVersion})`, noCopy: true }] : []),
     { label: k('address'), value: d.address, mono: true },
   ]
 })

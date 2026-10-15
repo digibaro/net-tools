@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools"
 	"github.com/digibaro/net-tools-docker/apps/api/internal/tools/tooltest"
@@ -68,6 +69,7 @@ func TestRelayClosed(t *testing.T) {
 	if res.Open || len(res.Cases) != 5 || res.Error != "" || res.Address != "93.184.215.14:25" || !strings.Contains(res.Cases[0].RcptReply, "554 5.7.1") || res.Cases[4].MailFrom != "postmaster@example.com" {
 		t.Errorf("res = %+v", res)
 	}
+	waitForQuit(t, &log, &mu)
 	mu.Lock()
 	defer mu.Unlock()
 	if strings.Count(strings.Join(log, "\n"), "RSET") != 5 || log[len(log)-1] != "QUIT" {
@@ -94,5 +96,19 @@ func TestRelayValidation(t *testing.T) {
 	env.Get("/api/v1/email/relay?host=10.0.0.1").ExpectError(t, "TARGET_PRIVATE_DENIED")
 	if ok, reason := (&RelayTool{}).Enabled(tools.Deps{Config: tooltest.Config(t, nil)}); ok || reason != tools.ReasonDisabledByAdmin {
 		t.Errorf("default: %v %s", ok, reason)
+	}
+}
+
+// waitForQuit: the handler may return before the fake MTA has logged the final QUIT.
+func waitForQuit(t *testing.T, log *[]string, mu *sync.Mutex) {
+	t.Helper()
+	for range 100 {
+		mu.Lock()
+		done := len(*log) > 0 && (*log)[len(*log)-1] == "QUIT"
+		mu.Unlock()
+		if done {
+			return
+		}
+		time.Sleep(10 * time.Millisecond)
 	}
 }

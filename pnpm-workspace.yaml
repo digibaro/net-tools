@@ -2,3 +2,9 @@ packages:
   - apps/web
 allowBuilds:
   esbuild: true
+auditConfig:
+  ignoreGhsas:
+    # node-forge RSA PKCS#1 v1.5 signature verification (no fixed version yet). node-forge is only
+    # used by the PKCS#12 inspector to decrypt bundles in the browser; it never verifies RSA
+    # signatures. Remove when a patched node-forge is released.
+    - GHSA-86w9-cpqp-85rv

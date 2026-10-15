@@ -161,6 +161,10 @@ ping:
   interval: Interval (ms)
   run: Start
 trace:
+  asPath: 'AS path:'
+  map: 'Route of the trace over {n} located hops'
+  mapLocal: Too few hops could be located for a map (private addresses or no geolocation data).
+  mapRetry: Retry the map
   protocol: Protocol
   cycles: Cycles
   hops: 'Hops ({count})'
@@ -2017,10 +2021,13 @@ tools:
       unsigned: Not PGP-signed (optional, but lets researchers verify it).
   http-protocols:
     title: HTTP/2 & HTTP/3 check
-    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN, the Alt-Svc header and performs a real QUIC handshake.
+    description: Does a site speak HTTP/2 and HTTP/3? Checks ALPN and Alt-Svc, performs a real QUIC handshake and HTTP/3 request, and tests 0-RTT resumption.
     run: Check
     httpsOnly: HTTP/2 and HTTP/3 need an https:// URL.
     h3ok: 'QUIC handshake on UDP port {port} in {ms} ms ({version})'
+    h3req: 'HTTP {status} over HTTP/3, first byte after {ms} ms'
+    h3reqFail: 'QUIC works, but the HTTP/3 request failed: {error}'
+    resumed: 'Resumed: {resumed} · 0-RTT accepted: {zeroRtt} (repeat request: first byte after {ms} ms)'
     notAdvertised: HTTP/3 works but is not advertised in Alt-Svc, so browsers will not use it.
     advertisedBroken: Alt-Svc advertises HTTP/3 but the QUIC handshake failed from this server (UDP may be blocked on either side).
     fields:
@@ -2028,6 +2035,9 @@ tools:
       used: Version used for a request
       altSvc: Alt-Svc
       http3: HTTP/3 (QUIC)
+      h3request: HTTP/3 request
+      resumption: Session resumption
+      ttfbTcp: First byte over TCP
       address: Address
   starttls-check:
     title: STARTTLS check
@@ -2722,3 +2732,715 @@ tools:
       search: Search domains
       preference: Preference
       status: Status
+  ipv6-address-analyzer:
+    title: IPv6 address analyzer
+    description: Everything about one IPv6 address — type and scope, how the interface ID was formed (EUI-64 with MAC, privacy, ISATAP), embedded IPv4, solicited-node group and reverse name.
+    input: IPv6 address
+    invalid: Enter an IPv6 address, e.g. 2001:db8::1 (a zone or /prefix is ignored).
+    permanent: None (permanent, well-known group)
+    macLocal: locally administered
+    eui64Warning: This interface ID is derived from the MAC address (EUI-64), so the device can be tracked across networks. Hosts usually prefer privacy or stable-opaque addresses (RFC 4941 / 7217).
+    fields:
+      compressed: Compressed
+      expanded: Expanded
+      type: Type
+      scope: Scope
+      reachable: Globally reachable
+      flags: Multicast flags
+      prefix64: /64 prefix
+      iid: Interface ID
+      mac: MAC address (from EUI-64)
+      isatap: ISATAP IPv4
+      solicited: Solicited-node multicast
+      arpa: Reverse DNS name
+      binary: Binary
+    scopes:
+      interface: Interface-local
+      link: Link-local
+      realm: Realm-local
+      admin: Admin-local
+      site: Site-local
+      organization: Organization-local
+      global: Global
+      host: Host (loopback)
+      none: None (unspecified)
+    iid:
+      eui64: EUI-64, derived from a MAC address
+      isatap: ISATAP (embeds an IPv4 address)
+      low: Low / manually assigned
+      random: Random (privacy or stable-opaque, RFC 4941 / 7217)
+      zero: All zeros (subnet-router anycast)
+  ipam-sheet:
+    title: IP address plan (IPAM sheet)
+    description: Plan the subnets of an IPv4 or IPv6 block with names, VLANs and notes — fixed networks stay put, the rest is allocated first-fit; download the plan as CSV.
+    block: Address block
+    invalidBlock: Enter a network in CIDR notation, e.g. 10.10.0.0/22 or 2001:db8:100::/56.
+    plan: Subnets (one per line)
+    planPlaceholder: 'Name, VLAN, size, fixed network, note'
+    help: 'One subnet per line: name, VLAN, size, optional fixed network, optional note (separated by comma, tab, ; or |). Size is a prefix (/24) or a number of hosts (200 hosts). Fixed networks are placed first; the others are allocated first-fit in the listed order. Lines starting with # are ignored.'
+    tooMany: 'At most {max} subnets per plan.'
+    result: 'Plan for {block}'
+    someErrors: '{n} line(s) could not be placed — see the status column.'
+    used: '{used} of {total} addresses allocated ({pct} %)'
+    free: 'Free blocks ({n})'
+    fixed: Fixed
+    auto: Allocated
+    errors:
+      size: Unknown size
+      fixed: Invalid fixed network
+      version: Wrong IP version
+      outside: Outside the block
+      overlap: Overlaps another subnet
+      no-space: Does not fit
+    columns:
+      name: Name
+      cidr: Subnet
+      gateway: Gateway (first address)
+      range: Usable range
+      mask: Netmask
+      usable: Usable
+      status: Status
+      note: Note
+  nat64-dns64-check:
+    title: NAT64 / DNS64 check
+    description: Does a resolver synthesize IPv6 addresses for IPv4-only names (DNS64), and which NAT64 prefix does it use? Prefix discovery per RFC 7050.
+    resolver: Resolver (optional)
+    resolverPlaceholder: empty = the server's resolver, or e.g. 2001:4860:4860::6464
+    invalidResolver: Enter an IP address (optionally with :port), or leave empty for the server's resolver.
+    run: Check
+    note: Asks for the AAAA record of ipv4only.arpa, a name that only has IPv4 addresses (192.0.0.170 and .171). Any IPv6 answer is synthesized, and the position of the IPv4 address in it reveals the NAT64 prefix and its length (RFC 6052).
+    verdict:
+      wellKnown: 'DNS64 is active with the well-known NAT64 prefix {prefix}.'
+      networkSpecific: 'DNS64 is active with the network-specific NAT64 prefix {prefix}.'
+      none: No DNS64 — this resolver returns no synthesized IPv6 addresses for IPv4-only names.
+    fields:
+      resolver: Resolver
+      prefixes: NAT64 prefix
+      synthesized: Synthesized AAAA
+      ipv4: A records of ipv4only.arpa
+      rcode: Response code
+  country-ip-blocks:
+    title: Country IP blocks
+    description: All IPv4 and IPv6 blocks registered to a country, merged into the shortest prefix list — as plain list, Cisco or Juniper prefix-list, nginx, ipset or MikroTik address-list.
+    country: Country code
+    invalid: Use a two-letter country code (ISO 3166), e.g. NL, BE, DE.
+    family: Address family
+    both: IPv4 + IPv6
+    run: Get blocks
+    format: Output format
+    output: Prefix list
+    v4Summary: '{prefixes} prefixes (from {entries} registrations), {addresses} addresses'
+    v6Summary: '{prefixes} prefixes (from {entries} registrations), {n48} × /48'
+    source: 'RIR delegation data via RIPEstat, {time}. Registration country, not where addresses are used — for geolocation see the IP geolocation tool.'
+    fields:
+      country: Country
+      ipv4: IPv4
+      ipv6: IPv6
+      asns: Autonomous systems
+      source: Source
+    formats:
+      plain: Plain list
+      cisco: Cisco prefix-list
+      juniper: Juniper prefix-list
+      nginx: nginx deny
+      ipset: Linux ipset (restore)
+      mikrotik: MikroTik address-list
+  open-resolver-test:
+    title: Open resolver test
+    description: Does a DNS server answer recursive queries for anyone? Open resolvers are abused for DDoS amplification — this shows the amplification factor too.
+    server: DNS server (IP or hostname)
+    invalid: Enter an IP address or hostname, optionally with :port.
+    run: Test
+    note: Sends one recursive query for example.com from the NET-TOOLS server. If it is answered, a DNSSEC query for the root keys measures how much larger the answer is than the question. Public resolvers such as 9.9.9.9 are open on purpose (and rate-limited); your own servers should not be.
+    verdict:
+      open: Open resolver — this server resolves names for anyone on the internet. Unless it is a public DNS service, restrict recursion to your own networks.
+      closed: Not an open resolver — the server answers, but does not resolve names for us.
+      silent: No answer — the server does not respond to DNS on this address (filtered or not a DNS server).
+    amplificationValue: '{factor}× ({req} → {resp} bytes for {query})'
+    fields:
+      server: Server
+      rcode: Response code
+      ra: Recursion available
+      answers: Answer records
+      rtt: Response time
+      amplification: Amplification
+  ptr-coverage:
+    title: Reverse DNS coverage
+    description: PTR records for every address in a /24 (or IPv6 /120), with forward confirmation (FCrDNS) — find missing or stale reverse DNS before mail servers do.
+    prefix: Prefix (at most 256 addresses)
+    invalid: Enter a /24 or smaller IPv4 prefix, a /120 or smaller IPv6 prefix, or one address (its /24 is scanned).
+    run: Scan
+    onlyNamed: Only addresses with a PTR record
+    summary: '{prefix}: {ptr} of {total} with PTR, {confirmed} forward-confirmed'
+    status:
+      confirmed: Forward-confirmed
+      mismatch: Name does not point back
+      none: No PTR
+      error: Lookup failed
+    columns:
+      ip: Address
+      names: PTR name
+      status: FCrDNS
+      rcode: Response
+  svcb-https-viewer:
+    title: HTTPS / SVCB record & ECH viewer
+    description: Decode HTTPS and SVCB records (RFC 9460) — ALPN (HTTP/3), address hints, port and Encrypted Client Hello configs — following alias records.
+    name: Name
+    type: Record type
+    run: Look up
+    ddr: Discover the resolver's DoH/DoT (DDR)
+    none: 'No {type} record for {name} ({rcode}).'
+    sameName: Same name (.)
+    ech: Encrypted Client Hello configs
+    modes:
+      alias: Alias mode (points to another name)
+      service: Service mode
+    fields:
+      mode: Mode
+      target: Target
+    columns:
+      configId: Config ID
+      publicName: Public name
+      suites: Cipher suites (KDF / AEAD)
+      maxName: Max name length
+  edns-compliance:
+    title: EDNS compliance test
+    description: Test a zone's authoritative nameservers the way ISC's ednscomp does — unknown EDNS versions, options and flags, DNSSEC OK, TCP — to catch servers that break DNSSEC or large answers.
+    zone: Zone
+    server: Nameserver (optional)
+    serverPlaceholder: empty = every NS of the zone (up to 6)
+    run: Test
+    note: 'Sends nine SOA queries per nameserver (IPv4) from the NET-TOOLS server, without recursion. Since DNS Flag Day 2019 resolvers no longer work around servers that mishandle EDNS.'
+    pass: Pass
+    fail: Fail
+    passed: '{n} of {total} tests passed'
+    cookie: Supports DNS cookies
+    grade:
+      ok: Compliant
+      minor: Minor issues
+      broken: Broken EDNS
+      unreachable: Unreachable
+    checks:
+      dns: Plain DNS (no EDNS)
+      edns: EDNS version 0
+      edns1: EDNS version 1 → BADVERS
+      ednsopt: Unknown EDNS option ignored
+      edns1opt: Version 1 + unknown option → BADVERS
+      do: DNSSEC OK bit echoed
+      ednsflags: Unknown EDNS flag cleared
+      optlist: NSID, EXPIRE, COOKIE, ECS together
+      tcp: EDNS over TCP
+    columns:
+      test: Test
+      result: Result
+      detail: Detail
+  dane-checker:
+    title: DANE / TLSA checker
+    description: Check the TLSA records of a mail domain's MX hosts (port 25, STARTTLS) or an HTTPS site against the certificate the server actually presents, including DNSSEC.
+    domain: Mail domain
+    host: Host name
+    service: Service
+    smtp: Mail (MX, port 25)
+    resolverPlaceholder: empty = the server's resolver (should validate DNSSEC)
+    run: Check
+    note: 'TLSA records only count when they are DNSSEC-signed (RFC 7672), so this needs a validating resolver: its AD flag decides. Many hosting networks block outgoing port 25; the TLSA part still works.'
+    dnssecYes: Yes (resolver validated, AD flag)
+    dnssecNo: No — not signed, or the resolver does not validate
+    leaf: server certificate
+    matchCert: 'Matches {n}'
+    noMatch: No match
+    verdict:
+      valid: 'DANE is valid for {input}: every server presents a certificate that matches its signed TLSA records.'
+      mismatch: 'DANE is broken for {input}: a TLSA record does not match the certificate — DANE-aware senders will refuse to deliver.'
+      insecure: 'TLSA records exist for {input}, but without a DNSSEC signature they are ignored.'
+      no-tlsa: 'No TLSA records for {input}: DANE is not used.'
+      unreachable: A server could not be checked.
+    hostVerdict:
+      valid: Valid
+      mismatch: Mismatch
+      insecure: Not DNSSEC-signed
+      no-tlsa: No TLSA
+      unreachable: Unreachable
+    fields:
+      tlsaName: TLSA name
+      dnssec: DNSSEC
+      address: Checked address
+      tls: TLS
+      webpki: Valid WebPKI certificate
+    columns:
+      params: Usage Selector Matching
+      data: Association data
+      match: Result
+  smtp-banner-check:
+    title: SMTP banner & FCrDNS check
+    description: Does a mail server's reverse DNS, SMTP banner and EHLO name line up? Receivers reject or junk mail from servers that fail these checks.
+    host: Mail server or mail domain
+    via: 'Mail for {domain} is handled by {host} (preferred MX).'
+    invalid: Enter a hostname or IP address.
+    run: Check
+    blocked: Port 25 could not be reached from the NET-TOOLS server (many providers block it); only the DNS checks ran.
+    grade:
+      good: 'All {total} checks passed.'
+      issues: '{n} of {total} checks passed — minor issues.'
+      bad: '{n} of {total} checks passed — reverse DNS problems hurt deliverability.'
+    checks:
+      ptr: Reverse DNS (PTR) exists
+      fcrdns: PTR name resolves back to this address (FCrDNS)
+      banner: SMTP banner received
+      bannerFqdn: Banner starts with a fully qualified host name
+      bannerPtr: Banner host name matches the PTR
+      ehloPtr: EHLO greeting name matches the PTR
+      starttls: STARTTLS offered
+      certificate: Certificate valid for the host name
+    columns:
+      check: Check
+      detail: Value
+  cdn-waf-detector:
+    title: CDN & WAF detector
+    description: Which CDN, web application firewall, bot protection and hosting platform serve a site — recognised from response headers, cookies, the CNAME chain and the certificate.
+    run: Detect
+    none: No known CDN, WAF or hosting platform recognised — the site may be served directly, or by a service without telltale headers.
+    note: Detection is based on public fingerprints; a WAF that hides itself is not seen. For the network owner of the address, use IP to ASN or the cloud IP lookup.
+    kinds:
+      cdn: CDN
+      waf: WAF
+      bot: Bot protection
+      hosting: Hosting platform
+      cache: Cache
+      tls: Certificate
+    fields:
+      url: Final URL
+      address: Address
+      cnames: CNAME chain
+      server: Server header
+      cacheStatus: Cache status
+      issuer: Certificate issuer
+  cache-header-analyzer:
+    title: Cache header analyzer
+    description: How long may browsers and CDNs cache a URL? Explains Cache-Control, Expires, validators and Vary (RFC 9111) and repeats the request to test 304 revalidation and cache hits.
+    run: Analyze
+    notCached: Not stored
+    unknown: No lifetime (revalidated every time)
+    noValidator: no validator
+    repeatValue: 'sent {sent} → HTTP {status}, cache {cache}'
+    sources:
+      max-age: max-age
+      max-age_s-maxage: max-age, s-maxage for shared caches
+      expires: Expires header
+      expires_s-maxage: Expires, s-maxage for shared caches
+      heuristic: Heuristic (10 % of the time since Last-Modified)
+      heuristic_s-maxage: Heuristic, s-maxage for shared caches
+      s-maxage: s-maxage (shared caches only)
+      none: None
+    fields:
+      url: URL
+      browser: Browser cache lifetime
+      shared: CDN / proxy cache lifetime
+      source: Lifetime from
+      cacheStatus: CDN cache status
+      repeat: Conditional repeat
+    findings:
+      maxAgeZero: 'max-age=0: caches may store it but must revalidate before every use.'
+      noStore: 'no-store: nothing may be cached, not even by the browser.'
+      noCache: 'no-cache: may be stored, but must be revalidated with the server before every use.'
+      noLifetime: No explicit lifetime (max-age or Expires) — caches decide for themselves.
+      heuristic: Only Last-Modified is set, so caches guess a lifetime (typically 10 % of its age). Set max-age explicitly.
+      private: 'private: only the browser may cache this, not CDNs or proxies.'
+      publicPrivate: Both public and private are set — contradictory.
+      immutable: 'immutable: browsers will not revalidate during the lifetime, even on reload.'
+      noValidators: No ETag or Last-Modified — expired copies cannot be revalidated cheaply (304) and are downloaded again.
+      varyStar: 'Vary: * makes the response effectively uncacheable for shared caches.'
+      varyFragment: 'Vary: {detail} splits the cache per cookie or browser and lowers the hit rate.'
+      setCookieShared: The response sets a cookie but may be stored by shared caches — the cookie could be served to other users. Add private or no-store.
+      pragmaOnly: 'Only the legacy Pragma: no-cache is set; HTTP/1.1 caches use Cache-Control.'
+      expiresInvalid: 'Invalid Expires value ({detail}): treated as already expired.'
+      no304: 'The repeat request with {detail} did not return 304 Not Modified, so revalidation downloads the full response.'
+  mixed-content-checker:
+    title: Mixed content checker
+    description: Find http:// scripts, stylesheets, frames, images and forms on an https page — the reason for a broken padlock or blocked page parts.
+    run: Check
+    note: Checks the HTML as served (no JavaScript is run), including srcset, inline styles and style blocks. Content loaded later by scripts is not seen.
+    summary: '{url} — {resources} references'
+    truncated: 'Only the first {bytes} bytes of the page were checked.'
+    showLinks: 'Also show {n} plain http:// links (navigation only, not mixed content)'
+    verdict:
+      clean: No mixed content found.
+      upgraded: 'Insecure references found, but the page sets upgrade-insecure-requests, so browsers load them over https (if the hosts support it).'
+      passive: '{passive} insecure image/media reference(s): browsers upgrade them to https or show them with a warning.'
+      active: '{active} insecure script/style/frame reference(s) and {forms} insecure form(s): browsers block these, so parts of the page break.'
+    kinds:
+      active: Active (blocked)
+      passive: Passive (image/media)
+      form: Form (sent unencrypted)
+      link: Link
+    columns:
+      kind: Type
+      element: Element
+  csp-builder:
+    title: CSP builder & evaluator
+    description: Build a Content-Security-Policy from presets (strict nonce-based, allowlist, lockdown), evaluate it for XSS bypasses and missing directives, and copy it as header, nginx, Apache or meta tag.
+    policy: Policy
+    help: "Directives are separated by ;. With a nonce or hash, 'unsafe-inline' is ignored by modern browsers (it is a fallback for old ones); with 'strict-dynamic', host and scheme sources are ignored too. Replace the RANDOM placeholder with a fresh nonce for every response."
+    nonce: Insert a random nonce
+    evaluation: Evaluation
+    directive: Directive
+    values: Sources
+    output: Output
+    format: Format
+    reportOnly: Report-only (monitor, do not block)
+    metaNote: In a meta tag frame-ancestors, report-to, report-uri and sandbox do not work, and report-only is not possible.
+    presets:
+      strict: Strict (nonce + strict-dynamic)
+      allowlist: Allowlist starter
+      lockdown: Lock down
+    outputs:
+      header: HTTP header
+      nginx: nginx add_header
+      apache: Apache Header
+      meta: HTML meta tag
+    score:
+      good: No weaknesses found.
+      warn: The policy works, but has weaknesses.
+      bad: The policy does not stop XSS reliably.
+    findings:
+      empty: The policy is empty.
+      duplicate: Duplicate directive — browsers use only the first one.
+      deprecated: Deprecated directive; browsers ignore it.
+      unknown: Unknown directive (typo?) — browsers ignore it.
+      noScriptSrc: Neither script-src nor default-src is set, so any script may run.
+      unsafeInline: "'unsafe-inline' allows inline scripts, so injected markup can run — use nonces or hashes."
+      unsafeInlineFallback: "'unsafe-inline' is ignored because a nonce or hash is present (fallback for old browsers)."
+      unsafeEval: "'unsafe-eval' allows eval() and similar; avoid it if you can."
+      unsafeHashes: "'unsafe-hashes' allows inline event handlers that match a hash."
+      strictDynamicNoNonce: "'strict-dynamic' without a nonce or hash blocks all scripts."
+      strictDynamicHosts: "Host and scheme sources are ignored because of 'strict-dynamic' (fallback for old browsers)."
+      scriptWildcard: 'Allows scripts from anywhere ({detail}).'
+      bypassHost: 'These hosts serve JSONP or AngularJS that can bypass an allowlist: {detail}.'
+      selfOnly: "Only 'self' — safe as long as no user-controlled files are served from your origin."
+      insecureSource: 'Loads over plain http: {detail}.'
+      objectSrc: "object-src is not 'none': plugins (Flash, Java) could load content. Set object-src 'none'."
+      baseUri: "No base-uri: an injected base tag can redirect relative script URLs. Set base-uri 'none' or 'self'."
+      frameAncestors: No frame-ancestors — the page can be framed (clickjacking) unless X-Frame-Options is set.
+      formAction: No form-action — injected forms can post anywhere.
+      noReporting: No report-to or report-uri, so violations are not reported to you.
+      weakNonce: 'Nonce {detail} is short — use at least 128 random bits, new for every response.'
+  cert-chain-validator:
+    title: Certificate chain validator
+    description: Paste a certificate chain and check its order, signatures and trust — missing intermediates are fetched from the issuer URL (AIA), so you see exactly what the server should send.
+    pem: Certificates (PEM, leaf first)
+    found: '{n} certificate(s) found.'
+    host: Host name to check (optional)
+    run: Validate
+    expired: expired
+    fetched: Fetched (AIA)
+    pasted: 'Pasted #{n}'
+    hostOk: 'The certificate is valid for {host}.'
+    hostBad: 'The certificate is not valid for {host}.'
+    extra: 'Not part of the path (can be removed): {names}'
+    verdict:
+      ok: The chain is complete, in the right order and trusted.
+      unordered: The chain is complete and trusted, but not in the right order (leaf first, then each issuer). Most clients cope; some do not.
+      incomplete: The chain is trusted only after fetching a missing intermediate. Browsers may cope, but many other clients (curl, Java, mail servers) will fail — add the intermediate to the server's chain.
+      untrusted: 'The chain is not trusted: {error}'
+    roles:
+      leaf: Leaf
+      intermediate: Intermediate
+      root: Root
+      extra: Extra
+    columns:
+      role: Role
+      subject: Subject
+      expires: Expires
+      source: Source
+      signature: Signed by next
+  pkcs12-inspector:
+    title: PKCS#12 / PFX inspector
+    description: Open a .p12 / .pfx bundle in your browser — certificates, private key and whether they match, friendly names, and the encryption and MAC algorithms (legacy ones flagged).
+    upload: Choose .p12 / .pfx file
+    password: Password
+    run: Open
+    note: The file and password never leave your browser.
+    protection: Protection
+    legacy: This bundle uses legacy algorithms (RC2, 3DES or a SHA-1 MAC). OpenSSL 3 needs -legacy to read it, and current Windows and macOS versions may refuse it; re-export with AES-256 and SHA-256.
+    selfSigned: self-signed
+    certificate: 'Certificate {n}'
+    key: 'Private key {n}'
+    matches: 'Matches certificate {n}'
+    noMatch: Matches none of the certificates
+    showKey: Show private key
+    hideKey: Hide private key
+    copyCerts: Copy certificates (PEM)
+    downloadCerts: Download certificates.pem
+    errors:
+      password: Wrong password (or the MAC does not verify).
+      invalid: This is not a PKCS#12 / PFX file.
+    fields:
+      subject: Subject
+      issuer: Issuer
+      valid: Valid
+      friendlyName: Friendly name
+      localKeyId: Local key ID
+      encryption: Encryption
+      type: Key type
+      matches: Certificate
+  lab-ca-generator:
+    title: Lab CA & certificate generator
+    description: Create your own root CA and a server certificate (with SANs for names and IP addresses) for a homelab or test network — generated in the browser, ready for nginx, Proxmox or a NAS.
+    newCa: New CA
+    existingCa: Use my existing CA
+    caCertPem: CA certificate (PEM)
+    caKeyPem: CA private key (PEM, PKCS#8 "BEGIN PRIVATE KEY")
+    caErrors:
+      ca-cert: The CA certificate could not be read.
+      ca-key: The private key could not be read (PKCS#8 PEM, unencrypted).
+      ca-mismatch: The private key does not belong to this CA certificate.
+      ca-not-ca: This certificate is not a CA (basicConstraints CA:false).
+    ca: Certificate authority
+    caName: CA name
+    invalidCa: Enter a name for the CA.
+    organization: Organization (optional)
+    keyType: Key type
+    caDays: CA validity (days)
+    server: Server certificate
+    serverName: Server name
+    invalidName: Enter a host name (wildcard allowed) or IP address.
+    serverDays: Validity (days)
+    sans: Extra names and IP addresses (optional)
+    invalidSan: Use host names or IP addresses, separated by commas or spaces.
+    clientAuth: Also usable as client certificate (clientAuth)
+    run: Generate
+    download: Download
+    note: 'Keys are generated with WebCrypto in your browser and never sent anywhere. Browsers accept at most 398 days for public certificates; for your own CA, 825 days is a common choice.'
+    keep: Keep ca.key private and offline — anyone who has it can issue certificates your devices trust. This tool stores nothing.
+    install: 'Install ca.crt as a trusted root on your devices (Windows: certmgr, macOS: Keychain Access, Linux: /usr/local/share/ca-certificates + update-ca-certificates, Firefox: its own certificate store), then configure the server with the .crt (or fullchain.pem) and .key.'
+    keys:
+      ecdsa-p256: ECDSA P-256 (recommended)
+      ecdsa-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096 (slow)
+    files:
+      caCert: CA certificate
+      caKey: CA private key
+      serverCert: Server certificate
+      serverKey: Server private key
+      fullchain: Full chain (server + CA)
+  bgp-route-history:
+    title: BGP route history & visibility
+    description: Which ASNs announced a prefix over the years, and how many RIS full-table peers see it right now — spot hijacks, MOAS and partial visibility.
+    resource: Prefix or IP address
+    invalid: Enter a prefix such as 193.0.0.0/21 or an IP address.
+    run: Look up
+    now: now
+    visibility: 'Visible to {seeing} of {total} RIS full-table peers (IPv{family}): {pct} %'
+    visibilityLabel: Visibility
+    origins: 'Origins since {from}'
+    collectors: RIS route collectors
+    verdict:
+      none: Not announced right now — no origin AS is seen at the moment.
+      single: Announced by one origin AS.
+      moas: 'Announced by {n} origin ASes at the same time (MOAS) — normal for anycast set-ups, otherwise a possible hijack or leak.'
+    columns:
+      name: Name
+      prefix: Prefix
+      period: Seen
+      peers: Max peers
+      collector: Collector
+      where: Location
+      seeing: Full-table peers seeing it
+  asn-neighbour-graph:
+    title: ASN neighbour graph
+    description: Upstreams (transit) and downstreams (customers) of an autonomous system as a graph, with names — click a neighbour to move through the internet.
+    run: Draw
+    graph: Neighbour graph
+    upstreams: Upstreams (transit)
+    downstreams: Downstreams (customers)
+    upstream: Upstream
+    downstream: Downstream
+    uncertain: Uncertain
+    all: All neighbours
+    summary: '{up} upstreams, {down} downstreams, {unsure} uncertain (RIPEstat, by BGP path power). The graph shows the {shown} strongest of each side.'
+    columns:
+      name: Name
+      rel: Relation
+      power: Power
+  common-ixps:
+    title: Common IXPs & facilities
+    description: Where can two networks peer? Internet exchanges and colocation facilities both are present at, with port speeds and route-server use (PeeringDB).
+    a: First network (ASN)
+    b: Second network (ASN)
+    run: Compare
+    title2: '{a} and {b}'
+    summary: '{ixs} common exchange(s) and {facs} common facility/facilities. Exchanges: {aIx} and {bIx}. Peering policy: {aPolicy} / {bPolicy}.'
+    ixs: Common exchanges
+    facilities: Common facilities (private interconnect possible)
+    noIx: No exchange in common.
+    noFac: No facility in common.
+    notFound: 'AS{asn} has no PeeringDB record.'
+    columns:
+      ix: Exchange
+      rs: Both on route servers
+      facility: Facility
+      where: Location
+  roa-coverage:
+    title: ROA coverage per ASN
+    description: RPKI route origin validation for every prefix an AS announces, its ROAs (unused or with too long a maxLength) and minimal ROAs to create for uncovered prefixes.
+    run: Check
+    coverage: RPKI coverage
+    summary: '{pct} % RPKI-valid: {valid} valid, {invalid} invalid, {notFound} without ROA (of {total} announced prefixes).'
+    invalidWarning: '{n} prefix(es) are RPKI-invalid: networks that drop invalids (most large ones) will not reach them. Fix the ROA or the announcement.'
+    uncheckedNote: '{n} prefix(es) were not checked to stay within the RIPEstat request budget.'
+    source: 'ROAs from the RIPEstat validator ({validator}), generated {time}.'
+    suggest: Suggested ROAs
+    suggestHelp: 'Create these ROAs (at your RIR) for the prefixes without one. They use maxLength = announced length, as RFC 9319 recommends.'
+    roas: 'ROAs of this AS ({n})'
+    unused: Not announced (stale?)
+    loose: maxLength longer than announced (RFC 9319 advises minimal ROAs)
+    status:
+      valid: Valid
+      invalid: Invalid
+      not-found: No ROA
+      unchecked: Not checked
+    reason:
+      length: longer than maxLength
+      asn: ROA for another AS
+    columns:
+      prefix: Prefix
+      status: RPKI status
+      roa: Matching ROA
+      ta: Trust anchor
+      note: Note
+  sla-calculator:
+    title: SLA & uptime calculator
+    description: How much downtime does 99.9 % allow per day, month or year? Convert both ways and combine the availability of components in series or redundant in parallel.
+    sla: Availability (%, or e.g. "4 nines")
+    invalid: Enter a percentage between 0 and 100, or a number of nines.
+    downtimeTitle: Allowed downtime
+    period: Period
+    allowed: Allowed downtime
+    achievedTitle: Availability from downtime
+    downMinutes: Downtime (minutes)
+    compositeTitle: Combined availability
+    components: Availability of each component (%)
+    series: In series (all needed)
+    parallel: Redundant (one is enough)
+    combined: Combined
+    ninesUnit: nines
+    compositeHelp: 'In series, a chain is less available than its weakest link (multiply). Redundant components fail only when all fail at once — assuming independent failures, which shared power, software or people often break.'
+    periods:
+      day: day
+      week: week
+      month: month
+      quarter: quarter
+      year: year
+  voip-bandwidth-calculator:
+    title: VoIP bandwidth & Erlang calculator
+    description: Bandwidth per call for G.711, G.729, Opus and more with all header overhead, and how many channels a SIP trunk needs for your busy hour (Erlang B).
+    bandwidth: Bandwidth per call
+    codec: Codec
+    link: Link layer
+    ptime: Packetization (ms)
+    calls: Simultaneous calls
+    overhead: overhead
+    note: Per direction. Headers counted are RTP (12 B), UDP (8 B), IPv4 (20 B) or IPv6 (40 B), the SRTP authentication tag (10 B), 802.1Q (4 B) and the link layer. Voice activity detection and RTCP are not included.
+    erlang: Trunk sizing (Erlang B)
+    bhca: Calls in the busy hour
+    avg: Average call (minutes)
+    gos: Allowed blocking (%)
+    links:
+      ethernet: Ethernet (incl. preamble and gap, 38 B)
+      ethernet-no-phy: Ethernet frame only (18 B)
+      ppp: PPP (7 B)
+      none: Layer 3 only
+    fields:
+      payload: Voice payload per packet
+      packet: Packet size on the wire
+      pps: Packets per second
+      perCall: Bandwidth per call
+      total: All calls
+      erlangs: Busy-hour traffic
+      channels: Channels needed
+      blocking: Blocking with that many channels
+      trunkBw: Trunk bandwidth (per direction)
+  packet-decoder:
+    title: Packet decoder
+    description: Paste a hex dump (Wireshark hex stream, tcpdump -XX, hexdump or xxd) and see every layer decoded — Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP and DNS.
+    hex: Packet bytes (hex)
+    bytes: '{n} bytes'
+    invalid: No hex bytes recognised yet.
+    start: First layer
+    truncated: 'The packet ends early: {detail}.'
+    offset: 'Offset {offset}, {length} bytes'
+    starts:
+      auto: Detect (Ethernet, IPv4 or IPv6)
+      ethernet: Ethernet
+      ipv4: IPv4
+      ipv6: IPv6
+      sll: Linux cooked capture (tcpdump -i any)
+      sll2: Linux cooked capture v2
+  pcap-viewer:
+    title: Pcap viewer
+    description: Open a small pcap or pcapng capture in your browser — packet list with filter, protocols, conversations, DNS queries and every layer of a packet decoded.
+    upload: Choose .pcap / .pcapng file
+    note: 'The file is read in your browser and never uploaded. Up to 100 MB and 200,000 packets; Ethernet, raw IP and Linux cooked captures (tcpdump -i any).'
+    summary: Capture
+    limited: 'only the first {max} are read'
+    filter: Filter (address, protocol or text)
+    firstRows: 'Showing the first {n} of {total} matching packets.'
+    details: Packet details
+    packetNo: Packet number
+    noDns: No DNS queries in this capture.
+    errors:
+      format: This is not a pcap or pcapng file.
+      too-big: The file is larger than 100 MB.
+      linktype: 'The capture uses a link type this viewer cannot decode (supported: Ethernet, raw IP, Linux cooked, loopback).'
+    tabs:
+      packets: Packets
+      protocols: Protocols
+      conversations: Conversations
+      dns: DNS queries
+    columns:
+      file: File
+      packets: Packets
+      bytes: Bytes
+      duration: Duration
+      time: Time (s)
+      src: Source
+      dst: Destination
+      protocol: Protocol
+      len: Length
+      info: Info
+      query: Query
+  dns-proxy-check:
+    title: DNS hijack & proxy check
+    description: Does the DNS on this network differ from public DNS (filtering, NXDOMAIN hijacking), and is there an HTTP proxy between your browser and this server that adds or changes headers?
+    run: Run checks
+    note: 'The NET-TOOLS server resolves a few names (and one random name that cannot exist) with its own resolver, and your browser asks Cloudflare DNS over HTTPS for the same names. Your browser also sends a random marker header to the server, which reports back what arrived. The DNS part shows the server''s network — in a homelab usually the same resolver as yours.'
+    dns: DNS
+    proxy: HTTP proxy between browser and server
+    dohBlocked: Your browser could not reach Cloudflare DNS over HTTPS (blocked or offline), so only the server's answers are shown.
+    proxyError: The server's echo endpoint could not be reached.
+    dnsVerdict:
+      nx-hijack: 'NXDOMAIN hijacking: the resolver returns an address for a name that does not exist (typical for ISP "search" redirects or some DNS filters).'
+      blocked: Some names are blocked by the resolver (no answer or a sinkhole address such as 0.0.0.0) — a DNS filter such as Pi-hole, or a censored network.
+      differ: The resolver gives different addresses than public DNS — normal for CDNs and geo-DNS, suspicious only for names with fixed addresses.
+      clean: The resolver answers like public DNS, and non-existent names stay non-existent.
+    verdicts:
+      match: Same answer
+      differ: Different addresses
+      blocked: Blocked
+      nx-hijack: Hijacked (should not exist)
+      ok-nx: Does not exist (correct)
+      error: Lookup failed
+    findings:
+      clean: No proxy seen — the request arrived unchanged (apart from this server's own reverse proxy).
+      marker-missing: The marker header was removed on the way — a proxy filters request headers.
+      marker-changed: 'The marker header was changed on the way (now {detail}).'
+      ua-changed: 'The User-Agent was changed on the way (server saw: {detail}).'
+      proxy-header: 'A proxy added a header: {detail}.'
+      extra-hops: 'The request passed another proxy in front of this server ({detail}) — expected when NET-TOOLS runs behind a reverse proxy such as Traefik or Caddy.'
+    columns:
+      name: Name
+      server: Server resolver
+      pub: Public DNS (DoH, from your browser)
+      verdict: Result

@@ -99,6 +99,22 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/dns/dnssec` | `name` | dns.dnssec |
 | GET | `/api/v1/dns/consistency` | `zone` | dns.consistency |
 | GET | `/api/v1/dns/caa` | `name` | dns.caa |
+| GET | `/api/v1/dns/dns64` | `resolver?` | dns.dns64 |
+| GET | `/api/v1/dns/open-resolver` | `server` | dns.openresolver |
+| GET | `/api/v1/dns/ptr-scan` | `prefix (≤256 addresses), resolver?` | dns.ptrscan |
+| GET | `/api/v1/dns/svcb` | `name, type=HTTPS\|SVCB, resolver?` | dns.svcb |
+| GET | `/api/v1/dns/edns-compliance` | `zone, server?` | dns.ednscomp |
+| GET | `/api/v1/tls/dane` | `host, service=smtp\|https, port?, resolver?` | tls.dane |
+| POST | `/api/v1/tls/chain-validate` | `{pem, host?}` (≤128 KiB, ≤12 certificates) | tls.chain |
+| GET | `/api/v1/email/smtp-banner` | `host` | email.banner |
+| GET | `/api/v1/http/cdn` | `url` | web.cdn |
+| GET | `/api/v1/http/cache` | `url` | web.cache |
+| GET | `/api/v1/http/mixed-content` | `url` | web.mixed |
+| GET | `/api/v1/ip/country-blocks` | `country, family=all\|4\|6` | ip.country |
+| GET | `/api/v1/bgp/route-history` | `resource` (prefix or IP) | bgp.history |
+| GET | `/api/v1/bgp/neighbours/{asn}` | — | bgp.graph |
+| GET | `/api/v1/bgp/roa-coverage/{asn}` | — | bgp.roacoverage |
+| GET | `/api/v1/peeringdb/common` | `a, b` (ASNs) | bgp.common |
 | GET | `/api/v1/dns/axfr` | `zone` | dns.axfr |
 | GET | `/api/v1/dns/benchmark/stream` | `resolvers`, `queries` | dns.benchmark |
 | GET | `/api/v1/dns/encrypted` | `endpoint`, `transport=dot`, `name=example.com`, `type?`, `count=3` | dns.encrypted |
@@ -219,3 +235,5 @@ renders `line` events, tool components render typed events. Local and Globalping
 | Cloud IP ranges, Tor exit list | refreshed every 24 h / 1 h in background |
 | GeoIP mmdb | file reload on change |
 | DNS / ping / traceroute | never cached |
+
+| POST | `/api/v1/geo/batch` | `{ips}` (≤64) | rep.geo |

@@ -87,6 +87,15 @@ Fixed limits for tools that follow data from third parties (not configurable):
 | Open relay test (EM-09) | Opt-in (`OPEN_RELAY_TEST_ENABLED`, off by default); ports 25/587/2525; 5 MAIL/RCPT attempts with RFC 2606 addresses, each followed by RSET — DATA is never sent; same read caps as EM-01; 30 s total |
 | WHOIS (BGP-06) | 3 referrals, ports 43 and 4321 only, 256 KiB per answer, 10 s per server |
 | RDAP / providers | `netx.PolicyClient`: policy on every dial incl. bootstrap targets and redirects, 5 MiB body (a request may raise it to at most 32 MiB via `netx.WithBodyLimit`; only the Azure Service Tags list does, to 16 MiB) |
+| Open resolver test (DNS-15) | One recursive query; only when answered, one `. DNSKEY` query to measure amplification; UDP without TCP fallback, 3 s |
+| Reverse DNS coverage (DNS-16) | At most 256 addresses (/24 or /120), 16 lookups in parallel; private prefixes follow the target policy |
+| EDNS compliance (DNS-18) | At most 6 nameservers of the zone, 9 SOA queries each, no recursion |
+| DANE (TLS-12) | At most 4 MX hosts; one STARTTLS / TLS handshake per host to a policy-checked address |
+| SMTP banner (EM-10) | One SMTP session (banner, EHLO, optional STARTTLS, QUIT) with the EM-01 read caps |
+| Chain validator (TLS-13) | 128 KiB PEM, 12 certificates; at most 4 AIA downloads of 64 KiB each through `netx.PolicyClient` |
+| HTTP tools (WEB-05, 16-18) | Same fetch path and `HTTP_MAX_BODY_BYTES` as WEB-01; the HTTP/3 request is dialed to the policy-checked address only |
+| RIPEstat / PeeringDB tools (IP-23, BGP-13..16) | Provider client and cache; ROA coverage makes at most 40 per-prefix validation calls, 6 in parallel |
+| Geolocation batch (`/geo/batch`) | 64 addresses per request; private addresses are not looked up |
 
 Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immediate peer is in
 `TRUSTED_PROXIES` (default: the `web` container network).
@@ -95,6 +104,8 @@ Client IP for rate limiting comes from `X-Forwarded-For` **only if** the immedia
 
 `api`:
 - `cap_drop: [ALL]`, `cap_add: [NET_RAW]` (ICMP/traceroute). The `lan` profile needs nothing more:
+  Browser-only tools that handle secrets (PKCS#12 inspector, lab CA generator) never send files,
+  passwords or keys to the server.
   ARP scan, the DHCP / DHCPv6 probes and LLDP / CDP listening use AF_PACKET sockets and the NDP scan
   a raw ICMPv6 socket, which `NET_RAW` covers; `NET_ADMIN` is never added. Capture sockets carry a
   kernel BPF filter (only LLDP/CDP frames, or only UDP from port 547) and join just the needed
@@ -145,6 +156,9 @@ reverse proxy (Authelia, oauth2-proxy, Cloudflare Access, Tailscale). Optional b
 
 - Pin base images by digest in release builds; Renovate/Dependabot enabled.
 - CI: `go vet`, `golangci-lint`, `govulncheck`, `pnpm audit --prod`, Trivy image scan, SBOM (syft).
+- Audit exceptions live in `pnpm-workspace.yaml` (`auditConfig.ignoreGhsas`), each with its reason;
+  currently GHSA-86w9-cpqp-85rv (node-forge RSA signature verification, unused: the PKCS#12
+  inspector only decrypts in the browser; no patched release yet).
 
 ## 10. `/security-review` checklist (run before merging any server tool)
 

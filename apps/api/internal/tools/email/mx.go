@@ -57,6 +57,7 @@ type SMTPProbe struct {
 	Connected  bool          `json:"connected"`
 	ConnectMs  float64       `json:"connectMs"`
 	Banner     string        `json:"banner"`
+	Greeting   string        `json:"greeting"`
 	Extensions []string      `json:"extensions"`
 	StartTLS   bool          `json:"starttls"`
 	TLS        *tlsx.Session `json:"tls"`
@@ -207,6 +208,7 @@ func ProbeSMTP(ctx context.Context, addr, mxName string) SMTPProbe {
 		p.Error = "EHLO rejected"
 		return p
 	}
+	p.Greeting = ext[0]
 	if len(ext) > 1 {
 		p.Extensions = ext[1:]
 	}

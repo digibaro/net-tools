@@ -161,6 +161,10 @@ ping:
   interval: Interval (ms)
   run: Starten
 trace:
+  asPath: 'AS-pad:'
+  map: 'Route van de trace over {n} gelokaliseerde hops'
+  mapLocal: Te weinig hops konden worden gelokaliseerd voor een kaart (privéadressen of geen geolocatiegegevens).
+  mapRetry: Kaart opnieuw proberen
   protocol: Protocol
   cycles: Cycli
   hops: 'Hops ({count})'
@@ -2017,10 +2021,13 @@ tools:
       unsigned: Niet met PGP ondertekend (optioneel, maar zo kunnen onderzoekers het controleren).
   http-protocols:
     title: HTTP/2- & HTTP/3-controle
-    description: Spreekt een site HTTP/2 en HTTP/3? Controleert ALPN en de Alt-Svc-header en doet een echte QUIC-handshake.
+    description: Spreekt een site HTTP/2 en HTTP/3? Controleert ALPN en Alt-Svc, doet een echte QUIC-handshake en HTTP/3-request, en test 0-RTT-hervatting.
     run: Controleren
     httpsOnly: HTTP/2 en HTTP/3 hebben een https://-URL nodig.
     h3ok: 'QUIC-handshake op UDP-poort {port} in {ms} ms ({version})'
+    h3req: 'HTTP {status} via HTTP/3, eerste byte na {ms} ms'
+    h3reqFail: 'QUIC werkt, maar het HTTP/3-request mislukte: {error}'
+    resumed: 'Hervat: {resumed} · 0-RTT geaccepteerd: {zeroRtt} (herhaald request: eerste byte na {ms} ms)'
     notAdvertised: HTTP/3 werkt, maar wordt niet in Alt-Svc aangekondigd, dus browsers gebruiken het niet.
     advertisedBroken: Alt-Svc kondigt HTTP/3 aan, maar de QUIC-handshake vanaf deze server is mislukt (UDP kan aan een van beide kanten geblokkeerd zijn).
     fields:
@@ -2028,6 +2035,9 @@ tools:
       used: Gebruikte versie voor een verzoek
       altSvc: Alt-Svc
       http3: HTTP/3 (QUIC)
+      h3request: HTTP/3-request
+      resumption: Sessiehervatting
+      ttfbTcp: Eerste byte via TCP
       address: Adres
   starttls-check:
     title: STARTTLS-controle
@@ -2722,3 +2732,715 @@ tools:
       search: Zoekdomeinen
       preference: Voorkeur
       status: Status
+  ipv6-address-analyzer:
+    title: IPv6-adresanalyse
+    description: Alles over één IPv6-adres — type en scope, hoe de interface-ID is gevormd (EUI-64 met MAC, privacy, ISATAP), ingebed IPv4, solicited-node-groep en reverse naam.
+    input: IPv6-adres
+    invalid: Voer een IPv6-adres in, bijv. 2001:db8::1 (een zone of /prefix wordt genegeerd).
+    permanent: Geen (permanente, bekende groep)
+    macLocal: lokaal beheerd
+    eui64Warning: Deze interface-ID is afgeleid van het MAC-adres (EUI-64), zodat het apparaat over netwerken heen te volgen is. Hosts geven meestal de voorkeur aan privacy- of stable-opaque-adressen (RFC 4941 / 7217).
+    fields:
+      compressed: Verkort
+      expanded: Uitgeschreven
+      type: Type
+      scope: Scope
+      reachable: Wereldwijd bereikbaar
+      flags: Multicastvlaggen
+      prefix64: /64-prefix
+      iid: Interface-ID
+      mac: MAC-adres (uit EUI-64)
+      isatap: ISATAP-IPv4
+      solicited: Solicited-node-multicast
+      arpa: Reverse-DNS-naam
+      binary: Binair
+    scopes:
+      interface: Interface-lokaal
+      link: Link-lokaal
+      realm: Realm-lokaal
+      admin: Admin-lokaal
+      site: Site-lokaal
+      organization: Organisatie-lokaal
+      global: Wereldwijd
+      host: Host (loopback)
+      none: Geen (ongespecificeerd)
+    iid:
+      eui64: EUI-64, afgeleid van een MAC-adres
+      isatap: ISATAP (bevat een IPv4-adres)
+      low: Laag / handmatig toegekend
+      random: Willekeurig (privacy of stable-opaque, RFC 4941 / 7217)
+      zero: Allemaal nullen (subnet-router-anycast)
+  ipam-sheet:
+    title: IP-adresplan (IPAM-sheet)
+    description: Plan de subnetten van een IPv4- of IPv6-blok met namen, VLAN's en notities — vaste netwerken blijven staan, de rest wordt first-fit toegewezen; download het plan als CSV.
+    block: Adresblok
+    invalidBlock: Voer een netwerk in CIDR-notatie in, bijv. 10.10.0.0/22 of 2001:db8:100::/56.
+    plan: Subnetten (één per regel)
+    planPlaceholder: 'Naam, VLAN, grootte, vast netwerk, notitie'
+    help: 'Eén subnet per regel: naam, VLAN, grootte, optioneel vast netwerk, optioneel notitie (gescheiden door komma, tab, ; of |). Grootte is een prefix (/24) of een aantal hosts (200 hosts). Vaste netwerken worden eerst geplaatst; de andere worden first-fit in de opgegeven volgorde toegewezen. Regels die met # beginnen worden genegeerd.'
+    tooMany: 'Maximaal {max} subnetten per plan.'
+    result: 'Plan voor {block}'
+    someErrors: '{n} regel(s) konden niet worden geplaatst — zie de statuskolom.'
+    used: '{used} van {total} adressen toegewezen ({pct} %)'
+    free: 'Vrije blokken ({n})'
+    fixed: Vast
+    auto: Toegewezen
+    errors:
+      size: Onbekende grootte
+      fixed: Ongeldig vast netwerk
+      version: Verkeerde IP-versie
+      outside: Buiten het blok
+      overlap: Overlapt een ander subnet
+      no-space: Past niet
+    columns:
+      name: Naam
+      cidr: Subnet
+      gateway: Gateway (eerste adres)
+      range: Bruikbaar bereik
+      mask: Netmasker
+      usable: Bruikbaar
+      status: Status
+      note: Notitie
+  nat64-dns64-check:
+    title: NAT64- / DNS64-controle
+    description: Maakt een resolver IPv6-adressen aan voor namen met alleen IPv4 (DNS64), en welke NAT64-prefix gebruikt hij? Prefixdetectie volgens RFC 7050.
+    resolver: Resolver (optioneel)
+    resolverPlaceholder: leeg = de resolver van de server, of bijv. 2001:4860:4860::6464
+    invalidResolver: Voer een IP-adres in (eventueel met :poort), of laat leeg voor de resolver van de server.
+    run: Controleren
+    note: Vraagt het AAAA-record op van ipv4only.arpa, een naam met alleen IPv4-adressen (192.0.0.170 en .171). Elk IPv6-antwoord is dus gesynthetiseerd, en de plaats van het IPv4-adres erin verraadt de NAT64-prefix en de lengte daarvan (RFC 6052).
+    verdict:
+      wellKnown: 'DNS64 is actief met de bekende NAT64-prefix {prefix}.'
+      networkSpecific: 'DNS64 is actief met de netwerkspecifieke NAT64-prefix {prefix}.'
+      none: Geen DNS64 — deze resolver geeft geen gesynthetiseerde IPv6-adressen voor namen met alleen IPv4.
+    fields:
+      resolver: Resolver
+      prefixes: NAT64-prefix
+      synthesized: Gesynthetiseerde AAAA
+      ipv4: A-records van ipv4only.arpa
+      rcode: Antwoordcode
+  country-ip-blocks:
+    title: IP-blokken per land
+    description: Alle IPv4- en IPv6-blokken die aan een land zijn uitgegeven, samengevoegd tot de kortste prefixlijst — als lijst, Cisco- of Juniper-prefix-list, nginx, ipset of MikroTik-address-list.
+    country: Landcode
+    invalid: Gebruik een landcode van twee letters (ISO 3166), bijv. NL, BE, DE.
+    family: Adresfamilie
+    both: IPv4 + IPv6
+    run: Blokken ophalen
+    format: Uitvoerformaat
+    output: Prefixlijst
+    v4Summary: '{prefixes} prefixen (uit {entries} registraties), {addresses} adressen'
+    v6Summary: '{prefixes} prefixen (uit {entries} registraties), {n48} × /48'
+    source: 'RIR-uitgiftegegevens via RIPEstat, {time}. Land van registratie, niet waar de adressen worden gebruikt — zie voor geolocatie de tool IP-geolocatie.'
+    fields:
+      country: Land
+      ipv4: IPv4
+      ipv6: IPv6
+      asns: Autonome systemen
+      source: Bron
+    formats:
+      plain: Gewone lijst
+      cisco: Cisco-prefix-list
+      juniper: Juniper-prefix-list
+      nginx: nginx deny
+      ipset: Linux ipset (restore)
+      mikrotik: MikroTik-address-list
+  open-resolver-test:
+    title: Open-resolvertest
+    description: Beantwoordt een DNS-server recursieve vragen van iedereen? Open resolvers worden misbruikt voor DDoS-amplificatie — de amplificatiefactor wordt ook getoond.
+    server: DNS-server (IP of hostnaam)
+    invalid: Voer een IP-adres of hostnaam in, eventueel met :poort.
+    run: Testen
+    note: Stuurt vanaf de NET-TOOLS-server één recursieve vraag voor example.com. Wordt die beantwoord, dan meet een DNSSEC-vraag naar de rootsleutels hoeveel groter het antwoord is dan de vraag. Publieke resolvers zoals 9.9.9.9 zijn bewust open (met rate limiting); je eigen servers horen dat niet te zijn.
+    verdict:
+      open: Open resolver — deze server zoekt namen op voor iedereen op internet. Beperk recursie tot je eigen netwerken, tenzij het een publieke DNS-dienst is.
+      closed: Geen open resolver — de server antwoordt, maar zoekt geen namen voor ons op.
+      silent: Geen antwoord — de server reageert op dit adres niet op DNS (gefilterd of geen DNS-server).
+    amplificationValue: '{factor}× ({req} → {resp} bytes voor {query})'
+    fields:
+      server: Server
+      rcode: Antwoordcode
+      ra: Recursie beschikbaar
+      answers: Antwoordrecords
+      rtt: Responstijd
+      amplification: Amplificatie
+  ptr-coverage:
+    title: Reverse-DNS-dekking
+    description: PTR-records voor elk adres in een /24 (of IPv6 /120), met forward-bevestiging (FCrDNS) — vind ontbrekende of verouderde reverse DNS voordat mailservers dat doen.
+    prefix: Prefix (maximaal 256 adressen)
+    invalid: Voer een IPv4-prefix van /24 of kleiner in, een IPv6-prefix van /120 of kleiner, of één adres (de /24 daarvan wordt gescand).
+    run: Scannen
+    onlyNamed: Alleen adressen met een PTR-record
+    summary: '{prefix}: {ptr} van {total} met PTR, {confirmed} forward-bevestigd'
+    status:
+      confirmed: Forward-bevestigd
+      mismatch: Naam verwijst niet terug
+      none: Geen PTR
+      error: Opzoeken mislukt
+    columns:
+      ip: Adres
+      names: PTR-naam
+      status: FCrDNS
+      rcode: Antwoord
+  svcb-https-viewer:
+    title: HTTPS- / SVCB-record & ECH-viewer
+    description: Ontleed HTTPS- en SVCB-records (RFC 9460) — ALPN (HTTP/3), adreshints, poort en Encrypted Client Hello-configuraties — met volgen van aliasrecords.
+    name: Naam
+    type: Recordtype
+    run: Opzoeken
+    ddr: DoH/DoT van de resolver ontdekken (DDR)
+    none: 'Geen {type}-record voor {name} ({rcode}).'
+    sameName: Dezelfde naam (.)
+    ech: Encrypted Client Hello-configuraties
+    modes:
+      alias: Aliasmodus (verwijst naar een andere naam)
+      service: Servicemodus
+    fields:
+      mode: Modus
+      target: Doel
+    columns:
+      configId: Config-ID
+      publicName: Publieke naam
+      suites: Cipher suites (KDF / AEAD)
+      maxName: Max. naamlengte
+  edns-compliance:
+    title: EDNS-compliancetest
+    description: Test de autoritatieve nameservers van een zone zoals ISC's ednscomp dat doet — onbekende EDNS-versies, -opties en -vlaggen, DNSSEC OK, TCP — om servers te vinden die DNSSEC of grote antwoorden breken.
+    zone: Zone
+    server: Nameserver (optioneel)
+    serverPlaceholder: leeg = elke NS van de zone (maximaal 6)
+    run: Testen
+    note: 'Stuurt per nameserver negen SOA-vragen (IPv4) vanaf de NET-TOOLS-server, zonder recursie. Sinds DNS Flag Day 2019 werken resolvers niet meer om servers heen die EDNS verkeerd afhandelen.'
+    pass: Goed
+    fail: Fout
+    passed: '{n} van {total} tests geslaagd'
+    cookie: Ondersteunt DNS-cookies
+    grade:
+      ok: Conform
+      minor: Kleine problemen
+      broken: EDNS defect
+      unreachable: Onbereikbaar
+    checks:
+      dns: Gewone DNS (zonder EDNS)
+      edns: EDNS-versie 0
+      edns1: EDNS-versie 1 → BADVERS
+      ednsopt: Onbekende EDNS-optie genegeerd
+      edns1opt: Versie 1 + onbekende optie → BADVERS
+      do: DNSSEC OK-bit teruggegeven
+      ednsflags: Onbekende EDNS-vlag gewist
+      optlist: NSID, EXPIRE, COOKIE, ECS samen
+      tcp: EDNS via TCP
+    columns:
+      test: Test
+      result: Resultaat
+      detail: Detail
+  dane-checker:
+    title: DANE- / TLSA-controle
+    description: Controleer de TLSA-records van de MX-hosts van een maildomein (poort 25, STARTTLS) of een HTTPS-site tegen het certificaat dat de server echt toont, inclusief DNSSEC.
+    domain: Maildomein
+    host: Hostnaam
+    service: Dienst
+    smtp: Mail (MX, poort 25)
+    resolverPlaceholder: leeg = de resolver van de server (moet DNSSEC valideren)
+    run: Controleren
+    note: 'TLSA-records tellen alleen als ze met DNSSEC zijn ondertekend (RFC 7672), dus dit vraagt een validerende resolver: zijn AD-vlag beslist. Veel hostingnetwerken blokkeren uitgaand poort 25; het TLSA-deel werkt dan nog wel.'
+    dnssecYes: Ja (resolver valideerde, AD-vlag)
+    dnssecNo: Nee — niet ondertekend, of de resolver valideert niet
+    leaf: servercertificaat
+    matchCert: 'Komt overeen met {n}'
+    noMatch: Geen overeenkomst
+    verdict:
+      valid: 'DANE is geldig voor {input}: elke server toont een certificaat dat overeenkomt met de ondertekende TLSA-records.'
+      mismatch: 'DANE is defect voor {input}: een TLSA-record komt niet overeen met het certificaat — afzenders die DANE gebruiken weigeren af te leveren.'
+      insecure: 'Er zijn TLSA-records voor {input}, maar zonder DNSSEC-handtekening worden ze genegeerd.'
+      no-tlsa: 'Geen TLSA-records voor {input}: DANE wordt niet gebruikt.'
+      unreachable: Een server kon niet worden gecontroleerd.
+    hostVerdict:
+      valid: Geldig
+      mismatch: Komt niet overeen
+      insecure: Niet DNSSEC-ondertekend
+      no-tlsa: Geen TLSA
+      unreachable: Onbereikbaar
+    fields:
+      tlsaName: TLSA-naam
+      dnssec: DNSSEC
+      address: Gecontroleerd adres
+      tls: TLS
+      webpki: Geldig WebPKI-certificaat
+    columns:
+      params: Usage Selector Matching
+      data: Associatiedata
+      match: Resultaat
+  smtp-banner-check:
+    title: SMTP-banner- & FCrDNS-controle
+    description: Kloppen de reverse DNS, de SMTP-banner en de EHLO-naam van een mailserver met elkaar? Ontvangers weigeren of markeren mail van servers die hierop zakken.
+    host: Mailserver of maildomein
+    via: 'Mail voor {domain} wordt afgehandeld door {host} (MX met voorkeur).'
+    invalid: Voer een hostnaam of IP-adres in.
+    run: Controleren
+    blocked: Poort 25 was vanaf de NET-TOOLS-server niet bereikbaar (veel providers blokkeren die); alleen de DNS-controles zijn uitgevoerd.
+    grade:
+      good: 'Alle {total} controles geslaagd.'
+      issues: '{n} van {total} controles geslaagd — kleine problemen.'
+      bad: '{n} van {total} controles geslaagd — problemen met reverse DNS schaden de bezorging.'
+    checks:
+      ptr: Reverse DNS (PTR) bestaat
+      fcrdns: PTR-naam verwijst terug naar dit adres (FCrDNS)
+      banner: SMTP-banner ontvangen
+      bannerFqdn: Banner begint met een volledige hostnaam
+      bannerPtr: Hostnaam in de banner komt overeen met de PTR
+      ehloPtr: EHLO-naam komt overeen met de PTR
+      starttls: STARTTLS aangeboden
+      certificate: Certificaat geldig voor de hostnaam
+    columns:
+      check: Controle
+      detail: Waarde
+  cdn-waf-detector:
+    title: CDN- & WAF-detectie
+    description: Welk CDN, welke web application firewall, botbescherming en welk hostingplatform een site bedienen — herkend aan responseheaders, cookies, de CNAME-keten en het certificaat.
+    run: Detecteren
+    none: Geen bekend CDN, WAF of hostingplatform herkend — de site wordt misschien direct geserveerd, of door een dienst zonder herkenbare headers.
+    note: De detectie gebruikt publieke kenmerken; een WAF die zich verbergt wordt niet gezien. Gebruik voor de eigenaar van het adres IP naar ASN of de cloud-IP-lookup.
+    kinds:
+      cdn: CDN
+      waf: WAF
+      bot: Botbescherming
+      hosting: Hostingplatform
+      cache: Cache
+      tls: Certificaat
+    fields:
+      url: Uiteindelijke URL
+      address: Adres
+      cnames: CNAME-keten
+      server: Server-header
+      cacheStatus: Cachestatus
+      issuer: Uitgever certificaat
+  cache-header-analyzer:
+    title: Cacheheader-analyse
+    description: Hoe lang mogen browsers en CDN's een URL cachen? Verklaart Cache-Control, Expires, validators en Vary (RFC 9111) en herhaalt het request om 304-hervalidatie en cachehits te testen.
+    run: Analyseren
+    notCached: Niet opgeslagen
+    unknown: Geen levensduur (elke keer hervalideren)
+    noValidator: geen validator
+    repeatValue: '{sent} verstuurd → HTTP {status}, cache {cache}'
+    sources:
+      max-age: max-age
+      max-age_s-maxage: max-age, s-maxage voor gedeelde caches
+      expires: Expires-header
+      expires_s-maxage: Expires, s-maxage voor gedeelde caches
+      heuristic: Heuristiek (10 % van de tijd sinds Last-Modified)
+      heuristic_s-maxage: Heuristiek, s-maxage voor gedeelde caches
+      s-maxage: s-maxage (alleen gedeelde caches)
+      none: Geen
+    fields:
+      url: URL
+      browser: Levensduur in de browsercache
+      shared: Levensduur in CDN-/proxycache
+      source: Levensduur uit
+      cacheStatus: CDN-cachestatus
+      repeat: Voorwaardelijke herhaling
+    findings:
+      maxAgeZero: 'max-age=0: caches mogen het opslaan, maar moeten het vóór elk gebruik hervalideren.'
+      noStore: 'no-store: niets mag worden gecachet, ook niet door de browser.'
+      noCache: 'no-cache: mag worden opgeslagen, maar moet vóór elk gebruik bij de server worden gehervalideerd.'
+      noLifetime: Geen expliciete levensduur (max-age of Expires) — caches beslissen zelf.
+      heuristic: Alleen Last-Modified is gezet, dus caches schatten een levensduur (meestal 10 % van de leeftijd). Zet max-age expliciet.
+      private: 'private: alleen de browser mag dit cachen, geen CDN''s of proxy''s.'
+      publicPrivate: Zowel public als private zijn gezet — tegenstrijdig.
+      immutable: 'immutable: browsers hervalideren niet tijdens de levensduur, ook niet bij herladen.'
+      noValidators: Geen ETag of Last-Modified — verlopen kopieën kunnen niet goedkoop worden gehervalideerd (304) en worden opnieuw gedownload.
+      varyStar: 'Vary: * maakt het antwoord in feite oncachebaar voor gedeelde caches.'
+      varyFragment: 'Vary: {detail} splitst de cache per cookie of browser en verlaagt de hitrate.'
+      setCookieShared: Het antwoord zet een cookie maar mag door gedeelde caches worden opgeslagen — de cookie kan bij andere gebruikers terechtkomen. Voeg private of no-store toe.
+      pragmaOnly: 'Alleen het verouderde Pragma: no-cache is gezet; HTTP/1.1-caches gebruiken Cache-Control.'
+      expiresInvalid: 'Ongeldige Expires-waarde ({detail}): geldt als al verlopen.'
+      no304: 'Het herhaalde request met {detail} gaf geen 304 Not Modified, dus hervalidatie downloadt het volledige antwoord.'
+  mixed-content-checker:
+    title: Mixed-content-controle
+    description: Vind http://-scripts, -stylesheets, -frames, -afbeeldingen en -formulieren op een https-pagina — de oorzaak van een gebroken slotje of geblokkeerde paginadelen.
+    run: Controleren
+    note: Controleert de HTML zoals die geserveerd wordt (zonder JavaScript uit te voeren), inclusief srcset, inline styles en style-blokken. Inhoud die later door scripts wordt geladen, wordt niet gezien.
+    summary: '{url} — {resources} verwijzingen'
+    truncated: 'Alleen de eerste {bytes} bytes van de pagina zijn gecontroleerd.'
+    showLinks: 'Ook {n} gewone http://-links tonen (alleen navigatie, geen mixed content)'
+    verdict:
+      clean: Geen mixed content gevonden.
+      upgraded: 'Onveilige verwijzingen gevonden, maar de pagina zet upgrade-insecure-requests, dus browsers laden ze via https (als de hosts dat ondersteunen).'
+      passive: '{passive} onveilige verwijzing(en) naar afbeeldingen/media: browsers zetten ze om naar https of tonen ze met een waarschuwing.'
+      active: '{active} onveilige verwijzing(en) naar scripts/styles/frames en {forms} onveilig(e) formulier(en): browsers blokkeren deze, dus delen van de pagina werken niet.'
+    kinds:
+      active: Actief (geblokkeerd)
+      passive: Passief (afbeelding/media)
+      form: Formulier (onversleuteld verzonden)
+      link: Link
+    columns:
+      kind: Soort
+      element: Element
+  csp-builder:
+    title: CSP-bouwer & -evaluatie
+    description: Bouw een Content-Security-Policy met presets (strikt met nonce, allowlist, alles dicht), evalueer hem op XSS-omwegen en ontbrekende directives, en kopieer hem als header, nginx, Apache of meta-tag.
+    policy: Policy
+    help: "Directives worden gescheiden door ;. Met een nonce of hash negeren moderne browsers 'unsafe-inline' (het is een fallback voor oude); met 'strict-dynamic' worden host- en schemabronnen ook genegeerd. Vervang de plaatshouder RANDOM door een nieuwe nonce voor elke response."
+    nonce: Willekeurige nonce invoegen
+    evaluation: Evaluatie
+    directive: Directive
+    values: Bronnen
+    output: Uitvoer
+    format: Formaat
+    reportOnly: Report-only (monitoren, niet blokkeren)
+    metaNote: In een meta-tag werken frame-ancestors, report-to, report-uri en sandbox niet, en report-only kan niet.
+    presets:
+      strict: Strikt (nonce + strict-dynamic)
+      allowlist: Allowlist-start
+      lockdown: Alles dicht
+    outputs:
+      header: HTTP-header
+      nginx: nginx add_header
+      apache: Apache Header
+      meta: HTML-meta-tag
+    score:
+      good: Geen zwakke punten gevonden.
+      warn: De policy werkt, maar heeft zwakke punten.
+      bad: De policy houdt XSS niet betrouwbaar tegen.
+    findings:
+      empty: De policy is leeg.
+      duplicate: Dubbele directive — browsers gebruiken alleen de eerste.
+      deprecated: Verouderde directive; browsers negeren hem.
+      unknown: Onbekende directive (typfout?) — browsers negeren hem.
+      noScriptSrc: Er is geen script-src of default-src gezet, dus elk script mag draaien.
+      unsafeInline: "'unsafe-inline' staat inline scripts toe, dus geïnjecteerde markup kan draaien — gebruik nonces of hashes."
+      unsafeInlineFallback: "'unsafe-inline' wordt genegeerd omdat er een nonce of hash is (fallback voor oude browsers)."
+      unsafeEval: "'unsafe-eval' staat eval() en dergelijke toe; vermijd het als het kan."
+      unsafeHashes: "'unsafe-hashes' staat inline event-handlers toe die met een hash overeenkomen."
+      strictDynamicNoNonce: "'strict-dynamic' zonder nonce of hash blokkeert alle scripts."
+      strictDynamicHosts: "Host- en schemabronnen worden genegeerd vanwege 'strict-dynamic' (fallback voor oude browsers)."
+      scriptWildcard: 'Staat scripts van overal toe ({detail}).'
+      bypassHost: 'Deze hosts serveren JSONP of AngularJS waarmee een allowlist te omzeilen is: {detail}.'
+      selfOnly: "Alleen 'self' — veilig zolang er geen door gebruikers aangeleverde bestanden van je eigen origin komen."
+      insecureSource: 'Laadt via gewone http: {detail}.'
+      objectSrc: "object-src is niet 'none': plugins (Flash, Java) kunnen inhoud laden. Zet object-src 'none'."
+      baseUri: "Geen base-uri: een geïnjecteerde base-tag kan relatieve script-URL's omleiden. Zet base-uri 'none' of 'self'."
+      frameAncestors: Geen frame-ancestors — de pagina kan in een frame worden geladen (clickjacking), tenzij X-Frame-Options is gezet.
+      formAction: Geen form-action — geïnjecteerde formulieren kunnen overal naartoe posten.
+      noReporting: Geen report-to of report-uri, dus overtredingen worden niet aan je gemeld.
+      weakNonce: 'Nonce {detail} is kort — gebruik minstens 128 willekeurige bits, nieuw voor elke response.'
+  cert-chain-validator:
+    title: Certificaatketen-validatie
+    description: Plak een certificaatketen en controleer volgorde, handtekeningen en vertrouwen — ontbrekende intermediates worden opgehaald via de URL van de uitgever (AIA), zodat je precies ziet wat de server hoort te sturen.
+    pem: Certificaten (PEM, leaf eerst)
+    found: '{n} certifica(a)t(en) gevonden.'
+    host: Te controleren hostnaam (optioneel)
+    run: Valideren
+    expired: verlopen
+    fetched: Opgehaald (AIA)
+    pasted: 'Geplakt #{n}'
+    hostOk: 'Het certificaat is geldig voor {host}.'
+    hostBad: 'Het certificaat is niet geldig voor {host}.'
+    extra: 'Geen deel van het pad (kan weg): {names}'
+    verdict:
+      ok: De keten is compleet, in de juiste volgorde en vertrouwd.
+      unordered: De keten is compleet en vertrouwd, maar niet in de juiste volgorde (leaf eerst, dan elke uitgever). De meeste clients kunnen ermee overweg, sommige niet.
+      incomplete: De keten is pas vertrouwd na het ophalen van een ontbrekende intermediate. Browsers lossen dat soms op, maar veel andere clients (curl, Java, mailservers) falen — voeg de intermediate toe aan de keten van de server.
+      untrusted: 'De keten wordt niet vertrouwd: {error}'
+    roles:
+      leaf: Leaf
+      intermediate: Intermediate
+      root: Root
+      extra: Extra
+    columns:
+      role: Rol
+      subject: Subject
+      expires: Verloopt
+      source: Bron
+      signature: Ondertekend door volgende
+  pkcs12-inspector:
+    title: PKCS#12- / PFX-inspectie
+    description: Open een .p12- / .pfx-bundel in je browser — certificaten, privésleutel en of ze bij elkaar horen, friendly names, en de versleutelings- en MAC-algoritmen (verouderde worden gemarkeerd).
+    upload: Kies een .p12- / .pfx-bestand
+    password: Wachtwoord
+    run: Openen
+    note: Het bestand en het wachtwoord verlaten je browser niet.
+    protection: Beveiliging
+    legacy: Deze bundel gebruikt verouderde algoritmen (RC2, 3DES of een SHA-1-MAC). OpenSSL 3 heeft -legacy nodig om hem te lezen, en actuele versies van Windows en macOS kunnen hem weigeren; exporteer opnieuw met AES-256 en SHA-256.
+    selfSigned: zelfondertekend
+    certificate: 'Certificaat {n}'
+    key: 'Privésleutel {n}'
+    matches: 'Hoort bij certificaat {n}'
+    noMatch: Hoort bij geen van de certificaten
+    showKey: Privésleutel tonen
+    hideKey: Privésleutel verbergen
+    copyCerts: Certificaten kopiëren (PEM)
+    downloadCerts: certificates.pem downloaden
+    errors:
+      password: Verkeerd wachtwoord (of de MAC klopt niet).
+      invalid: Dit is geen PKCS#12- / PFX-bestand.
+    fields:
+      subject: Subject
+      issuer: Uitgever
+      valid: Geldig
+      friendlyName: Friendly name
+      localKeyId: Lokale sleutel-ID
+      encryption: Versleuteling
+      type: Sleuteltype
+      matches: Certificaat
+  lab-ca-generator:
+    title: Lab-CA & certificaatgenerator
+    description: Maak je eigen root-CA en een servercertificaat (met SAN's voor namen en IP-adressen) voor een homelab of testnetwerk — gegenereerd in de browser, klaar voor nginx, Proxmox of een NAS.
+    newCa: Nieuwe CA
+    existingCa: Mijn bestaande CA gebruiken
+    caCertPem: CA-certificaat (PEM)
+    caKeyPem: Privésleutel van de CA (PEM, PKCS#8 "BEGIN PRIVATE KEY")
+    caErrors:
+      ca-cert: Het CA-certificaat kon niet worden gelezen.
+      ca-key: De privésleutel kon niet worden gelezen (PKCS#8-PEM, onversleuteld).
+      ca-mismatch: De privésleutel hoort niet bij dit CA-certificaat.
+      ca-not-ca: Dit certificaat is geen CA (basicConstraints CA:false).
+    ca: Certificaatautoriteit
+    caName: Naam van de CA
+    invalidCa: Voer een naam voor de CA in.
+    organization: Organisatie (optioneel)
+    keyType: Sleuteltype
+    caDays: Geldigheid CA (dagen)
+    server: Servercertificaat
+    serverName: Servernaam
+    invalidName: Voer een hostnaam (wildcard toegestaan) of IP-adres in.
+    serverDays: Geldigheid (dagen)
+    sans: Extra namen en IP-adressen (optioneel)
+    invalidSan: Gebruik hostnamen of IP-adressen, gescheiden door komma's of spaties.
+    clientAuth: Ook bruikbaar als clientcertificaat (clientAuth)
+    run: Genereren
+    download: Downloaden
+    note: Sleutels worden met WebCrypto in je browser gemaakt en nergens naartoe gestuurd. Browsers accepteren voor publieke certificaten maximaal 398 dagen; voor je eigen CA is 825 dagen een gangbare keuze.
+    keep: Houd ca.key privé en offline — wie hem heeft, kan certificaten uitgeven die je apparaten vertrouwen. Deze tool slaat niets op.
+    install: 'Installeer ca.crt als vertrouwde root op je apparaten (Windows: certmgr, macOS: Sleutelhangertoegang, Linux: /usr/local/share/ca-certificates + update-ca-certificates, Firefox: eigen certificaatopslag), en configureer de server met de .crt (of fullchain.pem) en .key.'
+    keys:
+      ecdsa-p256: ECDSA P-256 (aanbevolen)
+      ecdsa-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096 (traag)
+    files:
+      caCert: CA-certificaat
+      caKey: Privésleutel van de CA
+      serverCert: Servercertificaat
+      serverKey: Privésleutel van de server
+      fullchain: Volledige keten (server + CA)
+  bgp-route-history:
+    title: BGP-routegeschiedenis & -zichtbaarheid
+    description: Welke ASN's een prefix in de loop der jaren aankondigden, en hoeveel RIS-peers met een volledige tabel hem nu zien — spoor hijacks, MOAS en gedeeltelijke zichtbaarheid op.
+    resource: Prefix of IP-adres
+    invalid: Voer een prefix in zoals 193.0.0.0/21 of een IP-adres.
+    run: Opzoeken
+    now: nu
+    visibility: 'Zichtbaar voor {seeing} van {total} RIS-peers met volledige tabel (IPv{family}): {pct} %'
+    visibilityLabel: Zichtbaarheid
+    origins: 'Origins sinds {from}'
+    collectors: RIS-routecollectors
+    verdict:
+      none: Op dit moment niet aangekondigd — er wordt nu geen origin-AS gezien.
+      single: Aangekondigd door één origin-AS.
+      moas: 'Tegelijk aangekondigd door {n} origin-AS''en (MOAS) — normaal bij anycast, anders mogelijk een hijack of lek.'
+    columns:
+      name: Naam
+      prefix: Prefix
+      period: Gezien
+      peers: Max. peers
+      collector: Collector
+      where: Locatie
+      seeing: Peers met volledige tabel die hem zien
+  asn-neighbour-graph:
+    title: ASN-burengrafiek
+    description: Upstreams (transit) en downstreams (klanten) van een autonoom systeem als grafiek, met namen — klik op een buur om door het internet te bewegen.
+    run: Tekenen
+    graph: Burengrafiek
+    upstreams: Upstreams (transit)
+    downstreams: Downstreams (klanten)
+    upstream: Upstream
+    downstream: Downstream
+    uncertain: Onzeker
+    all: Alle buren
+    summary: '{up} upstreams, {down} downstreams, {unsure} onzeker (RIPEstat, naar BGP-padsterkte). De grafiek toont de {shown} sterkste aan elke kant.'
+    columns:
+      name: Naam
+      rel: Relatie
+      power: Sterkte
+  common-ixps:
+    title: Gemeenschappelijke IXP's & faciliteiten
+    description: Waar kunnen twee netwerken peeren? Internet exchanges en colocatiefaciliteiten waar beide aanwezig zijn, met poortsnelheden en routeserver-gebruik (PeeringDB).
+    a: Eerste netwerk (ASN)
+    b: Tweede netwerk (ASN)
+    run: Vergelijken
+    title2: '{a} en {b}'
+    summary: '{ixs} gemeenschappelijke exchange(s) en {facs} gemeenschappelijke faciliteit(en). Exchanges: {aIx} en {bIx}. Peeringbeleid: {aPolicy} / {bPolicy}.'
+    ixs: Gemeenschappelijke exchanges
+    facilities: Gemeenschappelijke faciliteiten (private interconnect mogelijk)
+    noIx: Geen gemeenschappelijke exchange.
+    noFac: Geen gemeenschappelijke faciliteit.
+    notFound: 'AS{asn} staat niet in PeeringDB.'
+    columns:
+      ix: Exchange
+      rs: Beide op routeservers
+      facility: Faciliteit
+      where: Locatie
+  roa-coverage:
+    title: ROA-dekking per ASN
+    description: RPKI route origin validation voor elke prefix die een AS aankondigt, zijn ROA's (ongebruikt of met te lange maxLength) en minimale ROA's om aan te maken voor prefixen zonder dekking.
+    run: Controleren
+    coverage: RPKI-dekking
+    summary: '{pct} % RPKI-valid: {valid} valid, {invalid} invalid, {notFound} zonder ROA (van {total} aangekondigde prefixen).'
+    invalidWarning: '{n} prefix(en) zijn RPKI-invalid: netwerken die invalids weggooien (de meeste grote) bereiken ze niet. Pas de ROA of de aankondiging aan.'
+    uncheckedNote: '{n} prefix(en) zijn niet gecontroleerd om binnen het RIPEstat-budget te blijven.'
+    source: 'ROA''s van de RIPEstat-validator ({validator}), gegenereerd {time}.'
+    suggest: Voorgestelde ROA's
+    suggestHelp: 'Maak deze ROA''s aan (bij je RIR) voor de prefixen zonder ROA. Ze gebruiken maxLength = aangekondigde lengte, zoals RFC 9319 aanbeveelt.'
+    roas: 'ROA''s van dit AS ({n})'
+    unused: Niet aangekondigd (verouderd?)
+    loose: maxLength langer dan aangekondigd (RFC 9319 adviseert minimale ROA's)
+    status:
+      valid: Valid
+      invalid: Invalid
+      not-found: Geen ROA
+      unchecked: Niet gecontroleerd
+    reason:
+      length: langer dan maxLength
+      asn: ROA voor een ander AS
+    columns:
+      prefix: Prefix
+      status: RPKI-status
+      roa: Passende ROA
+      ta: Trust anchor
+      note: Opmerking
+  sla-calculator:
+    title: SLA- & uptimecalculator
+    description: Hoeveel downtime staat 99,9 % toe per dag, maand of jaar? Reken beide kanten op en combineer de beschikbaarheid van componenten in serie of redundant parallel.
+    sla: Beschikbaarheid (%, of bijv. "4 nines")
+    invalid: Voer een percentage tussen 0 en 100 in, of een aantal negens.
+    downtimeTitle: Toegestane downtime
+    period: Periode
+    allowed: Toegestane downtime
+    achievedTitle: Beschikbaarheid uit downtime
+    downMinutes: Downtime (minuten)
+    compositeTitle: Gecombineerde beschikbaarheid
+    components: Beschikbaarheid per component (%)
+    series: In serie (allemaal nodig)
+    parallel: Redundant (één is genoeg)
+    combined: Gecombineerd
+    ninesUnit: negens
+    compositeHelp: 'In serie is een keten minder beschikbaar dan de zwakste schakel (vermenigvuldigen). Redundante componenten vallen alleen uit als ze tegelijk falen — uitgaande van onafhankelijke storingen, wat gedeelde stroom, software of mensen vaak tenietdoen.'
+    periods:
+      day: dag
+      week: week
+      month: maand
+      quarter: kwartaal
+      year: jaar
+  voip-bandwidth-calculator:
+    title: VoIP-bandbreedte- & Erlangcalculator
+    description: Bandbreedte per gesprek voor G.711, G.729, Opus en meer inclusief alle header-overhead, en hoeveel kanalen een SIP-trunk nodig heeft voor je drukste uur (Erlang B).
+    bandwidth: Bandbreedte per gesprek
+    codec: Codec
+    link: Linklaag
+    ptime: Pakketgrootte (ms)
+    calls: Gelijktijdige gesprekken
+    overhead: overhead
+    note: Per richting. Meegeteld zijn RTP (12 B), UDP (8 B), IPv4 (20 B) of IPv6 (40 B), de SRTP-authenticatietag (10 B), 802.1Q (4 B) en de linklaag. Spraakdetectie en RTCP zijn niet meegenomen.
+    erlang: Trunkdimensionering (Erlang B)
+    bhca: Gesprekken in het drukste uur
+    avg: Gemiddeld gesprek (minuten)
+    gos: Toegestane blokkering (%)
+    links:
+      ethernet: Ethernet (incl. preamble en gap, 38 B)
+      ethernet-no-phy: Alleen Ethernet-frame (18 B)
+      ppp: PPP (7 B)
+      none: Alleen laag 3
+    fields:
+      payload: Spraakdata per pakket
+      packet: Pakketgrootte op de lijn
+      pps: Pakketten per seconde
+      perCall: Bandbreedte per gesprek
+      total: Alle gesprekken
+      erlangs: Verkeer in het drukste uur
+      channels: Benodigde kanalen
+      blocking: Blokkering met zoveel kanalen
+      trunkBw: Trunkbandbreedte (per richting)
+  packet-decoder:
+    title: Pakketdecoder
+    description: Plak een hexdump (Wireshark-hexstream, tcpdump -XX, hexdump of xxd) en zie elke laag ontleed — Ethernet, VLAN, ARP, IPv4/IPv6, TCP, UDP, ICMP en DNS.
+    hex: Pakketbytes (hex)
+    bytes: '{n} bytes'
+    invalid: Nog geen hexbytes herkend.
+    start: Eerste laag
+    truncated: 'Het pakket houdt te vroeg op: {detail}.'
+    offset: 'Offset {offset}, {length} bytes'
+    starts:
+      auto: Detecteren (Ethernet, IPv4 of IPv6)
+      ethernet: Ethernet
+      ipv4: IPv4
+      ipv6: IPv6
+      sll: Linux cooked capture (tcpdump -i any)
+      sll2: Linux cooked capture v2
+  pcap-viewer:
+    title: Pcap-viewer
+    description: Open een kleine pcap- of pcapng-capture in je browser — pakketlijst met filter, protocollen, gesprekken, DNS-vragen en elke laag van een pakket ontleed.
+    upload: Kies een .pcap- / .pcapng-bestand
+    note: 'Het bestand wordt in je browser gelezen en nooit geüpload. Tot 100 MB en 200.000 pakketten; Ethernet, raw IP en Linux cooked captures (tcpdump -i any).'
+    summary: Capture
+    limited: 'alleen de eerste {max} worden gelezen'
+    filter: Filter (adres, protocol of tekst)
+    firstRows: 'De eerste {n} van {total} passende pakketten worden getoond.'
+    details: Pakketdetails
+    packetNo: Pakketnummer
+    noDns: Geen DNS-vragen in deze capture.
+    errors:
+      format: Dit is geen pcap- of pcapng-bestand.
+      too-big: Het bestand is groter dan 100 MB.
+      linktype: 'De capture gebruikt een linktype dat deze viewer niet kan ontleden (ondersteund: Ethernet, raw IP, Linux cooked, loopback).'
+    tabs:
+      packets: Pakketten
+      protocols: Protocollen
+      conversations: Gesprekken
+      dns: DNS-vragen
+    columns:
+      file: Bestand
+      packets: Pakketten
+      bytes: Bytes
+      duration: Duur
+      time: Tijd (s)
+      src: Bron
+      dst: Bestemming
+      protocol: Protocol
+      len: Lengte
+      info: Info
+      query: Vraag
+  dns-proxy-check:
+    title: DNS-kaping- & proxycontrole
+    description: Wijkt de DNS in dit netwerk af van publieke DNS (filtering, NXDOMAIN-kaping), en zit er een HTTP-proxy tussen je browser en deze server die headers toevoegt of wijzigt?
+    run: Controles uitvoeren
+    note: 'De NET-TOOLS-server zoekt een paar namen op (en één willekeurige naam die niet kan bestaan) met zijn eigen resolver, en je browser vraagt Cloudflare DNS over HTTPS om dezelfde namen. Je browser stuurt ook een willekeurige markeerheader naar de server, die meldt wat er aankwam. Het DNS-deel toont het netwerk van de server — in een homelab meestal dezelfde resolver als die van jou.'
+    dns: DNS
+    proxy: HTTP-proxy tussen browser en server
+    dohBlocked: Je browser kon Cloudflare DNS over HTTPS niet bereiken (geblokkeerd of offline), dus alleen de antwoorden van de server worden getoond.
+    proxyError: Het echo-endpoint van de server was niet bereikbaar.
+    dnsVerdict:
+      nx-hijack: 'NXDOMAIN-kaping: de resolver geeft een adres voor een naam die niet bestaat (typisch voor zoek-omleidingen van providers of sommige DNS-filters).'
+      blocked: Sommige namen worden door de resolver geblokkeerd (geen antwoord of een sinkhole-adres zoals 0.0.0.0) — een DNS-filter zoals Pi-hole, of een gecensureerd netwerk.
+      differ: De resolver geeft andere adressen dan publieke DNS — normaal bij CDN's en geo-DNS, alleen verdacht bij namen met vaste adressen.
+      clean: De resolver antwoordt zoals publieke DNS, en niet-bestaande namen blijven niet-bestaand.
+    verdicts:
+      match: Zelfde antwoord
+      differ: Andere adressen
+      blocked: Geblokkeerd
+      nx-hijack: Gekaapt (hoort niet te bestaan)
+      ok-nx: Bestaat niet (juist)
+      error: Opzoeken mislukt
+    findings:
+      clean: Geen proxy gezien — het request kwam ongewijzigd aan (afgezien van de eigen reverse proxy van deze server).
+      marker-missing: De markeerheader is onderweg verwijderd — een proxy filtert request-headers.
+      marker-changed: 'De markeerheader is onderweg gewijzigd (nu {detail}).'
+      ua-changed: 'De User-Agent is onderweg gewijzigd (server zag: {detail}).'
+      proxy-header: 'Een proxy voegde een header toe: {detail}.'
+      extra-hops: 'Het request kwam langs nog een proxy vóór deze server ({detail}) — verwacht als NET-TOOLS achter een reverse proxy zoals Traefik of Caddy draait.'
+    columns:
+      name: Naam
+      server: Serverresolver
+      pub: Publieke DNS (DoH, vanuit je browser)
+      verdict: Resultaat
