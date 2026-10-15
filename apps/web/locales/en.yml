@@ -161,6 +161,10 @@ ping:
   interval: Interval (ms)
   run: Start
 trace:
+  asPath: 'AS path:'
+  map: 'Route of the trace over {n} located hops'
+  mapLocal: Too few hops could be located for a map (private addresses or no geolocation data).
+  mapRetry: Retry the map
   protocol: Protocol
   cycles: Cycles
   hops: 'Hops ({count})'

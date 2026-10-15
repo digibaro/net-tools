@@ -42,6 +42,15 @@ func TestGeo(t *testing.T) {
 	env.Get("/api/v1/geo?ip=example.com").ExpectError(t, "INVALID_INPUT")
 	env.Get("/api/v1/geo?ip=1.1.1.1&source=ipinfo").ExpectError(t, "PROVIDER_KEY_MISSING")
 	env.Get("/api/v1/geo?ip=1.1.1.1&source=ipapi").ExpectError(t, "INVALID_INPUT")
+
+	var batch struct {
+		Results []Result `json:"results"`
+	}
+	env.Post("/api/v1/geo/batch", map[string]any{"ips": []string{"1.1.1.1", "10.0.0.1", "nonsense"}}).Must(t).Decode(t, &batch)
+	if len(batch.Results) != 3 || batch.Results[0].City != "Sydney" || batch.Results[1].Public || batch.Results[2].IP != "nonsense" {
+		t.Errorf("batch = %+v", batch)
+	}
+	env.Post("/api/v1/geo/batch", map[string]any{"ips": []string{}}).ExpectError(t, "INVALID_INPUT")
 }
 
 // Without a city database the tool is disabled with data_missing; the ASN falls back to Cymru.

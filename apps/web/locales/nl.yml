@@ -161,6 +161,10 @@ ping:
   interval: Interval (ms)
   run: Starten
 trace:
+  asPath: 'AS-pad:'
+  map: 'Route van de trace over {n} gelokaliseerde hops'
+  mapLocal: Te weinig hops konden worden gelokaliseerd voor een kaart (privéadressen of geen geolocatiegegevens).
+  mapRetry: Kaart opnieuw proberen
   protocol: Protocol
   cycles: Cycli
   hops: 'Hops ({count})'

@@ -2104,6 +2104,38 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/CommonPeering" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/geo/batch:
+    post:
+      operationId: geoBatch
+      summary: Geolocate up to 64 addresses (traceroute map); private addresses are not looked up
+      tags: [reputation]
+      x-capability: rep.geo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [ips]
+              properties:
+                ips: { type: array, items: { type: string }, minItems: 1, maxItems: 64 }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data:
+                        type: object
+                        required: [results]
+                        properties:
+                          results: { type: array, items: { $ref: "#/components/schemas/Geo" } }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -4541,3 +4573,4 @@ components:
               city: { type: string }
               country: { type: string }
               facId: { type: integer }
+

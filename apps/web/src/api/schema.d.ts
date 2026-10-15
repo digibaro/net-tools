@@ -1758,6 +1758,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/geo/batch": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Geolocate up to 64 addresses (traceroute map); private addresses are not looked up */
+        post: operations["geoBatch"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -6272,6 +6289,37 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["CommonPeering"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    geoBatch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    ips: string[];
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: {
+                            results: components["schemas"]["Geo"][];
+                        };
                     };
                 };
             };

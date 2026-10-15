@@ -3,6 +3,7 @@ package geo
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
 	"net/netip"
 	"strconv"
@@ -65,6 +66,48 @@ func (t *Tool) Mount(r chi.Router, d tools.Deps) {
 		t.TXT = asn.SystemTXT
 	}
 	r.With(d.RateLimit(limits.Light), d.Slot, d.Timeout(10*time.Second)).Get("/geo", t.handle)
+	r.With(d.RateLimit(limits.Light), d.Slot, d.Timeout(30*time.Second)).Post("/geo/batch", t.batch)
+}
+
+// MaxBatch bounds a batch lookup (a traceroute has at most 30-64 hops).
+const MaxBatch = 64
+
+// batch geolocates up to MaxBatch addresses (traceroute map). Private addresses are returned
+// without a lookup; with ipinfo each public address is one cached provider call.
+func (t *Tool) batch(w http.ResponseWriter, r *http.Request) {
+	var in struct {
+		IPs []string `json:"ips"`
+	}
+	if err := json.NewDecoder(http.MaxBytesReader(w, r.Body, 16<<10)).Decode(&in); err != nil || len(in.IPs) == 0 || len(in.IPs) > MaxBatch {
+		httpapi.Error(w, r, httpapi.InvalidInput("ips", `expected JSON {"ips": [...]} with 1 to 64 addresses`))
+		return
+	}
+	out := make([]Result, len(in.IPs))
+	sem := make(chan struct{}, 4)
+	var wg sync.WaitGroup
+	for i, raw := range in.IPs {
+		ip, err := netip.ParseAddr(strings.Trim(strings.TrimSpace(raw), "[]"))
+		if err != nil || ip.Zone() != "" {
+			out[i] = Result{IP: raw}
+			continue
+		}
+		ip = ip.Unmap()
+		wg.Go(func() {
+			sem <- struct{}{}
+			defer func() { <-sem }()
+			if t.city != nil {
+				out[i] = Lookup(r.Context(), t.city, t.asn, t.TXT, ip)
+				return
+			}
+			res, err := t.ipinfo(r.Context(), ip)
+			if err != nil {
+				res = Result{IP: ip.String(), Public: asn.IsPublic(ip)}
+			}
+			out[i] = res
+		})
+	}
+	wg.Wait()
+	httpapi.JSON(w, r, map[string]any{"results": out}, &httpapi.Meta{Tool: t.ID(), Vantage: "server"})
 }
 
 // Result is the response payload.
