@@ -95,7 +95,7 @@ const summary = computed(() => capture.value
     </CCard>
     <CCard :title="t('tools.pcap-viewer.details')">
       <NFormItem :label="t('tools.pcap-viewer.packetNo')" :show-feedback="false" class="mb-3 w-40">
-        <NInputNumber v-model:value="selected" :min="1" :max="capture.packets.length" :input-props="{ 'aria-label': t('tools.pcap-viewer.packetNo') }" data-testid="packet-no" />
+        <NInputNumber v-model:value="selected" :show-button="false" :min="1" :max="capture.packets.length" :input-props="{ 'aria-label': t('tools.pcap-viewer.packetNo') }" data-testid="packet-no" />
       </NFormItem>
       <template v-if="packet">
         <div v-for="(l, i) in packet.decoded.layers" :key="i" class="mb-3" data-testid="layer">

@@ -46,7 +46,7 @@ const k = (key: string) => t(`tools.ptr-coverage.columns.${key}`)
   <ApiError v-if="error" :error="error" />
   <CCard v-if="data" :title="t('tools.ptr-coverage.summary', { prefix: data.prefix, ptr: data.withPtr, total: data.total, confirmed: data.confirmed })" data-testid="result">
     <label class="mb-3 flex items-center gap-2 text-sm">
-      <NSwitch v-model:value="onlyNamed" size="small" />
+      <NSwitch v-model:value="onlyNamed" size="small" :aria-label="t('tools.ptr-coverage.onlyNamed')" />
       {{ t('tools.ptr-coverage.onlyNamed') }}
     </label>
     <ResultTable :columns="[{ key: 'ip', title: k('ip'), mono: true, width: 200 }, { key: 'names', title: k('names'), mono: true, width: 300 }, { key: 'status', title: k('status'), width: 200 }, { key: 'rcode', title: k('rcode'), width: 110 }]" :rows="rows" row-key="ip" filename="ptr-coverage.json" />

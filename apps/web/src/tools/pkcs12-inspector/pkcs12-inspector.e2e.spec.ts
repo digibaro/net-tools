@@ -7,5 +7,5 @@ test('pkcs12-inspector: opens a bundle in the browser', async ({ page }) => {
   await page.getByTestId('password').locator('input').fill('secret')
   await page.getByTestId('run').click()
   await expect(page.getByTestId('result')).toContainText('SHA-256')
-  await expect(page.getByText('CN=ec.example.test')).toBeVisible()
+  await expect(page.getByText('CN=ec.example.test').first()).toBeVisible()
 })

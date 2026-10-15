@@ -92,7 +92,7 @@ const files = computed(() => (result.value
     </div>
     <CInputText v-model:value="sansText" :label="t('tools.lab-ca-generator.sans')" placeholder="nas, 192.168.1.10, *.home.arpa" :validation="sanValidation" monospace test-id="sans" />
     <label class="mb-3 flex items-center gap-2 text-sm">
-      <NSwitch v-model:value="clientAuth" size="small" />
+      <NSwitch v-model:value="clientAuth" size="small" :aria-label="t('tools.lab-ca-generator.clientAuth')" />
       {{ t('tools.lab-ca-generator.clientAuth') }}
     </label>
     <NButton type="primary" :loading="busy" :disabled="!valid" data-testid="run" @click="generate">

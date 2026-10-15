@@ -67,7 +67,7 @@ function fillNonce() {
     <div class="grid items-end gap-x-4 sm:grid-cols-[1fr_auto]">
       <CSelect v-model:value="output" :label="t('tools.csp-builder.format')" :options="outputOptions" test-id="output-format" />
       <label class="mb-3 flex items-center gap-2 text-sm">
-        <NSwitch v-model:value="reportOnly" size="small" :disabled="output === 'meta'" />
+        <NSwitch v-model:value="reportOnly" size="small" :disabled="output === 'meta'" :aria-label="t('tools.csp-builder.reportOnly')" />
         {{ t('tools.csp-builder.reportOnly') }}
       </label>
     </div>

@@ -52,7 +52,7 @@ const k = (key: string) => t(`tools.mixed-content-checker.columns.${key}`)
       {{ t('tools.mixed-content-checker.truncated', { bytes: data.bodyBytes }) }}
     </NAlert>
     <label v-if="data.links" class="mb-3 flex items-center gap-2 text-sm">
-      <NSwitch v-model:value="showLinks" size="small" />
+      <NSwitch v-model:value="showLinks" size="small" :aria-label="t('tools.mixed-content-checker.showLinks', { n: data.links })" />
       {{ t('tools.mixed-content-checker.showLinks', { n: data.links }) }}
     </label>
     <ResultTable v-if="rows.length" :columns="[{ key: 'kind', title: k('kind'), width: 160 }, { key: 'element', title: k('element'), mono: true, width: 160 }, { key: 'url', title: 'URL', mono: true, width: 440 }]" :rows="rows" row-key="id" filename="mixed-content.json" />
