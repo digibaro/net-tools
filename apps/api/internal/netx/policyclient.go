@@ -17,6 +17,16 @@ import (
 // MaxProviderBody caps provider responses (docs/SECURITY.md §6).
 const MaxProviderBody = 5 << 20
 
+// MaxProviderBodyOverride bounds WithBodyLimit (large published lists such as Azure Service Tags).
+const MaxProviderBodyOverride = 32 << 20
+
+type bodyLimitKey struct{}
+
+// WithBodyLimit raises the response cap for requests made with ctx (at most MaxProviderBodyOverride).
+func WithBodyLimit(ctx context.Context, n int64) context.Context {
+	return context.WithValue(ctx, bodyLimitKey{}, n)
+}
+
 // PolicyClient returns an HTTP client for calls whose hosts come from data rather than the user
 // (RDAP bootstrap, providers). Every dial resolves the host through the target policy and
 // connects to the checked address, so redirects and bootstrap targets are covered too.
@@ -73,7 +83,11 @@ func (l *limitTransport) RoundTrip(r *http.Request) (*http.Response, error) {
 	if err != nil {
 		return nil, err //nolint:wrapcheck // transport errors pass through
 	}
-	resp.Body = &limitedBody{ReadCloser: resp.Body, r: io.LimitReader(resp.Body, l.max)}
+	limit := l.max
+	if n, ok := r.Context().Value(bodyLimitKey{}).(int64); ok && n > 0 && n <= MaxProviderBodyOverride {
+		limit = n
+	}
+	resp.Body = &limitedBody{ReadCloser: resp.Body, r: io.LimitReader(resp.Body, limit)}
 	return resp, nil
 }
 

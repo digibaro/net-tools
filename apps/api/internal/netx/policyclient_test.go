@@ -67,3 +67,27 @@ func TestPolicyClientRedirectAndLimit(t *testing.T) {
 		t.Errorf("status %d, read %d bytes", resp.StatusCode, len(b))
 	}
 }
+
+func TestPolicyClientBodyLimitOverride(t *testing.T) {
+	big := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(strings.Repeat("x", MaxProviderBody+1000)))
+	}))
+	defer big.Close()
+	c := PolicyClient(target.NewResolver(target.Policy{AllowPrivate: true}), "test", 2*time.Second)
+	read := func(ctx context.Context) int {
+		req, _ := http.NewRequestWithContext(ctx, http.MethodGet, big.URL, nil)
+		resp, err := c.Do(req)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		b, _ := io.ReadAll(resp.Body)
+		return len(b)
+	}
+	if n := read(WithBodyLimit(context.Background(), 16<<20)); n != MaxProviderBody+1000 {
+		t.Errorf("raised limit read %d bytes", n)
+	}
+	if n := read(WithBodyLimit(context.Background(), 1<<40)); n != MaxProviderBody { // above the ceiling: ignored
+		t.Errorf("over-ceiling limit read %d bytes", n)
+	}
+}

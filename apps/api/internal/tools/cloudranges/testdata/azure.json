@@ -1,0 +1,94 @@
+{
+ "changeNumber": 421,
+ "cloud": "Public",
+ "values": [
+  {
+   "name": "Storage",
+   "id": "Storage",
+   "properties": {
+    "changeNumber": 56,
+    "region": "",
+    "regionId": 0,
+    "platform": "Azure",
+    "systemService": "AzureStorage",
+    "addressPrefixes": [
+     "13.69.40.16/28"
+    ]
+   }
+  },
+  {
+   "name": "Storage.WestEurope",
+   "id": "Storage.WestEurope",
+   "properties": {
+    "changeNumber": 44,
+    "region": "westeurope",
+    "regionId": 18,
+    "platform": "Azure",
+    "systemService": "AzureStorage",
+    "addressPrefixes": [
+     "13.69.40.16/28"
+    ]
+   }
+  },
+  {
+   "name": "AzureCloud.westeurope",
+   "id": "AzureCloud.westeurope",
+   "properties": {
+    "changeNumber": 200,
+    "region": "westeurope",
+    "regionId": 18,
+    "platform": "Azure",
+    "systemService": "",
+    "addressPrefixes": [
+     "13.69.0.0/17"
+    ]
+   }
+  },
+  {
+   "name": "AzureCloud",
+   "id": "AzureCloud",
+   "properties": {
+    "changeNumber": 316,
+    "region": "",
+    "regionId": 0,
+    "platform": "Azure",
+    "systemService": "",
+    "addressPrefixes": [
+     "13.64.0.0/13"
+    ]
+   }
+  },
+  {
+   "name": "ActionGroup",
+   "id": "ActionGroup",
+   "properties": {
+    "changeNumber": 60,
+    "region": "",
+    "regionId": 0,
+    "platform": "Azure",
+    "systemService": "ActionGroup",
+    "addressPrefixes": [
+     "4.145.74.52/30",
+     "4.149.254.68/30",
+     "4.150.239.212/30"
+    ]
+   }
+  },
+  {
+   "name": "AzureFrontDoor.Frontend",
+   "id": "AzureFrontDoor.Frontend",
+   "properties": {
+    "changeNumber": 44,
+    "region": "",
+    "regionId": 0,
+    "platform": "Azure",
+    "systemService": "",
+    "addressPrefixes": [
+     "4.145.22.160/29",
+     "4.147.44.8/29",
+     "4.173.102.138/31"
+    ]
+   }
+  }
+ ]
+}

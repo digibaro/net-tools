@@ -54,6 +54,8 @@ type Request struct {
 	Timeout time.Duration
 	// Method defaults to GET; any other method is never cached.
 	Method string
+	// MaxBytes raises the 5 MiB response cap for this request (see netx.WithBodyLimit).
+	MaxBytes int64
 	// Body is sent as JSON when set.
 	Body any
 	// UpstreamMessage extracts a client-safe message from a 4xx error body (e.g. "no probes
@@ -163,6 +165,9 @@ func (c *Client) fetch(ctx context.Context, r Request) ([]byte, error) {
 	}
 	ctx, cancel := context.WithTimeout(ctx, timeout)
 	defer cancel()
+	if r.MaxBytes > 0 {
+		ctx = netx.WithBodyLimit(ctx, r.MaxBytes)
+	}
 	method := r.Method
 	if method == "" {
 		method = http.MethodGet
@@ -201,7 +206,7 @@ func (c *Client) fetch(ctx context.Context, r Request) ([]byte, error) {
 		}
 		return nil, se
 	}
-	b, err := io.ReadAll(resp.Body) // capped by PolicyClient (5 MiB)
+	b, err := io.ReadAll(resp.Body) // capped by PolicyClient (5 MiB unless MaxBytes)
 	if err != nil {
 		return nil, transportError(r.Provider, err)
 	}
