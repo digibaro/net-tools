@@ -12,8 +12,9 @@ import { cspScriptHashes } from './build/csp-hashes.ts'
 const apiProxy = process.env.VITE_API_PROXY ?? 'http://localhost:8081'
 
 /**
- * Latest release ("0.4.0@2026-10-14"): VITE_LATEST_RELEASE (Docker/CI builds) or the newest v* tag in
- * git; without either nothing is badged "new".
+ * Baseline release for the "new" badge ("0.4.0@2026-10-14"): VITE_LATEST_RELEASE (Docker/CI builds)
+ * or the newest v* tag before this commit (HEAD^), so a build of tag v0.5.0 badges what 0.5.0 added
+ * and later development builds badge what came after 0.5.0. Without either nothing is "new".
  */
 function latestRelease(): { version: string, date: string } {
   const env = process.env.VITE_LATEST_RELEASE
@@ -21,7 +22,7 @@ function latestRelease(): { version: string, date: string } {
   if (m)
     return { version: m[1]!, date: m[2]! }
   try {
-    const tag = execFileSync('git', ['describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
+    const tag = execFileSync('git', ['describe', '--tags', '--abbrev=0', '--match', 'v[0-9]*', 'HEAD^'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
     const date = execFileSync('git', ['log', '-1', '--format=%cs', tag], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim()
     return { version: tag.replace(/^v/, ''), date }
   }

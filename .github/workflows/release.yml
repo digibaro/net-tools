@@ -25,6 +25,8 @@ jobs:
         image: [web, api]
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0 # tags: the previous release is the "new" badge baseline
       - uses: docker/setup-qemu-action@v4
       - uses: docker/setup-buildx-action@v4
       - name: Log in to GHCR
@@ -36,7 +38,8 @@ jobs:
           img="ghcr.io/${GITHUB_REPOSITORY_OWNER,,}/nettools-${{ matrix.image }}"
           {
             echo "version=$v"
-            echo "release=$v@$(git log -1 --format=%cs "$GITHUB_REF_NAME")"
+            prev=$(git describe --tags --abbrev=0 --match 'v[0-9]*' "$GITHUB_REF_NAME^" 2>/dev/null || true)
+            if [ -n "$prev" ]; then echo "release=${prev#v}@$(git log -1 --format=%cs "$prev")"; fi
             echo "date=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
             echo "tags<<EOF"
             echo "$img:$v"

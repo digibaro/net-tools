@@ -14,9 +14,10 @@ endif
 ifndef NETTOOLS_BUILD_DATE
 NETTOOLS_BUILD_DATE := $(shell git log -1 --format=%cI 2>/dev/null)
 endif
-# Latest release tag and its date ("0.4.0@2026-10-14"): drives the "new" badge in the web app.
+# Newest release tag before this commit and its date ("0.4.0@2026-10-14"): the "new" badge in the
+# web app marks tools added after it (on tag v0.5.0 that is v0.4.0, so 0.5.0 shows its own additions).
 ifndef NETTOOLS_LATEST_RELEASE
-NETTOOLS_LATEST_RELEASE := $(shell t=$$(git describe --tags --abbrev=0 --match 'v[0-9]*' 2>/dev/null) && echo "$$t@$$(git log -1 --format=%cs $$t)" | sed 's/^v//')
+NETTOOLS_LATEST_RELEASE := $(shell t=$$(git describe --tags --abbrev=0 --match 'v[0-9]*' HEAD^ 2>/dev/null) && echo "$$t@$$(git log -1 --format=%cs $$t)" | sed 's/^v//')
 endif
 export NETTOOLS_BUILD_VERSION NETTOOLS_BUILD_COMMIT NETTOOLS_BUILD_DATE NETTOOLS_LATEST_RELEASE
 

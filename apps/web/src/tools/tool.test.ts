@@ -15,7 +15,7 @@ describe('isNew', () => {
     for (const t of tools)
       expect(t.isNew, t.path).toBe(!!t.createdAt && t.createdAt.getTime() > LATEST_RELEASE.date.getTime())
     expect(LATEST_RELEASE.version).toMatch(/^\d+\.\d+\.\d+/)
-    if (LATEST_RELEASE.version === '0.4.0') // the LAN tools added after v0.4.0
+    if (LATEST_RELEASE.version === '0.4.0') // the LAN tools added after v0.4.0 (baseline up to the v0.5.0 build)
       expect(tools.filter(t => t.isNew).map(t => t.path)).toEqual(expect.arrayContaining(['/lldp-neighbors', '/ipv6-neighbors', '/dhcpv6-probe']))
   })
 })
