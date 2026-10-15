@@ -188,6 +188,10 @@ make up-e2e && make e2e   # Playwright against the running stack (relaxed rate l
 make new-tool name=my-tool   # scaffold a tool
 ```
 
+`make up` builds from source and stamps the version from git (`0.4.0` on a release tag,
+`0.4.0-3-gabc1234` after it); a plain `docker compose up --build` shows `<version>-dev`. To run a
+release instead, use `docker compose pull && docker compose up -d` (no `--build`).
+
 Frontend: Vue 3, Vite, TypeScript, Naive UI, UnoCSS (`apps/web`). Backend: Go, chi (`apps/api`).
 
 | Document | Contents |

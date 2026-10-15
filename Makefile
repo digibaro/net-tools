@@ -3,6 +3,12 @@ COMPOSE_DEV  = $(COMPOSE) -f docker-compose.yml -f docker-compose.dev.yml
 COMPOSE_LAN  = $(COMPOSE) -f docker-compose.yml -f docker-compose.lan.yml
 COMPOSE_E2E  = $(COMPOSE) -f docker-compose.yml -f docker-compose.e2e.yml
 
+# Stamp local builds from git: 0.4.0 exactly on the v0.4.0 tag, 0.4.0-2-gabc1234 after it (-dirty
+# with uncommitted changes). The commit date keeps the build cache valid for unchanged code.
+export NETTOOLS_BUILD_VERSION ?= $(shell git describe --tags --always --dirty 2>/dev/null | sed 's/^v//')
+export NETTOOLS_BUILD_COMMIT  ?= $(shell git rev-parse HEAD 2>/dev/null)
+export NETTOOLS_BUILD_DATE    ?= $(shell git log -1 --format=%cI 2>/dev/null)
+
 .PHONY: dev up up-lan up-e2e down logs build test test-web test-api e2e lint new-tool gen-api
 
 dev:      ; $(COMPOSE_DEV) up
