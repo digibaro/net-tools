@@ -3120,3 +3120,104 @@ tools:
       formAction: Geen form-action — geïnjecteerde formulieren kunnen overal naartoe posten.
       noReporting: Geen report-to of report-uri, dus overtredingen worden niet aan je gemeld.
       weakNonce: 'Nonce {detail} is kort — gebruik minstens 128 willekeurige bits, nieuw voor elke response.'
+  cert-chain-validator:
+    title: Certificaatketen-validatie
+    description: Plak een certificaatketen en controleer volgorde, handtekeningen en vertrouwen — ontbrekende intermediates worden opgehaald via de URL van de uitgever (AIA), zodat je precies ziet wat de server hoort te sturen.
+    pem: Certificaten (PEM, leaf eerst)
+    found: '{n} certifica(a)t(en) gevonden.'
+    host: Te controleren hostnaam (optioneel)
+    run: Valideren
+    expired: verlopen
+    fetched: Opgehaald (AIA)
+    pasted: 'Geplakt #{n}'
+    hostOk: 'Het certificaat is geldig voor {host}.'
+    hostBad: 'Het certificaat is niet geldig voor {host}.'
+    extra: 'Geen deel van het pad (kan weg): {names}'
+    verdict:
+      ok: De keten is compleet, in de juiste volgorde en vertrouwd.
+      unordered: De keten is compleet en vertrouwd, maar niet in de juiste volgorde (leaf eerst, dan elke uitgever). De meeste clients kunnen ermee overweg, sommige niet.
+      incomplete: De keten is pas vertrouwd na het ophalen van een ontbrekende intermediate. Browsers lossen dat soms op, maar veel andere clients (curl, Java, mailservers) falen — voeg de intermediate toe aan de keten van de server.
+      untrusted: 'De keten wordt niet vertrouwd: {error}'
+    roles:
+      leaf: Leaf
+      intermediate: Intermediate
+      root: Root
+      extra: Extra
+    columns:
+      role: Rol
+      subject: Subject
+      expires: Verloopt
+      source: Bron
+      signature: Ondertekend door volgende
+  pkcs12-inspector:
+    title: PKCS#12- / PFX-inspectie
+    description: Open een .p12- / .pfx-bundel in je browser — certificaten, privésleutel en of ze bij elkaar horen, friendly names, en de versleutelings- en MAC-algoritmen (verouderde worden gemarkeerd).
+    upload: Kies een .p12- / .pfx-bestand
+    password: Wachtwoord
+    run: Openen
+    note: Het bestand en het wachtwoord verlaten je browser niet.
+    protection: Beveiliging
+    legacy: Deze bundel gebruikt verouderde algoritmen (RC2, 3DES of een SHA-1-MAC). OpenSSL 3 heeft -legacy nodig om hem te lezen, en actuele versies van Windows en macOS kunnen hem weigeren; exporteer opnieuw met AES-256 en SHA-256.
+    selfSigned: zelfondertekend
+    certificate: 'Certificaat {n}'
+    key: 'Privésleutel {n}'
+    matches: 'Hoort bij certificaat {n}'
+    noMatch: Hoort bij geen van de certificaten
+    showKey: Privésleutel tonen
+    hideKey: Privésleutel verbergen
+    copyCerts: Certificaten kopiëren (PEM)
+    downloadCerts: certificates.pem downloaden
+    errors:
+      password: Verkeerd wachtwoord (of de MAC klopt niet).
+      invalid: Dit is geen PKCS#12- / PFX-bestand.
+    fields:
+      subject: Subject
+      issuer: Uitgever
+      valid: Geldig
+      friendlyName: Friendly name
+      localKeyId: Lokale sleutel-ID
+      encryption: Versleuteling
+      type: Sleuteltype
+      matches: Certificaat
+  lab-ca-generator:
+    title: Lab-CA & certificaatgenerator
+    description: Maak je eigen root-CA en een servercertificaat (met SAN's voor namen en IP-adressen) voor een homelab of testnetwerk — gegenereerd in de browser, klaar voor nginx, Proxmox of een NAS.
+    newCa: Nieuwe CA
+    existingCa: Mijn bestaande CA gebruiken
+    caCertPem: CA-certificaat (PEM)
+    caKeyPem: Privésleutel van de CA (PEM, PKCS#8 "BEGIN PRIVATE KEY")
+    caErrors:
+      ca-cert: Het CA-certificaat kon niet worden gelezen.
+      ca-key: De privésleutel kon niet worden gelezen (PKCS#8-PEM, onversleuteld).
+      ca-mismatch: De privésleutel hoort niet bij dit CA-certificaat.
+      ca-not-ca: Dit certificaat is geen CA (basicConstraints CA:false).
+    ca: Certificaatautoriteit
+    caName: Naam van de CA
+    invalidCa: Voer een naam voor de CA in.
+    organization: Organisatie (optioneel)
+    keyType: Sleuteltype
+    caDays: Geldigheid CA (dagen)
+    server: Servercertificaat
+    serverName: Servernaam
+    invalidName: Voer een hostnaam (wildcard toegestaan) of IP-adres in.
+    serverDays: Geldigheid (dagen)
+    sans: Extra namen en IP-adressen (optioneel)
+    invalidSan: Gebruik hostnamen of IP-adressen, gescheiden door komma's of spaties.
+    clientAuth: Ook bruikbaar als clientcertificaat (clientAuth)
+    run: Genereren
+    download: Downloaden
+    note: Sleutels worden met WebCrypto in je browser gemaakt en nergens naartoe gestuurd. Browsers accepteren voor publieke certificaten maximaal 398 dagen; voor je eigen CA is 825 dagen een gangbare keuze.
+    keep: Houd ca.key privé en offline — wie hem heeft, kan certificaten uitgeven die je apparaten vertrouwen. Deze tool slaat niets op.
+    install: 'Installeer ca.crt als vertrouwde root op je apparaten (Windows: certmgr, macOS: Sleutelhangertoegang, Linux: /usr/local/share/ca-certificates + update-ca-certificates, Firefox: eigen certificaatopslag), en configureer de server met de .crt (of fullchain.pem) en .key.'
+    keys:
+      ecdsa-p256: ECDSA P-256 (aanbevolen)
+      ecdsa-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096 (traag)
+    files:
+      caCert: CA-certificaat
+      caKey: Privésleutel van de CA
+      serverCert: Servercertificaat
+      serverKey: Privésleutel van de server
+      fullchain: Volledige keten (server + CA)

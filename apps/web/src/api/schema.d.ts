@@ -1673,6 +1673,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/tls/chain-validate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Validate a pasted certificate chain (order, signatures, missing intermediates via AIA, trust) */
+        post: operations["tlsChainValidate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -3442,6 +3459,26 @@ export interface components {
                 /** @enum {string} */
                 kind: "active" | "passive" | "form" | "link";
             }[];
+        };
+        ChainResult: {
+            path: number[];
+            ordered: boolean;
+            complete: boolean;
+            trusted: boolean;
+            verifyError: string;
+            host: string;
+            hostOk: boolean | null;
+            notes: string[];
+            certs: (components["schemas"]["TlsCert"] & {
+                /** @enum {string} */
+                role: "leaf" | "intermediate" | "root" | "extra";
+                /** @enum {string} */
+                source: "input" | "aia";
+                inputIndex: number;
+                signatureOk: boolean | null;
+                expired: boolean;
+                aia: string;
+            })[];
         };
     };
     responses: {
@@ -5932,6 +5969,38 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["OkEnvelope"] & {
                         data: components["schemas"]["MixedResult"];
+                    };
+                };
+            };
+            default: components["responses"]["Error"];
+        };
+    };
+    tlsChainValidate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": {
+                    /** @description 1 to 12 PEM certificates */
+                    pem: string;
+                    /** @description optional host name to check against the leaf */
+                    host?: string;
+                };
+            };
+        };
+        responses: {
+            /** @description OK */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OkEnvelope"] & {
+                        data: components["schemas"]["ChainResult"];
                     };
                 };
             };

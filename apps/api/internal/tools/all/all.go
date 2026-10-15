@@ -87,6 +87,7 @@ func Tools() []tools.Tool {
 		&web.CORSTool{},
 		&tlsinspect.InspectTool{},
 		&tlsinspect.ExpiryTool{},
+		&tlsinspect.ChainTool{},
 		&email.MXTool{},
 		&email.BannerTool{},
 		&email.RelayTool{},

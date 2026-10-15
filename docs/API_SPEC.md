@@ -105,6 +105,7 @@ Capability id in brackets. `target` always accepts hostname, IPv4 or IPv6; optio
 | GET | `/api/v1/dns/svcb` | `name, type=HTTPS\|SVCB, resolver?` | dns.svcb |
 | GET | `/api/v1/dns/edns-compliance` | `zone, server?` | dns.ednscomp |
 | GET | `/api/v1/tls/dane` | `host, service=smtp\|https, port?, resolver?` | tls.dane |
+| POST | `/api/v1/tls/chain-validate` | `{pem, host?}` (≤128 KiB, ≤12 certificates) | tls.chain |
 | GET | `/api/v1/email/smtp-banner` | `host` | email.banner |
 | GET | `/api/v1/http/cdn` | `url` | web.cdn |
 | GET | `/api/v1/http/cache` | `url` | web.cache |

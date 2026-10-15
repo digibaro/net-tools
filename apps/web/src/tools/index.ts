@@ -10,6 +10,7 @@ import { tool as browserLatency } from './browser-latency'
 import { tool as caaChecker } from './caa-checker'
 import { tool as cacheHeaderAnalyzer } from './cache-header-analyzer'
 import { tool as cdnWafDetector } from './cdn-waf-detector'
+import { tool as certChainValidator } from './cert-chain-validator'
 import { tool as certKeyMatcher } from './cert-key-matcher'
 import { tool as certificateDecoder } from './certificate-decoder'
 import { tool as cidrAggregator } from './cidr-aggregator'
@@ -69,6 +70,7 @@ import { tool as ipv6UlaGenerator } from './ipv6-ula-generator'
 import { tool as irrExpansion } from './irr-expansion'
 import { tool as isItDown } from './is-it-down'
 import { tool as keyConverter } from './key-converter'
+import { tool as labCaGenerator } from './lab-ca-generator'
 import { tool as latencyMatrix } from './latency-matrix'
 import { tool as lldpNeighbors } from './lldp-neighbors'
 import { tool as lookingGlass } from './looking-glass'
@@ -89,6 +91,7 @@ import { tool as passiveExposure } from './passive-exposure'
 import { tool as pathMtu } from './path-mtu'
 import { tool as peeringdbLookup } from './peeringdb-lookup'
 import { tool as ping } from './ping'
+import { tool as pkcs12Inspector } from './pkcs12-inspector'
 import { tool as portCheck } from './port-check'
 import { tool as portReference } from './port-reference'
 import { tool as portScanner } from './port-scanner'
@@ -146,7 +149,7 @@ const categories: { id: string, components: Tool[] }[] = [
   { id: 'dns', components: [punycodeConverter, domainParser, dnsLookup, reverseDns, caaChecker, dnsConsistency, dnsPropagation, dnsTrace, encryptedDnsTester, zoneBuilder, zoneTransferTest, wildcardDetector, dnsBenchmark, dnssecValidator, openResolverTest, ptrCoverage, svcbHttpsViewer, ednsCompliance] },
   { id: 'connectivity', components: [ping, tcpPing, traceroute, mtr, portCheck, ntpCheck, serverNetworkInfo, isItDown, latencyMatrix, pathMtu, ipv6Readiness, portScanner, iperf, snmp] },
   { id: 'web', components: [urlParser, userAgentParser, httpStatusCodes, httpRequest, redirectTracer, httpTiming, securityHeaders, corsTester, hstsPreload, compressionCheck, cookieInspector, wellKnownFiles, httpProtocols, curlBuilder, websocketTester, cdnWafDetector, cacheHeaderAnalyzer, mixedContentChecker, cspBuilder] },
-  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit, keyConverter, daneChecker] },
+  { id: 'tls', components: [certificateDecoder, tlsInspector, tlsExpiry, csrTool, certKeyMatcher, ctSearch, starttlsCheck, revocationCheck, tlsScanner, sshAudit, keyConverter, daneChecker, certChainValidator, pkcs12Inspector, labCaGenerator] },
   { id: 'email', components: [mxLookup, spfChecker, dmarcChecker, dkimChecker, emailHeaderAnalyzer, blacklistCheck, mtaStsChecker, openRelayTest, dmarcReportViewer, smtpBannerCheck] },
   { id: 'bgp', components: [ipToAsn, whoisLookup, rdapLookup, domainExpiry, asnInfo, prefixStatus, rpkiValidator, lookingGlass, peeringdbLookup, cloudIpLookup, irrExpansion, asPathVisualizer] },
   { id: 'reputation', components: [ipGeolocation, passiveExposure, ipReputation, torExitCheck, urlReputation] },

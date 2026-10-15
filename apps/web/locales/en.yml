@@ -3120,3 +3120,104 @@ tools:
       formAction: No form-action — injected forms can post anywhere.
       noReporting: No report-to or report-uri, so violations are not reported to you.
       weakNonce: 'Nonce {detail} is short — use at least 128 random bits, new for every response.'
+  cert-chain-validator:
+    title: Certificate chain validator
+    description: Paste a certificate chain and check its order, signatures and trust — missing intermediates are fetched from the issuer URL (AIA), so you see exactly what the server should send.
+    pem: Certificates (PEM, leaf first)
+    found: '{n} certificate(s) found.'
+    host: Host name to check (optional)
+    run: Validate
+    expired: expired
+    fetched: Fetched (AIA)
+    pasted: 'Pasted #{n}'
+    hostOk: 'The certificate is valid for {host}.'
+    hostBad: 'The certificate is not valid for {host}.'
+    extra: 'Not part of the path (can be removed): {names}'
+    verdict:
+      ok: The chain is complete, in the right order and trusted.
+      unordered: The chain is complete and trusted, but not in the right order (leaf first, then each issuer). Most clients cope; some do not.
+      incomplete: The chain is trusted only after fetching a missing intermediate. Browsers may cope, but many other clients (curl, Java, mail servers) will fail — add the intermediate to the server's chain.
+      untrusted: 'The chain is not trusted: {error}'
+    roles:
+      leaf: Leaf
+      intermediate: Intermediate
+      root: Root
+      extra: Extra
+    columns:
+      role: Role
+      subject: Subject
+      expires: Expires
+      source: Source
+      signature: Signed by next
+  pkcs12-inspector:
+    title: PKCS#12 / PFX inspector
+    description: Open a .p12 / .pfx bundle in your browser — certificates, private key and whether they match, friendly names, and the encryption and MAC algorithms (legacy ones flagged).
+    upload: Choose .p12 / .pfx file
+    password: Password
+    run: Open
+    note: The file and password never leave your browser.
+    protection: Protection
+    legacy: This bundle uses legacy algorithms (RC2, 3DES or a SHA-1 MAC). OpenSSL 3 needs -legacy to read it, and current Windows and macOS versions may refuse it; re-export with AES-256 and SHA-256.
+    selfSigned: self-signed
+    certificate: 'Certificate {n}'
+    key: 'Private key {n}'
+    matches: 'Matches certificate {n}'
+    noMatch: Matches none of the certificates
+    showKey: Show private key
+    hideKey: Hide private key
+    copyCerts: Copy certificates (PEM)
+    downloadCerts: Download certificates.pem
+    errors:
+      password: Wrong password (or the MAC does not verify).
+      invalid: This is not a PKCS#12 / PFX file.
+    fields:
+      subject: Subject
+      issuer: Issuer
+      valid: Valid
+      friendlyName: Friendly name
+      localKeyId: Local key ID
+      encryption: Encryption
+      type: Key type
+      matches: Certificate
+  lab-ca-generator:
+    title: Lab CA & certificate generator
+    description: Create your own root CA and a server certificate (with SANs for names and IP addresses) for a homelab or test network — generated in the browser, ready for nginx, Proxmox or a NAS.
+    newCa: New CA
+    existingCa: Use my existing CA
+    caCertPem: CA certificate (PEM)
+    caKeyPem: CA private key (PEM, PKCS#8 "BEGIN PRIVATE KEY")
+    caErrors:
+      ca-cert: The CA certificate could not be read.
+      ca-key: The private key could not be read (PKCS#8 PEM, unencrypted).
+      ca-mismatch: The private key does not belong to this CA certificate.
+      ca-not-ca: This certificate is not a CA (basicConstraints CA:false).
+    ca: Certificate authority
+    caName: CA name
+    invalidCa: Enter a name for the CA.
+    organization: Organization (optional)
+    keyType: Key type
+    caDays: CA validity (days)
+    server: Server certificate
+    serverName: Server name
+    invalidName: Enter a host name (wildcard allowed) or IP address.
+    serverDays: Validity (days)
+    sans: Extra names and IP addresses (optional)
+    invalidSan: Use host names or IP addresses, separated by commas or spaces.
+    clientAuth: Also usable as client certificate (clientAuth)
+    run: Generate
+    download: Download
+    note: 'Keys are generated with WebCrypto in your browser and never sent anywhere. Browsers accept at most 398 days for public certificates; for your own CA, 825 days is a common choice.'
+    keep: Keep ca.key private and offline — anyone who has it can issue certificates your devices trust. This tool stores nothing.
+    install: 'Install ca.crt as a trusted root on your devices (Windows: certmgr, macOS: Keychain Access, Linux: /usr/local/share/ca-certificates + update-ca-certificates, Firefox: its own certificate store), then configure the server with the .crt (or fullchain.pem) and .key.'
+    keys:
+      ecdsa-p256: ECDSA P-256 (recommended)
+      ecdsa-p384: ECDSA P-384
+      rsa-2048: RSA 2048
+      rsa-3072: RSA 3072
+      rsa-4096: RSA 4096 (slow)
+    files:
+      caCert: CA certificate
+      caKey: CA private key
+      serverCert: Server certificate
+      serverKey: Server private key
+      fullchain: Full chain (server + CA)

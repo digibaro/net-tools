@@ -129,6 +129,9 @@ The backlog of every tool. Claude Code updates the **Status** column (`⬜` todo
 | TLS-10 | SSH server audit | Banner, host key fingerprints, KEX/cipher algorithms | S | `x/crypto/ssh` handshake (no auth) | — | 3 | ✅ |
 | TLS-11 | JWK / PEM converter | Convert keys between PEM, JWK, SSH formats | B | WebCrypto | — | 4 | ✅ |
 | TLS-12 | DANE / TLSA checker | TLSA of MX hosts (STARTTLS) or HTTPS vs presented chain, DNSSEC AD flag | S | `miekg/dns`, `crypto/tls` | — | 6 | ✅ |
+| TLS-13 | Certificate chain validator | Pasted chain: order, signatures, missing intermediates via AIA, trust, host name | B+S | `crypto/x509` | — | 6 | ✅ |
+| TLS-14 | PKCS#12 / PFX inspector | Certificates, key match, friendly names, encryption / MAC algorithms (legacy flagged), in the browser | B | `node-forge`, `@peculiar/x509` | — | 6 | ✅ |
+| TLS-15 | Lab CA & certificate generator | Root CA (or reuse one) + server certificate with SANs, WebCrypto in the browser | B | `@peculiar/x509` | — | 6 | ✅ |
 
 ## 6. Email
 

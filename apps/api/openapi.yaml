@@ -1990,6 +1990,35 @@ paths:
                     properties:
                       data: { $ref: "#/components/schemas/MixedResult" }
         default: { $ref: "#/components/responses/Error" }
+  /v1/tls/chain-validate:
+    post:
+      operationId: tlsChainValidate
+      summary: Validate a pasted certificate chain (order, signatures, missing intermediates via AIA, trust)
+      tags: [tls]
+      x-capability: tls.chain
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pem]
+              properties:
+                pem: { type: string, maxLength: 131072, description: 1 to 12 PEM certificates }
+                host: { type: string, description: optional host name to check against the leaf }
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/OkEnvelope"
+                  - type: object
+                    required: [data]
+                    properties:
+                      data: { $ref: "#/components/schemas/ChainResult" }
+        default: { $ref: "#/components/responses/Error" }
 components:
   parameters:
     Family:
@@ -4259,3 +4288,29 @@ components:
               attr: { type: string }
               url: { type: string }
               kind: { type: string, enum: [active, passive, form, link] }
+    ChainResult:
+      type: object
+      required: [certs, path, ordered, complete, trusted, verifyError, host, hostOk, notes]
+      properties:
+        path: { type: array, items: { type: integer } }
+        ordered: { type: boolean }
+        complete: { type: boolean }
+        trusted: { type: boolean }
+        verifyError: { type: string }
+        host: { type: string }
+        hostOk: { type: [boolean, "null"] }
+        notes: { type: array, items: { type: string } }
+        certs:
+          type: array
+          items:
+            allOf:
+              - $ref: "#/components/schemas/TlsCert"
+              - type: object
+                required: [role, source, inputIndex, signatureOk, expired, aia]
+                properties:
+                  role: { type: string, enum: [leaf, intermediate, root, extra] }
+                  source: { type: string, enum: [input, aia] }
+                  inputIndex: { type: integer }
+                  signatureOk: { type: [boolean, "null"] }
+                  expired: { type: boolean }
+                  aia: { type: string }

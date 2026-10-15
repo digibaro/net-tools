@@ -44,7 +44,7 @@ const asText = () => [data.value?.probe.banner ?? '', ...rows.value.map(r => `${
     <NAlert :type="gradeType[g]" class="mb-3" data-testid="verdict">
       {{ t(`tools.smtp-banner-check.grade.${g}`, { n: data.passed, total: data.checks.length }) }}
     </NAlert>
-    <p v-if="data.via" class="nt-muted mt-0 text-sm">
+    <p v-if="data.via" class="mt-0 text-sm nt-muted">
       {{ t('tools.smtp-banner-check.via', { domain: data.via, host: data.host }) }}
     </p>
     <NAlert v-if="data.smtpBlocked" type="info" class="mb-3">
