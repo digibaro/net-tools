@@ -32,8 +32,8 @@ Every tool shows where it runs:
 Requirements: Docker with Compose v2. LAN mode needs a Linux host.
 
 ```bash
-git clone https://github.com/digibaro/net-tools.git
-cd net-tools
+git clone https://github.com/digibaro/net-tools-docker.git
+cd net-tools-docker
 cp .env.example .env          # optional: settings and API keys (see Configuration)
 docker compose up -d --build  # build from source
 ```
