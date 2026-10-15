@@ -15,7 +15,7 @@ page, light / dark / auto theme, shareable links. Ships as two Docker containers
 | Email | 9 | MX/SMTP, SPF, DMARC, DKIM, MTA-STS, header analyzer, DMARC reports, open relay test |
 | Routing, BGP & Registry | 12 | IP→ASN, WHOIS, RDAP, PeeringDB, IRR / AS-SET expansion, AS-path visualizer |
 | Reputation & Geolocation | 5 | IP geolocation, AbuseIPDB, passive exposure, Tor exit check, URL reputation |
-| LAN | 6 | Wake-on-LAN, ARP scan, mDNS and SSDP discovery, DHCP probe, gateway / NAT info |
+| LAN | 9 | Wake-on-LAN, ARP scan, mDNS / SSDP discovery, DHCP and DHCPv6 probe, LLDP / CDP, IPv6 neighbours |
 | Calculators & Reference | 12 | Bandwidth, data units, port reference, router config snippets |
 | Client Diagnostics | 5 | Request headers, browser latency, WebRTC leak test, browser ↔ server speed test |
 
@@ -26,6 +26,18 @@ Every tool shows where it runs:
 - **Public API** — a third-party service is queried through the server (keys stay on the server).
 
 <img width="1312" height="824" alt="Image" src="https://github.com/user-attachments/assets/420bafa8-e29b-4914-9452-ca6995514483" />
+
+<details>
+<summary>More screenshots: light and dark theme, worldwide map, phone</summary>
+
+| Light | Dark |
+|---|---|
+| ![Home page, light theme](docs/screenshots/home-light.png) | ![Home page, dark theme](docs/screenshots/home-dark.png) |
+| ![IPv4 subnet calculator on a phone, light theme](docs/screenshots/mobile-light.png) | ![DNS lookup on a phone, dark theme](docs/screenshots/mobile-dark.png) |
+
+![Worldwide ping from Globalping probes on a world map](docs/screenshots/worldwide-dark.png)
+
+</details>
 
 ## Quick start
 
@@ -120,6 +132,16 @@ Rate limits and per-tool bounds keep the server from being abused. The most usef
 
 The complete list with explanations is in [docs/SECURITY.md](docs/SECURITY.md).
 
+### Logging
+
+| Variable | Default | Meaning |
+|---|---|---|
+| `LOG_LEVEL` | `info` | `debug`, `info`, `warn` or `error` (JSON logs on stdout) |
+| `LOG_HASH_IPS` | `false` | Log a hash of the client IP instead of the IP itself |
+| `AUDIT_LOG` | `false` | One `audit` line per server-tool request: tool, target, status, duration, client IP |
+
+Read them with `docker compose logs api`; filter the audit trail with `| grep '"msg":"audit"'`.
+
 ### GeoIP databases
 
 IP geolocation works offline with a MaxMind GeoLite2 or DB-IP Lite database placed in `data/`
@@ -137,8 +159,8 @@ profile adds LibreSpeed's own UI for comparison.
 
 ## LAN mode
 
-Wake-on-LAN, ARP scan, mDNS and SSDP discovery, DHCP probe and gateway / NAT info need to see your
-local network, so both containers use the host's network:
+Wake-on-LAN, ARP scan, mDNS and SSDP discovery, DHCP / DHCPv6 probe, gateway / NAT info, LLDP / CDP
+neighbours and IPv6 neighbours need to see your local network, so both containers use the host's network:
 
 ```bash
 docker compose -f docker-compose.yml -f docker-compose.lan.yml up -d --build   # or: make up-lan
@@ -147,7 +169,10 @@ docker compose -f docker-compose.yml -f docker-compose.lan.yml up -d --build   #
 - Linux hosts only (Docker Desktop on macOS/Windows does not expose the LAN this way).
 - The web UI listens on port 8080 of the host; the api stays on host loopback and is not
   reachable from the LAN.
-- Only `NET_RAW` is added (ARP, DHCP probe and ICMP); no `NET_ADMIN`.
+- Only `NET_RAW` is added (ARP, DHCP / DHCPv6 probes, LLDP / CDP listening, NDP and ICMP); no
+  `NET_ADMIN`. The probes never take a lease.
+- LLDP / CDP neighbours only hear something when the host is plugged into a switch that announces
+  itself; inside a VM you usually see the hypervisor at most.
 - Use it on trusted networks only, typically with `NETTOOLS_PROFILE=homelab`.
 
 Without the override these tools show "needs LAN mode".
@@ -167,7 +192,10 @@ Health checks: `GET /api/healthz` (process up) and `GET /api/readyz` (dependenci
 
 - Search with <kbd>Ctrl</kbd>+<kbd>K</kbd>, star tools to pin them on the home page.
 - Every input is in the URL — copy the address to share a result.
-- Settings (gear icon): theme (light / dark / auto), accent colour, language.
+- Theme (light / dark / auto) and language (NL / UK) are switched in the top bar; the accent
+  colour is under settings (gear icon).
+- Result tables download as CSV; the printer icon prints a tool or saves it as PDF.
+- Worldwide results show the probe locations on a map; select a dot to jump to its result.
 - Server tools run from the server's location; many DNS and connectivity tools can also run
   **Worldwide** through Globalping probes.
 
